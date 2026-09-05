@@ -51,7 +51,7 @@ gained DCP for sparse MLA on newer code; these patches are for the June
 | `patches/*.patch` | `baseline` to `overlay` diffs, plus `apply.sh` |
 | `stage/glm-dcp/` | the seventeen files flattened for bind-mounting, with `SHA256SUMS` |
 | `launch-glm53big-dcp.sh` | TP4 + DCP4 + DFlash launcher, derived from the selected one |
-| `tests/` | 150 CPU tests driving the real patched kernels, the NVMe tier and the connector fix |
+| `tests/` | 156 CPU tests driving the real patched kernels, the NVMe tier and the connector fix |
 | `upstream-vllm/` | an upstream clone, used to locate the fork's base commit |
 
 `baseline` is what the image runs: for `flashmla_sparse.py` and
@@ -63,7 +63,7 @@ bind-mounts, and for the other eleven the pristine file from the image's
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install pytest torch triton numpy
-PYTHONPATH=tests .venv/bin/python -m pytest tests/ -q     # 150 passed
+PYTHONPATH=tests .venv/bin/python -m pytest tests/ -q     # 156 passed
 ```
 
 They run Triton in interpreter mode on CPU and extract the kernels straight out

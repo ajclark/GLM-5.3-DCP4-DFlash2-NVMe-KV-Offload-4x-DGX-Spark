@@ -35,7 +35,7 @@ reasoning; this file is the operational summary.
   by default; `MAXLEN`, `MAXBATCHED`, `KVBYTES` env overrides). Five files
   make the sparse-MLA target DCP-aware; eight let the DFlash drafter's
   sliding-window KV group stay replicated across the ranks.
-- 150 CPU tests pass: `PYTHONPATH=tests .venv/bin/python -m pytest tests/ -q`.
+- 156 CPU tests pass: `PYTHONPATH=tests .venv/bin/python -m pytest tests/ -q`.
 - Operating scripts: `rollout_dcp.sh <label> [MAXLEN] [MAXBATCHED] [KVBYTES] [KVTIER]`
   (deploy with watchdog and automatic production restore; `SKIP_PREFLIGHT=1`
   when the stack is already down), `post_boot_checks.sh <label> <baseline_dir>
