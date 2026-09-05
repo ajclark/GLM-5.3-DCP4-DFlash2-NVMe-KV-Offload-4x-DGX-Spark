@@ -38,11 +38,13 @@ ring=$(for i in enP2p1s0f0np0 enP2p1s0f1np1; do cat /sys/class/net/$i/operstate;
 rdma=$(rdma link show 2>/dev/null | awk "/roceP2p1s0f[01]\//{print \$4}" | paste -sd/)
 ringip=$(for i in enP2p1s0f0np0 enP2p1s0f1np1; do ip -o -4 addr show dev $i 2>/dev/null | awk "{print \$4}" | head -1 | grep . || echo none; done | paste -sd/)
 mtu=$(for i in enP2p1s0f0np0 enP2p1s0f1np1; do cat /sys/class/net/$i/mtu 2>/dev/null || echo 0; done | paste -sd/)
+cx7=$(cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state 2>/dev/null || echo -)
+fns=$(lspci -D -d 15b3:1021 2>/dev/null | wc -l)
 radios=$(rfkill list 2>/dev/null | grep -c "Soft blocked: yes")
 gpu=$(nvidia-smi --query-gpu=power.draw,clocks.sm,persistence_mode --format=csv,noheader,nounits 2>/dev/null | tr -d " " | tr "," "/")
 ctr=$(docker inspect -f "{{.State.Status}}" vllm_glm53big 2>/dev/null || echo none)
 avail=$(awk "/MemAvailable/{printf \"%.1f\", \$2/1048576}" /proc/meminfo)
-echo "gov=$gov mhz=$mhz online=$online eth=${eth}M ring=$ring rdma=$rdma ringip=$ringip mtu=$mtu radios_blocked=$radios/2 gpu_W/MHz/pm=$gpu ctr=$ctr availG=$avail"
+echo "gov=$gov mhz=$mhz online=$online eth=${eth}M ring=$ring rdma=$rdma cx7=$cx7 fns=$fns ringip=$ringip mtu=$mtu radios_blocked=$radios/2 gpu_W/MHz/pm=$gpu ctr=$ctr availG=$avail"
 '
 node_status() { sshq "$1" "$NODE_STATUS" 2>/dev/null || echo "UNREACHABLE"; }
 status_all()  { local h; for h in "${HOSTS[@]}"; do printf "%-11s %s\n" "$h" "$(node_status "$h")"; done; }

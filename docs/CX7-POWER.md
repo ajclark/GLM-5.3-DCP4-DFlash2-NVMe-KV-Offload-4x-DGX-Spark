@@ -134,3 +134,42 @@ leftover scripts, zero kernel errors since the experiment. The serving
 containers exist but are **stopped** (`docker stop` at 23:16-23:17 UTC), the
 cache flushers are gone, ~115 GB free per node. Relaunch is
 `./rollout_dcp.sh <label>` (daily DCP=2 lane) or `./un-idle.sh`.
+
+## 6. Roadmap: idle with the model resident ("just-in-time inference")
+
+Goal state: the vLLM stack stays up with weights and KV cache resident, the
+CX-7s are off (~30 W per node), and the first request brings the ring back
+and serves within a minute instead of the 505 s reload. What that takes in the
+engine, per worker, on `suspend`:
+
+1. Quiesce (no running requests; the API queues new ones).
+2. Drop captured CUDA graphs (they embed NCCL kernels and communicator
+   buffers). vLLM's elastic EP already has this: `_release_cuda_graphs()`.
+3. Destroy every NCCL communicator (torch process groups for TP/DCP/world and
+   the drafter's replicated group, plus vLLM's PyNccl communicators) while
+   the adapter is still up, so the teardown is clean. Gloo/TCP-store traffic
+   rides the 10GbE and survives.
+4. `cx7-power.sh off`.
+
+On `resume` (triggered by the first request or by hand): `cx7-power.sh on`,
+re-create the process groups with fresh NCCL ids through the surviving TCP
+store (elastic EP's `StatelessGroupCoordinator` / `_replace_active_groups`),
+`compile_or_warm_up_model()` to re-capture graphs with the block tables saved
+and restored (elastic EP does exactly this), then unpause. Expected: ~20 s
+adapter, ~5 s communicators, ~15-20 s graph capture, so 40-60 s to first
+token from cold idle. The weights, KV pool and slab tier never move.
+
+The one unknown that decides feasibility: NCCL opens its IB device contexts
+once per process and caches them. After a hot-remove those contexts are dead
+(uverbs disassociation), and the re-created communicators may fail to build
+queue pairs even though the adapter is back. Crux experiment, stack down, no
+meter needed: a small script in the serving image on all four nodes that
+builds a NCCL communicator over the ring, all-reduces, destroys it, waits
+while the host runs `cx7-power.sh off` then `on`, builds a new communicator
+and all-reduces again. If that passes, the engine-side work is a
+`suspend_network` / `resume_network` RPC pair built from elastic EP's parts
+(days, in the fork). If it fails, the fallback is to restart the worker
+processes rather than the communicators, which only becomes cheap once the
+disk-image boot (`BOOT-TIME.md` in the DCP repo) exists, or to find a lower
+CX-7 power state that keeps the device contexts alive (ports admin-down; its
+savings are unmeasured).

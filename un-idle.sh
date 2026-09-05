@@ -11,6 +11,8 @@
 #               and Wake-on-LAN magic packets (NVIDIA says Spark ignores them), then up
 #               to 5 min for SSH. A node that stays away needs the power button; the
 #               script stops there with everything else untouched.
+#   1b. cx7     Nodes whose ConnectX-7 is powered off get ./cx7-power.sh on (power, rescan,
+#               200G, IPv4, MTU, RDMA, jumbo pings) before anything else.
 #   2. restore  Per node: cpus online, ring ports reconnected (NetworkManager), radios
 #               back to the baseline, governor performance, GPU persistence on, clock
 #               lock $GPU_LOCK, management link back to 10G (with a node-side revert
@@ -18,9 +20,9 @@
 #   3. verify   governor, online mask, ring carrier + RDMA ACTIVE + IPv4 + MTU as in the
 #               baseline, GPU clocks locked, eth 10G. Bounded waits, no resets: a failed
 #               stage is reported and the script stops with SSH intact.
-#   4. serving  Container running on all four and a real generation succeeds; otherwise
-#               relaunch the default lane with ./rollout_dcp.sh <label> (~505 s, its own
-#               auto-restore) unless --no-relaunch.
+#   4. serving  Container running on all four and a real generation succeeds; otherwise run
+#               RELAUNCH_CMD (default: ./rollout_dcp.sh <label> when that script sits next to
+#               this one) and require a real generation, unless --no-relaunch.
 #   5. journal  Moved to results/idle-power/last.env; add-ons that recovered cleanly with
 #               I_AM_PRESENT=1 get their <addon>-qualified marker.
 set -uo pipefail
@@ -37,7 +39,7 @@ fail() { say "FAILED: $*"; say "nothing was reset or relaunched beyond this poin
 
 JOURNAL=0; [ -e "$STATE" ] && [ -n "$(state_get IDLE_TIER)" ] && JOURNAL=1
 say "== un-idle: journal=$JOURNAL tier=$( [ $JOURNAL = 1 ] && state_get IDLE_TIER || echo none) dry-run=$DRY_RUN (log $LOG)"
-if pgrep -f 'rollout_dcp.sh|restore_production.sh|deploy_kvtier.sh|deploy_slab' >/dev/null; then
+if pgrep -f '(^|[ /])(rollout_dcp|restore_production|deploy_kvtier|deploy_slab[a-z_]*)\.sh( |$)' >/dev/null; then
   fail "a rollout/deploy is already running on this box"; fi
 
 # ---- 1. wake
@@ -50,6 +52,18 @@ for h in "${HOSTS[@]}"; do
   say "  waiting up to 300 s for SSH"; wait_ssh "$h" 300 || fail "$h did not come back; it needs the power button (or a PLUG_ON_CMD)"
   say "  $h is back"
 done
+
+# ---- 1b. ConnectX-7 back on where it is off
+need=""
+for h in "${HOSTS[@]}"; do
+  s=$(node_status "$h"); { [ "$(sfield "$s" cx7)" = 1 ] && [ "$(sfield "$s" fns)" = 4 ]; } || need="$need${need:+,}$h"
+done
+[ "$DRY_RUN" = 1 ] && [ "$JOURNAL" = 1 ] && [ "$(state_get CX7_OFF)" = 1 ] && need=$(IFS=,; echo "${HOSTS[*]}")
+if [ -n "$need" ]; then
+  say "-- ConnectX-7 powered off on: $need; bringing it back"
+  if [ "$DRY_RUN" = 1 ]; then echo "  [dry-run] $WS/cx7-power.sh on --hosts $need" | tee -a "$LOG"
+  else LOG="$LOG" "$WS/cx7-power.sh" on --hosts "$need" || fail "cx7-power.sh on did not verify on $need"; fi
+fi
 
 # ---- 2. restore per node (parallel); radios follow the baseline when we have one
 say "-- restoring the serving profile on every node"
@@ -103,6 +117,7 @@ for attempt in $(seq 1 12); do
     [ "$(sfield "$s" online)" = 0-19 ] || bad="$bad $h:online=$(sfield "$s" online)"
     [ "$(sfield "$s" ring)" = up/up ] || bad="$bad $h:ring=$(sfield "$s" ring)"
     [ "$(sfield "$s" rdma)" = ACTIVE/ACTIVE ] || bad="$bad $h:rdma=$(sfield "$s" rdma)"
+    { [ "$(sfield "$s" cx7)" = 1 ] && [ "$(sfield "$s" fns)" = 4 ]; } || bad="$bad $h:cx7=$(sfield "$s" cx7)/fns=$(sfield "$s" fns)"
     [ "$(sfield "$s" eth)" = 10000M ] || bad="$bad $h:eth=$(sfield "$s" eth)"
     gpu=$(sfield "$s" gpu_W/MHz/pm); mhz=$(echo "$gpu" | cut -d/ -f2); pm=$(echo "$gpu" | cut -d/ -f3)
     [ "$pm" = Enabled ] || bad="$bad $h:pm=$pm"
@@ -132,17 +147,21 @@ if [ "$gen_rc" = 0 ]; then
 elif [ "$NORELAUNCH" = 1 ]; then
   say "-- serving stack is not fully up; --no-relaunch given, leaving it"
 else
-  say "-- relaunching the default lane: ./rollout_dcp.sh $LABEL (~505 s)"
-  ( cd "$WS" && ./rollout_dcp.sh "$LABEL" ) > "$STATE_DIR/$LABEL.console.log" 2>&1
-  R=$(ls -d "$WS"/results/rollout-"$LABEL"-*/ 2>/dev/null | tail -1)
-  if [ -n "$R" ] && grep -q "complete" "$R/rollout.log" 2>/dev/null; then say "  rollout complete: $R"
-  else fail "rollout did not complete (see $STATE_DIR/$LABEL.console.log and ${R:-no result dir}); rollout_dcp.sh's own auto-restore applies"; fi
+  RELAUNCH="${RELAUNCH_CMD:-}"; [ -z "$RELAUNCH" ] && [ -x "$WS/rollout_dcp.sh" ] && RELAUNCH="$WS/rollout_dcp.sh $LABEL"
+  if [ -z "$RELAUNCH" ]; then
+    say "-- serving stack is not up and no RELAUNCH_CMD is set; the nodes are verified, start your stack now"
+  else
+    say "-- relaunching: $RELAUNCH (console: $STATE_DIR/$LABEL.console.log)"
+    ( cd "$WS" && eval "$RELAUNCH" ) > "$STATE_DIR/$LABEL.console.log" 2>&1 || fail "relaunch command exited non-zero"
+    if health && out=$(generate_ok 2>&1); then echo "$out" | tee -a "$LOG"; say "  serving stack is up and generating"
+    else fail "relaunch finished but the stack does not generate"; fi
+  fi
 fi
 
 # ---- 5. journal and qualification markers
 if [ "$JOURNAL" = 1 ]; then
   if [ "$(state_get I_AM_PRESENT)" = 1 ]; then
-    [ "$(state_get RING_DOWN)" = 1 ] && { touch "$STATE_DIR/ring-qualified"; say "  --ring-down qualified (marker dropped)"; }
+    [ "$(state_get CX7_OFF)" = 1 ] && { touch "$STATE_DIR/cx7-qualified"; say "  --cx7-off qualified (marker dropped)"; }
     [ "$(state_get ETH1G)" = 1 ] && { touch "$STATE_DIR/eth1g-qualified"; say "  --eth-1g qualified (marker dropped)"; }
   fi
   mv "$STATE" "$STATE_DIR/last.env"

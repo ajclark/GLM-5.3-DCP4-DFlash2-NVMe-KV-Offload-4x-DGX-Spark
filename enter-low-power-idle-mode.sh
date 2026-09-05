@@ -20,9 +20,10 @@
 # Add-ons. Each is first run with a human watching (I_AM_PRESENT=1); when un-idle
 # recovers cleanly it drops results/idle-power/<addon>-qualified, which allows the
 # add-on unattended from then on.
-#   --ring-down (--deep only) NetworkManager-disconnect all four ConnectX-7 functions
-#               so both 200G ports go admin-down. NVIDIA quotes up to 18 W for an
-#               unused CX-7; how much admin-down recovers is unknown until measured.
+#   --cx7-off   (--deep only) Power the ConnectX-7 off with the cables attached via
+#               NVIDIA's cx7-pcie-hotplug driver (./cx7-power.sh off): measured ~20 W per
+#               node, 202 -> 120 W for four. CX7_RESTORE_AFTER=<s> arms a node-side
+#               dead-man restore timer (default 0 = stay off until un-idle).
 #   --eth-1g    Renegotiate the 10GbE management link to 1G. A node-side systemd timer
 #               reverts to 10G after 150 s unless we cancel it once SSH is back.
 #   --suspend   (--deep only) systemctl suspend (s2idle). NVIDIA states DGX Spark has
@@ -35,10 +36,10 @@
 #   --status    One status line per node and exit (read-only).
 set -uo pipefail
 source "$(dirname "$0")/idle-power-lib.sh"
-TIER=light; RING=0; ETH1G=0; SUSPEND=0; YES=0
+TIER=light; CX7=0; ETH1G=0; SUSPEND=0; YES=0
 for a in "$@"; do case "$a" in
   --light) TIER=light ;; --deep) TIER=deep ;; --shutdown) TIER=shutdown ;;
-  --ring-down) RING=1 ;; --eth-1g) ETH1G=1 ;; --suspend) SUSPEND=1 ;;
+  --cx7-off) CX7=1 ;; --eth-1g) ETH1G=1 ;; --suspend) SUSPEND=1 ;;
   --yes) YES=1 ;; --dry-run) DRY_RUN=1 ;; --status) status_all; exit 0 ;;
   -h|--help) sed -n '2,36p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
   *) echo "unknown argument: $a (try --help)" >&2; exit 2 ;;
@@ -46,12 +47,12 @@ esac; done
 export DRY_RUN
 qualified() { [ -e "$STATE_DIR/$1-qualified" ] || [ "${I_AM_PRESENT:-0}" = 1 ]; }
 
-say "== enter idle mode: tier=$TIER ring-down=$RING eth-1g=$ETH1G suspend=$SUSPEND dry-run=$DRY_RUN (log $LOG)"
+say "== enter idle mode: tier=$TIER cx7-off=$CX7 eth-1g=$ETH1G suspend=$SUSPEND dry-run=$DRY_RUN (log $LOG)"
 
 # ---- refuse the obviously wrong before touching anything
 if [ -e "$STATE" ] && [ -n "$(state_get IDLE_TIER)" ] && [ "$DRY_RUN" != 1 ]; then
   say "already in idle mode since $(state_get ENTERED) (tier $(state_get IDLE_TIER)); run ./un-idle.sh first so the baseline journal is not overwritten"; exit 1; fi
-[ "$RING" = 1 ] && [ "$TIER" = light ] && { say "--ring-down needs --deep: the serving stack runs on the ring"; exit 2; }
+[ "$CX7" = 1 ] && [ "$TIER" = light ] && { say "--cx7-off needs --deep: the serving stack runs on the ring"; exit 2; }
 [ "$SUSPEND" = 1 ] && [ "$TIER" != deep ] && { say "--suspend needs --deep"; exit 2; }
 if [ "$TIER" != light ] && [ "$YES" != 1 ]; then
   say "tier $TIER discards the in-memory KV pool and costs a ~505 s relaunch on un-idle: add --yes"; exit 2; fi
@@ -59,9 +60,9 @@ if [ "$TIER" = shutdown ] && [ -z "${PLUG_ON_CMD:-}" ] && [ "${I_AM_PRESENT:-0}"
   say "REFUSED: --shutdown needs a way back: set PLUG_ON_CMD (smart plug, see un-idle.sh) or I_AM_PRESENT=1 if you can press the power buttons."; exit 2; fi
 if [ "$SUSPEND" = 1 ] && [ "${I_AM_PRESENT:-0}" != 1 ]; then
   say "REFUSED: NVIDIA states DGX Spark does not support Wake-on-LAN (forums.developer.nvidia.com/t/348168); a node that does not wake needs the power button. Set I_AM_PRESENT=1 only if you can press it."; exit 2; fi
-[ "$RING" = 1 ] && ! qualified ring && { say "REFUSED: --ring-down is not yet qualified on this cluster; run it once with I_AM_PRESENT=1 while watching (un-idle drops the marker after a clean recovery)"; exit 2; }
+[ "$CX7" = 1 ] && ! qualified cx7 && { say "REFUSED: --cx7-off is not yet qualified on this cluster; run it once with I_AM_PRESENT=1 while watching (un-idle drops the marker after a clean recovery)"; exit 2; }
 [ "$ETH1G" = 1 ] && ! qualified eth1g && { say "REFUSED: --eth-1g is not yet qualified on this cluster; run it once with I_AM_PRESENT=1 while watching"; exit 2; }
-if pgrep -f 'rollout_dcp.sh|restore_production.sh|deploy_kvtier.sh|deploy_slab' >/dev/null; then
+if pgrep -f '(^|[ /])(rollout_dcp|restore_production|deploy_kvtier|deploy_slab[a-z_]*)\.sh( |$)' >/dev/null; then
   say "a rollout/deploy is running on this box; not touching the cluster"; exit 1; fi
 
 # ---- preflight: reachability, serving state, drain
@@ -81,7 +82,7 @@ for h in "${HOSTS[@]}"; do BASE[$h]=$(node_status "$h"); say "  $h ${BASE[$h]}";
 if [ "$DRY_RUN" != 1 ]; then
   rm -f "$STATE"
   state_set ENTERED "$(date -Is)"; state_set IDLE_TIER "$TIER"; state_set STACK_WAS_UP "$STACK_UP"
-  state_set RING_DOWN "$RING"; state_set ETH1G "$ETH1G"; state_set SUSPENDED 0; state_set SHUTDOWN 0
+  state_set CX7_OFF "$CX7"; state_set ETH1G "$ETH1G"; state_set SUSPENDED 0; state_set SHUTDOWN 0
   state_set I_AM_PRESENT "${I_AM_PRESENT:-0}"
   for h in "${HOSTS[@]}"; do state_set "BASE_$h" "${BASE[$h]}"; done
 fi
@@ -113,11 +114,11 @@ if [ "$TIER" != light ]; then
   done; wait
 fi
 
-if [ "$RING" = 1 ]; then
-  say "-- ring ports admin-down (NetworkManager disconnect of all four ConnectX-7 functions)"
-  for h in "${HOSTS[@]}"; do
-    run_node "$h" 'for d in enP2p1s0f0np0 enP2p1s0f1np1 enp1s0f0np0 enp1s0f1np1; do sudo -n nmcli dev disconnect "$d" >/dev/null 2>&1; sudo -n ip link set "$d" down 2>/dev/null; done; echo "ring: $(for d in enP2p1s0f0np0 enP2p1s0f1np1; do cat /sys/class/net/$d/operstate; done | paste -sd/) rdma: $(rdma link show 2>/dev/null | awk "/roceP2p1s0f[01]\//{print \$4}" | paste -sd/)"' &
-  done; wait
+if [ "$CX7" = 1 ]; then
+  say "-- ConnectX-7 power off (cx7-power.sh off --restore-after ${CX7_RESTORE_AFTER:-0})"
+  if [ "$DRY_RUN" = 1 ]; then echo "  [dry-run] $WS/cx7-power.sh off --restore-after ${CX7_RESTORE_AFTER:-0}" | tee -a "$LOG"
+  else LOG="$LOG" "$WS/cx7-power.sh" off --restore-after "${CX7_RESTORE_AFTER:-0}" || { say "cx7-power.sh off failed on at least one node (state printed above); the other idle steps are applied; ./un-idle.sh recovers"; exit 1; }
+  fi
 fi
 
 # ---- management link to 1G, one node at a time, with a node-side safety net

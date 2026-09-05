@@ -138,3 +138,12 @@ That bug is in the fused NVIDIA DeepSeek-V3.2 norm/RoPE kernel, in a directory
 this fork does not have, so its fix (#54908) is a no-op here. The fork's actual
 gap is that the sparse indexer and the sparse attention backend have no DCP
 support at all. `docs/DESIGN.md` section 2 has the details.
+
+## Idle power
+
+The idle-power toolkit (ConnectX-7 hot-plug power-off, 202 -> 120 W for the four
+idle nodes with cables attached; `enter-low-power-idle-mode.sh` / `un-idle.sh` /
+`cx7-power.sh`) lives in its own repo,
+[ajclark/dgx-spark-idle-power](https://github.com/ajclark/dgx-spark-idle-power).
+The copies here are kept in sync so `un-idle.sh` can relaunch the serving lane
+through `rollout_dcp.sh`; see `docs/CX7-POWER.md` and `docs/IDLE-POWER.md`.
