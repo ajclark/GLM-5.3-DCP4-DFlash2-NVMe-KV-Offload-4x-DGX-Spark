@@ -3,6 +3,8 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, ClassVar
 
+import os
+
 import numpy as np
 import torch
 
@@ -28,9 +30,17 @@ from vllm.v1.attention.backend import (
     SparseMLAAttentionImpl,
 )
 from vllm.v1.attention.backends.mla.sparse_utils import (
+    compact_dcp_candidates,
     triton_convert_req_index_to_global_index,
     triton_filter_and_convert_dcp_index,
 )
+
+# DCP overlay: candidate compaction. With GLM_DCP_COMPACT=1 the per-rank
+# top-k list is compacted after the DCP filter and its length handed to the
+# sparse kernels, which then walk only this rank's ~1/dcp of the candidates
+# instead of masking all of them (23.8 ms of a 173 ms verify pass on the
+# Sparks was that kernel walking masked entries).
+DCP_COMPACT = os.environ.get("GLM_DCP_COMPACT", "0") == "1"
 from vllm.v1.attention.backends.utils import (
     reshape_attn_output_for_spec_decode,
     reshape_query_for_spec_decode,
@@ -857,6 +867,7 @@ class FlashMLASparseImpl(SparseMLAAttentionImpl[FlashMLASparseMetadata]):
 
         The lse is only returned when DCP needs it, otherwise None.
         """
+        topk_length = None
         if self.dcp_world_size > 1:
             # Under DCP the indexer emits GLOBAL token positions (its per-rank
             # local top-k lists were merged across the group). Keep this rank's
@@ -872,6 +883,8 @@ class FlashMLASparseImpl(SparseMLAAttentionImpl[FlashMLASparseMetadata]):
                 BLOCK_SIZE=attn_metadata.block_size,
                 NUM_TOPK_TOKENS=topk_indices.shape[1],
             )
+            if DCP_COMPACT:
+                topk_indices, topk_length = compact_dcp_candidates(topk_indices)
         else:
             # Convert per-request indices to global slots (decode) or workspace
             # offsets (prefill).
@@ -894,6 +907,7 @@ class FlashMLASparseImpl(SparseMLAAttentionImpl[FlashMLASparseMetadata]):
             kv_c_and_k_pe_cache=kv_c_and_k_pe_cache,
             topk_indices=topk_indices.unsqueeze(0),  # (T, topk) -> (1, T, topk)
             kernel_metadata=fp8_metadata,
+            topk_length=topk_length,  # (T,) per-token candidate count, or None
         )
 
         # Output is (1, T, H, D_v), squeeze back to (T, H, D_v)
@@ -922,6 +936,7 @@ class FlashMLASparseImpl(SparseMLAAttentionImpl[FlashMLASparseMetadata]):
         kv_c_and_k_pe_cache: torch.Tensor,
         topk_indices: torch.Tensor,
         kernel_metadata: FlashMLASparseMetadata.FP8KernelMetadata,
+        topk_length: torch.Tensor | None = None,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         # q shape: (batch, seq_len, num_heads, head_dim)
         actual_num_heads = q.size(2)
@@ -949,6 +964,7 @@ class FlashMLASparseImpl(SparseMLAAttentionImpl[FlashMLASparseMetadata]):
                 kv_cache=kv_cache_uint8,
                 topk_indices=topk_indices,
                 softmax_scale=self.softmax_scale,
+                topk_length=topk_length,
             )
         except Exception as exc:
             logger.warning_once(
@@ -967,6 +983,7 @@ class FlashMLASparseImpl(SparseMLAAttentionImpl[FlashMLASparseMetadata]):
                 is_fp8_kvcache=True,
                 indices=topk_indices,
                 softmax_scale=self.softmax_scale,
+                topk_length=topk_length,
             )
         else:
             out, lse = b12x_result

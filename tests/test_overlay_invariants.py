@@ -21,6 +21,7 @@ FILES = [
     "model_executor/layers/sparse_attn_indexer.py",
     "model_executor/layers/attention/mla_attention.py",
     "distributed/kv_transfer/kv_connector/v1/offloading/scheduler.py",
+    "v1/attention/ops/deepseek_v4_ops/b12x_sparse_helpers.py",
 ]
 
 INDEXER = OVERLAY / "model_executor/layers/sparse_attn_indexer.py"

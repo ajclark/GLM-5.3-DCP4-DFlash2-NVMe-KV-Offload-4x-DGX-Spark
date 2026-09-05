@@ -1,0 +1,31 @@
+[03:54:12] rollout 'dcp1-dflash-96k-prof' MAXLEN=98304 MAXBATCHED=2048 KVBYTES=6000000000 KVTIER=0 out=/home/napta2k/spark-cluster-mla-dcp/results/rollout-dcp1-dflash-96k-prof-20260905-035412
+[03:54:12] production healthy; saving pre-rollout logs + memory baseline
+spark-06c4 avail=1207MiB swapfree=13578MiB pswpout=20838950
+spark-365c avail=4845MiB swapfree=14151MiB pswpout=14991192
+spark-ddbf avail=4961MiB swapfree=14153MiB pswpout=14399385
+spark-a218 avail=5017MiB swapfree=14137MiB pswpout=29143895
+[03:54:16]   spark-06c4 staged + verified
+[03:54:17]   spark-365c staged + verified
+[03:54:18]   spark-ddbf staged + verified
+[03:54:18]   spark-a218 staged + verified
+[03:54:18] stopping production ranks
+[03:54:28]   flusher spark-06c4: STARTED 115G-avail
+[03:54:29]   flusher spark-365c: STARTED 115G-avail
+[03:54:31]   flusher spark-ddbf: STARTED 115G-avail
+[03:54:32]   flusher spark-a218: STARTED 115G-avail
+[03:54:32] launching DCP ranks (worker-first)
+[03:54:32]   launching rank 3 on spark-a218
+ebec35af59dcc9f89581e68774fbb0409cc6fecb9d6bcdba184088719d47f0d5
+launched vllm_glm53big rank=3 host=192.168.1.31 spec=dflash k=7 tp4 dcp4 maxlen=98304 maxseqs=12 kvtier=0/slab image=vllm-glm52-b12x:dflash2-port2
+vllm_glm53big Up 3 seconds
+[03:54:39]   launching rank 2 on spark-ddbf
+bea65e67a7ea0d3219487e8e18de51a46b126f41b3fcf7c60f0691f6f8272034
+launched vllm_glm53big rank=2 host=192.168.1.149 spec=dflash k=7 tp4 dcp4 maxlen=98304 maxseqs=12 kvtier=0/slab image=vllm-glm52-b12x:dflash2-port2
+vllm_glm53big Up 3 seconds
+[03:54:47]   launching rank 1 on spark-365c
+e134e15171ff09b902782367cde68fe782446c6792fddbffc0dd831e95761e53
+launched vllm_glm53big rank=1 host=192.168.1.88 spec=dflash k=7 tp4 dcp4 maxlen=98304 maxseqs=12 kvtier=0/slab image=vllm-glm52-b12x:dflash2-port2
+vllm_glm53big Up 3 seconds
+[03:54:54]   launching rank 0 on spark-06c4
+08129c2c90672e882b1749eb1070a8ac666c359fda8b42c3abc58b0dfd59d9d0
+launched vllm_glm53big rank=0 host=192.168.1.228 spec=dflash k=7 tp4 dcp4 maxlen=98304 maxseqs=12 kvtier=0/slab image=vllm-glm52-b12x:dflash2-port2

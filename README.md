@@ -16,15 +16,17 @@ production DCP1 lane of the same image:
 | KV pool at a 131k window, 8 GB/rank | 131k tokens | 524,288 tokens (4.00x) |
 | KV pool at a 262k window, 7 GB/rank | n/a | 462,308 tokens (1.76x) |
 | largest window booted | 120k | 524,288 (served a 500k-token prompt, no headroom left) |
-| decode, count100 greedy | 57.0 tok/s, 138 ms/cycle | 45.4 tok/s, 173 ms/cycle (-22%); acceptance unchanged |
+| decode, count100 greedy | 57.0 tok/s, 138 ms/cycle | 49.7 tok/s, 158 ms/cycle (-13%) with candidate compaction; acceptance unchanged |
 | 250k-token prompt | n/a | 893 s |
 | 100k prefix, cold prefill | 335 s | 335 s |
 | 100k prefix after eviction or engine restart | 335 s (recompute) | **3-8 s from NVMe**, 99.4% of tokens served |
 
 The serving configuration is a 307,200-token window with a 6 GB/rank pool
 and a 150 GB/rank slab store; 512k works but leaves no host memory for the
-tier. The DCP cost is a constant +36 ms per verify cycle (two ring
-collectives per layer); the drafter is untouched, so acceptance is too.
+tier. The DCP cost was +36 ms per verify cycle; a profiler trace showed a third
+of it was the sparse attention kernel walking masked candidates, which
+compaction removed, leaving ~13 ms of ring collectives (`docs/DESIGN.md`
+§8). The drafter is untouched, so acceptance is too.
 
 What is in the patches, briefly: the sparse-MLA indexer and attention
 backend learn to work on a sharded KV cache (top-k merged across ranks,
@@ -44,10 +46,10 @@ gained DCP for sparse MLA on newer code; these patches are for the June
 | path | what it is |
 |---|---|
 | `docs/DESIGN.md` | the design, the cost analysis, and the validation plan |
-| `baseline/vllm/…` | fifteen files exactly as the running image has them |
-| `overlay/vllm/…` | the same fifteen files patched (thirteen for DCP: target sharded, DFlash drafter replicated; the engine scheduler's invalid-block recovery; the offloading connector's store progress) plus the new `v1/kv_offload/tiering/multinode.py` NVMe tier |
+| `baseline/vllm/…` | sixteen files exactly as the running image has them |
+| `overlay/vllm/…` | the same sixteen files patched (thirteen for DCP: target sharded, DFlash drafter replicated, top-k candidates compacted per rank; the engine scheduler's invalid-block recovery; the offloading connector's store progress; the b12x attention helper's candidate-count passthrough) plus the new `v1/kv_offload/tiering/multinode.py` NVMe tier |
 | `patches/*.patch` | `baseline` to `overlay` diffs, plus `apply.sh` |
-| `stage/glm-dcp/` | the sixteen files flattened for bind-mounting, with `SHA256SUMS` |
+| `stage/glm-dcp/` | the seventeen files flattened for bind-mounting, with `SHA256SUMS` |
 | `launch-glm53big-dcp.sh` | TP4 + DCP4 + DFlash launcher, derived from the selected one |
 | `tests/` | 150 CPU tests driving the real patched kernels, the NVMe tier and the connector fix |
 | `upstream-vllm/` | an upstream clone, used to locate the fork's base commit |

@@ -1,14 +1,33 @@
 --- a/vllm/v1/attention/backends/mla/flashmla_sparse.py
 +++ b/vllm/v1/attention/backends/mla/flashmla_sparse.py
-@@ -29,6 +29,7 @@
+@@ -3,6 +3,8 @@
+ from dataclasses import dataclass
+ from typing import TYPE_CHECKING, Any, ClassVar
+ 
++import os
++
+ import numpy as np
+ import torch
+ 
+@@ -28,8 +30,17 @@
+     SparseMLAAttentionImpl,
  )
  from vllm.v1.attention.backends.mla.sparse_utils import (
++    compact_dcp_candidates,
      triton_convert_req_index_to_global_index,
 +    triton_filter_and_convert_dcp_index,
  )
++
++# DCP overlay: candidate compaction. With GLM_DCP_COMPACT=1 the per-rank
++# top-k list is compacted after the DCP filter and its length handed to the
++# sparse kernels, which then walk only this rank's ~1/dcp of the candidates
++# instead of masking all of them (23.8 ms of a 173 ms verify pass on the
++# Sparks was that kernel walking masked entries).
++DCP_COMPACT = os.environ.get("GLM_DCP_COMPACT", "0") == "1"
  from vllm.v1.attention.backends.utils import (
      reshape_attn_output_for_spec_decode,
-@@ -162,6 +163,8 @@
+     reshape_query_for_spec_decode,
+@@ -162,6 +173,8 @@
      req_id_per_token: torch.Tensor
      block_size: int = 64
      topk_tokens: int = 2048
@@ -17,7 +36,7 @@
  
      @dataclass
      class FP8KernelMetadata:
-@@ -253,19 +256,61 @@
+@@ -253,19 +266,61 @@
          # Classify single-token queries (plus num_speculative_tokens via
          # supports_spec_as_decode=True) as decodes; longer queries go to
          # prefill.
@@ -82,7 +101,7 @@
          max_num_seqs = vllm_config.scheduler_config.max_num_seqs
          # Shape: [max_num_seqs], all elements = topk_tokens (constant for full-CG)
          self.topk_tokens_tensor = torch.full(
-@@ -516,7 +561,7 @@
+@@ -516,7 +571,7 @@
              | FlashMLASparseMetadata.FP8KernelMetadata
              | None
          ) = None
@@ -91,7 +110,7 @@
          if self.use_fp8_kv_cache:
              if fp8_use_mixed_batch:
                  fp8_extra_metadata = self._build_fp8_mixed_decode_prefill(cm)
-@@ -534,6 +579,7 @@
+@@ -534,6 +589,7 @@
              req_id_per_token=req_id_per_token,
              block_size=self.kv_cache_spec.block_size,
              topk_tokens=self.topk_tokens,
@@ -99,7 +118,7 @@
              fp8_extra_metadata=fp8_extra_metadata,
              fp8_use_mixed_batch=fp8_use_mixed_batch,
          )
-@@ -542,6 +588,11 @@
+@@ -542,6 +598,11 @@
  
  
  class FlashMLASparseImpl(SparseMLAAttentionImpl[FlashMLASparseMetadata]):
@@ -111,7 +130,7 @@
      @staticmethod
      def _compute_fp8_decode_padded_heads(num_heads: int) -> int:
          # Raw FlashMLA fp8 decode kernel supports h_q = 64 or 128 only, but the
-@@ -602,7 +653,18 @@
+@@ -602,7 +663,18 @@
          self.prefill_padding = (
              128 if current_platform.is_device_capability_family(100) else 64
          )
@@ -131,7 +150,7 @@
  
          vllm_config = get_current_vllm_config()
          max_tokens = vllm_config.scheduler_config.max_num_batched_tokens
-@@ -613,7 +675,18 @@
+@@ -613,7 +685,18 @@
                  "fp8_ds_mla kv-cache dtype"
              )
  
@@ -151,7 +170,7 @@
              # Reserve workspace during initialization
              assert vllm_config is not None and vllm_config.model_config is not None
              prefill_workspace_size = get_prefill_workspace_size(
-@@ -663,6 +736,11 @@
+@@ -663,6 +746,11 @@
          topk_indices: torch.Tensor,
          attn_metadata: FlashMLASparseMetadata,
      ) -> torch.Tensor:
@@ -163,7 +182,7 @@
          fp8_metadata = attn_metadata.fp8_extra_metadata
          assert isinstance(fp8_metadata, FlashMLASparseMetadata.FP8SeparatePrefillDecode)
          num_decodes = fp8_metadata.num_decodes
-@@ -770,22 +848,40 @@
+@@ -770,22 +858,43 @@
          kv_c_and_k_pe_cache: torch.Tensor,
          topk_indices: torch.Tensor,
          attn_metadata: FlashMLASparseMetadata,
@@ -186,6 +205,7 @@
 -            BLOCK_SIZE=attn_metadata.block_size,
 -            NUM_TOPK_TOKENS=topk_indices.shape[1],
 -        )
++        topk_length = None
 +        if self.dcp_world_size > 1:
 +            # Under DCP the indexer emits GLOBAL token positions (its per-rank
 +            # local top-k lists were merged across the group). Keep this rank's
@@ -201,6 +221,8 @@
 +                BLOCK_SIZE=attn_metadata.block_size,
 +                NUM_TOPK_TOKENS=topk_indices.shape[1],
 +            )
++            if DCP_COMPACT:
++                topk_indices, topk_length = compact_dcp_candidates(topk_indices)
 +        else:
 +            # Convert per-request indices to global slots (decode) or workspace
 +            # offsets (prefill).
@@ -214,7 +236,7 @@
  
          assert attn_metadata.fp8_extra_metadata is not None
          assert isinstance(
-@@ -793,7 +889,7 @@
+@@ -793,15 +902,33 @@
          )
          fp8_metadata = attn_metadata.fp8_extra_metadata
  
@@ -223,7 +245,8 @@
              q=q.unsqueeze(0),  # unsqueeze to add batch_dim: (T, H, D) -> (1, T, H, D)
              kv_c_and_k_pe_cache=kv_c_and_k_pe_cache,
              topk_indices=topk_indices.unsqueeze(0),  # (T, topk) -> (1, T, topk)
-@@ -801,7 +897,24 @@
+             kernel_metadata=fp8_metadata,
++            topk_length=topk_length,  # (T,) per-token candidate count, or None
          )
  
          # Output is (1, T, H, D_v), squeeze back to (T, H, D_v)
@@ -249,7 +272,28 @@
  
      def _fp8_flash_mla_kernel(
          self,
-@@ -858,9 +971,10 @@
+@@ -809,6 +936,7 @@
+         kv_c_and_k_pe_cache: torch.Tensor,
+         topk_indices: torch.Tensor,
+         kernel_metadata: FlashMLASparseMetadata.FP8KernelMetadata,
++        topk_length: torch.Tensor | None = None,
+     ) -> tuple[torch.Tensor, torch.Tensor]:
+         # q shape: (batch, seq_len, num_heads, head_dim)
+         actual_num_heads = q.size(2)
+@@ -836,6 +964,7 @@
+                 kv_cache=kv_cache_uint8,
+                 topk_indices=topk_indices,
+                 softmax_scale=self.softmax_scale,
++                topk_length=topk_length,
+             )
+         except Exception as exc:
+             logger.warning_once(
+@@ -854,13 +983,15 @@
+                 is_fp8_kvcache=True,
+                 indices=topk_indices,
+                 softmax_scale=self.softmax_scale,
++                topk_length=topk_length,
+             )
          else:
              out, lse = b12x_result
  
@@ -261,7 +305,7 @@
  
          return out, lse
  
-@@ -924,12 +1038,14 @@
+@@ -924,12 +1055,14 @@
  
          use_fp8_cache = self.kv_cache_dtype == "fp8_ds_mla"
  
@@ -277,7 +321,7 @@
                  q, kv_c_and_k_pe_cache, topk_indices, attn_metadata
              )
          else:
-@@ -937,4 +1053,4 @@
+@@ -937,4 +1070,4 @@
                  q, kv_c_and_k_pe_cache, topk_indices, attn_metadata
              )
  

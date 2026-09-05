@@ -152,6 +152,7 @@ def _run_mixed_batch(dcp_world_size, topk_local, kernel_out, kernel_lse):
     g = FMS["_forward_fp8_kv_mixed_batch"].__globals__
     g["triton_filter_and_convert_dcp_index"] = lambda *a, **k: topk_local
     g["triton_convert_req_index_to_global_index"] = lambda *a, **k: topk_local
+    g.setdefault("DCP_COMPACT", False)  # module flag; compaction is covered by test_dcp_compact.py
     q = torch.zeros(num_tokens, num_heads, 4)
     return FMS["_forward_fp8_kv_mixed_batch"](
         impl, q, torch.zeros(0), topk_local, meta

@@ -188,6 +188,7 @@ return curr_o @ W_O
 """
 
 import functools
+import os
 from abc import abstractmethod
 from dataclasses import dataclass
 from enum import Enum
@@ -270,6 +271,34 @@ from vllm.v1.attention.backends.utils import (
 )
 from vllm.v1.attention.ops.common import cp_lse_ag_out_rs
 from vllm.v1.attention.ops.dcp_alltoall import dcp_a2a_lse_reduce
+
+# DCP overlay: gather the decode query before its latent expansion.
+# Under DCP every rank needs every head's absorbed query (kv_lora_rank +
+# rope = 576 per head) to attend over its KV shard. The stock path expands
+# the local heads first and all-gathers the 576-wide result. With
+# GLM_DCP_Q_PREGATHER=1 the ranks instead all-gather the 256-wide
+# pre-expansion query (qk_nope_head_dim + rope) and expand all heads
+# locally against a replicated copy of W_UK^T (built once after loading),
+# which cuts the largest per-layer collective by 2.25x for ~740 MB of
+# extra weight per rank on GLM-5.3. Same bmm on the same bf16 inputs.
+DCP_Q_PREGATHER = os.environ.get("GLM_DCP_Q_PREGATHER", "0") == "1"
+
+
+def dcp_pregather_expand(
+    mqa_q_nope: torch.Tensor,  # (N_local, B, P)
+    mqa_q_pe: torch.Tensor,  # (B, N_local, R)
+    w_uk_t_all: torch.Tensor,  # (N_total, P, L)
+    gather_heads_dim0,  # callable: (N_local, B, X) -> (N_total, B, X)
+) -> torch.Tensor:
+    """Return the full-head absorbed query (B, N_total, L + R) after one
+    all-gather of the packed pre-expansion query (N_local, B, P + R)."""
+    n_local, b, p = mqa_q_nope.shape
+    packed = torch.cat((mqa_q_nope, mqa_q_pe.transpose(0, 1)), dim=-1)
+    gathered = gather_heads_dim0(packed.contiguous())  # (N_total, B, P + R)
+    q_nope_all = gathered[..., :p]
+    q_pe_all = gathered[..., p:]
+    ql_nope_all = torch.bmm(q_nope_all, w_uk_t_all)  # (N_total, B, L)
+    return torch.cat((ql_nope_all, q_pe_all), dim=-1).transpose(0, 1)
 from vllm.v1.attention.ops.merge_attn_states import merge_attn_states
 from vllm.v1.attention.selector import get_attn_backend
 from vllm.v1.kv_cache_interface import (
@@ -731,6 +760,7 @@ class MLAAttention(nn.Module, AttentionLayerBase):
 
             # Convert from (B, N, P) to (N, B, P)
             mqa_q_nope = mqa_q_nope.transpose(0, 1)
+            mqa_q_pregathered = False
 
             if self.q_pad_num_heads is not None:
                 B, N, L = mqa_q_pe.shape
@@ -759,6 +789,23 @@ class MLAAttention(nn.Module, AttentionLayerBase):
                     group_size=128,
                     transpose_bm=True,
                 )
+            elif (
+                getattr(self, "W_UK_T_all", None) is not None
+                and self.q_pad_num_heads is None
+                and not fp8_attention
+                and self.impl.dcp_world_size > 1
+            ):
+                # DCP overlay: one all-gather of the 256-wide query, then the
+                # same bmm for every head against the replicated W_UK^T.
+                dcp_group = get_dcp_group()
+                mqa_q = dcp_pregather_expand(
+                    mqa_q_nope,
+                    mqa_q_pe,
+                    self.W_UK_T_all,
+                    lambda t: dcp_group.all_gather(t, dim=0),
+                )
+                mqa_ql_nope = None
+                mqa_q_pregathered = True
             else:
                 # Pads the head_dim if necessary (for the underlying kernel)
                 N, B, P = mqa_q_nope.shape
@@ -776,7 +823,9 @@ class MLAAttention(nn.Module, AttentionLayerBase):
                 # Convert from (N, B, L) to (B, N, L)
                 mqa_ql_nope = mqa_ql_nope.transpose(0, 1)
 
-            if fp8_attention and self.impl.supports_quant_query_input:
+            if mqa_q_pregathered:
+                pass  # mqa_q is already the gathered (B, N_total, L + R) tensor
+            elif fp8_attention and self.impl.supports_quant_query_input:
                 assert mqa_ql_nope.shape[0] == mqa_q_pe.shape[0]
                 assert mqa_ql_nope.shape[1] == mqa_q_pe.shape[1]
                 mqa_q = self._decode_concat_quant_fp8_op(
@@ -784,7 +833,7 @@ class MLAAttention(nn.Module, AttentionLayerBase):
                 )
             else:
                 mqa_q = (mqa_ql_nope, mqa_q_pe)
-            if self.impl.dcp_world_size > 1:
+            if self.impl.dcp_world_size > 1 and not mqa_q_pregathered:
                 # The general fp8 MLA decode path quantizes the query against
                 # a per-layer scale and relies on the kernel applying a
                 # matching k_scale, which the cross-rank merge does not model.
@@ -964,6 +1013,18 @@ class MLAAttention(nn.Module, AttentionLayerBase):
             self.W_UV = W_UV.transpose(0, 1)
             # Convert from (L, N, P) to (N, P, L)
             self.W_UK_T = W_UK.permute(1, 2, 0)
+            self.W_UK_T_all = None
+            if DCP_Q_PREGATHER:
+                try:
+                    dcp_group = get_dcp_group()
+                except (AssertionError, RuntimeError):
+                    dcp_group = None
+                if dcp_group is not None and dcp_group.world_size > 1:
+                    # (N_local, P, L) -> (N_total, P, L); ~740 MB extra per rank
+                    # for GLM-5.3's 48 non-local heads over 78 layers.
+                    self.W_UK_T_all = dcp_group.all_gather(
+                        self.W_UK_T.contiguous(), dim=0
+                    )
 
         # If we should not load quant weights, we initialize the scales to 1.0
         # as the default value. See [Note: Register q/k/v/prob scales in state dict]

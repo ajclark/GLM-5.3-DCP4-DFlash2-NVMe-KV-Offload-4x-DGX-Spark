@@ -21,12 +21,17 @@ reasoning; this file is the operational summary.
   launcher's defaults equal it. An evicted or restarted 100k context reloads
   from NVMe in 3-8 s instead of 335 s, now from a single store (the
   connector fix of NVME-DESIGN.md §10, validated 02:28). GPU clocks locked
-  at 2000 MHz. Serving label: `dcp4-dflash-300k-slab3-e`. Details in
-  DESIGN.md §7, NVME-DESIGN.md and `results/`.
-- Fifteen patched vLLM files plus one new module in `overlay/` (thirteen for
+  at 2000 MHz. Since 2026-09-05 05:00 the decode path also runs with
+  candidate compaction (`DCP_COMPACT=1`, launcher default): the DCP verify
+  cycle went from 173 to ~151-158 ms, count100 44.6 -> 49.7 tok/s, prose
+  14.5 -> 17.1, code 36.1 -> 43.2 (DESIGN.md §8). Serving label:
+  `dcp4-dflash-300k-compact-prod`. Details in DESIGN.md §7-8,
+  NVME-DESIGN.md and `results/`.
+- Sixteen patched vLLM files plus one new module in `overlay/` (thirteen for
   DCP, the engine scheduler's invalid-block recovery, the offloading
-  connector's store progress, and `multinode.py`), staged flat in
-  `stage/glm-dcp/` with checksums (sixteen files), plus `launch-glm53big-dcp.sh` (TP4 + DCP4 + **DFlash K=7**
+  connector's store progress, the b12x sparse-attention helper's candidate
+  count, and `multinode.py`), staged flat in `stage/glm-dcp/` with checksums
+  (seventeen files), plus `launch-glm53big-dcp.sh` (TP4 + DCP4 + **DFlash K=7**
   by default; `MAXLEN`, `MAXBATCHED`, `KVBYTES` env overrides). Five files
   make the sparse-MLA target DCP-aware; eight let the DFlash drafter's
   sliding-window KV group stay replicated across the ranks.
@@ -227,18 +232,25 @@ gathering queries across ranks that hold different KV-head shards.
 DFlash under DCP is built and deployed (2026-09-04). `docs/DESIGN.md`
 sections 3.2, 5.6, 6 and 7 have the mechanics, the reasoning and the numbers.
 
-1. Query replication: compute the DCP-gathered query on every rank instead of
-   all-gathering it. The measured cost is +36 ms per DFlash cycle for two
-   collectives per layer; removing the q all-gather should return roughly a
-   third of that. Needs the q projection input replicated, which it already is
-   after the TP all-reduce.
+1. (Measured 2026-09-05, DESIGN.md §8.) The +36 ms per cycle was a third
+   attention kernel walking masked candidates and two thirds collectives.
+   Candidate compaction (`GLM_DCP_COMPACT=1`) recovered 22 ms; the query
+   gather before expansion (`GLM_DCP_Q_PREGATHER=1`, ~740 MB/rank) is worth
+   only what the payload halving buys at ~105 us per all-gather. What is
+   left is ~13 ms of ring collectives; the switch's single all-to-all merge
+   (`dcp_a2a_lse_reduce`, disabled on the ring in `flashmla_sparse.py`) is
+   the next lever, then full query replication if memory ever allows.
 2. (Done in boot 3.) The indexer workspace and prefill splitter now budget on
    local lengths under DCP, which is what makes max-model-len 524,288 fit.
 3. Long-prompt TTFT: ~290 tok/s at 92k. Profile one 2048-token chunk at 100k+
    context before touching anything; the gather workspace and the sparse
    indexer dominate, not the attention kernel.
-4. Candidate compaction plus a `topk_length`-bounded kernel loop, only if a
-   profile says the attention kernel matters.
+4. (Done 2026-09-05.) Candidate compaction with the kernel's `topk_length`
+   is in and measured: the attention kernel went from 309 to 37 us per
+   layer under DCP4. The profile is in `results/dcp-profile-comparison.md`;
+   `dcp_profile.py` / `analyze_trace.py` / `measure_variant.sh` reproduce it
+   (launch with `PROFILER_DIR=/kvcache/profiles`, tier on so the traces land
+   on the host).
 5. Pool vs context: `KVBYTES` trades KV tokens for host headroom (the indexer
    gather workspace is 40 x max_model_len x 132 B). Rank 0 is the constraint
    (API server + scheduler); read its `MemAvailable` after a full check

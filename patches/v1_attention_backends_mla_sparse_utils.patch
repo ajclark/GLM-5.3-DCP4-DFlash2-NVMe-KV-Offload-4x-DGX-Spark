@@ -32,7 +32,7 @@
      # Compute block id and in-block offset
      block_id = tok // BLOCK_SIZE
      inblock_off = tok % BLOCK_SIZE
-@@ -176,6 +194,113 @@
+@@ -176,6 +194,160 @@
          BLOCK_N,
          HAS_PREFILL_WORKSPACE,
          return_valid_counts,
@@ -52,6 +52,53 @@
 +        assert valid_counts is not None
 +        return out, valid_counts
 +    return out
++
++
++@triton.jit
++def _compact_dcp_candidates_kernel(
++    in_ptr,
++    out_ptr,
++    count_ptr,
++    in_stride0,
++    out_stride0,
++    NUM_TOPK_TOKENS: tl.constexpr,
++    BLOCK: tl.constexpr,
++):
++    """One program per token row: move the valid (>= 0) candidates to the
++    front of the row, keeping their order, and write how many there are.
++    The caller pre-fills the output row with -1."""
++    row = tl.program_id(0)
++    offs = tl.arange(0, BLOCK)
++    in_bounds = offs < NUM_TOPK_TOKENS
++    idx = tl.load(in_ptr + row * in_stride0 + offs, mask=in_bounds, other=-1)
++    valid = idx >= 0
++    valid_i = valid.to(tl.int32)
++    pos = tl.cumsum(valid_i, axis=0) - valid_i  # exclusive prefix sum
++    tl.store(out_ptr + row * out_stride0 + pos, idx, mask=valid)
++    tl.store(count_ptr + row, tl.sum(valid_i, axis=0))
++
++
++def compact_dcp_candidates(
++    token_indices: torch.Tensor,  # int32 [num_tokens, NUM_TOPK_TOKENS], -1 = not ours
++) -> tuple[torch.Tensor, torch.Tensor]:
++    """DCP overlay: candidate compaction. Return (compacted, lengths) where
++    each row of `compacted` holds that token's valid candidates first, then
++    -1, and `lengths[t] = max(1, number of valid candidates)`. The sparse
++    kernels bound their candidate loop by `lengths`, so a rank only walks the
++    top-k entries it owns (~1/dcp of them) instead of masking all of them.
++    An empty row keeps a single -1 entry, which the kernels mask as before,
++    and the caller still neutralises all -1 rows in the LSE merge."""
++    assert token_indices.dtype == torch.int32 and token_indices.dim() == 2
++    num_tokens, num_topk = token_indices.shape
++    src = token_indices.contiguous()
++    out = torch.full_like(src, -1)
++    counts = torch.empty(num_tokens, dtype=torch.int32, device=src.device)
++    block = triton.next_power_of_2(num_topk)
++    _compact_dcp_candidates_kernel[(num_tokens,)](
++        src, out, counts, src.stride(0), out.stride(0),
++        NUM_TOPK_TOKENS=num_topk, BLOCK=block,
++    )
++    return out, counts.clamp_(min=1)
 +
 +
 +def triton_filter_and_convert_dcp_index(

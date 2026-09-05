@@ -1,0 +1,46 @@
+[04:53:33] == measure dcp4-dflash-300k-compact-pregather vs results/dcp4-dflash-300k-compact
+  100 tokens in 2.56 s
+traced request: {'completion_tokens': 100, 'wall_s': 2.335, 'ttft_s': 0.33, 'decode_tok_s': None, 'accepted_per_cycle': None, 'cycle_ms': None, 'content': '1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 '}
+   window 2473.1 ms, GPU busy 2375.9 ms (96%), NCCL kernels 551.8 ms, other kernels 1875.9 ms (sums, may overlap)
+   window 2474.7 ms, GPU busy 2386.3 ms (96%), NCCL kernels 561.6 ms, other kernels 1875.4 ms (sums, may overlap)
+   window 2475.2 ms, GPU busy 2382.9 ms (96%), NCCL kernels 552.6 ms, other kernels 1882.3 ms (sums, may overlap)
+   window 2474.0 ms, GPU busy 2389.2 ms (97%), NCCL kernels 565.6 ms, other kernels 1876.1 ms (sums, may overlap)
+verify-pass annotation: execute_context_0(0)_generation_1(8) (median 150.0 ms, 14 replays); others: execute_context_1(30)_generation_0(0) x1 ~0.0 ms, execute_context_0(0)_generation_0(0) x1 ~0.0 ms
+14 verify-pass windows; wall per window (ms): 23 145 149 150 150 150 148 151 158 147 153 147 152 151
+
+median over 13 passes: wall 150.1 ms, GPU busy 144.7 ms, idle 5.2 ms
+  MoE / marlin GEMM            median   84.2 ms  n=867
+  dense GEMM                   median   20.9 ms  n=408
+  nccl AllReduce (TP)          median   14.3 ms  n=165
+  nccl AllGather               median   12.0 ms  n=175
+  nccl ReduceScatter           median    7.3 ms  n=76
+  other kernels                median    5.6 ms  n=2527
+  attention/indexer kernels    median    2.9 ms  n=120
+  top-k                        median    1.3 ms  n=84
+  AllGather split: <50us (LSE-size) median 1.7 ms n=77; >=50us (query/indexer) median 10.2 ms n=98
+  one pass: AllGather n=175 p10/p50/p90 15/88/112 us; ReduceScatter n=76 p10/p50/p90 88/97/104 us
+[04:54:07] -- bench (1 rep)
+== dcp4-dflash-300k-compact-pregather @ http://spark-06c4.local:8000 phase=bench
+  count100  rep0 gen= 299 ttft=0.339s decode=50.62 tok/s acc/cycle=7.868 cycle=154.9ms sha=34a4f1e5bb080915
+  prose     rep0 gen= 450 ttft=0.542s decode=17.26 tok/s acc/cycle=2.689 cycle=155.8ms sha=1aa2dbc9837f8a22
+  code      rep0 gen= 195 ttft=0.568s decode=40.25 tok/s acc/cycle=6.5 cycle=160.7ms sha=865121926b784024
+== done
+baseline=results/dcp4-dflash-300k-compact
+candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-300k-compact-pregather
+
+== bench (per prompt, mean over reps)
+  prompt              decode tok/s          acc/cycle           cycle ms           ttft s
+  count100            49.7 -> 50.6       7.87 -> 7.87     157.7 -> 154.9     0.34 -> 0.34
+  prose               17.1 -> 17.3       2.67 -> 2.69     156.5 -> 155.8     0.45 -> 0.54
+  code                43.2 -> 40.2       6.73 -> 6.50     155.1 -> 160.7     0.58 -> 0.57
+
+  count100  text hashes base=['34a4f1e5bb080915'] cand=['34a4f1e5bb080915'] IDENTICAL
+  prose     text hashes base=['028e013390a8d05b'] cand=['1aa2dbc9837f8a22'] DIFFER
+  code      text hashes base=['0f61229643db0bdf'] cand=['865121926b784024'] DIFFER
+[04:54:45] -- memory
+  spark-06c4 avail=2028MiB
+  spark-365c avail=4093MiB
+  spark-ddbf avail=4147MiB
+  spark-a218 avail=4130MiB
+[04:54:47] -- log scan (rank 0, 20m)
+[04:54:48] == done

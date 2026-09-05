@@ -796,3 +796,83 @@ slabs grew by 1.96 GB per prompt, identically on all ranks
 MemAvailable stayed above 3.3 GB on rank 0 and 4.7 GB elsewhere. The
 launcher's defaults equal this configuration (307200 / 2048 / 6e9 /
 `KVTIER=1` slab / 150 GB / `PYTHONHASHSEED=0`) on all four nodes.
+
+## 8. Decode latency under DCP: where the 36 ms went, and what came back (2026-09-05)
+
+The +36 ms per DFlash verify cycle (138 ms at DCP1, 173 ms at DCP4, §7) was
+attributed in §4 to four ring collectives per layer using the all-reduce
+latency table. A torch-profiler trace of one count100 request on each rank
+(`dcp_profile.py`, `analyze_trace.py`, `results/dcp-profile-comparison.md`)
+says otherwise. Per 8-token verify pass, median of 13 passes, the same
+image and overlays at `DCP_SIZE=1` (82k window) and at DCP4 (307k, slab
+tier):
+
+| kernel bucket per verify pass | DCP=1 | DCP=4 | delta |
+|---|---:|---:|---:|
+| MoE experts + marlin GEMM | 84.7 ms | 85.0 ms | 0 |
+| b12x sparse MLA attention kernel | 12.3 ms (78 x 158 us) | 23.8 ms (77 x 309 us) | +11.5 |
+| NCCL all-gather (query, LSE, indexer merge) | 0.4 ms | 12.3 ms | +11.9 |
+| NCCL reduce-scatter (attention output) | 0 | 7.5 ms | +7.5 |
+| NCCL all-reduce (TP) | 13.0 ms | 14.6 ms | +1.6 |
+| GPU idle inside the pass | 0.7 ms | 4.5 ms | +3.8 |
+| verify pass | 136 ms (129 + the 7 ms drafter graph) | 172.9 ms | +36 |
+
+Two corrections to §4. The collectives cost 19.4 ms, not 33: the big
+all-gathers run at ~105 us and the reduce-scatters at ~99 us, so halving
+their payload is worth 2-3 ms each. And a third of the penalty was never
+communication: under DCP the index filter leaves the other ranks' three
+quarters of the 2,048 top-k slots in place as -1, and the b12x kernel masks
+them per cell but still walks them, for 64 gathered heads instead of 16.
+
+**Candidate compaction** (`GLM_DCP_COMPACT=1`; `compact_dcp_candidates` in
+`sparse_utils.py`, a Triton kernel that moves each token's owned candidates
+to the front and returns the count; `flashmla_sparse.py` threads the count
+to the kernels; `b12x_sparse_helpers.py`, now a 16th overlay, passes it as
+the b12x `topk_length`). Boot `dcp4-dflash-300k-compact`:
+
+| per verify pass | DCP=4 | DCP=4 + compaction |
+|---|---:|---:|
+| attention/indexer kernels | 24.1 ms | **2.9 ms** |
+| collectives | 34.4 ms | 34.3 ms |
+| verify pass | 172.9 ms | **150.7 ms** |
+
+| bench (1 rep, thinking off, greedy) | DCP=4 | + compaction |
+|---|---:|---:|
+| count100 decode tok/s, cycle | 44.6, 175.7 ms | **49.7, 157.7 ms** |
+| prose | 14.5 | **17.1** |
+| code | 36.1 | **43.2** |
+| accepted per cycle (count100 / prose / code) | 7.87 / 2.57 / 6.49 | 7.87 / 2.67 / 6.73 |
+
+count100 text is byte-identical; prose and code hashes differ, as they do
+between two reps of the baseline itself (greedy is not run-to-run
+deterministic on those prompts). Each rank now walks about a quarter of the
+candidates, so DCP4's attention time is below DCP1's 12.3 ms: the sharded
+cache parallelises the attention as well as the memory. Net DCP overhead
+after compaction: about 13 ms per cycle, all of it collectives.
+
+**Query gather before expansion** (`GLM_DCP_Q_PREGATHER=1`; the ranks
+all-gather the 256-wide pre-expansion query instead of the 576-wide absorbed
+one and expand all 64 heads locally against a replicated `W_UK^T`, ~740 MB
+per rank; `dcp_pregather_expand` in `mla_attention.py`, byte-equal to the
+stock path in `tests/test_dcp_q_pregather.py`). Boot
+`dcp4-dflash-300k-compact-pregather` on top of compaction: verify pass
+150.7 -> 150.1 ms, all-gathers 12.1 -> 12.0 ms, count100 49.7 -> 50.6 tok/s,
+prose 17.1 -> 17.3, code 43.2 -> 40.2 (single rep, acceptance 6.73 -> 6.50,
+noise), workers ~300 MB less host memory. The big all-gathers run at 88-105
+us whether they carry 590 KB or 262 KB: the ring's per-collective latency
+floor, not bytes, is what remains. Kept as an off-by-default flag.
+
+What is left of the DCP penalty is ~13 ms per cycle of ring collectives:
+78 query all-gathers, 78 LSE all-gathers, 76 output reduce-scatters and
+~20 indexer merges, each at its latency floor. Fewer collectives, not
+smaller ones, is the next lever: the fork's single all-to-all merge
+(`dcp_a2a_lse_reduce`, disabled on the ring by the overlay) replaces two of
+the four per layer once a switch is in place, and overlapping the indexer
+merge with the query gather on the top-k layers is worth ~2 ms on the ring.
+Full query replication would remove the query gather entirely for
+~2.6 GB/rank of int8 `q_b_proj`, which the memory budget does not have.
+
+**Serving configuration after this work:** `dcp4-dflash-300k-compact-prod`,
+307,200 window, 6 GB/rank pool, slab tier, compaction on by default
+(`DCP_COMPACT=1` in the launcher), profiler and pre-gather off.
+

@@ -14,3 +14,6 @@ results/**/*.nohup
 results/**/pre-*.log
 results/**/up-*.log
 results/**/failed-*.log
+# torch-profiler traces (30-100 MB each); the per-rank text summaries and the
+# per-pass breakdowns in measure.log / dcp-profile-comparison.md stay
+results/**/*.pt.trace.json.gz

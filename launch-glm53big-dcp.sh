@@ -126,7 +126,7 @@ DCP_FILES=(flashmla_sparse.py sparse_attn_indexer.py sparse_utils.py indexer.py
   kv_cache_interface.py kv_cache_utils.py kv_cache_coordinator.py
   block_table.py gpu_input_batch.py gpu_model_runner.py cp_utils.py
   flash_attn.py
-  scheduler.py)
+  scheduler.py b12x_sparse_helpers.py)
 for f in "${DCP_FILES[@]}"; do
   [ -f "$DCP_DIR/$f" ] || { echo "DCP overlay missing: $DCP_DIR/$f" >&2; exit 4; }
 done
@@ -138,7 +138,16 @@ grep -q "DCP overlay: hybrid-aware" "$DCP_DIR/scheduler.py" || {
   echo "$DCP_DIR/scheduler.py is not the DCP version" >&2; exit 5; }
 grep -q "cp_world_size_for_kv_cache_spec" "$DCP_DIR/kv_cache_interface.py" || {
   echo "$DCP_DIR/kv_cache_interface.py is not the DCP version" >&2; exit 5; }
+grep -q "DCP overlay: topk_length passthrough" "$DCP_DIR/b12x_sparse_helpers.py" || {
+  echo "$DCP_DIR/b12x_sparse_helpers.py is not the DCP version" >&2; exit 5; }
 KVTIER_MOUNTS=(); KVTIER_ARGS=(); KVTIER_ENV=()
+# PROFILER_DIR=<path inside the container> arms vLLM's torch profiler. Armed
+# only: a trace is taken between POST /start_profile and POST /stop_profile,
+# one file per rank under that directory (use /kvcache/profiles with KVTIER=1).
+PROF_ARGS=()
+if [ -n "${PROFILER_DIR:-}" ]; then
+  PROF_ARGS=(--profiler-config.profiler=torch "--profiler-config.torch_profiler_dir=$PROFILER_DIR")
+fi
 if [ "$KVTIER" = 1 ]; then
   [ -f "$DCP_DIR/multinode.py" ] || { echo "KVTIER=1 but $DCP_DIR/multinode.py is missing" >&2; exit 4; }
   grep -q "class MultiNodeOffloadingConnector" "$DCP_DIR/multinode.py" || {
@@ -213,7 +222,7 @@ run_docker run -d --name "$NAME" \
   -v "$KERNELS_DIR/patch_flashmla_ops.py:$MLA/patch_flashmla_ops.py:ro" \
   -v "$KERNELS_DIR/sm12x_deep_gemm_fallbacks.py:$MLA/sm12x_deep_gemm_fallbacks.py:ro" \
   -v "$KERNELS_DIR/sm12x_mqa.py:$OPS/sm12x_mqa.py:ro" \
-  -v "$KERNELS_DIR/b12x_sparse_helpers.py:$OPS/b12x_sparse_helpers.py:ro" \
+  -v "$DCP_DIR/b12x_sparse_helpers.py:$OPS/b12x_sparse_helpers.py:ro" \
   -v "$KERNELS_DIR/deepseek_v2.py:$MODELS/deepseek_v2.py:ro" \
   -v "$DCP_DIR/flashmla_sparse.py:$MLA/flashmla_sparse.py:ro" \
   -v "$DCP_DIR/sparse_utils.py:$MLA/sparse_utils.py:ro" \
@@ -239,6 +248,8 @@ run_docker run -d --name "$NAME" \
   -e VLLM_ALLOW_LONG_MAX_MODEL_LEN=1 \
   -e VLLM_SPARSE_INDEXER_MAX_LOGITS_MB=256 \
   -e VLLM_DEBUG_WORKSPACE=1 \
+  -e "GLM_DCP_Q_PREGATHER=${DCP_Q_PREGATHER:-0}" \
+  -e "GLM_DCP_COMPACT=${DCP_COMPACT:-1}" \
   "${KVTIER_ENV[@]}" \
   -e GLM52_BIND_HOST_TRITON=1 \
   -e GLM52_MQA_LOGITS_TRITON=1 \
@@ -286,6 +297,7 @@ run_docker run -d --name "$NAME" \
     --gpu-memory-utilization 0.91 --kv-cache-memory-bytes "$KVBYTES" \
     --kv-cache-dtype "$KVDTYPE" $KVSKIP \
     "${KVTIER_ARGS[@]}" \
+    "${PROF_ARGS[@]}" \
     --distributed-executor-backend mp --compilation-config '{"cudagraph_mode":"FULL"}' \
     --nnodes 4 --node-rank "$NODE_RANK" \
     --master-addr "$HEAD_IP" --master-port "$MASTER_PORT" \
