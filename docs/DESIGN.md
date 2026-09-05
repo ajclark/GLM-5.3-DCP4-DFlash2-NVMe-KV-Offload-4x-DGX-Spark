@@ -901,6 +901,19 @@ legitimate middle lane: twice the context of production at 96% of its
 decode speed. The 262k window would need an 8 GB pool at DCP2, which the
 host headroom does not allow next to the tier.
 
+**Concurrency by lane** (`results/concurrency-sweeps.md`, the cycle-vs-
+concurrency probe, count-to-400 prompts, no restart within a lane, all at
+2000 MHz): aggregate tokens/s at C = 1 / 4 / 12 are DCP=1 54.0 / 136.4 /
+245.7, DCP=2 49.9 / 125.3 / 232.7, DCP=4 46.9 / 114.6 / 198.8. Single stream
+the DCP cost is the per-cycle collective floor, but with concurrency the
+per-step payloads grow (the query gather carries ~7 MB at 96 tokens), so
+DCP=4's three-hop collectives turn bandwidth-bound and its marginal cost per
+token stays ~2.9 ms while DCP=1 and DCP=2 fall to ~1.9-2.1 ms. The DCP=4
+penalty widens from 11% at C=1 to 19% at C=12; DCP=2 stays within 5-8% of
+DCP=1 at every concurrency with twice its KV. For multi-session use DCP=2 is
+the better lane unless one session needs more than 180k or several very
+long sessions must stay resident at once.
+
 **Serving configuration after this work:** first `dcp4-dflash-300k-compact-prod`
 (307,200 window, 6 GB/rank pool, slab tier, compaction on by default,
 profiler and pre-gather off), briefly (2026-09-05 16:24-17:00) the DCP2 lane

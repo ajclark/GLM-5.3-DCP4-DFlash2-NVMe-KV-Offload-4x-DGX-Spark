@@ -24,11 +24,11 @@ production DCP1 lane of the same image:
 Decode by lane, single stream, greedy, thinking off, GPU clocks locked at
 2000 MHz, DFlash2 K=7 (`docs/DESIGN.md` §8; DCP=4 with candidate compaction):
 
-| lane | count100 | prose | code | verify cycle | KV tokens at 6 GB/rank |
-|---|---|---|---|---|---|
-| DCP=1 (production launcher) | 56.5 tok/s | 19.6 | 48.0 | 139 ms | 99k |
-| DCP=2 (pairs on adjacent ring links) | 54.5 | 18.1 | 41.5 | 144 ms | ~198k |
-| DCP=4 (serving) | 50.5 | 17.5 | 38.6 | 155 ms | 396k |
+| lane | count100 | prose | code | verify cycle | aggregate at C=12 | KV tokens at 6 GB/rank |
+|---|---|---|---|---|---|---|
+| DCP=1 (production launcher) | 56.5 tok/s | 19.6 | 48.0 | 139 ms | 245.7 tok/s | 99k |
+| DCP=2 (pairs on adjacent ring links) | 54.5 | 18.1 | 41.5 | 144 ms | 232.7 | ~198k |
+| DCP=4 (serving) | 50.5 | 17.5 | 38.6 | 155 ms | 198.8 | 396k |
 
 Accepted tokens per cycle are the same across lanes (7.87 of 8 on count100,
 ~2.7 on prose, ~6.5 on code); count100 output is byte-identical. Prose and

@@ -25,7 +25,7 @@ reasoning; this file is the operational summary.
   candidate compaction (`DCP_COMPACT=1`, launcher default): the DCP verify
   cycle went from 173 to ~151-158 ms, count100 44.6 -> 49.7 tok/s, prose
   14.5 -> 17.1, code 36.1 -> 43.2 (DESIGN.md §8). Serving label:
-  `dcp4-dflash-300k-compact-prod5` since 2026-09-05 17:00 (the DCP2 lane
+  `dcp4-dflash-300k-compact-prod6` since 2026-09-05 17:35 (the DCP2 lane
   served as `dcp2-dflash-180k-prod` from 16:24 to 17:00; the user is trying
   DCP4 as the daily default). Launcher and rollout defaults: `DCP_SIZE=4
   MAXLEN=307200 KVBYTES=6e9 KVTIER=1`; the DCP2 lane is `DCP_SIZE=2
