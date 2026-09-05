@@ -35,12 +35,12 @@ Accepted tokens per cycle are the same across lanes (7.87 of 8 on count100,
 code vary run to run at greedy on every lane, so treat those two columns as
 ±5%.
 
-The serving default since 2026-09-05 16:00 is the DCP=2 lane: a
-180,224-token window with a 6 GB/rank pool (~198k KV tokens, two copies)
-and a 150 GB/rank slab store, at 96% of production's decode speed. DCP=4
-(307,200 window, 396k tokens, 89% of production's speed) is one launcher
-env away (`DCP_SIZE=4 MAXLEN=307200`); 512k works at DCP=4 but leaves no
-host memory for the tier. The DCP cost was +36 ms per verify cycle; a profiler trace showed a third
+The serving default is the DCP=4 lane: a 307,200-token window with a
+6 GB/rank pool (396k KV tokens, one copy) and a 150 GB/rank slab store, at
+89% of production's decode speed. The DCP=2 lane (180,224 window, ~198k
+tokens, 96% of production's speed) is one launcher env away
+(`DCP_SIZE=2 MAXLEN=180224`); 512k works at DCP=4 but leaves no host memory
+for the tier. The DCP cost was +36 ms per verify cycle; a profiler trace showed a third
 of it was the sparse attention kernel walking masked candidates, which
 compaction removed, leaving ~13 ms of ring collectives (`docs/DESIGN.md`
 §8). The drafter is untouched, so acceptance is too.

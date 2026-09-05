@@ -25,18 +25,18 @@ reasoning; this file is the operational summary.
   candidate compaction (`DCP_COMPACT=1`, launcher default): the DCP verify
   cycle went from 173 to ~151-158 ms, count100 44.6 -> 49.7 tok/s, prose
   14.5 -> 17.1, code 36.1 -> 43.2 (DESIGN.md §8). Serving label:
-  `dcp2-dflash-180k-prod` since 2026-09-05 16:00: the user chose the DCP2
-  lane as the default (54.5 tok/s at 144 ms, ~198k KV tokens, 180,224
-  window, 6 GB pool, slab tier, compaction on). The launcher and rollout
-  defaults now equal it (`DCP_SIZE=2 MAXLEN=180224`); DCP4 at 307,200 is
-  `DCP_SIZE=4 ./rollout_dcp.sh <label> 307200 2048 6000000000 1`. pi's
-  glm-5.3 entry on the sandbox is set to a 155,648 context window with
-  32,768 max tokens: vLLM rejects a request whose prompt plus max_tokens
-  exceeds the window (measured: HTTP 400), pi sends its full maxTokens every
-  time and compacts at contextWindow minus a 16,384 reserve, so the prompt
-  budget is 139,264 by pi's count, 146k with a 5% tokenizer margin, plus
-  32,768 = 179k < 180,224. (Before, at 120k/120k, pi was hitting the 400
-  past 87k tokens and recovering by auto-compacting.) Details in DESIGN.md §7-8,
+  `dcp4-dflash-300k-compact-prod5` since 2026-09-05 17:00 (the DCP2 lane
+  served as `dcp2-dflash-180k-prod` from 16:24 to 17:00; the user is trying
+  DCP4 as the daily default). Launcher and rollout defaults: `DCP_SIZE=4
+  MAXLEN=307200 KVBYTES=6e9 KVTIER=1`; the DCP2 lane is `DCP_SIZE=2
+  ./rollout_dcp.sh <label> 180224 2048 6000000000 1`. pi's glm-5.3 entry on
+  the sandbox is a 270,336 context window with 32,768 max tokens. The rule:
+  vLLM rejects a request whose prompt plus max_tokens exceeds the window
+  (measured, HTTP 400), pi sends its full maxTokens every time and compacts
+  at contextWindow minus a 16,384 reserve, so (contextWindow - 16,384) x 1.05
+  tokenizer margin + maxTokens must stay under the window: 299k < 307,200
+  here, 155,648 for the 180k lane. (At the old 120k/120k, pi hit the 400
+  past 87k tokens and recovered by auto-compacting.) Details in DESIGN.md §7-8,
   NVME-DESIGN.md and `results/`.
 - Sixteen patched vLLM files plus one new module in `overlay/` (thirteen for
   DCP, the engine scheduler's invalid-block recovery, the offloading
