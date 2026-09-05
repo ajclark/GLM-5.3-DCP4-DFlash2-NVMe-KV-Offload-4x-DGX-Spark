@@ -16,7 +16,7 @@ production DCP1 lane of the same image:
 | KV pool at a 131k window, 8 GB/rank | 131k tokens | 524,288 tokens (4.00x) |
 | KV pool at a 262k window, 7 GB/rank | n/a | 462,308 tokens (1.76x) |
 | largest window booted | 120k | 524,288 (served a 500k-token prompt, no headroom left) |
-| decode, count100 greedy | 57.0 tok/s, 138 ms/cycle | 49.7 tok/s, 158 ms/cycle (-13%) with candidate compaction; acceptance unchanged |
+| decode, count100 greedy (GPU clocks locked at 2000 MHz) | 56.5 tok/s, 139 ms/cycle | 50.5 tok/s, 155 ms/cycle (-11%) with candidate compaction; acceptance unchanged |
 | 250k-token prompt | n/a | 893 s |
 | 100k prefix, cold prefill | 335 s | 335 s |
 | 100k prefix after eviction or engine restart | 335 s (recompute) | **3-8 s from NVMe**, 99.4% of tokens served |

@@ -25,7 +25,8 @@ reasoning; this file is the operational summary.
   candidate compaction (`DCP_COMPACT=1`, launcher default): the DCP verify
   cycle went from 173 to ~151-158 ms, count100 44.6 -> 49.7 tok/s, prose
   14.5 -> 17.1, code 36.1 -> 43.2 (DESIGN.md §8). Serving label:
-  `dcp4-dflash-300k-compact-prod`. Details in DESIGN.md §7-8,
+  `dcp4-dflash-300k-compact-prod2` (same config, relaunched after the
+  same-clock DCP1 re-baseline of 06:00). Details in DESIGN.md §7-8,
   NVME-DESIGN.md and `results/`.
 - Sixteen patched vLLM files plus one new module in `overlay/` (thirteen for
   DCP, the engine scheduler's invalid-block recovery, the offloading

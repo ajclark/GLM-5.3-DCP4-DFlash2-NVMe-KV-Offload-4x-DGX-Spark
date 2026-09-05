@@ -37,6 +37,9 @@ What this says:
   and passing the count (`GLM_DCP_COMPACT=1`, `compact_dcp_candidates`,
   b12x `topk_length`) lets the kernel walk ~1/4 of the slots: expected
   ~-11 ms per pass, no memory cost.
+- Same-clock DCP=1 baseline (production launcher at the 2000 MHz lock,
+  `results/baseline-dcp1-prod-2000mhz`): count100 56.5 tok/s at 138.9 ms,
+  so the residual DCP4 cost after compaction is 16.3 ms per cycle.
 - Measured levers (boots `dcp4-dflash-300k-compact`, `-compact-pregather`):
   compaction verify pass 172.9 -> 150.7 ms (attention 24.1 -> 2.9 ms);
   pre-gather on top 150.7 -> 150.1 ms (all-gather 12.1 -> 12.0). The big

@@ -872,6 +872,15 @@ merge with the query gather on the top-k layers is worth ~2 ms on the ring.
 Full query replication would remove the query gather entirely for
 ~2.6 GB/rank of int8 `q_b_proj`, which the memory budget does not have.
 
+**Same-clock baseline.** The DCP1 production numbers above were taken at
+the 2418 MHz application clock, before the 2000 MHz lock. Re-taken at the
+lock on 2026-09-05 06:00 (`results/baseline-dcp1-prod-2000mhz`, production
+launcher, 2 reps): count100 56.5 tok/s at 138.9 ms (7.87 accepted/cycle,
+text identical), prose 19.6 at 139.9 ms, code 48.0 at 140.4 ms. The lock
+costs about 1% at DCP1. Against the compaction stack's 50.5 tok/s at 155.2 ms,
+the DCP4 penalty at the same clock is 16.3 ms per cycle, 11% on count100
+(it was 36 ms and 22% before compaction).
+
 **Serving configuration after this work:** `dcp4-dflash-300k-compact-prod`,
 307,200 window, 6 GB/rank pool, slab tier, compaction on by default
 (`DCP_COMPACT=1` in the launcher), profiler and pre-gather off.

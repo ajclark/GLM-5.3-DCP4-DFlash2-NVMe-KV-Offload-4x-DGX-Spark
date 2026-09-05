@@ -1,0 +1,31 @@
+[05:48:52] == DCP=1 production baseline at 2000 MHz
+[05:58:36] production up; clocks:
+  spark-06c4 1995 MHz
+  spark-365c 1995 MHz
+  spark-ddbf 1995 MHz
+  spark-a218 1976 MHz
+[05:58:37] -- warmup
+[05:59:58] -- bench 2 reps
+== baseline-dcp1-prod-2000mhz @ http://spark-06c4.local:8000 phase=bench
+  count100  rep0 gen= 299 ttft=0.325s decode=56.4 tok/s acc/cycle=7.868 cycle=139.1ms sha=34a4f1e5bb080915
+  count100  rep1 gen= 299 ttft=0.39s decode=56.51 tok/s acc/cycle=7.868 cycle=138.8ms sha=34a4f1e5bb080915
+  prose     rep0 gen= 450 ttft=0.478s decode=18.76 tok/s acc/cycle=2.626 cycle=140.0ms sha=ec7d52129abf83d6
+  prose     rep1 gen= 445 ttft=0.384s decode=20.49 tok/s acc/cycle=2.871 cycle=139.8ms sha=1697a2c731c64f40
+  code      rep0 gen= 192 ttft=0.432s decode=48.68 tok/s acc/cycle=6.857 cycle=140.1ms sha=fb5e7d2a4daddb2f
+  code      rep1 gen= 221 ttft=0.469s decode=47.35 tok/s acc/cycle=6.697 cycle=140.8ms sha=6a815abf65e86229
+== done
+baseline=results/baseline-dcp1-prod
+candidate=results/baseline-dcp1-prod-2000mhz
+
+== bench (per prompt, mean over reps)
+  prompt              decode tok/s          acc/cycle           cycle ms           ttft s
+  count100            57.0 -> 56.5       7.87 -> 7.87     137.6 -> 138.9     0.39 -> 0.36
+  prose               21.3 -> 19.6       2.94 -> 2.75     137.9 -> 139.9     0.45 -> 0.43
+  code                44.8 -> 48.0       6.29 -> 6.78     140.1 -> 140.4     0.48 -> 0.45
+
+  count100  text hashes base=['34a4f1e5bb080915'] cand=['34a4f1e5bb080915'] IDENTICAL
+  prose     text hashes base=['3e54a1ff5fbc7c85', '6bb346226fc09c12'] cand=['1697a2c731c64f40', 'ec7d52129abf83d6'] DIFFER
+  code      text hashes base=['0625f62aca0f3d82', 'a128d0b562fb18d1'] cand=['6a815abf65e86229', 'fb5e7d2a4daddb2f'] DIFFER
+[06:01:06] -- back to the compaction stack
+[06:11:04] compaction stack back and generating
+[06:11:04] == sequence done
