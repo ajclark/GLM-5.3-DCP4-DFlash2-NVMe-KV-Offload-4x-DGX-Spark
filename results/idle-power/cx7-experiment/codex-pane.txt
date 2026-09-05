@@ -1,0 +1,988 @@
+    Search ^## 8|^## 9|DCP=2|DCP2|143.8|155.2|138.9 in DESIGN.md
+    Read DESIGN.md
+    Search pregather|PRE_GATHER|PREGATHER|compact|COMPACT|all_gather|process_weights_after_loading in mla_attention.py
+    Read mla.py
+    Read sparse_attn_indexer.py
+    Search topk|sorted in sparse_attn_indexer.py
+    Search compact_dcp_candidates|empty_rows|topk_length|triton_filter|block_table in flashmla_sparse.py
+    List dcp4-dflash-300k-compact
+    Read mla_attention.py
+    Read sparse_utils.py
+    Read nccl_multicomm.py
+    List csrc
+    Search idle|union|gap|cudaGraph|kernel|overlap in analyze_trace.py
+
+• Searching the web
+
+• Searched the web for https://docs.pytorch.org/docs/2.14/notes/numerical_accuracy.html
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• The fixed-constant LSE reduction is riskier than the proposal suggests: the algebra is correct, but BF16 range and reduction rounding aren’t covered by the claimed “1–2
+  ulps.” Fusion and overlap also compete on top-k layers: a combined query/candidate gather must wait for local top-k to finish.
+
+• Explored
+  └ Read analyze_trace.py
+    Read base_device_communicator.py
+    Read cuda_communicator.py
+    List spark-src
+
+• Searching the web
+
+• Searched the web for 'Reduced Precision Reduction for FP16 and BF16 GEMMs' in https://docs.pytorch.org/docs/2.14/notes/numerical_accuracy.html
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• I’d rank implementation work 4 → 3 → 7 → 2, and spend tomorrow on 4+3 while preserving DCP4. Compaction also decisively disproved my earlier assumption that masked-
+  candidate traversal was a small cost.
+
+  ### (a) Gain versus risk
+
+  4. Glue fusion: first, but separate safe fusion from caching/algorithm changes. Budget 1–3 ms, not a guaranteed 600-launch dividend. Fuse filter/compaction/empty detection
+  and produce the RS layout directly first. The current compaction path (overlay/vllm/v1/attention/backends/mla/sparse_utils.py:239) allocates/fills, compacts, then clamps
+  counts; retain the unclamped zero-count flag.
+
+  Cross-layer reuse needs identical request mapping, block table, interleave, and global candidate generation—not merely the static recompute schedule. Never accidentally
+  reuse across graph replays. A four-way sorted merge also requires proving the local top-k lists are sorted; preserve tie-breaking and candidate order.
+
+  3. Gather fusion/overlap: second. Eliminating 21 indexer gathers gives a gross ceiling around 21 × 92 µs = 1.93 ms, before larger-message and packing costs. Budget 1–3 ms
+  combined, pending actual overlap measurements; don’t add fusion and overlap estimates independently.
+
+  7. Adaptive verification: third, with acceptance analysis first. At a hypothesized 122-ms cycle, beating 17.5 tok/s requires >2.135 emitted tokens/cycle; gaining 10%
+  requires >2.349. The proposed 2.2–2.4 range therefore yields 18.0–19.7 tok/s, roughly +3–12%. Measure the accepted-prefix survival curve: mean acceptance alone cannot
+  predict truncation losses. Keep target verification/rejection sampling unchanged; budget graph memory and cache/position rollback work.
+
+  2. Fixed-c LSE folding: last. The directly removable kernel time is 78 × 22 µs = 1.72 ms. The extra ~1.2 ms attributed to launch gaps is unproven, while numerical risk is
+  substantial.
+
+  ### (b) Fixed-c numerics
+
+  The ratio
+  sum(out_r × exp(lse_r−c)) / sum(exp(lse_r−c))
+  is algebraically correct. The proposed BF16 implementation is not numerically justified by “spreads of tens.”
+
+  Spread does not bound absolute LSE relative to c. You must bound the denominator, scaled outputs, and intermediate sums. Cancellation also defeats a universal “1–2 ulps”
+  claim. Finite final answers do not imply safe intermediate arithmetic. PyTorch numerical guidance
+  (https://docs.pytorch.org/docs/2.14/notes/numerical_accuracy.html#extremal-values).
+
+  Separately reducing BF16 hi/lo components does not guarantee a 16-bit mantissa: rounding during the high-component reduction is not repaired by independently summing input
+  residuals.
+
+  For an experiment, calibrate per-layer/per-head c from all-rank LSE extrema and partial-output magnitudes across short/maximum contexts and workloads—not count100 alone.
+  Reserve explicit exponent margins. Calibration still needs runtime range checks and a rank-consistent fallback, awkward under FULL capture. I would test FP32-packed
+  reduction first, including its larger payload, rather than ship fixed-c BF16.
+
+  ### (c) Dependency in idea 3
+
+  No mathematical dependency prevents queries overlapping the independent indexer. But the proposed schedule overstates available work:
+
+  - /home/napta2k/lmcache-mg/spark-src/vllm/model_executor/layers/mla.py:140 already computes fused Q/KV input projections before q_b; there is no subsequent independent
+    kv_a_proj to hide.
+
+  - Today the indexer finishes at line 170 before absorbed-query BMM at MLA:821 (overlay/vllm/model_executor/layers/attention/mla_attention.py:821). Move absorption earlier
+    to overlap the existing 576-wide gather.
+
+  - A combined query/candidate gather must wait for local top-k. It cannot simultaneously overlap that same work.
+
+  Benchmark fused-late versus separate-early schedules. Combined input is 272 KiB/rank, output 1.0625 MiB; preserve FP32 candidate fields bitwise.
+
+  ### (d) Missing controls and alternatives
+
+  The 4.6-ms “idle” needs remeasurement: analyze_trace.py:28 selects CPU annotation windows, then subtracts GPU intervals. That does not establish device-internal graph gaps.
+  Correlate graph nodes, separate boundary slack, and inspect ProcessGroup gather versus direct-PyNCCL stream handoffs. Don’t assign 15 µs to every removed collective.
+
+  A numerically stable one-collective control is packed output+LSE all-gather, then local max-subtracted merge. It receives ~2 MiB/rank, so may lose badly—but deserves one
+  microbenchmark before fixed-c arithmetic.
+
+  Also, multicomm:49 (bench/nccl_multicomm.py:49) undersizes LSE/indexer inputs fourfold: 512 B/32 KiB versus 2 KiB/128 KiB. This doesn’t rescue idea 1.
+
+  ### (e) Tomorrow
+
+  4+3, separately gated; defer 2. DCP2 is already a useful measured fallback, but halves the pool and therefore doesn’t satisfy this objective. Keep it as a selectable ≤198k
+  lane, not the destination for the capacity-preserving work.
+
+─ Worked for 5m 13s ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+─ Conversation recap ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+  The second opinion on DCP latency ideas recommended prioritizing 4, then 3, 7, and 2, focusing tomorrow on 4+3 while preserving DCP4. The visible response cuts off during
+  the compaction explanation, leaving that rationale incomplete.
+
+
+› Design question from the Claude session in the sibling pane (the human asked us to bounce this). Repo /home/napta2k/spark-cluster-mla-dcp; read docs/BOOT-TIME.md first (a
+  measured anatomy of our 505 s serving-stack boot with ranked options). Do not modify files; answer in the pane, ~700 words.
+
+  The human's challenge: nothing changes between restarts of this stack (same weights, same TP4/DCP layout, same kernels, same shapes), so why does every boot re-read 380 GB
+  of safetensors through mmap at 0.6 GB/s (283 s), re-run torch.compile (55 s), re-run the FlashInfer/Triton autotune (37 s) and re-capture CUDA graphs (14 s)? Why is the
+  whole derived state not a binary object each rank loads, or memory that simply stays resident? Please think hard about that framing rather than about incremental loader
+  flags.
+
+  Platform facts: 4x DGX Spark GB10, aarch64, 121 GB unified LPDDR5x per node shared by CPU and GPU (no separate VRAM; cudaMalloc and host RAM draw from the same pool), NVMe
+  reads 10 GB/s with O_DIRECT, 20 cores, Docker 29 with default seccomp (io_uring blocked), CUDA 13, no GDS (nvidia_fs not loaded). vLLM 0.23.1 fork at /home/napta2k/
+  lmcache-mg/spark-src/vllm (read only). Each rank holds ~95 GB of post-processed weights (marlin int4 repacked MoE, MLA W_UK/W_UV dequantized to bf16). The engine runs in a
+  container that is docker rm'd and recreated on every restart; anything inside the container filesystem dies with it, but bind-mounted NVMe paths and host tmpfs persist.
+
+  Two resident-weights routes we are weighing, and what we need judged:
+  A. Post-processed per-rank weights kept in a host tmpfs (or hugetlbfs) file that outlives the container; the new process mmaps it, cudaHostRegisters it, and adopts the
+  pages as parameter storage via a device pointer (cudaHostGetDevicePointer + a tensor wrapper) so there is no copy at all. Questions: on GB10's unified memory, is GPU
+  access to cudaHostRegister'd/pinned host pages full speed (same as cudaMalloc'd memory) or does it go through a slower/uncached mapping? How long does cudaHostRegister of
+  95 GB take (page-table work)? Does PyTorch/vLLM tolerate parameters whose storage is externally owned (weight loaders, marlin post-processing writing into new tensors,
+  cudagraph capture, the allocator's memory accounting)? Would the 95 GB of tmpfs pages plus the process's own allocations exceed 121 GB, i.e. does the adopted mapping fully
+  replace the parameter allocations?
+  B. A holder daemon keeping cudaMalloc'd post-processed weights and exporting CUDA IPC handles (cudaIpcGetMemHandle) that the engine imports; restart = remap. Questions: is
+  CUDA IPC supported on the integrated GB10 (no separate device memory), what happens when the daemon dies, and how does this compare to A.
+  C. Also judge: a pre-baked per-rank binary on NVMe read with O_DIRECT (~10 s for 95 GB) as the fallback if neither A nor B works; persisting the torch.compile AOT cache
+  and Triton autotune results across processes (what exactly is process-bound: CUDA graphs cannot be serialized; what else); and whole-process checkpoint/restore (CRIU +
+  NVIDIA cuda-checkpoint) as the literal "binary object" — is it viable with NCCL/RDMA connections in flight, and on this driver?
+
+  Deliver: for each of A, B, C a verdict (works / plausible with these unknowns / no), the one experiment that settles each unknown safely (no serving-node OOM; the cluster
+  has ~4 GB free while serving, so anything that allocates must run in a maintenance window), and your estimate of the achievable floor for docker-run-to-serving. Flag
+  anything in docs/BOOT-TIME.md you think is wrong.
+
+
+• I’ll read the boot breakdown first, then check which derived state can survive a process restart on GB10. The key distinction is between reusable weights/compiler artifacts
+  and CUDA/NCCL state tied to the running process.
+
+• Explored
+  └ Read BOOT-TIME.md
+    Search cache_dir|local_cache_dir|VLLM_CACHE_ROOT|VLLM_TORCH_COMPILE|AOT|aot_compile|compile_cache|cache_key in compilation
+    Search sharded_state|load_model|save_model|process_weights_after_loading in sharded_state_loader.py
+    Search TRITON|FLASHINFER|CACHE|cache|shm|compile in launch-glm53big-dcp.sh
+
+• Searching the web
+
+• Searched the web for site.docs.nvidia.com CUDA Tegra Thor GB10 cudaHostRegister cudaIpcGetMemHandle integrated GPU supported ...
+
+• Searching the web
+
+• Searched the web for https://docs.nvidia.com/cuda/cuda-for-tegra-appnote/index.html
+
+• Ran nl -ba /home/napta2k/lmcache-mg/spark-src/vllm/model_executor/model_loader/base_loader.py | sed -n '35,92p'
+  │ nl -ba /home/napta2k/lmcache-mg/spark-src/vllm/model_executor/model_loader/sharded_state_loader.py | sed -n '1,210p'
+  │ nl -ba /home/napta2k/lmcache-mg/spark-src/vllm/model_executor/warmup/kernel_warmup.py | sed -n '55,165p'
+  │ … +2 lines
+  └     35
+        36        @abstractmethod
+    … +377 lines (ctrl + t to view transcript)
+    docs/HANDOVER.md:167:  nearest supported step). The lock does not survive a reboot or driver
+    results/rollout-dcp2-dflash-180k-prod2-20260905-182340/up-spark-ddbf.log:35:spark-ddbf:226:226 [0] NCCL INFO cudaDriverVersion 13000
+
+• Searching the web
+
+• Searched the web for 'IPC' in https://docs.nvidia.com/cuda/cuda-for-tegra-appnote/index.html
+
+• Explored
+  └ Read decorators.py
+    Read caching.py
+    Search initial_memory|free_memory|requested_memory|gpu_memory_utilization|weights_memory|model_memory_usage|non_torch in gpu_worker.py
+    Search TRITON|FLASHINFER|CACHE|cache|shm|compile in launch-glm53big-dcp.sh
+
+• Searching the web
+
+• Searched the web for site:nvidia.com "GB10" "cudaHostRegister" ...
+
+• Ran if [ -r /proc/driver/nvidia/version ]; then sed -n '1,6p' /proc/driver/nvidia/version; fi
+  │ nl -ba /home/napta2k/lmcache-mg/spark-src/vllm/v1/worker/gpu_worker.py | sed -n '300,320p;372,410p'
+  │ rg -n 'def request_memory' /home/napta2k/lmcache-mg/spark-src/vllm/v1/worker/utils.py
+  │ … +3 lines
+  └    300                )
+       301
+    … +123 lines (ctrl + t to view transcript)
+    3454:(Worker_TP0_DCP0 pid=232) 2026-09-05 18:31:34,647 - INFO - autotuner.py:972 - flashinfer.jit: [Autotuner]: Autotuning process starts ...
+    3941:(Worker_TP0_DCP0 pid=232) 2026-09-05 18:32:11,233 - INFO - autotuner.py:995 - flashinfer.jit: [Autotuner]: Autotuning process ends
+
+• Searching the web
+
+• Searched the web for site:docs.nvidia.com/cuda "checkpoint" "Linux" "aarch64" ...
+
+• Ran nl -ba /home/napta2k/lmcache-mg/spark-src/vllm/v1/worker/utils.py | sed -n '405,449p'
+  │ rg --files /home/napta2k/lmcache-mg/spark-src -g '*autotun*'
+  │ rg -n 'cache_results|TRITON_CACHE_DIR' /home/napta2k/lmcache-mg/spark-src/vllm/model_executor/layers/attention /home/napta2k/lmcache-mg/spark-src/vllm/v1/attention | head
+  │ … +2 lines
+  └    405    def request_memory(init_snapshot: MemorySnapshot, cache_config: CacheConfig) -> int:
+       406        """
+    … +43 lines (ctrl + t to view transcript)
+    /home/napta2k/spark-cluster-experiments/CLAUDE-HANDOVER.md:63:- `06c4` and `365c`: driver `580.159.03`, kernel suffix `1026`.
+    /home/napta2k/spark-cluster-experiments/CLAUDE-HANDOVER.md:64:- `ddbf` and `a218`: driver `580.173.02`, kernel suffix `1031`.
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• The strongest version of the idea is to keep the warmed engine workers alive and restart only the front end; a weights-only holder still loses CUDA graphs, NCCL state, and
+  warmup state. I also found two issues in the document: resident weights would fail today’s startup free-memory check, and FlashInfer’s persistent cache is disabled because
+  of known cache-key collisions—not just an unused feature.
+
+• Searching the web
+
+• Searched the web for https://docs.nvidia.com/cuda/cuda-driver-api/group__CUDA__CHECKPOINT.html
+
+• Searching the web
+
+• Searched the web for https://triton-lang.org/main/python-api/generated/triton.autotune.html
+
+• Explored
+  └ Read CLAUDE-HANDOVER.md, weight_utils.py, BOOT-TIME.md
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• The human’s framing is right: repeated derivation is largely avoidable. But there are two different solutions: serialize immutable artifacts, or preserve the live executor.
+  A weights-only daemon preserves less than you want; a warmed engine daemon, with a replaceable API container, preserves weights, graphs, kernel handles and NCCL
+  connections.
+
+  All allocation experiments below require a maintenance window; I ran none.
+
+  ### A. Persistent tmpfs-backed parameters: plausible, performance unproven
+
+  Shared physical DRAM does not guarantee identical GPU caching. NVIDIA documents registered-host memory as GPU-cached only with full system coherency; otherwise it is
+  uncached. That is not sufficient evidence to promise cudaMalloc-equivalent performance on GB10. Memory-type distinctions
+  (https://docs.nvidia.com/cuda/cuda-for-tegra-appnote/index.html#memory-management).
+
+  MAP_SHARED plus registration can genuinely retain one physical weight copy. But only if initialization adopts those pages instead of allocating another 95 GB. A CPU tensor
+  followed by .cuda() defeats this.
+
+  PyTorch can wrap externally owned CUDA-addressable storage, with an appropriate lifetime/deleter. vLLM needs a custom initialization path: skip destructive repacking,
+  reconstruct aliases/attributes, and account for memory outside its allocator. Today’s startup admission check (/home/napta2k/lmcache-mg/spark-src/vllm/v1/worker/
+  utils.py:405) would reject the already-resident weights at utilization 0.91.
+
+  Decisive experiment: sequential 256-MiB/1-GiB/4-GiB registered mappings versus cudaMalloc, measuring registration separately from page population, streaming bandwidth, an
+  actual Marlin kernel, and graph replay after consumer restart. Approximately 23–25 million 4-KiB pages make extrapolating registration time unsafe; only a subsequently
+  budgeted full-size test settles it. Check tmpfs capacity, memlock and cgroup limits. Hugetlbfs is a separate experiment, not an assumed cure.
+
+  ### B. CUDA-IPC holder: plausible; preferable to A if supported
+
+  Do not reject it merely because GB10 is integrated: NVIDIA’s Tegra guide says memory IPC became supported with CUDA 13 on newer open-driver platforms. GB10’s
+  installed-driver support still needs a probe. IPC support update (https://docs.nvidia.com/cuda/cuda-for-tegra-appnote/index.html#cuda-features-not-supported-on-tegra).
+
+  Decisive experiment: a 64-MiB cudaMalloc exporter and disposable consumer containers; repeatedly import, checksum, run Marlin/graph replay, and restart consumers while
+  checking physical memory. Use explicit allocations, not arbitrary caching-allocator suballocations.
+
+  The exporter must retain ownership. Daemon death is a fatal dependency failure requiring consumer restart/reload—not durable memory. IPC imports also require the custom
+  adoption/accounting path above. If legacy IPC fails, separately probe CUDA VMM shareable allocations.
+
+  ### C. Post-processed NVMe image: works architecturally; my first implementation choice
+
+  Treat it as a versioned execution checkpoint, not a conventional state_dict: final tensor bytes, shapes/strides, aliases, scales, MLA plain attributes, and required non-
+  tensor metadata. Key it by weights, fork/kernel build, quantization backend, architecture and parallel layout.
+
+  Avoid “PWAL on empty weights”: postprocessing performs real transformations and parameter replacement. Separate metadata construction from transformation, then load final
+  storage directly. The default loader (/home/napta2k/lmcache-mg/spark-src/vllm/model_executor/model_loader/base_loader.py:80) otherwise reruns postprocessing.
+
+  Without GDS, O_DIRECT normally needs bounded registered host staging, then copying into device allocations; it cannot simply read into cudaMalloc memory. On UMA this adds
+  traffic, not a second model-sized copy.
+
+  Decisive experiment: round-trip one representative postprocessed MoE+MLA layer with aligned direct reads and bounded buffers; compare bytes and kernel outputs. Then
+  maintenance-only full-rank loading measures whether 15–25 seconds is realistic. Ten seconds is the storage-only lower bound.
+
+  ### Compilation, tuning and literal process snapshots
+
+  Persist AOT/Inductor artifacts; the fork loads them before retracing (/home/napta2k/lmcache-mg/spark-src/vllm/compilation/decorators.py:565). Persist Triton binaries and,
+  where supported, autotune results: Triton exposes cache_results (https://triton-lang.org/main/python-api/generated/triton.autotune.html). Validate with two fresh processes
+  and unchanged manifests.
+
+  BOOT-TIME.md understates FlashInfer risk: its persistent cache is disabled for known key collisions (/home/napta2k/lmcache-mg/spark-src/vllm/model_executor/warmup/
+  kernel_warmup.py:115), potentially selecting invalid tactics. Don’t merely flip that constant.
+
+  Graphs, loaded module/function handles, streams/events, library workspaces and NCCL/RDMA connections remain process-bound.
+
+  CRIU: no on the documented 580-series ARM drivers. NVIDIA added ARM checkpoint support in 595. Even upgraded, submitted work must drain; RDMA connections need coordinated
+  handling, and checkpointing copies device memory into host allocations—dangerous at this UMA footprint. Start with a tiny disposable process, never this engine. Checkpoint
+  requirements (https://github.com/NVIDIA/cuda-checkpoint).
+
+  Floor estimate: retaining today’s ~50-second startup and ~20-second tail, expect roughly 90–120 seconds plus registration/import time for A/B, or 105–145 seconds for C,
+  with persistent caches. These are engineering targets, not measured limits. The document’s “under a minute is impossible” is too absolute: keep the warmed engine alive, and
+  frontend-only recovery can plausibly be seconds.
+
+─ Worked for 3m 41s ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+› Brainstorm request from the Claude session in the sibling pane (the human asked us to pair on this). Do not modify files; answer in the pane, ~800 words, ranked list.
+
+  Goal: lower the IDLE power draw of a 4-node DGX Spark (GB10) cluster between work sessions, with two scripts: `enter-low-power-idle-mode.sh` and `un-idle.sh` (run from a
+  separate always-on sandbox box over SSH). Un-idle must reliably bring everything back to the exact serving state (TP4 vLLM across the 4 nodes over a switchless 200G RoCE
+  ring, GPU clocks locked at 2000 MHz for reproducible benchmarks). Hard constraint: the human cannot power-cycle a node physically, so nothing that can leave a node
+  unreachable (a failed s2idle wake, a NIC that will not come back) may run unattended; such items go in an "experiment with the human present" tier.
+
+  Measured facts from one node (read-only survey, serving stack up but idle):
+  - Kernel 6.17.0-1026-nvidia, aarch64, 20 cores, cppc_cpufreq, governor=performance (available: conservative ondemand userspace powersave performance schedutil), cur 2808
+  MHz, min 338 MHz. acpi_idle with LPI-0..3 (LPI-3 latency 433 us heavily used; LPI-2 usage 0).
+  - PCIe ASPM policy = default (powersave, powersupersave available). No tuned / power-profiles-daemon / powertop installed; cpupower present.
+  - NICs: four mlx5_core netdevs at 200G all state=up carrier=1 (enp1s0f0np0, enp1s0f1np1, enP2p1s0f0np0, enP2p1s0f1np1); NCCL uses RDMA devices roceP2p1s0f0/f1 only (one
+  ConnectX-7, two cabled ports to the two ring neighbours). 10GbE Realtek r8127 (enP7s7) is the management/LAN link: Wake-on supports pumbg, currently g. Wi-Fi mt7925e down
+  but not rfkill-blocked; Bluetooth up, not blocked.
+  - /sys/power/state = "freeze mem", mem_sleep = s2idle only (no deep S3).
+  - hwmon: only temperatures (acpitz, nvme, mlx5 x4, wifi). No power/energy sensor anywhere; no BMC. nvidia-smi reports GPU power.draw 8.71 W at idle with SM clocks locked
+  at 1995 MHz, P0, persistence mode on, 0% util; power.limit N/A. Default applications clock 2418 MHz.
+  - NVMe Samsung, APST enabled, default_ps_max_latency_us 100000.
+  - 121 GB unified LPDDR5x, 117 GB used by the idle serving stack (weights + KV pool resident). The vLLM container stays up; the model is not reloadable quickly (boot is 505
+  s today).
+  - Cluster load average 0.07 when idle.
+
+  Please cover, ranked by expected watts saved per unit of risk:
+  1. Which of these actually matter on a GB10 box at idle (CPU governor vs cpuidle, ASPM policy for the CX-7/NVMe/Wi-Fi, powering down the two unused 200G ports vs the two
+  ring ports, 10GBASE-T PHY at 10G vs 1G link speed, rfkill Wi-Fi/BT, USB autosuspend, GPU clock lock release (`nvidia-smi -rgc`) vs persistence mode off, LPDDR5x self-
+  refresh (any control?), display/DRM off).
+  2. Two tiers: (a) "serving stays up" idle mode (must not disturb the RoCE ring or NCCL, must not touch memory), and (b) "serving stack down" idle mode (container removed,
+  ~115 GB freed; what extra becomes possible, e.g. offlining 16 of 20 cores, bringing ring ports down, GPU clock release; and what does un-idle then have to do, given a 505
+  s reboot of the stack).
+  3. s2idle suspend + WoL magic packet over the 10GbE: viable on this class of platform? What breaks (mlx5 RDMA state, NCCL, docker, time sync, GPU context)? What is the
+  safe test protocol with the human present?
+  4. Measurement without a power sensor: what is the cheapest way to actually know the watts (smart plug/PDU with metering, USB-C PD meter since the Spark is USB-C powered
+  at 240 W?), and any on-box proxies worth logging (GPU power.draw, CPU residency in LPI states via /sys/devices/system/cpu/cpu*/cpuidle/state*/time, package temps).
+  5. Rough wattage expectations per lever for a GB10 (clearly marked as estimates), and which levers are pure placebo.
+  6. Failure modes for un-idle: mlx5 ports not re-establishing 200G, NCCL ring not reforming, clock lock needing re-apply, cpufreq min not restored; how the script should
+  verify each step before declaring success.
+
+
+• I’ll rank these by likely idle savings and recovery risk, with anything that could jeopardize SSH kept out of unattended use. I’ll also check the NIC topology: four mlx5
+  netdevs may represent two physical ports, not four independently switchable ports.
+
+• Searching the web
+
+• Searched the web for site.docs.nvidia.com dgx spark suspend wake on lan s2idle power ...
+
+• Explored
+  └ Search nvidia-smi|clocks|persistence|cpufreq|governor|roce|NCCL_SOCKET_IFNAME|NCCL_IB_HCA|drop_caches|cache_flusher in launch-glm53big-dcp.sh
+    List docs
+
+• Searching the web
+
+• Searched the web for https://forums.developer.nvidia.com/t/cant-get-wake-on-lan-to-work/348168/4
+
+• Searching the web
+
+• Searched the web for https://docs.kernel.org/admin-guide/pm/cpuidle.html
+
+• Context compacted
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• Two findings change the ranking: the four mlx5 interfaces represent two physical ports, so there aren’t two spare 200G PHYs to power off. Also, NVIDIA has reported Spark
+  WoL as unsupported despite the NIC advertising it; suspend belongs strictly in the human-present test tier.
+
+• Searching the web
+
+• Searched the web for https://docs.nvidia.com/dgx/dgx-spark/spark-clustering.html
+
+• Searching the web
+
+• Searched the web for https://docs.kernel.org/admin-guide/pm/cpuidle.html
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• My recommendation: make warm idle the default, targeting modest savings without sacrificing the 505-second startup. Keep suspend and device power-gating outside unattended
+  operation.
+
+  Important correction: your four mlx5 netdevs represent two physical QSFP ports, each exposed through two PCIe paths—not four independently powered ports. There are no two
+  spare 200G PHYs to disable. NVIDIA topology (https://docs.nvidia.com/dgx/dgx-spark/spark-clustering.html)
+
+  The estimates below are hypotheses per node, not GB10 measurements, and are not additive.
+
+  1. Release the GPU clock lock; use schedutil: best initial warm-idle experiments.
+
+     After blocking new requests and draining work, try nvidia-smi -rgc. This resets clocks, not the GPU/context. Budget 0–5 W, potentially zero or even a regression if the
+     live CUDA context keeps clocks high. Your reported 8.71 W already limits the opportunity; P0 alone does not mean high consumption. Keep persistence enabled while vLLM
+     remains alive—disabling it does not remove the live context. Clock controls (https://docs.nvidia.com/deploy/nvidia-smi/index.html)
+
+     Change CPU governor to schedutil, preserving min/max: estimate 0–2 W. Heavy LPI-3 residency means cpuidle already does the important work; reported 2808 MHz does not
+     mean every idle core runs continuously. Forcing 338 MHz mainly penalizes wakeup responsiveness. Leave idle states alone; unused LPI-2 is not inherently suspicious. Linux
+     idle management (https://docs.kernel.org/admin-guide/pm/cpuidle.html)
+
+  2. Disable genuinely unused peripherals: low risk, small gains.
+
+     Software-rfkill Wi-Fi and Bluetooth: roughly 0–1 W combined; interface-down is not necessarily radio-off. Preserve previous block states.
+
+     Blank an active display: perhaps 1–3 W inside the Spark, zero if already headless; monitor savings are separate. Do not unload DRM/NVIDIA drivers.
+
+     USB autosuspend: 0–1 W for idle peripherals, device-dependent. Use a tested device allowlist, excluding storage and recovery/input devices—not blanket powertop --auto-
+     tune.
+
+     These plus item 1 form warm idle: no NIC, PCIe, allocation, cache, or container changes.
+
+  3. Cold idle: biggest plausible additional lever is ConnectX-7, not freeing RAM.
+
+     Stop/remove all serving containers only after draining the cluster. GPU clock release and, optionally, persistence-off after all clients exit may save another few watts,
+     but measure before accepting an eight-minute restart.
+
+     NVIDIA documents up to 18 W saved when ConnectX-7 is unused through its hot-plug power-management support. That does not establish that ip link set down, with cables
+     attached and sibling functions active, achieves this. Qualify link-down/recovery with the human present; do not automate driver unload, PCIe removal, or forced D3.
+     Release notes (https://docs.nvidia.com/dgx/dgx-spark/release-notes.html)
+
+     Freeing 115 GB does not power off corresponding LPDDR capacity. Self-refresh is hardware/controller-managed; I know of no supported GB10 userspace control. Allocation
+     occupancy is not memory activity. Cold restart also loses resident KV state.
+
+  4. Human-present only: PHY speed, ASPM, aggressive device policies.
+
+     Management 10G→1G might save 1–3 W locally, but renegotiating your only SSH link is a poor unattended trade.
+
+     ASPM might save 0–3 W, but global policy touches management NIC, CX-7 and root NVMe. Leave default; avoid forced ASPM. NVMe already has APST: further tuning likely
+     offers 0–1 W, with disproportionate timeout risk.
+
+     Offlining 16 cores probably adds only 0–1 W over good idle residency, while complicating IRQ affinity and restoration. I would skip it. “Free RAM,” fixed minimum CPU
+     frequency, and persistence-off with live clients are mostly placebo candidates here.
+
+  5. s2idle + WoL: no unattended use.
+
+     NVIDIA staff reported Spark WoL unsupported; advertised g does not prove platform wake support. That statement is older, so exact firmware testing matters. NVIDIA
+     response (https://forums.developer.nvidia.com/t/cant-get-wake-on-lan-to-work/348168/4)
+
+     Test only with someone able to physically recover one canary: stop the distributed stack, verify magic-packet delivery before suspend, check wake configuration, and arm
+     an RTC alarm if supported—but do not treat it as guaranteed rescue. Test short and overnight intervals repeatedly.
+
+     Assume RDMA/NCCL communicators require reconstruction; verify GPU health, Docker restart behavior and time synchronization. GPU suspend itself has a recent GB10 failure
+     report. Report
+
+     (https://forums.developer.nvidia.com/t/nvidia-suspend-service-fails-nv-set-system-power-state-warning-nv-c-4784-s2idle-suspend-does-not-complete-on-dgx-spark-gb10/380263
+)
+
+  6. Measure at the AC outlet before optimizing further.
+
+     Cheapest useful instrument: a plug-in AC wattmeter; logging metering plugs are convenient, with switching schedules disabled. AC includes PSU losses. USB-C measurement
+     requires genuine 48 V/5 A, 240 W EPR compatibility, not a generic 100 W meter. Electrical rating (https://docs.nvidia.com/dgx/dgx-spark/compliance.html)
+
+     Compare repeated, thermally settled A/B windows. Log GPU power/clocks, per-CPU LPI residency deltas, wakeups and temperatures sparsely. None substitutes for wall watts.
+
+  7. Make un-idle a verified transaction.
+
+     Save an idempotent restoration journal outside containers; repeated entry must not overwrite the original baseline. Restore CPU online masks and every policy’s governor/
+     min/max, persistence, and -lgc 2000,2000; confirm approximately 1995 MHz under work.
+
+     Require all four SSH endpoints, 200G carrier, expected MTUs/IPs and active RDMA mappings before cold startup. Recreate identical image/configuration, allow the measured
+     505 seconds plus margin, then run an existing-engine canary exercising all ranks—not merely HTTP health. Avoid separate CUDA probes while memory is full.
+
+     Keep ingress closed until every check passes. Bounded retries only; failures must leave SSH intact and report the failed stage, never escalate automatically to NIC/GPU
+     resets.
+
+─ Worked for 6m 03s ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+› I can validate teh 18W saving on a spark with no ConnectX cable installed... but how do we fool the NIC driver in to thinking its gone? ok with a custom driver here.
+
+
+• I’ll trace what triggers Spark’s “cable absent” power saving and whether we can invoke it with cables still attached. The key distinction is a recoverable port shutdown
+  versus powering down the NIC so far that it needs a physical event to wake.
+
+• Ran pwd
+  └ /home/napta2k/spark-cluster-mla-dcp
+
+• Explored
+  └ List .
+
+• Searching the web
+
+• Searched the web for DGX Spark ConnectX 18W cable hotplug driver power management cable presence ...
+
+• Explored
+  └ List spark-cluster-mla-dcp
+
+• Searching the web
+
+• Searched the web for "cx7-pcie-hotplug" "power" ...
+
+• Explored
+  └ Read idle-power-lib.sh
+
+• Searching the web
+
+• Searched the web for https://forums.developer.nvidia.com/t/disable-connectx-7-even-when-qsfp-is-connected-to-save-power/371302
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• There’s a promising answer already in NVIDIA’s package: a hotplug-handler script with explicit removal and plug-in actions. A Spark owner reports toggling the full 18 W
+  with cables connected. I’m checking your installed version and the recovery caveats; a custom driver may not be necessary.
+
+• Ran ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=8 napta2k@spark-06c4.local 'dpkg-query -W dgx-spark-mlnx-hotplug; nl -ba /opt/nvidia/
+  │ dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh; cat /lib/udev/rules.d/90-mtk-hotplug.rules; ls -l /sys/devices/platform/MTKP0001:00/pcie_hotplug/; lsmod | grep -E
+  │ "mstflint|mtk_pcie|mlx5"'
+  └ Bad owner or permissions on /etc/ssh/ssh_config.d/20-systemd-ssh-proxy.conf
+
+✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
+
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'dpkg-query -W
+  │ dgx-spark-mlnx-hotplug; nl -ba /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh; cat /lib/udev/rules.d/90-mtk-hotplug.rules; ls -l /sys/devices/platform/
+  │ MTKP0001:00/pcie_hotplug/; lsmod | grep -E "mstflint|mtk_pcie|mlx5"'
+  └ dgx-spark-mlnx-hotplug    26.01-1
+         1    #!/bin/bash
+    … +190 lines (ctrl + t to view transcript)
+    tls                   159744  2 mlx5_core
+    pci_hyperv_intf        12288  1 mlx5_core
+
+✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
+
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'uname -r; ls -l /etc/nvidia/
+  │ cx7-hotplug-enabled; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state /sys/devices/platform/MTKP0001:00/pcie_hotplug/hotplug_enabled; lspci -D -s 0000::;
+  │ lspci -D -s 0002::; readlink -f /sys/class/net/enP7s7/device; modinfo -F version mstflint_access'
+  └ 6.17.0-1026-nvidia
+    -rw-r--r-- 1 root root 278 Jun 28 13:33 /etc/nvidia/cx7-hotplug-enabled
+    … +8 lines (ctrl + t to view transcript)
+    /sys/devices/pci0007:00/0007:00:00.0/0007:01:00.0
+    2.0.0 (Nov-27-2012)
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• Yes—and you probably don’t need a custom driver. NVIDIA already ships the override. I checked it read-only on spark-06c4; I haven’t changed any power state.
+
+  The relevant driver is the platform’s mtk_pcie_hotplug, not mlx5_core. Its control is:
+
+  /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state
+
+  Your installed dgx-spark-mlnx-hotplug 26.01-1 provides the complete sequence around that control.
+
+  ### The existing “pretend the cable was removed” commands
+
+  For a human-present maintenance test, with the distributed serving stack stopped:
+
+  # Power down CX7 with cables still physically connected
+  sudo /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh removal
+
+  # Power it back up and rediscover its PCIe functions
+  sudo /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh plug-in
+
+  This exact approach has a first-hand report of approximately 18 W savings with cables attached, followed by software restoration. Reported test
+  (https://forums.developer.nvidia.com/t/disable-connectx-7-even-when-qsfp-is-connected-to-save-power/371302/5)
+
+  The installed script explains why it works:
+
+  - Lines 101–109: removes devices from CX7’s two PCIe domains, then writes 0 to debug_state.
+  - Lines 116–129: writes 1, waits three seconds, then rescans both root ports.
+  - Lines 20–46: requires /etc/nvidia/cx7-hotplug-enabled; otherwise it can exit successfully without performing the requested operation.
+
+  Your enable file exists and hotplug is enabled. I also verified that domains 0000 and 0002 contain only their root bridges and the four CX7 functions. Your Realtek
+  management NIC is in domain 0007, outside those targets.
+
+  Do not just write 0 directly: the orderly device removal preceding hardware shutdown matters.
+
+  ### Two things to fix before unattended use
+
+  1. The shipped script is too optimistic about failures. Line 108 permits hardware shutdown if either domain removal succeeds—not necessarily both. remove() subsequently
+     returns success regardless; plugin() also ignores rescan failures. Its presence test accepts any CX7 function, so a partial restoration can cause subsequent plug-in
+     calls to skip recovery.
+
+     I would harden this small userspace handler first: serialize manual/udev operations, require both domains fully detached before power-down, and verify all four functions
+     after restoration. A custom kernel driver is not the first requirement.
+
+  2. There is a relevant kernel-panic report involving mstflint_access. It can retain stale PCI-device pointers after hotplug removal; a later firmware query can trigger a
+     use-after-free. Your node has this module loaded. The report concerns an earlier 6.17 kernel; I have not established whether your 1026 build fixes it. Resolve or isolate
+     that module and its consumers before qualification—don’t run MST-based diagnostics casually after cycling CX7. Bug report
+     (https://github.com/Mellanox/mstflint/issues/1786)
+
+  ### What I would test
+
+  One canary, physical recovery available: stop the cluster’s RDMA users, record wall watts, invoke removal, verify all four functions disappear and watts fall, then invoke
+  restoration. Require four functions, both links at 200G, correct addresses/MTU, working RDMA and a distributed inference canary. Repeat before automation.
+
+  This could recover approximately 72 W across four nodes, if your measured saving reproduces.
+
+  The remaining architectural catch: this destroys existing NCCL/RDMA state. Preserving weights would require a separate vLLM suspend/resume mechanism that recreates
+  communicators and affected CUDA graphs—not merely a NIC-driver change.
+
+─ Worked for 3m 09s ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+› lets try it. I have a grafana open now with all four sparks. I am present. unmount serving stack and try it
+
+
+• I’ll stop the serving stack across all four nodes, then cycle ConnectX-7 on one canary first while leaving the 10GbE management link untouched. I’ll check the hotplug/MST
+  safety prerequisites before powering it down, and pause for your Grafana reading before restoring it.
+
+• Explored
+  └ List .
+
+• Explored
+  └ Read enter-low-power-idle-mode.sh, un-idle.sh
+
+• Explored
+  └ Search docker (rm|stop)|down\(|shutdown|stop_all|NAME=|vllm_glm53big|firmware-manager in .
+    Read restore_production.sh
+
+• Ran pgrep -af 'rollout_dcp.sh|restore_production.sh|deploy_kvtier.sh|deploy_slab|enter-low-power-idle-mode.sh|un-idle.sh'
+  └ 1 codex-linux-sandbox --sandbox-policy-cwd /home/napta2k/spark-cluster-mla-dcp --command-cwd /home/napta2k/spark-cluster-mla-dcp --permission-profile
+    {"type":"managed","file_system":{"type":"restricted","entries":[{"path":{"type":"special","value":{"kind":"root"}},"access":"read"},{"path":{"type":"path","path":"/home/
+    … +110 lines (ctrl + t to view transcript)
+    releases/0.153.3-x86_64-unknown-linux-musl/codex-path':"$PATH"; else export PATH='/home/napta2k/.codex/packages/standalone/releases/0.153.3-x86_64-unknown-linux-musl/
+    codex-path'; fi  exec '/bin/bash' -c 'pgrep -af '"'"'rollout_dcp.sh|restore_production.sh|deploy_kvtier.sh|deploy_slab|enter-low-power-idle-mode.sh|un-idle.sh'"'"''
+
+✔ You approved codex to run for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.8... this time
+
+• Ran for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do ssh -F /dev/null -o
+  │ BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -Is; docker ps --format
+  │ "{{.ID}} {{.Names}} {{.Status}}"; docker inspect -f "ID={{.Id}} image={{.Image}} status={{.State.Status}} restart={{.HostConfig.RestartPolicy.Name}}" vllm_glm53big; ip
+  │ … +3 lines
+  └ spark-06c4
+    2026-09-05T16:15:51-07:00
+    … +69 lines (ctrl + t to view transcript)
+    Mem:           121Gi       116Gi       6.3Gi       421Mi       1.2Gi       4.7Gi
+    Swap:           15Gi       2.2Gi        13Gi
+
+• Explored
+  └ Read launch-glm53big-dcp.sh
+    Search current|compact|prod6|launch-glm53big|DCP|lane in HANDOVER.md
+
+✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
+
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'curl -fsS --max-time 5
+  │ http://127.0.0.1:8000/metrics | grep -E "^vllm:num_requests_(running|waiting)"; docker inspect -f "auto_remove={{.HostConfig.AutoRemove}} path={{.Path}} args={{json
+  │ .Args}}" vllm_glm53big; sudo -n fuser /dev/*_mstconf 2>/dev/null; ps -eo pid,comm,args | awk '\''$2 !~ /^(bash|sh|sshd|awk|grep)$/ && $0 ~
+  │ … +1 lines
+  └ vllm:num_requests_running{engine="0",model_name="glm-5.3"} 0.0
+    vllm:num_requests_waiting{engine="0",model_name="glm-5.3"} 0.0
+    … +13 lines (ctrl + t to view transcript)
+    \"n_write_threads\":8}}","--distributed-executor-backend","mp","--compilation-config","{\"cudagraph_mode\":
+    \"FULL\"}","--nnodes","4","--node-rank","0","--master-addr","192.168.1.228","--master-port","29541"]
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• The stack is idle, and I found it is currently TP4/DCP2 at 180k context—not the older DCP4 configuration. I’ll preserve the existing containers so that exact configuration
+  can be restarted. For this test I’m changing only serving availability and CX7 power; CPU/GPU clocks and the management network will stay as they are. Please keep the other
+  pane from running idle or rollout scripts during the test.
+
+✔ You approved codex to run cx7_stop_pids=() ... this time
+
+• Ran cx7_stop_pids=()
+  │ for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -e; hostname; test
+  │ … +9 lines
+  └ spark-a218
+    spark-365c
+    … +24 lines (ctrl + t to view transcript)
+    Mem:           121Gi       6.4Gi       116Gi       712Ki       1.0Gi       115Gi
+    Swap:           15Gi       140Mi        15Gi
+
+✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
+
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; systemctl cat
+  │ nvidia-spark-mlnx-firmware-manager.service; rg -n "mstflint|firmware-manager|mtk-hotplug|cx7" /lib/udev/rules.d /etc/udev/rules.d /opt/nvidia/dgx-spark-mlnx-hotplug; ip
+  │ -br addr show enP2p1s0f0np0; ip -br addr show enP2p1s0f1np1; ip -d link show enP2p1s0f0np0; ip -d link show enP2p1s0f1np1; ls -l /dev/infiniband; nvidia-smi
+  │ … +1 lines
+  └ spark-06c4
+    # /usr/lib/systemd/system/nvidia-spark-mlnx-firmware-manager.service
+    … +43 lines (ctrl + t to view transcript)
+    1995 MHz, Enabled, 7.85 W
+    2026-09-05T23:17:26+00:00
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• All four serving containers are stopped; each node now has roughly 114–115 GiB available. Nothing was deleted. The GPU lock remains at 1995 MHz effective.
+
+  I’m using spark-06c4 as the canary and leaving the other three NICs powered for comparison. First I’ll unload its unused mstflint_access helper to avoid the reported
+  hotplug use-after-free.
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• What wall-power readings does Grafana show now that serving is stopped, especially for spark-06c4? I’ll compare that baseline with its CX7-off reading.
+
+✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
+
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'set -e
+  │ hostname
+  │ date -u -Is
+  │ … +13 lines
+  └ spark-06c4
+    2026-09-05T23:18:31+00:00
+    … +7 lines (ctrl + t to view transcript)
+    MST helper unloaded; all four CX7 functions still present
+    2026-09-05T23:18:31+00:00
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• The canary’s RDMA devices have no open users, and the MST helper is unloaded. I’m now powering down only spark-06c4’s CX7, with a three-minute automatic power-on timer as a
+  backup. Watch for the change on that node; its two neighbours may also show a smaller change as their links drop.
+
+
+✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
+
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'set -euo pipefail
+  │ hostname
+  │ test "$(docker inspect -f "{{.State.Running}}" vllm_glm53big)" = false
+  │ … +23 lines
+  └ spark-06c4
+    Running timer as unit: cx7-canary-restore.timer
+    … +12 lines (ctrl + t to view transcript)
+    1 timers listed.
+    Pass --all to see loaded but inactive timers, too.
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• spark-06c4’s CX7 is now off: all four PCIe functions disappeared and debug_state=0. SSH and the 10GbE management link remain up.
+
+  Grafana marker: 16:19:56 PDT / 23:19:56 UTC. The automatic power-on is scheduled for 16:22:35 PDT. What power drop do you see?
+
+✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
+
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is; cat /
+  │ sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; cat /sys/class/net/enP7s7/carrier /sys/class/net/enP7s7/speed; sudo -n journalctl -k --since "2026-09-05
+  │ 16:19:25" --no-pager | tail -n 45; systemctl list-timers cx7-canary-restore.timer --no-pager'
+  └ spark-06c4
+    2026-09-05T23:20:20+00:00
+    … +31 lines (ctrl + t to view transcript)
+    1 timers listed.
+    Pass --all to see loaded but inactive timers, too.
+
+• Model interrupted to submit steer instructions.
+
+
+› I observed 207 > 203W between all four sparks aggregate
+
+
+• Model interrupted to submit steer instructions.
+
+
+› damn 180W!
+
+
+• That’s a 27 W aggregate drop from 207 W. Only spark-06c4’s CX7 is powered off; some of the saving may also come from its neighbours’ links going idle. I’ll check the timed
+  recovery next before expanding the test.
+
+✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
+
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is; cat /
+  │ sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; lspci -D -d 15b3:1021; systemctl list-timers --all cx7-canary-restore.timer --no-pager; systemctl show
+  │ cx7-canary-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; ip -br addr show; rdma link show; test ! -d /sys/module/mstflint_access && printf
+  │ … +1 lines
+  └ spark-06c4
+    2026-09-05T23:21:18+00:00
+    … +13 lines (ctrl + t to view transcript)
+    docker0          DOWN           172.17.0.1/16 fe80::b4bd:daff:fe67:778c/64
+    MST helper remains unloaded
+
+• Model interrupted to submit steer instructions.
+
+
+› 177W!
+
+
+• Now 30 W below the 207 W baseline. I’ll let it settle until the scheduled power-on at 16:22:35 PDT, then check whether the power rises again and both 200G links recover.
+  That return measurement will help separate CX7 savings from cooling after the stack stopped.
+
+✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
+
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is;
+  │ systemctl show cx7-canary-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; lspci
+  │ -D -d 15b3:1021; ip -br addr show; rdma link show; sudo -n journalctl -u cx7-canary-restore.service --since "2026-09-05 16:22:20" --no-pager; true'
+  └ spark-06c4
+    2026-09-05T23:22:58+00:00
+    … +9 lines (ctrl + t to view transcript)
+    docker0          DOWN           172.17.0.1/16 fe80::b4bd:daff:fe67:778c/64
+    Sep 05 16:22:57 spark-06c4 systemd[1]: Started cx7-canary-restore.service - /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh plug-in.
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• The automatic restore has started and debug_state is back to 1; PCIe rediscovery is still in progress. SSH stayed up throughout. Watch for the power rise now—I’m checking
+  that all four NIC functions and the ring configuration return.
+
+✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
+
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is;
+  │ systemctl show cx7-canary-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; lspci -D -d 15b3:1021; ip -br addr show enP2p1s0f0np0; ip -br addr
+  │ show enP2p1s0f1np1; cat /sys/class/net/enP2p1s0f0np0/speed /sys/class/net/enP2p1s0f1np1/speed; rdma link show; sudo -n journalctl -k --since "2026-09-05 16:22:30"
+  │ … +1 lines
+  └ spark-06c4
+    2026-09-05T23:23:16+00:00
+    … +69 lines (ctrl + t to view transcript)
+    Sep 05 16:23:04 spark-06c4 kernel: mlx5_core 0002:01:00.1 enP2p1s0f1np1: Link up
+    Sep 05 16:23:04 spark-06c4 kernel: mlx5_core 0002:01:00.1 roceP2p1s0f1: Port: 1 Link ACTIVE
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• The canary recovered in software: all four CX7 functions are back, both ring ports report 200G, and the original IP addresses returned. No physical intervention was needed.
+
+  Serving is still stopped. What aggregate wattage do you see now that CX7 is back on? I haven’t tested NCCL yet, so this confirms NIC/link recovery—not full serving
+  recovery.
+
+• Model interrupted to submit steer instructions.
+
+
+› back at ~202 now
+
+
+• That gives us a useful A/B result: about 25 W saved across the cluster, with power returning from 177 W to ~202 W after the canary’s CX7 came back.
+
+  I’ll now repeat the timed test across all four CX7s to measure the total saving directly. Serving will remain stopped, and all four 10GbE management links will stay
+  untouched.
+
+
+✔ You approved codex to run for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.8... this time
+
+• Ran for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+  │ hostname
+  │ … +23 lines
+  └ spark-06c4
+    2026-09-05T23:24:51+00:00
+    … +64 lines (ctrl + t to view transcript)
+    e5aab681fcbad7aa803b7247566781bd6d009e8ea34b7ea4864b495cbb443003  /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh
+    PREFLIGHT_OK
+
+
+✔ You approved codex to run cx7_power_pids=() ... this time
+
+• Running cx7_power_pids=()
+  │ for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+  │ … +32 lines
+  └ Running timer as unit: cx7-all-restore.timer
+    Will run service as unit: cx7-all-restore.service
+    … +12 lines (ctrl + t to view transcript)
+    spark-06c4 removal starting 2026-09-05T23:25:44+00:00
+    spark-06c4 removing 0000:01:00.0
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• All four passed the safety checks. Their CX7 shutdowns started together at 16:25:44 PDT; the automatic restores are due at 16:28:44 PDT. The four serving containers remain
+  intact but stopped.
+
+• Ran cx7_power_pids=()
+  │ for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+  │ … +32 lines
+  └ Running timer as unit: cx7-all-restore.timer
+    Will run service as unit: cx7-all-restore.service
+    … +48 lines (ctrl + t to view transcript)
+    1 timers listed.
+    Pass --all to see loaded but inactive timers, too.
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• All four CX7s are now off, confirmed by absent PCIe functions and debug_state=0. All four nodes still answer over 10GbE.
+
+  The fully-off window began at 16:26:12 PDT and runs until 16:28:44 PDT. This is the window to compare against the ~202 W baseline.
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• What aggregate wall power does Grafana settle at with all four CX7s off? The fully-off window is 16:26:12–16:28:44 PDT.
+
+• Model interrupted to submit steer instructions.
+
+
+› 168W so far
+
+
+• That’s 34 W below the ~202 W baseline so far. We’ll use the settled reading and the power rise after restoration—the earlier single-node result clearly shouldn’t be
+  multiplied by four. The restore timers are still set for 16:28:44 PDT.
+
+• Model interrupted to submit steer instructions.
+
+
+› 120W now
+
+
+• That’s 82 W saved across the cluster—about 41%, or 20.5 W per node on average. That’s much closer to the expected CX7 saving. I’ll let the timers restore all four, then
+  verify the ring and compare the power rise.
+
+✔ You approved codex to run for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.8... this time
+
+• Ran for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do ssh -F /dev/null -o
+  │ BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -u -Is; printf "CX7
+  │ state="; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; printf "management speed="; cat /sys/class/net/enP7s7/speed; systemctl show
+  │ … +2 lines
+  └ spark-06c4
+    2026-09-05T23:27:13+00:00
+    … +36 lines (ctrl + t to view transcript)
+    SubState=dead
+    MST helper unloaded
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• All four nodes remain reachable with CX7 off; the management links are still at 10G. About a minute remains before automatic restoration. CPU/GPU clock settings and other
+  power controls are unchanged, so this test is isolating the NIC shutdown as closely as we can.
+
+• Explored
+  └ List bench
+    Read run-nccl-multicomm.sh
+
+✔ You approved codex to run for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.8... this time
+
+• Ran for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -u -Is;
+  │ systemctl show cx7-all-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; printf "CX7 state="; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/
+  │ … +3 lines
+  └ spark-06c4
+    2026-09-05T23:29:11+00:00
+    … +72 lines (ctrl + t to view transcript)
+    link roceP2p1s0f0/1 state ACTIVE physical_state LINK_UP netdev enP2p1s0f0np0
+    link roceP2p1s0f1/1 state ACTIVE physical_state LINK_UP netdev enP2p1s0f1np1
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• All four CX7s restored automatically. Every node has its four PCIe functions back, both ring ports at 200G, the original IPs, and active RDMA links. No physical recovery
+  was needed.
+
+  What does Grafana settle at now? I’m checking the restored paths and cleaning up the temporary test state; serving is still stopped.
+
+• Model interrupted to submit steer instructions.
+
+
+› 202W ish
+
+
+• Confirmed: ~202 → 120 → ~202 W, an approximately 82 W / 41% idle reduction with cables left connected.
+
+  I’ll finish by checking jumbo-frame connectivity and restoring the MST helpers from fresh PCIe references. I’ll leave serving stopped unless you want the ~8-minute reload
+  started.
+
+
+✔ You approved codex to run for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.8... this time
+
+• Running for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+  │ cx7_host=$(hostname)
+  │ … +27 lines
+  └ spark-06c4 final recovery verification
+    PING 192.168.104.1 (192.168.104.1) from 192.168.104.2 enP2p1s0f0np0: 8972(9000) bytes of data.
+    8980 bytes from 192.168.104.1: icmp_seq=1 ttl=64 time=1.12 ms
+
+
+› document everything
+
+
+• Ran for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+  │ cx7_host=$(hostname)
+  │ … +27 lines
+  └ spark-06c4 final recovery verification
+    PING 192.168.104.1 (192.168.104.1) from 192.168.104.2 enP2p1s0f0np0: 8972(9000) bytes of data.
+    … +12 lines (ctrl + t to view transcript)
+    rtt min/avg/max/mdev = 1.327/1.519/1.711/0.192 ms
+    Failed to stop cx7-all-restore.timer: Unit cx7-all-restore.timer not loaded.
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• I’ll write a reproducible experiment report with the power readings, exact sequence and timestamps, safety checks, recovery results, and what remains untested. I’ll also
+  record the final node state so the next session knows serving is stopped and how to restore it.
+
+• Explored
+  └ List docs
+
+• Ran git status --short
+  └ ?? results/idle-power/
+
+
+✔ You approved codex to run for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.8... this time
+
+• Ran for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+  │ cx7_host=$(hostname)
+  │ … +33 lines
+  └ spark-06c4 final recovery verification
+    PING 192.168.104.1 (192.168.104.1) from 192.168.104.2 enP2p1s0f0np0: 8972(9000) bytes of data.
+    … +80 lines (ctrl + t to view transcript)
+    spark-a218 RESTORED_200G_MTU9000_PINGS_OK_MST_RELOADED
+    2026-09-05T23:32:12+00:00
+
+✔ You approved codex to run for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.8... this time
+
+• Ran for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do ssh -F /dev/null -o
+  │ BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -u -Is; sudo -n journalctl
+  │ -u cx7-all-restore.service -u cx7-canary-restore.service --since "2026-09-05 16:19:00" --no-pager -o short-iso-precise; sudo -n journalctl -k --since "2026-09-05
+  │ … +3 lines
+  └ spark-06c4
+    2026-09-05T23:32:48+00:00
+    … +47 lines (ctrl + t to view transcript)
+    cpu_governor=performance
+    mgmt_speed=10000
+
+■ You've hit your usage limit. Upgrade to Pro (https://chatgpt.com/explore/pro), visit https://chatgpt.com/codex/settings/usage to purchase more credits or try again at Sep
+6th, 2026 3:04 AM.
+
+
+› Ask Codex to do anything
+
+  gpt-6-astra xhigh · ~/spark-cluster-mla-dcp

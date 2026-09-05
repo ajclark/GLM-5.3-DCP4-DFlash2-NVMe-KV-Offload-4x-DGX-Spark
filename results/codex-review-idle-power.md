@@ -66,10 +66,11 @@ hypotheses, not additive.
 
 ## What the Claude session did with it
 
-- Verified the two NVIDIA claims from source and added a third fact: on this
-  firmware (DGX OS 7.2.3 / OTA 7.5.0) the CX-7 root ports have no hot-plug
-  slot or power controller, so the 18 W path is not software-reachable; the
-  ring add-on is a NetworkManager disconnect, to be judged by a meter.
+- Verified the two NVIDIA claims from source. The first read of the firmware
+  (CX-7 root ports `HotPlug- PwrCtrl-`) concluded the 18 W path was not
+  software-reachable; Codex then found NVIDIA's `dgx-spark-mlnx-hotplug`
+  handler and platform driver, and the human and Codex measured 202 → 120 W
+  for the four nodes the same evening (`docs/CX7-POWER.md`).
 - Dropped core offlining and all placebo levers; kept ASPM as a manual
   experiment only.
 - Built the scripts around item 7: baseline journal never overwritten,

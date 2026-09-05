@@ -23,11 +23,17 @@ estimate until a wattmeter is on the plugs (section 5).
 | Sensors | temperatures only (acpitz, nvme, mlx5, wifi); no power/energy hwmon, no BMC | GPU `power.draw` is the only on-box wattage |
 | Idle CPU load | 0.07; vLLM container 3 % of one core | nothing to save |
 
-Two things we hoped for are not there: the "up to 18 W when the ConnectX-7 is
-not in use" from NVIDIA's January 2026 DGX OS release notes is delivered through
-hot-plug power management, and on this firmware the CX-7 root ports expose no
-hot-plug slot or power controller, so software cannot trigger it; and the Realtek
-NIC's WoL bit is advertised but NVIDIA says the platform does not honour it.
+**Correction, same evening:** the "up to 18 W when the ConnectX-7 is not in
+use" from NVIDIA's January 2026 DGX OS release notes *is* software-reachable.
+It is not PCIe slot power (the CX-7 root ports report `HotPlug- PwrCtrl-`,
+which is what the survey looked for) but a platform driver, `cx7-pcie-hotplug`
+(`/sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state`) with NVIDIA's
+handler `/opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh removal|plug-in`.
+The human and Codex measured it the same evening with the stack stopped:
+**202 → 120 W for the four nodes, ~20 W per node, cables attached, full
+software recovery.** Report and exact sequence: `docs/CX7-POWER.md`. The
+other disappointment stands: the Realtek NIC's WoL bit is advertised but
+NVIDIA says the platform does not honour it.
 
 ## 2. Levers, ranked by watts per unit of risk (estimates)
 
@@ -38,7 +44,8 @@ NIC's WoL bit is advertised but NVIDIA says the platform does not honour it.
 | rfkill Wi-Fi + Bluetooth | 0-1 W | none (management is wired) | light |
 | Persistence mode off after the stack is down | 1-3 W (lets the GPU fully power-gate with no context) | none once no client remains | deep |
 | Serving stack down | frees 115 GB but **saves ~0 W by itself** (DRAM refresh is capacity-based; the idle engine uses 3 % of a core); it is only the enabler for the levers below | 505 s relaunch, KV pool lost (slab tier survives) | deep |
-| Ring ports admin-down (all four CX-7 functions) | unknown, 0-18 W; NVIDIA's 18 W needs the slot power-off we do not have | ports must retrain and NM must reapply IP/MTU; node stays reachable via 10GbE | deep add-on, qualify with a meter |
+| **ConnectX-7 powered off** via NVIDIA's cx7-pcie-hotplug handler (`docs/CX7-POWER.md`) | **~20 W measured** (202 → 120 W for four nodes) | PCIe functions removed and re-enumerated; NM reapplies IP/MTU; node stays reachable via 10GbE; unload `mstflint_access` first; dead-man restore timer | deep add-on (to replace `--ring-down`) |
+| Ring ports admin-down only (`nmcli dev disconnect`) | superseded by the row above | | dropped |
 | 10GbE mgmt link 10G → 1G | 1-3 W (10GBASE-T PHY) plus the same on the switch port | renegotiating the only SSH path; node-side revert timer covers it | add-on, qualify once |
 | PCIe ASPM `powersave` | 0-3 W (NVMe, Realtek, Wi-Fi, GPU link only) | Realtek + ASPM is a classic hang; not automated | human-present experiment |
 | Offline 16 of 20 cores | 0-1 W over good idle residency | IRQ affinity, restoration | dropped |

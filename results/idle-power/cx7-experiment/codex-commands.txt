@@ -1,0 +1,424 @@
+====================================================================================================
+/bin/bash -lc ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=8 napta2k@spark-06c4.local 'dpkg-query -W dgx-spark-mlnx-hotplug; nl -ba /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh; cat /lib/udev/rules.d/90-mtk-hotplug.rules; ls -l /sys/devices/platform/MTKP0001:00/pcie_hotplug/; lsmod | grep -E "mstflint|mtk_pcie|mlx5"'
+====================================================================================================
+ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=8 napta2k@spark-06c4.local 'dpkg-query -W dgx-spark-mlnx-hotplug; nl -ba /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh; cat /lib/udev/rules.d/90-mtk-hotplug.rules; ls -l /sys/devices/platform/MTKP0001:00/pcie_hotplug/; lsmod | grep -E "mstflint|mtk_pcie|mlx5"'
+====================================================================================================
+/bin/bash -lc ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'dpkg-query -W dgx-spark-mlnx-hotplug; nl -ba /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh; cat /lib/udev/rules.d/90-mtk-hotplug.rules; ls -l /sys/devices/platform/MTKP0001:00/pcie_hotplug/; lsmod | grep -E "mstflint|mtk_pcie|mlx5"'
+====================================================================================================
+ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'dpkg-query -W dgx-spark-mlnx-hotplug; nl -ba /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh; cat /lib/udev/rules.d/90-mtk-hotplug.rules; ls -l /sys/devices/platform/MTKP0001:00/pcie_hotplug/; lsmod | grep -E "mstflint|mtk_pcie|mlx5"'
+====================================================================================================
+/bin/bash -lc ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'uname -r; ls -l /etc/nvidia/cx7-hotplug-enabled; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state /sys/devices/platform/MTKP0001:00/pcie_hotplug/hotplug_enabled; lspci -D -s 0000::; lspci -D -s 0002::; readlink -f /sys/class/net/enP7s7/device; modinfo -F version mstflint_access'
+====================================================================================================
+ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'uname -r; ls -l /etc/nvidia/cx7-hotplug-enabled; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state /sys/devices/platform/MTKP0001:00/pcie_hotplug/hotplug_enabled; lspci -D -s 0000::; lspci -D -s 0002::; readlink -f /sys/class/net/enP7s7/device; modinfo -F version mstflint_access'
+====================================================================================================
+/bin/bash -lc for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -Is; docker ps --format "{{.ID}} {{.Names}} {{.Status}}"; docker inspect -f "ID={{.Id}} image={{.Image}} status={{.State.Status}} restart={{.HostConfig.RestartPolicy.Name}}" vllm_glm53big; ip -br addr show enP7s7; lspci -D -d 15b3:1021; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state /sys/devices/platform/MTKP0001:00/pcie_hotplug/hotplug_enabled; systemctl is-active nvidia-spark-mlnx-firmware-manager.service; pgrep -af "[m]stflint|[m]stconfig|[m]lxconfig|[m]lxlink|[c]ache_flusher.sh"; lsmod | grep mstflint; free -h; true' || exit; done
+====================================================================================================
+for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -Is; docker ps --format "{{.ID}} {{.Names}} {{.Status}}"; docker inspect -f "ID={{.Id}} image={{.Image}} status={{.State.Status}} restart={{.HostConfig.RestartPolicy.Name}}" vllm_glm53big; ip -br addr show enP7s7; lspci -D -d 15b3:1021; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state /sys/devices/platform/MTKP0001:00/pcie_hotplug/hotplug_enabled; systemctl is-active nvidia-spark-mlnx-firmware-manager.service; pgrep -af "[m]stflint|[m]stconfig|[m]lxconfig|[m]lxlink|[c]ache_flusher.sh"; lsmod | grep mstflint; free -h; true' || exit; done
+====================================================================================================
+/bin/bash -lc cx7_stop_pids=()
+for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -e; hostname; test "$(docker inspect -f "{{.HostConfig.AutoRemove}}" vllm_glm53big)" = false; docker stop --time 45 vllm_glm53big; docker inspect -f "status={{.State.Status}} id={{.Id}}" vllm_glm53big; free -h' &
+  cx7_stop_pids+=("$!")
+done
+cx7_stop_failed=0
+for cx7_stop_pid in "${cx7_stop_pids[@]}"; do
+  wait "$cx7_stop_pid" || cx7_stop_failed=1
+done
+exit "$cx7_stop_failed"
+====================================================================================================
+cx7_stop_pids=()
+for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -e; hostname; test "$(docker inspect -f "{{.HostConfig.AutoRemove}}" vllm_glm53big)" = false; docker stop --time 45 vllm_glm53big; docker inspect -f "status={{.State.Status}} id={{.Id}}" vllm_glm53big; free -h' &
+  cx7_stop_pids+=("$!")
+done
+cx7_stop_failed=0
+for cx7_stop_pid in "${cx7_stop_pids[@]}"; do
+  wait "$cx7_stop_pid" || cx7_stop_failed=1
+done
+exit "$cx7_stop_failed"
+====================================================================================================
+/bin/bash -lc ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; systemctl cat nvidia-spark-mlnx-firmware-manager.service; rg -n "mstflint|firmware-manager|mtk-hotplug|cx7" /lib/udev/rules.d /etc/udev/rules.d /opt/nvidia/dgx-spark-mlnx-hotplug; ip -br addr show enP2p1s0f0np0; ip -br addr show enP2p1s0f1np1; ip -d link show enP2p1s0f0np0; ip -d link show enP2p1s0f1np1; ls -l /dev/infiniband; nvidia-smi --query-gpu=clocks.sm,persistence_mode,power.draw --format=csv,noheader; date -u -Is'
+====================================================================================================
+ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; systemctl cat nvidia-spark-mlnx-firmware-manager.service; rg -n "mstflint|firmware-manager|mtk-hotplug|cx7" /lib/udev/rules.d /etc/udev/rules.d /opt/nvidia/dgx-spark-mlnx-hotplug; ip -br addr show enP2p1s0f0np0; ip -br addr show enP2p1s0f1np1; ip -d link show enP2p1s0f0np0; ip -d link show enP2p1s0f1np1; ls -l /dev/infiniband; nvidia-smi --query-gpu=clocks.sm,persistence_mode,power.draw --format=csv,noheader; date -u -Is'
+====================================================================================================
+/bin/bash -lc ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'set -e
+hostname
+date -u -Is
+test "$(docker inspect -f "{{.State.Running}}" vllm_glm53big)" = false
+sudo -n true
+grep -RnE "mstflint|firmware-manager|mtk-hotplug|cx7" /lib/udev/rules.d /etc/udev/rules.d /opt/nvidia/dgx-spark-mlnx-hotplug || true
+sudo -n fuser /dev/infiniband/uverbs0 /dev/infiniband/uverbs1 /dev/infiniband/uverbs2 /dev/infiniband/uverbs3 /dev/infiniband/rdma_cm /dev/0000:01:00.0_mstconf /dev/0000:01:00.1_mstconf /dev/0002:01:00.0_mstconf /dev/0002:01:00.1_mstconf 2>/dev/null && exit 20
+sudo -n modprobe -r mstflint_access
+test ! -d /sys/module/mstflint_access
+test -d /sys/bus/pci/devices/0000:01:00.0
+test -d /sys/bus/pci/devices/0000:01:00.1
+test -d /sys/bus/pci/devices/0002:01:00.0
+test -d /sys/bus/pci/devices/0002:01:00.1
+printf "MST helper unloaded; all four CX7 functions still present\n"
+date -u -Is'
+====================================================================================================
+ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'set -e
+hostname
+date -u -Is
+test "$(docker inspect -f "{{.State.Running}}" vllm_glm53big)" = false
+sudo -n true
+grep -RnE "mstflint|firmware-manager|mtk-hotplug|cx7" /lib/udev/rules.d /etc/udev/rules.d /opt/nvidia/dgx-spark-mlnx-hotplug || true
+sudo -n fuser /dev/infiniband/uverbs0 /dev/infiniband/uverbs1 /dev/infiniband/uverbs2 /dev/infiniband/uverbs3 /dev/infiniband/rdma_cm /dev/0000:01:00.0_mstconf /dev/0000:01:00.1_mstconf /dev/0002:01:00.0_mstconf /dev/0002:01:00.1_mstconf 2>/dev/null && exit 20
+sudo -n modprobe -r mstflint_access
+test ! -d /sys/module/mstflint_access
+test -d /sys/bus/pci/devices/0000:01:00.0
+test -d /sys/bus/pci/devices/0000:01:00.1
+test -d /sys/bus/pci/devices/0002:01:00.0
+test -d /sys/bus/pci/devices/0002:01:00.1
+printf "MST helper unloaded; all four CX7 functions still present\n"
+date -u -Is'
+====================================================================================================
+/bin/bash -lc ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'set -euo pipefail
+hostname
+test "$(docker inspect -f "{{.State.Running}}" vllm_glm53big)" = false
+test ! -d /sys/module/mstflint_access
+test "$(cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/hotplug_enabled)" = 1
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/vendor)" = 0x15b3
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/device)" = 0x1021
+done
+sudo -n systemd-run --unit=cx7-canary-restore --on-active=180s /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh plug-in
+date -u -Is
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  printf "Removing %s\n" "$cx7_bdf"
+  printf "1\n" | sudo -n tee /sys/bus/pci/devices/$cx7_bdf/remove >/dev/null
+  test ! -e /sys/bus/pci/devices/$cx7_bdf
+done
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  test ! -e /sys/bus/pci/devices/$cx7_bdf
+done
+printf "0\n" | sudo -n tee /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state >/dev/null
+date -u -Is
+printf "CX7 debug_state="
+cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state
+lspci -D -d 15b3:1021
+ip -br addr show enP7s7
+systemctl list-timers cx7-canary-restore.timer --no-pager'
+====================================================================================================
+ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'set -euo pipefail
+hostname
+test "$(docker inspect -f "{{.State.Running}}" vllm_glm53big)" = false
+test ! -d /sys/module/mstflint_access
+test "$(cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/hotplug_enabled)" = 1
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/vendor)" = 0x15b3
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/device)" = 0x1021
+done
+sudo -n systemd-run --unit=cx7-canary-restore --on-active=180s /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh plug-in
+date -u -Is
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  printf "Removing %s\n" "$cx7_bdf"
+  printf "1\n" | sudo -n tee /sys/bus/pci/devices/$cx7_bdf/remove >/dev/null
+  test ! -e /sys/bus/pci/devices/$cx7_bdf
+done
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  test ! -e /sys/bus/pci/devices/$cx7_bdf
+done
+printf "0\n" | sudo -n tee /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state >/dev/null
+date -u -Is
+printf "CX7 debug_state="
+cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state
+lspci -D -d 15b3:1021
+ip -br addr show enP7s7
+systemctl list-timers cx7-canary-restore.timer --no-pager'
+====================================================================================================
+/bin/bash -lc ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; cat /sys/class/net/enP7s7/carrier /sys/class/net/enP7s7/speed; sudo -n journalctl -k --since "2026-09-05 16:19:25" --no-pager | tail -n 45; systemctl list-timers cx7-canary-restore.timer --no-pager'
+====================================================================================================
+ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; cat /sys/class/net/enP7s7/carrier /sys/class/net/enP7s7/speed; sudo -n journalctl -k --since "2026-09-05 16:19:25" --no-pager | tail -n 45; systemctl list-timers cx7-canary-restore.timer --no-pager'
+====================================================================================================
+/bin/bash -lc ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; lspci -D -d 15b3:1021; systemctl list-timers --all cx7-canary-restore.timer --no-pager; systemctl show cx7-canary-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; ip -br addr show; rdma link show; test ! -d /sys/module/mstflint_access && printf "MST helper remains unloaded\n"; true'
+====================================================================================================
+ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; lspci -D -d 15b3:1021; systemctl list-timers --all cx7-canary-restore.timer --no-pager; systemctl show cx7-canary-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; ip -br addr show; rdma link show; test ! -d /sys/module/mstflint_access && printf "MST helper remains unloaded\n"; true'
+====================================================================================================
+/bin/bash -lc ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is; systemctl show cx7-canary-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; lspci -D -d 15b3:1021; ip -br addr show; rdma link show; sudo -n journalctl -u cx7-canary-restore.service --since "2026-09-05 16:22:20" --no-pager; true'
+====================================================================================================
+ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is; systemctl show cx7-canary-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; lspci -D -d 15b3:1021; ip -br addr show; rdma link show; sudo -n journalctl -u cx7-canary-restore.service --since "2026-09-05 16:22:20" --no-pager; true'
+====================================================================================================
+/bin/bash -lc ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is; systemctl show cx7-canary-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; lspci -D -d 15b3:1021; ip -br addr show enP2p1s0f0np0; ip -br addr show enP2p1s0f1np1; cat /sys/class/net/enP2p1s0f0np0/speed /sys/class/net/enP2p1s0f1np1/speed; rdma link show; sudo -n journalctl -k --since "2026-09-05 16:22:30" --no-pager | tail -n 55; true'
+====================================================================================================
+ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is; systemctl show cx7-canary-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; lspci -D -d 15b3:1021; ip -br addr show enP2p1s0f0np0; ip -br addr show enP2p1s0f1np1; cat /sys/class/net/enP2p1s0f0np0/speed /sys/class/net/enP2p1s0f1np1/speed; rdma link show; sudo -n journalctl -k --since "2026-09-05 16:22:30" --no-pager | tail -n 55; true'
+====================================================================================================
+/bin/bash -lc for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+hostname
+date -u -Is
+test "$(docker inspect -f "{{.State.Running}}" vllm_glm53big)" = false
+test "$(cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state)" = 1
+test -f /etc/nvidia/cx7-hotplug-enabled
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/vendor)" = 0x15b3
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/device)" = 0x1021
+done
+lspci -D -s 0000::
+lspci -D -s 0002::
+readlink -f /sys/class/net/enP7s7/device
+systemctl show nvidia-spark-mlnx-firmware-manager.service -p ActiveState -p SubState
+test "$(systemctl show nvidia-spark-mlnx-firmware-manager.service -p ActiveState --value)" = inactive
+sudo -n fuser /dev/infiniband/uverbs0 /dev/infiniband/uverbs1 /dev/infiniband/uverbs2 /dev/infiniband/uverbs3 /dev/infiniband/rdma_cm /dev/0000:01:00.0_mstconf /dev/0000:01:00.1_mstconf /dev/0002:01:00.0_mstconf /dev/0002:01:00.1_mstconf 2>/dev/null && exit 20
+if test -d /sys/module/mstflint_access; then sudo -n modprobe -r mstflint_access; fi
+test ! -d /sys/module/mstflint_access
+ip -br addr show enP2p1s0f0np0
+ip -br addr show enP2p1s0f1np1
+cat /sys/class/net/enP2p1s0f0np0/speed /sys/class/net/enP2p1s0f1np1/speed
+sha256sum /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh
+printf "PREFLIGHT_OK\n"' || exit
+done
+====================================================================================================
+for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+hostname
+date -u -Is
+test "$(docker inspect -f "{{.State.Running}}" vllm_glm53big)" = false
+test "$(cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state)" = 1
+test -f /etc/nvidia/cx7-hotplug-enabled
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/vendor)" = 0x15b3
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/device)" = 0x1021
+done
+lspci -D -s 0000::
+lspci -D -s 0002::
+readlink -f /sys/class/net/enP7s7/device
+systemctl show nvidia-spark-mlnx-firmware-manager.service -p ActiveState -p SubState
+test "$(systemctl show nvidia-spark-mlnx-firmware-manager.service -p ActiveState --value)" = inactive
+sudo -n fuser /dev/infiniband/uverbs0 /dev/infiniband/uverbs1 /dev/infiniband/uverbs2 /dev/infiniband/uverbs3 /dev/infiniband/rdma_cm /dev/0000:01:00.0_mstconf /dev/0000:01:00.1_mstconf /dev/0002:01:00.0_mstconf /dev/0002:01:00.1_mstconf 2>/dev/null && exit 20
+if test -d /sys/module/mstflint_access; then sudo -n modprobe -r mstflint_access; fi
+test ! -d /sys/module/mstflint_access
+ip -br addr show enP2p1s0f0np0
+ip -br addr show enP2p1s0f1np1
+cat /sys/class/net/enP2p1s0f0np0/speed /sys/class/net/enP2p1s0f1np1/speed
+sha256sum /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh
+printf "PREFLIGHT_OK\n"' || exit
+done
+====================================================================================================
+/bin/bash -lc cx7_power_pids=()
+for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+cx7_host=$(hostname)
+test "$(docker inspect -f "{{.State.Running}}" vllm_glm53big)" = false
+test ! -d /sys/module/mstflint_access
+test "$(cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/hotplug_enabled)" = 1
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/vendor)" = 0x15b3
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/device)" = 0x1021
+done
+sudo -n systemd-run --unit=cx7-all-restore --on-active=180s --timer-property=AccuracySec=1s /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh plug-in
+printf "%s removal starting " "$cx7_host"
+date -u -Is
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  printf "%s removing %s\n" "$cx7_host" "$cx7_bdf"
+  printf "1\n" | sudo -n tee /sys/bus/pci/devices/$cx7_bdf/remove >/dev/null
+  test ! -e /sys/bus/pci/devices/$cx7_bdf
+done
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  test ! -e /sys/bus/pci/devices/$cx7_bdf
+done
+printf "0\n" | sudo -n tee /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state >/dev/null
+test "$(cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state)" = 0
+test -z "$(lspci -D -d 15b3:1021)"
+test "$(cat /sys/class/net/enP7s7/carrier)" = 1
+test "$(cat /sys/class/net/enP7s7/speed)" = 10000
+printf "%s CX7_OFF_MANAGEMENT_10G_OK " "$cx7_host"
+date -u -Is
+systemctl list-timers cx7-all-restore.timer --no-pager' &
+  cx7_power_pids+=("$!")
+done
+cx7_power_failed=0
+for cx7_power_pid in "${cx7_power_pids[@]}"; do wait "$cx7_power_pid" || cx7_power_failed=1; done
+exit "$cx7_power_failed"
+====================================================================================================
+cx7_power_pids=()
+for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+cx7_host=$(hostname)
+test "$(docker inspect -f "{{.State.Running}}" vllm_glm53big)" = false
+test ! -d /sys/module/mstflint_access
+test "$(cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/hotplug_enabled)" = 1
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/vendor)" = 0x15b3
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/device)" = 0x1021
+done
+sudo -n systemd-run --unit=cx7-all-restore --on-active=180s --timer-property=AccuracySec=1s /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh plug-in
+printf "%s removal starting " "$cx7_host"
+date -u -Is
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  printf "%s removing %s\n" "$cx7_host" "$cx7_bdf"
+  printf "1\n" | sudo -n tee /sys/bus/pci/devices/$cx7_bdf/remove >/dev/null
+  test ! -e /sys/bus/pci/devices/$cx7_bdf
+done
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  test ! -e /sys/bus/pci/devices/$cx7_bdf
+done
+printf "0\n" | sudo -n tee /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state >/dev/null
+test "$(cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state)" = 0
+test -z "$(lspci -D -d 15b3:1021)"
+test "$(cat /sys/class/net/enP7s7/carrier)" = 1
+test "$(cat /sys/class/net/enP7s7/speed)" = 10000
+printf "%s CX7_OFF_MANAGEMENT_10G_OK " "$cx7_host"
+date -u -Is
+systemctl list-timers cx7-all-restore.timer --no-pager' &
+  cx7_power_pids+=("$!")
+done
+cx7_power_failed=0
+for cx7_power_pid in "${cx7_power_pids[@]}"; do wait "$cx7_power_pid" || cx7_power_failed=1; done
+exit "$cx7_power_failed"
+====================================================================================================
+/bin/bash -lc for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -u -Is; printf "CX7 state="; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; printf "management speed="; cat /sys/class/net/enP7s7/speed; systemctl show cx7-all-restore.timer -p NextElapseUSecRealtime -p ActiveState; systemctl show cx7-all-restore.service -p ActiveState -p SubState -p Result; test ! -d /sys/module/mstflint_access && printf "MST helper unloaded\n"; true' || exit; done
+====================================================================================================
+for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -u -Is; printf "CX7 state="; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; printf "management speed="; cat /sys/class/net/enP7s7/speed; systemctl show cx7-all-restore.timer -p NextElapseUSecRealtime -p ActiveState; systemctl show cx7-all-restore.service -p ActiveState -p SubState -p Result; test ! -d /sys/module/mstflint_access && printf "MST helper unloaded\n"; true' || exit; done
+====================================================================================================
+/bin/bash -lc for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -u -Is; systemctl show cx7-all-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; printf "CX7 state="; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; lspci -D -d 15b3:1021; ip -br addr show enP2p1s0f0np0; ip -br addr show enP2p1s0f1np1; cat /sys/class/net/enP2p1s0f0np0/speed /sys/class/net/enP2p1s0f1np1/speed; rdma link show; true' || exit
+done
+====================================================================================================
+for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -u -Is; systemctl show cx7-all-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; printf "CX7 state="; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; lspci -D -d 15b3:1021; ip -br addr show enP2p1s0f0np0; ip -br addr show enP2p1s0f1np1; cat /sys/class/net/enP2p1s0f0np0/speed /sys/class/net/enP2p1s0f1np1/speed; rdma link show; true' || exit
+done
+====================================================================================================
+/bin/bash -lc for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+cx7_host=$(hostname)
+printf "%s final recovery verification\n" "$cx7_host"
+case "$cx7_host" in
+  spark-06c4) cx7_peer0=192.168.104.1; cx7_peer1=192.168.100.2 ;;
+  spark-365c) cx7_peer0=192.168.102.2; cx7_peer1=192.168.100.1 ;;
+  spark-ddbf) cx7_peer0=192.168.102.1; cx7_peer1=192.168.103.1 ;;
+  spark-a218) cx7_peer0=192.168.104.2; cx7_peer1=192.168.103.2 ;;
+  *) exit 20 ;;
+esac
+test "$(cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state)" = 1
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/vendor)" = 0x15b3
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/device)" = 0x1021
+done
+for cx7_iface in enP2p1s0f0np0 enP2p1s0f1np1; do
+  test "$(cat /sys/class/net/$cx7_iface/speed)" = 200000
+  test "$(cat /sys/class/net/$cx7_iface/mtu)" = 9000
+done
+ping -n -c 2 -W 2 -I enP2p1s0f0np0 -M do -s 8972 "$cx7_peer0"
+ping -n -c 2 -W 2 -I enP2p1s0f1np1 -M do -s 8972 "$cx7_peer1"
+sudo -n systemctl stop cx7-all-restore.timer
+if test "$cx7_host" = spark-06c4; then sudo -n systemctl stop cx7-canary-restore.timer; fi
+sudo -n modprobe mstflint_access
+test -d /sys/module/mstflint_access
+docker inspect -f "serving={{.State.Status}} id={{.Id}}" vllm_glm53big
+nvidia-smi --query-gpu=clocks.sm,persistence_mode,power.draw --format=csv,noheader
+printf "%s RESTORED_200G_MTU9000_PINGS_OK_MST_RELOADED\n" "$cx7_host"' || exit
+done
+====================================================================================================
+for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+cx7_host=$(hostname)
+printf "%s final recovery verification\n" "$cx7_host"
+case "$cx7_host" in
+  spark-06c4) cx7_peer0=192.168.104.1; cx7_peer1=192.168.100.2 ;;
+  spark-365c) cx7_peer0=192.168.102.2; cx7_peer1=192.168.100.1 ;;
+  spark-ddbf) cx7_peer0=192.168.102.1; cx7_peer1=192.168.103.1 ;;
+  spark-a218) cx7_peer0=192.168.104.2; cx7_peer1=192.168.103.2 ;;
+  *) exit 20 ;;
+esac
+test "$(cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state)" = 1
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/vendor)" = 0x15b3
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/device)" = 0x1021
+done
+for cx7_iface in enP2p1s0f0np0 enP2p1s0f1np1; do
+  test "$(cat /sys/class/net/$cx7_iface/speed)" = 200000
+  test "$(cat /sys/class/net/$cx7_iface/mtu)" = 9000
+done
+ping -n -c 2 -W 2 -I enP2p1s0f0np0 -M do -s 8972 "$cx7_peer0"
+ping -n -c 2 -W 2 -I enP2p1s0f1np1 -M do -s 8972 "$cx7_peer1"
+sudo -n systemctl stop cx7-all-restore.timer
+if test "$cx7_host" = spark-06c4; then sudo -n systemctl stop cx7-canary-restore.timer; fi
+sudo -n modprobe mstflint_access
+test -d /sys/module/mstflint_access
+docker inspect -f "serving={{.State.Status}} id={{.Id}}" vllm_glm53big
+nvidia-smi --query-gpu=clocks.sm,persistence_mode,power.draw --format=csv,noheader
+printf "%s RESTORED_200G_MTU9000_PINGS_OK_MST_RELOADED\n" "$cx7_host"' || exit
+done
+====================================================================================================
+/bin/bash -lc rg --files docs results -g '*IDLE*' -g '*POWER*' -g '*cx7*' -g '*idle*' -g '*power*' -g 'AGENTS.md'
+====================================================================================================
+rg --files docs results -g '*IDLE*' -g '*POWER*' -g '*cx7*' -g '*idle*' -g '*power*' -g AGENTS.md
+====================================================================================================
+/bin/bash -lc for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+cx7_host=$(hostname)
+printf "%s final recovery verification\n" "$cx7_host"
+case "$cx7_host" in
+  spark-06c4) cx7_peer0=192.168.104.1; cx7_peer1=192.168.100.2 ;;
+  spark-365c) cx7_peer0=192.168.102.2; cx7_peer1=192.168.100.1 ;;
+  spark-ddbf) cx7_peer0=192.168.102.1; cx7_peer1=192.168.103.1 ;;
+  spark-a218) cx7_peer0=192.168.104.2; cx7_peer1=192.168.103.2 ;;
+  *) exit 20 ;;
+esac
+test "$(cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state)" = 1
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/vendor)" = 0x15b3
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/device)" = 0x1021
+done
+for cx7_iface in enP2p1s0f0np0 enP2p1s0f1np1; do
+  test "$(cat /sys/class/net/$cx7_iface/speed)" = 200000
+  test "$(cat /sys/class/net/$cx7_iface/mtu)" = 9000
+done
+ping -n -c 2 -W 2 -I enP2p1s0f0np0 -M do -s 8972 "$cx7_peer0"
+ping -n -c 2 -W 2 -I enP2p1s0f1np1 -M do -s 8972 "$cx7_peer1"
+for cx7_unit in cx7-all-restore.timer cx7-canary-restore.timer; do
+  if systemctl list-units --all --plain --no-legend "$cx7_unit" | grep -q "^$cx7_unit "; then
+    sudo -n systemctl stop "$cx7_unit"
+  fi
+done
+sudo -n modprobe mstflint_access
+test -d /sys/module/mstflint_access
+docker inspect -f "serving={{.State.Status}} id={{.Id}} finished={{.State.FinishedAt}} exit={{.State.ExitCode}} OOM={{.State.OOMKilled}}" vllm_glm53big
+nvidia-smi --query-gpu=clocks.sm,persistence_mode,power.draw --format=csv,noheader
+uname -r
+dpkg-query -W dgx-spark-mlnx-hotplug
+printf "%s RESTORED_200G_MTU9000_PINGS_OK_MST_RELOADED\n" "$cx7_host"
+date -u -Is' || exit
+done
+====================================================================================================
+for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
+  ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+cx7_host=$(hostname)
+printf "%s final recovery verification\n" "$cx7_host"
+case "$cx7_host" in
+  spark-06c4) cx7_peer0=192.168.104.1; cx7_peer1=192.168.100.2 ;;
+  spark-365c) cx7_peer0=192.168.102.2; cx7_peer1=192.168.100.1 ;;
+  spark-ddbf) cx7_peer0=192.168.102.1; cx7_peer1=192.168.103.1 ;;
+  spark-a218) cx7_peer0=192.168.104.2; cx7_peer1=192.168.103.2 ;;
+  *) exit 20 ;;
+esac
+test "$(cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state)" = 1
+for cx7_bdf in 0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1; do
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/vendor)" = 0x15b3
+  test "$(cat /sys/bus/pci/devices/$cx7_bdf/device)" = 0x1021
+done
+for cx7_iface in enP2p1s0f0np0 enP2p1s0f1np1; do
+  test "$(cat /sys/class/net/$cx7_iface/speed)" = 200000
+  test "$(cat /sys/class/net/$cx7_iface/mtu)" = 9000
+done
+ping -n -c 2 -W 2 -I enP2p1s0f0np0 -M do -s 8972 "$cx7_peer0"
+ping -n -c 2 -W 2 -I enP2p1s0f1np1 -M do -s 8972 "$cx7_peer1"
+for cx7_unit in cx7-all-restore.timer cx7-canary-restore.timer; do
+  if systemctl list-units --all --plain --no-legend "$cx7_unit" | grep -q "^$cx7_unit "; then
+    sudo -n systemctl stop "$cx7_unit"
+  fi
+done
+sudo -n modprobe mstflint_access
+test -d /sys/module/mstflint_access
+docker inspect -f "serving={{.State.Status}} id={{.Id}} finished={{.State.FinishedAt}} exit={{.State.ExitCode}} OOM={{.State.OOMKilled}}" vllm_glm53big
+nvidia-smi --query-gpu=clocks.sm,persistence_mode,power.draw --format=csv,noheader
+uname -r
+dpkg-query -W dgx-spark-mlnx-hotplug
+printf "%s RESTORED_200G_MTU9000_PINGS_OK_MST_RELOADED\n" "$cx7_host"
+date -u -Is' || exit
+done
+====================================================================================================
+/bin/bash -lc for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -u -Is; sudo -n journalctl -u cx7-all-restore.service -u cx7-canary-restore.service --since "2026-09-05 16:19:00" --no-pager -o short-iso-precise; sudo -n journalctl -k --since "2026-09-05 16:19:00" --no-pager -o short-iso-precise | grep -E "Cable removal|Cable plugin|AER:|severity=|insufficient power|Oops|panic|Call Trace|Call trace|allocation failure"; printf "cpu_online="; cat /sys/devices/system/cpu/online; printf "cpu_governor="; cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor; printf "mgmt_speed="; cat /sys/class/net/enP7s7/speed; true' || exit; done
+====================================================================================================
+for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -u -Is; sudo -n journalctl -u cx7-all-restore.service -u cx7-canary-restore.service --since "2026-09-05 16:19:00" --no-pager -o short-iso-precise; sudo -n journalctl -k --since "2026-09-05 16:19:00" --no-pager -o short-iso-precise | grep -E "Cable removal|Cable plugin|AER:|severity=|insufficient power|Oops|panic|Call Trace|Call trace|allocation failure"; printf "cpu_online="; cat /sys/devices/system/cpu/online; printf "cpu_governor="; cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor; printf "mgmt_speed="; cat /sys/class/net/enP7s7/speed; true' || exit; done
