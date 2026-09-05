@@ -21,6 +21,20 @@ production DCP1 lane of the same image:
 | 100k prefix, cold prefill | 335 s | 335 s |
 | 100k prefix after eviction or engine restart | 335 s (recompute) | **3-8 s from NVMe**, 99.4% of tokens served |
 
+Decode by lane, single stream, greedy, thinking off, GPU clocks locked at
+2000 MHz, DFlash2 K=7 (`docs/DESIGN.md` §8; DCP=4 with candidate compaction):
+
+| lane | count100 | prose | code | verify cycle | KV tokens at 6 GB/rank |
+|---|---|---|---|---|---|
+| DCP=1 (production launcher) | 56.5 tok/s | 19.6 | 48.0 | 139 ms | 99k |
+| DCP=2 (pairs on adjacent ring links) | 54.5 | 18.1 | 41.5 | 144 ms | ~198k |
+| DCP=4 (serving) | 50.5 | 17.5 | 38.6 | 155 ms | 396k |
+
+Accepted tokens per cycle are the same across lanes (7.87 of 8 on count100,
+~2.7 on prose, ~6.5 on code); count100 output is byte-identical. Prose and
+code vary run to run at greedy on every lane, so treat those two columns as
+±5%.
+
 The serving configuration is a 307,200-token window with a 6 GB/rank pool
 and a 150 GB/rank slab store; 512k works but leaves no host memory for the
 tier. The DCP cost was +36 ms per verify cycle; a profiler trace showed a third
