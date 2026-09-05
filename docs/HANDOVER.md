@@ -25,11 +25,18 @@ reasoning; this file is the operational summary.
   candidate compaction (`DCP_COMPACT=1`, launcher default): the DCP verify
   cycle went from 173 to ~151-158 ms, count100 44.6 -> 49.7 tok/s, prose
   14.5 -> 17.1, code 36.1 -> 43.2 (DESIGN.md §8). Serving label:
-  `dcp4-dflash-300k-compact-prod4` (same config, relaunched after the
-  same-clock DCP1 re-baseline of 06:00 and the DCP2 experiment of 06:22).
-  A DCP2 lane is measured and one env away: `DCP_SIZE=2 ./rollout_dcp.sh
-  <label> 180224 2048 6000000000 1` gives 54.5 tok/s at 144 ms with ~198k
-  KV tokens (DESIGN.md §8). Details in DESIGN.md §7-8,
+  `dcp2-dflash-180k-prod` since 2026-09-05 16:00: the user chose the DCP2
+  lane as the default (54.5 tok/s at 144 ms, ~198k KV tokens, 180,224
+  window, 6 GB pool, slab tier, compaction on). The launcher and rollout
+  defaults now equal it (`DCP_SIZE=2 MAXLEN=180224`); DCP4 at 307,200 is
+  `DCP_SIZE=4 ./rollout_dcp.sh <label> 307200 2048 6000000000 1`. pi's
+  glm-5.3 entry on the sandbox is set to a 155,648 context window with
+  32,768 max tokens: vLLM rejects a request whose prompt plus max_tokens
+  exceeds the window (measured: HTTP 400), pi sends its full maxTokens every
+  time and compacts at contextWindow minus a 16,384 reserve, so the prompt
+  budget is 139,264 by pi's count, 146k with a 5% tokenizer margin, plus
+  32,768 = 179k < 180,224. (Before, at 120k/120k, pi was hitting the 400
+  past 87k tokens and recovering by auto-compacting.) Details in DESIGN.md §7-8,
   NVME-DESIGN.md and `results/`.
 - Sixteen patched vLLM files plus one new module in `overlay/` (thirteen for
   DCP, the engine scheduler's invalid-block recovery, the offloading

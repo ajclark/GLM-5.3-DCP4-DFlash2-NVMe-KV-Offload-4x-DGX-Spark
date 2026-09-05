@@ -901,7 +901,9 @@ legitimate middle lane: twice the context of production at 96% of its
 decode speed. The 262k window would need an 8 GB pool at DCP2, which the
 host headroom does not allow next to the tier.
 
-**Serving configuration after this work:** `dcp4-dflash-300k-compact-prod`,
-307,200 window, 6 GB/rank pool, slab tier, compaction on by default
-(`DCP_COMPACT=1` in the launcher), profiler and pre-gather off.
+**Serving configuration after this work:** first `dcp4-dflash-300k-compact-prod`
+(307,200 window, 6 GB/rank pool, slab tier, compaction on by default,
+profiler and pre-gather off), then from 2026-09-05 16:00 the DCP2 lane
+`dcp2-dflash-180k-prod` (180,224 window, same pool and tier) as the
+default, chosen for its decode speed; DCP4 stays selectable.
 
