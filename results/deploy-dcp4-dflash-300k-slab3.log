@@ -1,0 +1,35 @@
+[01:44:39] == D: roll out the fixed connector scheduler (cap 150000000000, fresh prefixes from seed base 1000)
+INFO 09-05 01:52:57 [multinode.py:1706] Slab store: rank 0 at /kvcache/_models_glm-5.3_e2882ca48d1b_r0, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 01:52:57 [multinode.py:1706] Slab store: rank 1 at /kvcache/_models_glm-5.3_e2882ca48d1b_r1, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 01:52:57 [multinode.py:1706] Slab store: rank 2 at /kvcache/_models_glm-5.3_e2882ca48d1b_r2, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 01:52:57 [multinode.py:1706] Slab store: rank 3 at /kvcache/_models_glm-5.3_e2882ca48d1b_r3, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 01:53:57 [multinode.py:1671] Slab store: scheduler will index rank 0's slabs under /kvcache
+[01:54:39] D: offload probe without the warm step (reload must HIT from a once-stored prefix)
+  cold   {'prompt_tokens': 99980, 'ttft_s': 342.08, 'content': 'OK', 'prefix_hits': 0.0, 'prefix_queries': 99980.0, 'ext_hits': 0.0, 'ext_queries': 99980.0}
+  evict0 {'prompt_tokens': 99907, 'ttft_s': 339.25, 'content': 'OK', 'prefix_hits': 0.0, 'prefix_queries': 99907.0, 'ext_hits': 0.0, 'ext_queries': 99907.0}
+  evict1 {'prompt_tokens': 99913, 'ttft_s': 338.45, 'content': 'OK', 'prefix_hits': 0.0, 'prefix_queries': 99913.0, 'ext_hits': 0.0, 'ext_queries': 99913.0}
+  evict2 {'prompt_tokens': 99938, 'ttft_s': 338.44, 'content': 'OK', 'prefix_hits': 0.0, 'prefix_queries': 99938.0, 'ext_hits': 0.0, 'ext_queries': 99938.0}
+  reload {'prompt_tokens': 99980, 'ttft_s': 3.39, 'content': 'OK', 'prefix_hits': 0.0, 'prefix_queries': 99980.0, 'ext_hits': 99328.0, 'ext_queries': 99980.0}
+[02:18:30] D: slab sizes:
+  spark-06c4 slab bytes=15513038336 15G
+  spark-365c slab bytes=15513038336 15G
+  spark-ddbf slab bytes=15513038336 15G
+  spark-a218 slab bytes=15513038336 15G
+[02:18:31] == E: restart (once-stored prefixes must hit on a fresh engine)
+INFO 09-05 02:26:38 [multinode.py:1706] Slab store: rank 0 at /kvcache/_models_glm-5.3_e2882ca48d1b_r0, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 02:26:38 [multinode.py:1706] Slab store: rank 1 at /kvcache/_models_glm-5.3_e2882ca48d1b_r1, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 02:26:38 [multinode.py:1706] Slab store: rank 2 at /kvcache/_models_glm-5.3_e2882ca48d1b_r2, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 02:26:38 [multinode.py:1706] Slab store: rank 3 at /kvcache/_models_glm-5.3_e2882ca48d1b_r3, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 02:27:40 [multinode.py:1671] Slab store: scheduler will index rank 0's slabs under /kvcache
+== dcp4-dflash-300k-slab3-e @ http://spark-06c4.local:8000 phase=reload
+  reload-after-restart {'prompt_tokens': 99980, 'ttft_s': 8.25, 'content': 'OK', 'ext_hits': 99328.0, 'ext_queries': 99980.0}
+== done
+== dcp4-dflash-300k-slab3-e @ http://spark-06c4.local:8000 phase=reload
+  reload-evict2-after-restart {'prompt_tokens': 99938, 'ttft_s': 3.85, 'content': 'OK', 'ext_hits': 99328.0, 'ext_queries': 99938.0}
+== done
+[02:28:43] E: slab sizes:
+  spark-06c4 slab bytes=15513038336 15G
+  spark-365c slab bytes=15513038336 15G
+  spark-ddbf slab bytes=15513038336 15G
+  spark-a218 slab bytes=15513038336 15G
+[02:28:44] == fix sequence done

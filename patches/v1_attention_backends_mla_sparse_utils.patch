@@ -1,0 +1,148 @@
+--- a/vllm/v1/attention/backends/mla/sparse_utils.py
++++ b/vllm/v1/attention/backends/mla/sparse_utils.py
+@@ -23,6 +23,11 @@
+     BLOCK_N: tl.constexpr,  # tile width along columns
+     HAS_PREFILL: tl.constexpr,
+     COUNT_VALID: tl.constexpr,  # whether to count valid indices
++    # DCP de-interleave. With DCP_SIZE == 1 (any interleave) every token is
++    # local and local_idx == tok, i.e. bit-identical to the non-DCP kernel.
++    DCP_SIZE: tl.constexpr,
++    DCP_RANK: tl.constexpr,
++    DCP_INTERLEAVE: tl.constexpr,
+     # strides (in elements)
+     bt_stride0,
+     bt_stride1,
+@@ -52,6 +57,19 @@
+     if HAS_PREFILL:
+         prefill_req_id = tl.load(prefill_request_id_ptr + token_id)
+         is_prefill = prefill_req_id >= 0
++    # DCP: the indexer emits GLOBAL per-request positions. Position p is
++    # owned by rank (p // I) % N and stored at local position
++    # (p // (N * I)) * I + p % I on that rank (this mirrors
++    # _compute_slot_mapping_kernel in v1/worker/block_table.py). Tokens owned
++    # by another rank become -1 so the kernel skips them; the cross-rank LSE
++    # merge in mla_attention.py puts the pieces back together.
++    if DCP_SIZE > 1:
++        owning_rank = (tok // DCP_INTERLEAVE) % DCP_SIZE
++        is_invalid_tok |= owning_rank != DCP_RANK
++        tok = (tok // (DCP_SIZE * DCP_INTERLEAVE)) * DCP_INTERLEAVE + (
++            tok % DCP_INTERLEAVE
++        )
++
+     # Compute block id and in-block offset
+     block_id = tok // BLOCK_SIZE
+     inblock_off = tok % BLOCK_SIZE
+@@ -176,6 +194,113 @@
+         BLOCK_N,
+         HAS_PREFILL_WORKSPACE,
+         return_valid_counts,
++        1,  # DCP_SIZE: plain (non-DCP) conversion
++        0,  # DCP_RANK
++        1,  # DCP_INTERLEAVE
++        # strides
++        bt_stride0,
++        bt_stride1,
++        ti_stride0,
++        ti_stride1,
++        out_stride0,
++        out_stride1,
++    )
++
++    if return_valid_counts:
++        assert valid_counts is not None
++        return out, valid_counts
++    return out
++
++
++def triton_filter_and_convert_dcp_index(
++    req_id: torch.Tensor,  # int32 [num_tokens]
++    block_table: torch.Tensor,  # int32 [num_requests, max_num_blocks_per_req]
++    token_indices: torch.Tensor,  # int32 [num_tokens, NUM_TOPK_TOKENS]
++    dcp_size: int,
++    dcp_rank: int,
++    cp_kv_cache_interleave_size: int = 1,
++    BLOCK_SIZE: int = 64,
++    NUM_TOPK_TOKENS: int = 2048,
++    BLOCK_N: int = 128,
++    return_valid_counts: bool = False,
++) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
++    """Filter GLOBAL per-request top-k positions to this DCP rank's local
++    cache slots.
++
++    out[t, i] = block_table[req_id[t], local // BLOCK_SIZE] * BLOCK_SIZE
++                + local % BLOCK_SIZE     if this rank owns token_indices[t, i]
++              = -1                        otherwise (remote, padding, OOB)
++
++    where, for global position p, owner = (p // I) % N and
++    local = (p // (N * I)) * I + p % I (I = cp_kv_cache_interleave_size,
++    N = dcp_size). The -1 entries stay in place (no compaction): the Triton
++    sparse-MLA kernels mask them per cell, and the caller uses "all -1" rows
++    to neutralize this rank's contribution in the cross-rank LSE merge.
++
++    With dcp_size == 1 this is exactly triton_convert_req_index_to_global_index.
++    """
++    assert dcp_size >= 1
++    assert 0 <= dcp_rank < dcp_size
++    assert BLOCK_SIZE % cp_kv_cache_interleave_size == 0, (
++        f"BLOCK_SIZE ({BLOCK_SIZE}) must be divisible by "
++        f"cp_kv_cache_interleave_size ({cp_kv_cache_interleave_size})."
++    )
++    if dcp_size == 1:
++        return triton_convert_req_index_to_global_index(
++            req_id,
++            block_table,
++            token_indices,
++            BLOCK_SIZE=BLOCK_SIZE,
++            NUM_TOPK_TOKENS=NUM_TOPK_TOKENS,
++            BLOCK_N=BLOCK_N,
++            return_valid_counts=return_valid_counts,
++        )
++
++    assert req_id.dtype == torch.int32
++    assert block_table.dtype == torch.int32
++    assert token_indices.dtype == torch.int32
++    assert token_indices.shape[1] == NUM_TOPK_TOKENS
++    assert NUM_TOPK_TOKENS % BLOCK_N == 0, (
++        f"NUM_TOPK_TOKENS ({NUM_TOPK_TOKENS}) must be divisible by BLOCK_N ({BLOCK_N})"
++    )
++
++    num_tokens = req_id.shape[0]
++    max_num_blocks_per_req = block_table.shape[1]
++    tiles_per_row = NUM_TOPK_TOKENS // BLOCK_N
++
++    req_id_c = req_id.contiguous()
++    block_table_c = block_table.contiguous()
++    token_indices_c = token_indices.contiguous()
++    out = torch.empty_like(token_indices_c)
++
++    valid_counts: torch.Tensor | None = None
++    if return_valid_counts:
++        valid_counts = torch.zeros(
++            num_tokens, dtype=torch.int32, device=token_indices.device
++        )
++
++    bt_stride0, bt_stride1 = block_table_c.stride()
++    ti_stride0, ti_stride1 = token_indices_c.stride()
++    out_stride0, out_stride1 = out.stride()
++
++    grid = (num_tokens, tiles_per_row)
++    _convert_req_index_to_global_index_kernel[grid](
++        req_id_c,
++        block_table_c,
++        token_indices_c,
++        out,
++        valid_counts,
++        None,  # no prefill workspace on the DCP path
++        None,
++        # shapes / constexprs
++        max_num_blocks_per_req,
++        BLOCK_SIZE,
++        BLOCK_N,
++        False,  # HAS_PREFILL
++        return_valid_counts,
++        dcp_size,
++        dcp_rank,
++        cp_kv_cache_interleave_size,
+         # strides
+         bt_stride0,
+         bt_stride1,

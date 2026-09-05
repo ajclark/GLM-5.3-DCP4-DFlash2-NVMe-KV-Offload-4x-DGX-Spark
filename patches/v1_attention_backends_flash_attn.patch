@@ -1,0 +1,80 @@
+--- a/vllm/v1/attention/backends/flash_attn.py
++++ b/vllm/v1/attention/backends/flash_attn.py
+@@ -360,6 +360,58 @@
+             self.dcp_world_size = 1
+             self.dcp_rank = 0
+ 
++        # A replicated KV group (sliding window) keeps every position on every
++        # rank, so its metadata is built exactly as without DCP: no local
++        # context lengths, no gathered head count. The impls of its layers
++        # make the matching decision from their sliding window (see
++        # FlashAttentionImpl.__init__); verify the two agree so a
++        # sliding-window layer folded into a token-sharded full-attention
++        # group (e.g. with the hybrid KV manager disabled) fails loudly
++        # instead of attending over a quarter of its window.
++        if self.dcp_world_size > 1:
++            from vllm.v1.kv_cache_interface import cp_world_size_for_kv_cache_spec
++
++            group_cp = cp_world_size_for_kv_cache_spec(
++                kv_cache_spec, self.dcp_world_size
++            )
++            layers = vllm_config.compilation_config.static_forward_context
++            for name in layer_names:
++                impl = getattr(layers.get(name), "impl", None)
++                if impl is None:
++                    continue
++                impl_replicated = getattr(impl, "dcp_world_size", group_cp) == 1
++                if impl_replicated != (group_cp == 1):
++                    raise NotImplementedError(
++                        f"Layer {name!r}: its KV cache group is "
++                        f"{'replicated' if group_cp == 1 else 'token-sharded'} "
++                        "under DCP but the attention impl is "
++                        f"{'replicated' if impl_replicated else 'token-sharded'}. "
++                        "Sliding-window layers must be managed as sliding-window "
++                        "groups under DCP (do not disable the hybrid KV cache "
++                        "manager)."
++                    )
++            if group_cp == 1:
++                self.dcp_world_size = 1
++                self.dcp_rank = 0
++            elif not self.model_config.use_mla:
++                # A token-sharded GQA/MQA group is only valid when every rank
++                # of the DCP group holds the same KV heads, i.e. the heads are
++                # replicated across TP (config/model.py applies this rule to
++                # the target; a drafter's config never reaches it). Without
++                # it the query all-gather would mix ranks that hold different
++                # head shards and produce silent garbage.
++                tp = self.parallel_config.tensor_parallel_size
++                total_kv = self.model_config.get_total_num_kv_heads()
++                if not (tp > total_kv and self.dcp_world_size <= tp // total_kv):
++                    raise NotImplementedError(
++                        f"Layers {layer_names}: a token-sharded KV group needs "
++                        f"tensor_parallel_size ({tp}) > total KV heads "
++                        f"({total_kv}) and dcp ({self.dcp_world_size}) <= "
++                        f"tp // kv_heads for GQA DCP. A drafter with TP-sharded "
++                        "KV heads must use a sliding-window (replicated) KV "
++                        "group under DCP."
++                    )
++
+         self.cp_kv_cache_interleave_size = (
+             self.parallel_config.cp_kv_cache_interleave_size
+         )
+@@ -660,6 +712,18 @@
+         self.logits_soft_cap = logits_soft_cap
+         self.kv_sharing_target_layer_name = kv_sharing_target_layer_name
+ 
++        # Sliding-window KV is replicated across DCP ranks (every rank keeps
++        # every position for its TP shard of heads), so a sliding-window layer
++        # runs its plain path: no query all-gather, no LSE merge, no LSE to
++        # return. AttentionImplBase.__new__ has already read the process DCP
++        # group; undo it here. kv_cache_interface.cp_world_size_for_kv_cache_spec
++        # makes the same decision for the KV manager and the block table, and
++        # the metadata builder checks that the two agree.
++        if sliding_window is not None and self.dcp_world_size > 1:
++            self.dcp_world_size = 1
++            self.dcp_rank = 0
++            self.need_to_return_lse_for_decode = False
++
+         self.num_queries_per_kv = self.num_heads // self.num_kv_heads
+ 
+         self.attn_type = attn_type

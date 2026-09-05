@@ -1,0 +1,19 @@
+[19:58:22] == deploy NVMe tier: dcp4-dflash-300k-kvtier3 MAXLEN=307200 KVBYTES=6000000000 tokens=100000
+[20:08:07] stack up; tier startup lines:
+      4 INFO 09-04 20:06:32 [factory.py:61] Creating offloading spec with name: MultiNodeTieringOffloadingSpec
+      4 INFO 09-04 20:06:32 [factory.py:62] Creating v1 connector with name: MultiNodeOffloadingConnector and engine_id: 885bc2a5-9669-4a21-a77e-9c0344b62731
+      1 INFO 09-04 20:06:33 [multinode.py:621] Worker fs tier: rank 0 writes under /kvcache/_models_glm-5.3_54903f9e584c_r0
+      1 INFO 09-04 20:06:33 [multinode.py:621] Worker fs tier: rank 1 writes under /kvcache/_models_glm-5.3_54903f9e584c_r1
+      1 INFO 09-04 20:06:33 [multinode.py:621] Worker fs tier: rank 2 writes under /kvcache/_models_glm-5.3_54903f9e584c_r2
+      1 INFO 09-04 20:06:33 [multinode.py:621] Worker fs tier: rank 3 writes under /kvcache/_models_glm-5.3_54903f9e584c_r3
+      1 INFO 09-04 20:07:34 [factory.py:61] Creating offloading spec with name: MultiNodeTieringOffloadingSpec
+      1 INFO 09-04 20:07:34 [factory.py:62] Creating v1 connector with name: MultiNodeOffloadingConnector and engine_id: 885bc2a5-9669-4a21-a77e-9c0344b62731
+      1 INFO 09-04 20:07:34 [multinode.py:584] MultiNodeTieringOffloadingSpec: CPU tier 260 blocks (lru), worker fs tier at /kvcache
+      1 INFO 09-04 20:07:34 [scheduler.py:176] KV offloading: EAGLE/MTP draft attention groups [0, 1] detected. The trailing block of these groups will be excluded from
+[20:13:55] post-boot checks done; running offload checks
+[20:42:50] offload checks done; relaunching the same stack for the durability test
+[20:52:37] restarted; re-sending the cold prefix
+== dcp4-dflash-300k-kvtier3 @ http://spark-06c4.local:8000 phase=reload
+  reload-after-restart {'prompt_tokens': 99975, 'ttft_s': 335.38, 'content': 'OK', 'ext_hits': 0.0, 'ext_queries': 99975.0}
+== done
+[20:58:13] == deploy sequence done

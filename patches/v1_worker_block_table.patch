@@ -1,0 +1,92 @@
+--- a/vllm/v1/worker/block_table.py
++++ b/vllm/v1/worker/block_table.py
+@@ -26,6 +26,7 @@
+         device: torch.device,
+         kernel_block_size: int,
+         cp_kv_cache_interleave_size: int,
++        cp_world_size: int | None = None,
+     ):
+         """
+         Args:
+@@ -38,6 +39,12 @@
+             kernel_block_size: The block_size of underlying attention kernel.
+                 Will be the same as `block_size` if `block_size` is supported
+                 by the attention kernel.
++            cp_world_size: Context-parallel world size that owns this group's
++                block geometry (kv_cache_interface.cp_world_size_for_kv_cache_spec).
++                ``1`` means the group is replicated across the DCP ranks: every
++                rank stores every position, so the slot mapping runs with a CP
++                size of 1 regardless of the process DCP group. ``None`` uses the
++                process DCP/PCP groups (token-sharded, the default).
+         """
+         self.max_num_reqs = max_num_reqs
+         self.max_num_batched_tokens = max_num_batched_tokens
+@@ -97,6 +104,20 @@
+             # DCP might not be initialized in testing
+             self.dcp_world_size = 1
+             self.dcp_rank = 0
++        if cp_world_size is not None:
++            total = self.pcp_world_size * self.dcp_world_size
++            assert cp_world_size in (1, total), (
++                f"cp_world_size must be 1 (replicated) or the process CP size "
++                f"{total}, got {cp_world_size}"
++            )
++            if cp_world_size == 1:
++                # Replicated group: behave exactly as without context
++                # parallelism. Rank 0 of a world of 1 owns every position.
++                self.pcp_world_size = 1
++                self.pcp_rank = 0
++                self.dcp_world_size = 1
++                self.dcp_rank = 0
++        self.cp_world_size = self.pcp_world_size * self.dcp_world_size
+         self.cp_kv_cache_interleave_size = cp_kv_cache_interleave_size
+ 
+     def append_row(
+@@ -234,21 +255,31 @@
+         kernel_block_sizes: list[int],
+         max_num_blocks: list[int] | None = None,
+         cp_kv_cache_interleave_size: int = 1,
++        cp_world_sizes: list[int] | None = None,
+     ) -> None:
+         if len(kernel_block_sizes) != len(block_sizes):
+             raise ValueError(
+                 f"kernel_block_sizes length ({len(kernel_block_sizes)}) "
+                 f"must match block_sizes length ({len(block_sizes)})"
+             )
++        # Per-group CP world size: token-sharded groups use the process CP
++        # size, replicated groups (sliding window under DCP) use 1. Defaults
++        # to the process CP size for every group, i.e. the old behaviour.
++        if cp_world_sizes is None:
++            cp_world_sizes = [get_total_cp_world_size()] * len(block_sizes)
++        if len(cp_world_sizes) != len(block_sizes):
++            raise ValueError(
++                f"cp_world_sizes length ({len(cp_world_sizes)}) "
++                f"must match block_sizes length ({len(block_sizes)})"
++            )
+         if max_num_blocks is None:
+             # Note(hc): each dcp rank only store
+             # (max_model_len//dcp_world_size) tokens in kvcache,
+             # so the block_size which used for calc max_num_blocks_per_req
+             # must be multiplied by dcp_world_size.
+-            total_cp_world_size = get_total_cp_world_size()
+             max_num_blocks = [
+-                cdiv(max_model_len, block_size * total_cp_world_size)
+-                for block_size in block_sizes
++                cdiv(max_model_len, block_size * cp_world_size)
++                for block_size, cp_world_size in zip(block_sizes, cp_world_sizes)
+             ]
+ 
+         if len(max_num_blocks) != len(block_sizes):
+@@ -274,9 +305,10 @@
+                 device,
+                 kernel_block_size,
+                 cp_kv_cache_interleave_size,
++                cp_world_size=cp_world_size,
+             )
+-            for block_size, kernel_block_size, max_num_blocks_per_req in zip(
+-                block_sizes, kernel_block_sizes, max_num_blocks
++            for block_size, kernel_block_size, max_num_blocks_per_req, cp_world_size in zip(
++                block_sizes, kernel_block_sizes, max_num_blocks, cp_world_sizes
+             )
+         ]
+ 

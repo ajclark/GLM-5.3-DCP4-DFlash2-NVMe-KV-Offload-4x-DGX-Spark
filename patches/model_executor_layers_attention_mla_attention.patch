@@ -1,0 +1,37 @@
+--- a/vllm/model_executor/layers/attention/mla_attention.py
++++ b/vllm/model_executor/layers/attention/mla_attention.py
+@@ -785,7 +785,20 @@
+             else:
+                 mqa_q = (mqa_ql_nope, mqa_q_pe)
+             if self.impl.dcp_world_size > 1:
+-                assert not fp8_attention, "DCP not support fp8 kvcache now."
++                # The general fp8 MLA decode path quantizes the query against
++                # a per-layer scale and relies on the kernel applying a
++                # matching k_scale, which the cross-rank merge does not model.
++                # The sparse fp8_ds_mla path is exempt: its cache carries
++                # per-128-element scales inline and the kernel dequantizes
++                # internally, and the query stays bf16 here (sparse impls do
++                # not set supports_quant_query_input).
++                assert not fp8_attention or (
++                    is_sparse_impl and self.kv_cache_dtype == "fp8_ds_mla"
++                ), (
++                    "DCP does not support this fp8 kv-cache configuration "
++                    f"(backend={self.attn_backend.get_name()}, "
++                    f"kv_cache_dtype={self.kv_cache_dtype})."
++                )
+                 # concatenate mqa_ql_nope and mqa_q_pe -> (B, N, L + P)
+                 mqa_q = torch.cat(mqa_q, dim=-1)
+                 # mqa_q do allgather in head dim.
+@@ -798,6 +811,12 @@
+ 
+             # correct dcp attn_out with lse.
+             if self.impl.dcp_world_size > 1:
++                assert lse is not None, (
++                    "DCP needs a per-token softmax LSE from the decode "
++                    f"kernel, but {self.impl.__class__.__name__} returned "
++                    "None. Backends must set can_return_lse_for_decode and "
++                    "honour need_to_return_lse_for_decode."
++                )
+                 if self.dcp_a2a:
+                     attn_out = dcp_a2a_lse_reduce(
+                         attn_out,

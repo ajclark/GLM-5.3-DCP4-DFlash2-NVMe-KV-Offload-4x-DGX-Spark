@@ -1,0 +1,18 @@
+--- a/vllm/v1/worker/gpu_input_batch.py
++++ b/vllm/v1/worker/gpu_input_batch.py
+@@ -106,6 +106,7 @@
+         is_pooling_model: bool = False,
+         cp_kv_cache_interleave_size: int = 1,
+         reasoning_config: ReasoningConfig | None = None,
++        cp_world_sizes: list[int] | None = None,
+     ):
+         self.thinking_budget_state_holder = maybe_create_thinking_budget_state_holder(
+             reasoning_config,
+@@ -178,6 +179,7 @@
+             kernel_block_sizes=kernel_block_sizes,
+             max_num_blocks=max_num_blocks_per_req,
+             cp_kv_cache_interleave_size=cp_kv_cache_interleave_size,
++            cp_world_sizes=cp_world_sizes,
+         )
+ 
+         # Sampling-related.

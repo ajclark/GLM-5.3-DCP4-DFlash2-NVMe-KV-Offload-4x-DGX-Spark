@@ -1,0 +1,89 @@
+--- a/vllm/v1/core/sched/scheduler.py
++++ b/vllm/v1/core/sched/scheduler.py
+@@ -2485,50 +2485,50 @@
+             is_affected = False
+             marked_invalid_block = False
+             req_id = request.request_id
+-            # TODO (davidb): add support for hybrid memory allocator
+-            (req_block_ids,) = self.kv_cache_manager.get_block_ids(req_id)
++            # DCP overlay: hybrid-aware. Walk every KV-cache group; a group's
++            # block covers block_size x (its context-parallel factor) tokens
++            # (256 for the sharded target group, 64 for the replicated drafter
++            # group). Truncate at the earliest invalid token position over all
++            # groups, aligned down to the scheduler block.
++            group_block_ids = self.kv_cache_manager.get_block_ids(req_id)
++            managers = self.kv_cache_manager.coordinator.single_type_managers
+             # We iterate only over blocks that may contain externally computed
+             # tokens
+             req_num_computed_tokens = (
+                 request.num_computed_tokens - num_scheduled_tokens.get(req_id, 0)
+             )
+-
+-            req_num_computed_blocks = (
+-                req_num_computed_tokens + self.block_size - 1
+-            ) // self.block_size
+-            for idx, block_id in zip(range(req_num_computed_blocks), req_block_ids):
+-                if block_id not in invalid_block_ids:
+-                    continue
+-
+-                is_affected = True
+-
+-                if block_id in marked_invalid_block_ids:
+-                    # This invalid block is shared with a previous request
+-                    # and was already marked for recomputation.
+-                    # This means this request can still consider this block
+-                    # as computed when rescheduled.
+-                    # Currently this only applies to sync loading; Async
+-                    # loading does not yet support block sharing
+-                    continue
+-
+-                marked_invalid_block_ids.add(block_id)
+-
+-                if marked_invalid_block:
+-                    # This request has already marked an invalid block for
+-                    # recomputation and updated its num_computed_tokens.
+-                    continue
+-
+-                marked_invalid_block = True
++            first_bad_token: int | None = None
++            for group_idx, req_block_ids in enumerate(group_block_ids):
++                mgr = managers[group_idx]
++                tokens_per_block = mgr.block_size * max(
++                    1, int(getattr(mgr, "dcp_world_size", 1))
++                )
++                req_num_computed_blocks = (
++                    req_num_computed_tokens + tokens_per_block - 1
++                ) // tokens_per_block
++                for idx, block_id in zip(range(req_num_computed_blocks), req_block_ids):
++                    if block_id not in invalid_block_ids:
++                        continue
++                    is_affected = True
++                    if block_id in marked_invalid_block_ids:
++                        # shared with a previous request that already recomputes it
++                        # (sync loading only)
++                        continue
++                    marked_invalid_block_ids.add(block_id)
++                    marked_invalid_block = True
++                    bad_token = idx * tokens_per_block
++                    if first_bad_token is None or bad_token < first_bad_token:
++                        first_bad_token = bad_token
++                    # collect invalid block and all downstream dependent blocks
++                    if evict_blocks:
++                        blocks_to_evict.update(req_block_ids[idx:])
++            if first_bad_token is not None:
+                 # Truncate the computed tokens at the first failed block
+-                request.num_computed_tokens = idx * self.block_size
+-                num_affected_tokens = (
++                first_bad_token -= first_bad_token % self.block_size
++                request.num_computed_tokens = first_bad_token
++                total_affected_tokens += (
+                     req_num_computed_tokens - request.num_computed_tokens
+                 )
+-                total_affected_tokens += num_affected_tokens
+-
+-                # collect invalid block and all downstream dependent blocks
+-                if evict_blocks:
+-                    blocks_to_evict.update(req_block_ids[idx:])
+ 
+             if is_affected:
+                 if not marked_invalid_block:

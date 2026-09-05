@@ -1,0 +1,46 @@
+{
+ "rows": [
+  {
+   "name": "gen-prose",
+   "prompt_tokens": 46,
+   "gen_tokens": 350,
+   "ttft_s": 0.417,
+   "decode_tok_s": 6.26,
+   "sha": "e811ee3c101a9c81",
+   "head": "# Tensor-Parallel Attention in Transformers\n\n## Splitting the Attention Heads\n\nIn tensor parallelism"
+  },
+  {
+   "name": "pf-3k",
+   "prompt_tokens": 2935,
+   "gen_tokens": 96,
+   "ttft_s": 9.894,
+   "decode_tok_s": 3.34,
+   "sha": "52388fe020b5d421",
+   "head": "The text is a long, repetitive stream of single words drawn from computing and machine-learning voca"
+  },
+  {
+   "name": "pf-6k",
+   "prompt_tokens": 5841,
+   "gen_tokens": 20,
+   "ttft_s": 26.853,
+   "decode_tok_s": 10.6,
+   "sha": "51099ed75e4bc014",
+   "head": "token, memory, attention, gradient, cache, system, matrix, marble, bandwidth, layer"
+  },
+  {
+   "name": "gen-code",
+   "prompt_tokens": 52,
+   "gen_tokens": 219,
+   "ttft_s": 25.268,
+   "decode_tok_s": 22.69,
+   "sha": "fe806660cf7fe3d2",
+   "head": "```python\ndef merge_intervals(intervals):\n    \"\"\"Merge overlapping intervals and return them sorted "
+  }
+ ],
+ "summary": {
+  "wall_s": 56.2,
+  "drafts": 209.0,
+  "accepted": 477.0,
+  "accepted_per_cycle": 3.282
+ }
+}

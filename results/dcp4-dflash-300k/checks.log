@@ -1,0 +1,197 @@
+[17:10:17] == post-boot checks for dcp4-dflash-300k
+  spark-06c4 avail=4779MiB swapfree=13618MiB
+  spark-365c avail=5977MiB swapfree=14141MiB
+  spark-ddbf avail=5970MiB swapfree=14143MiB
+  spark-a218 avail=6010MiB swapfree=14141MiB
+[17:10:18] log scan (boot):
+      4 WARNING 09-04 17:10:00 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      4 INFO 09-04 17:09:16 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      1 INFO 09-04 17:01:18 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+[17:10:18] -- warmup sweep (inference-time JITs happen here, under observation)
+== dcp4-dflash-300k @ http://spark-06c4.local:8000 phase=warmup
+  warmup     1 words -> 22 tok, 0.5s: 'OK'
+  warmup     4 words -> 25 tok, 0.7s: 'OK'
+  warmup    13 words -> 36 tok, 0.7s: 'OK'
+  warmup    70 words -> 94 tok, 0.9s: 'OK'
+  warmup   250 words -> 277 tok, 1.5s: 'OK'
+  warmup   700 words -> 747 tok, 3.0s: 'OK'
+  warmup  1400 words -> 1466 tok, 5.1s: 'OK'
+  warmup  2800 words -> 2949 tok, 9.9s: 'OK'
+  warmup 38500 words -> 40031 tok, 131.3s: 'OK'
+== done
+[17:12:53] log scan (warmup):
+      4 WARNING 09-04 17:10:19 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to
+      4 WARNING 09-04 17:10:00 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      4 INFO 09-04 17:09:16 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      1 INFO 09-04 17:01:18 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+  spark-06c4 avail=3594MiB swapfree=13635MiB
+  spark-365c avail=4790MiB swapfree=14157MiB
+  spark-ddbf avail=4805MiB swapfree=14159MiB
+  spark-a218 avail=4852MiB swapfree=14157MiB
+[17:12:54] -- determinism vs baseline
+== dcp4-dflash-300k @ http://spark-06c4.local:8000 phase=determinism
+  u512            431-> 128 tok  sha=1ea17c1d0a72c0b4  9.5s  '# Summary\n\nThe text is a stream of technical vocab'
+  u1536          1247-> 128 tok  sha=d73980cfe300194e  13.0s  '# Summary\n\nThe text is a large collection of techn'
+  c1024-seed      824-> 128 tok  sha=3ce13ace861af8ab  9.9s  '# Summary\n\nThe text is a stream of technical vocab'
+  c1024+u1536    2017-> 128 tok  sha=42b32204628d093a  13.8s  '# Summary\n\nThe text is a large collection of techn'
+== done
+[17:13:40] -- bench
+== dcp4-dflash-300k @ http://spark-06c4.local:8000 phase=bench
+  count100  rep0 gen= 299 ttft=0.454s decode=45.37 tok/s acc/cycle=7.868 cycle=172.9ms sha=34a4f1e5bb080915
+  count100  rep1 gen= 299 ttft=0.489s decode=45.3 tok/s acc/cycle=7.868 cycle=173.1ms sha=34a4f1e5bb080915
+  prose     rep0 gen= 450 ttft=0.599s decode=15.78 tok/s acc/cycle=2.744 cycle=173.5ms sha=09537c53d6f58671
+  prose     rep1 gen= 450 ttft=0.563s decode=16.45 tok/s acc/cycle=2.873 cycle=173.9ms sha=aac19667c8a897a7
+  code      rep0 gen= 225 ttft=0.658s decode=34.8 tok/s acc/cycle=6.25 cycle=178.8ms sha=191ca5a52a4d9c4f
+  code      rep1 gen= 251 ttft=0.519s decode=33.96 tok/s acc/cycle=6.122 cycle=179.6ms sha=1a1a3e7b25b1706d
+== done
+baseline=results/baseline-dcp1-prod
+candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-300k
+
+== determinism (greedy, thinking off)
+  u512         base=c98ba48947d00b5a cand=1ea17c1d0a72c0b4 DIFFERS  tokens 128 vs 128
+     base: '# Summary\n\nThe text is a stream of technical vocabulary related to machine learning and GPU computing, mixing '
+     cand: '# Summary\n\nThe text is a stream of technical vocabulary drawn from machine learning and computing—words like "'
+  u1536        base=e0ade287d5ad19d3 cand=d73980cfe300194e DIFFERS  tokens 128 vs 128
+     base: '# Summary\n\nThe text is a large collection of technical and nature-related words—such as "glacier," "softmax," '
+     cand: '# Summary\n\nThe text is a large collection of technical and nature-related words—such as "glacier," "softmax," '
+  c1024-seed   base=f857338257e568af cand=3ce13ace861af8ab DIFFERS  tokens 128 vs 128
+     base: '# Summary\n\nThe text is a stream of technical-sounding vocabulary related to machine learning and GPU computing'
+     cand: '# Summary\n\nThe text is a stream of technical vocabulary related to machine learning and GPU computing—words li'
+  c1024+u1536  base=c229bc4a76e4baf3 cand=42b32204628d093a DIFFERS  tokens 128 vs 128
+     base: '# Summary\n\nThe text is a large collection of technical vocabulary related to machine learning and GPU computin'
+     cand: '# Summary\n\nThe text is a large collection of technical vocabulary related to machine learning and GPU computin'
+  0/4 identical
+
+== bench (per prompt, mean over reps)
+  prompt              decode tok/s          acc/cycle           cycle ms           ttft s
+  count100            57.0 -> 45.3       7.87 -> 7.87     137.6 -> 173.0     0.39 -> 0.47
+  prose               21.3 -> 16.1       2.94 -> 2.81     137.9 -> 173.7     0.45 -> 0.58
+  code                44.8 -> 34.4       6.29 -> 6.19     140.1 -> 179.2     0.48 -> 0.59
+
+  count100  text hashes base=['34a4f1e5bb080915'] cand=['34a4f1e5bb080915'] IDENTICAL
+  prose     text hashes base=['3e54a1ff5fbc7c85', '6bb346226fc09c12'] cand=['09537c53d6f58671', 'aac19667c8a897a7'] DIFFER
+  code      text hashes base=['0625f62aca0f3d82', 'a128d0b562fb18d1'] cand=['191ca5a52a4d9c4f', '1a1a3e7b25b1706d'] DIFFER
+[17:15:07] -- concurrent (mixed decode+prefill batches)
+== dcp4-dflash-300k @ http://spark-06c4.local:8000 phase=concurrent
+  gen-prose     46-> 350 tok ttft=0.479s decode=6.43 tok/s  '# Tensor Parallelism in Transformer Attention\n\n## How Attent'
+  pf-3k       2935->  96 tok ttft=9.757s decode=3.52 tok/s  'The text is a long, repetitive sequence of single words draw'
+  pf-6k       5841->  20 tok ttft=26.694s decode=8.97 tok/s  'amber, cache, marble, system, fossil, river, bandwidth, atte'
+  gen-code      52-> 232 tok ttft=25.116s decode=21.71 tok/s  '```python\ndef merge_intervals(intervals):\n    """Merge overl'
+  concurrent window: {'wall_s': 54.7, 'drafts': 200.0, 'accepted': 499.0, 'accepted_per_cycle': 3.495}
+== done
+[17:16:02] log scan (concurrent):
+      4 WARNING 09-04 17:15:09 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _build_prefill_chunk_metadata_kernel. This causes a latency spike; consider extending wa
+      4 WARNING 09-04 17:10:19 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to
+      4 WARNING 09-04 17:10:00 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      4 INFO 09-04 17:09:16 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      1 INFO 09-04 17:01:18 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+  spark-06c4 avail=3528MiB swapfree=13636MiB
+  spark-365c avail=4756MiB swapfree=14159MiB
+  spark-ddbf avail=4798MiB swapfree=14160MiB
+  spark-a218 avail=4835MiB swapfree=14157MiB
+[17:16:03] -- long context probe (290000 tokens)
+  spark-06c4 avail=3526MiB swapfree=13636MiB
+  spark-365c avail=4757MiB swapfree=14159MiB
+  spark-ddbf avail=4796MiB swapfree=14160MiB
+  spark-a218 avail=4833MiB swapfree=14157MiB
+[17:16:27] guard: 06c4=3269MiB 365c=4749MiB ddbf=4784MiB a218=4823MiB 
+[17:16:50] guard: 06c4=3261MiB 365c=4740MiB ddbf=4778MiB a218=4810MiB 
+[17:17:14] guard: 06c4=3246MiB 365c=4700MiB ddbf=4759MiB a218=4784MiB 
+[17:17:37] guard: 06c4=3246MiB 365c=4660MiB ddbf=4756MiB a218=4776MiB 
+[17:18:00] guard: 06c4=3242MiB 365c=4658MiB ddbf=4745MiB a218=4771MiB 
+[17:18:24] guard: 06c4=3240MiB 365c=4649MiB ddbf=4719MiB a218=4750MiB 
+[17:18:48] guard: 06c4=3230MiB 365c=4634MiB ddbf=4719MiB a218=4740MiB 
+[17:19:11] guard: 06c4=3214MiB 365c=4631MiB ddbf=4717MiB a218=4733MiB 
+[17:19:35] guard: 06c4=3182MiB 365c=4616MiB ddbf=4700MiB a218=4721MiB 
+[17:19:58] guard: 06c4=3173MiB 365c=4617MiB ddbf=4695MiB a218=4705MiB 
+[17:20:21] guard: 06c4=3164MiB 365c=4611MiB ddbf=4697MiB a218=4702MiB 
+[17:20:45] guard: 06c4=3167MiB 365c=4596MiB ddbf=4665MiB a218=4693MiB 
+[17:21:08] guard: 06c4=3162MiB 365c=4594MiB ddbf=4666MiB a218=4686MiB 
+[17:21:31] guard: 06c4=3150MiB 365c=4594MiB ddbf=4667MiB a218=4684MiB 
+[17:21:55] guard: 06c4=3147MiB 365c=4579MiB ddbf=4649MiB a218=4673MiB 
+[17:22:19] guard: 06c4=3162MiB 365c=4577MiB ddbf=4639MiB a218=4668MiB 
+[17:22:42] guard: 06c4=3157MiB 365c=4575MiB ddbf=4632MiB a218=4657MiB 
+[17:23:06] guard: 06c4=3139MiB 365c=4569MiB ddbf=4630MiB a218=4636MiB 
+[17:23:29] guard: 06c4=3122MiB 365c=4564MiB ddbf=4642MiB a218=4629MiB 
+[17:23:52] guard: 06c4=3110MiB 365c=4558MiB ddbf=4636MiB a218=4611MiB 
+[17:24:16] guard: 06c4=3099MiB 365c=4527MiB ddbf=4621MiB a218=4603MiB 
+[17:24:40] guard: 06c4=3099MiB 365c=4527MiB ddbf=4626MiB a218=4599MiB 
+[17:25:03] guard: 06c4=3108MiB 365c=4532MiB ddbf=4625MiB a218=4592MiB 
+[17:25:27] guard: 06c4=3099MiB 365c=4510MiB ddbf=4634MiB a218=4594MiB 
+[17:25:50] guard: 06c4=3094MiB 365c=4520MiB ddbf=4633MiB a218=4588MiB 
+[17:26:13] guard: 06c4=118009MiB 365c=4522MiB ddbf=4624MiB a218=4581MiB 
+== dcp4-dflash-300k @ http://spark-06c4.local:8000 phase=longctx
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/urllib/request.py", line 1321, in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              encode_chunked=req.has_header('Transfer-encoding'))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/http/client.py", line 1367, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/http/client.py", line 1413, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/http/client.py", line 1362, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/http/client.py", line 1122, in _send_output
+    self.send(msg)
+    ~~~~~~~~~^^^^^
+  File "/usr/lib/python3.14/http/client.py", line 1066, in send
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "/usr/lib/python3.14/http/client.py", line 1032, in connect
+    self.sock = self._create_connection(
+                ~~~~~~~~~~~~~~~~~~~~~~~^
+        (self.host,self.port), self.timeout, self.source_address)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/socket.py", line 870, in create_connection
+    raise exceptions[0]
+  File "/usr/lib/python3.14/socket.py", line 855, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 305, in <module>
+    m0 = metrics(base)
+             ^^^^^^
+  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 300, in main
+    def phase_longctx(base, out, n_tokens):
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 270, in phase_longctx
+    Node-side file counts are collected by offload_checks.sh around this."""
+         ^^^^^^^^^^^^^
+  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 38, in metrics
+    txt = urllib.request.urlopen(base + "/metrics", timeout=20).read().decode()
+          ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/urllib/request.py", line 187, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/urllib/request.py", line 487, in open
+    response = self._open(req, data)
+  File "/usr/lib/python3.14/urllib/request.py", line 504, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+                              '_open', req)
+  File "/usr/lib/python3.14/urllib/request.py", line 464, in _call_chain
+    result = func(*args)
+  File "/usr/lib/python3.14/urllib/request.py", line 1350, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/urllib/request.py", line 1324, in do_open
+    raise URLError(err)
+urllib.error.URLError: <urlopen error [Errno 111] Connection refused>
+  spark-06c4 avail=118009MiB swapfree=16240MiB
+  spark-365c avail=4525MiB swapfree=14161MiB
+  spark-ddbf avail=4624MiB swapfree=14161MiB
+  spark-a218 avail=4579MiB swapfree=14158MiB
+[17:26:16] log scan (final):
+      3 WARNING 09-04 17:15:09 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _build_prefill_chunk_metadata_kernel. This causes a latency spike; consider extending wa
+      3 WARNING 09-04 17:10:19 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to
+      3 WARNING 09-04 17:10:00 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      3 INFO 09-04 17:09:16 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+[17:26:16] == checks done; results in /home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-300k

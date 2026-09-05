@@ -1,0 +1,17 @@
+--- a/vllm/v1/worker/cp_utils.py
++++ b/vllm/v1/worker/cp_utils.py
+@@ -27,7 +27,13 @@
+                     "MTP with cp_kv_cache_interleave_size > 1 is not "
+                     f"supported in {layer_impl.__class__.__name__}."
+                 )
+-            if dcp_size > 1:
++            # Layers whose KV group is replicated across the DCP ranks (the
++            # sliding-window drafter) run their plain non-DCP path and set
++            # dcp_world_size = 1 on their impl; they have no LSE to return.
++            # Compare with == 1 on purpose: dense MLA impls carry a -1
++            # placeholder until their first forward and must still be checked.
++            impl_replicated = getattr(layer_impl, "dcp_world_size", None) == 1
++            if dcp_size > 1 and not impl_replicated:
+                 assert layer_impl.need_to_return_lse_for_decode, (
+                     "Decode Context Parallelism (DCP) requires attention "
+                     "implementations to return the softmax LSE during decode, "

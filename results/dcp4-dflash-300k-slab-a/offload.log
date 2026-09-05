@@ -1,0 +1,101 @@
+[23:44:39] == offload checks for dcp4-dflash-300k-slab-a (100000 tokens)
+  spark-06c4 _models_glm-5.3_54903f9e584c_r0 files=0 8.0K
+  spark-365c _models_glm-5.3_54903f9e584c_r1 files=0 8.0K
+  spark-ddbf _models_glm-5.3_54903f9e584c_r2 files=0 8.0K
+  spark-a218 _models_glm-5.3_54903f9e584c_r3 files=0 8.0K
+  spark-06c4 avail=9544MiB swapfree=16172MiB
+  spark-365c avail=5553MiB swapfree=14152MiB
+  spark-ddbf avail=5846MiB swapfree=14125MiB
+  spark-a218 avail=5911MiB swapfree=14131MiB
+[23:45:03] guard: 06c4=118338MiB 365c=5550MiB ddbf=5844MiB a218=5909MiB 
+== dcp4-dflash-300k-slab-a @ http://spark-06c4.local:8000 phase=offload
+Traceback (most recent call last):
+  File "/usr/lib/python3.14/urllib/request.py", line 1321, in do_open
+    h.request(req.get_method(), req.selector, req.data, headers,
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              encode_chunked=req.has_header('Transfer-encoding'))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/http/client.py", line 1367, in request
+    self._send_request(method, url, body, headers, encode_chunked)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/http/client.py", line 1413, in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/http/client.py", line 1362, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/http/client.py", line 1122, in _send_output
+    self.send(msg)
+    ~~~~~~~~~^^^^^
+  File "/usr/lib/python3.14/http/client.py", line 1066, in send
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "/usr/lib/python3.14/http/client.py", line 1032, in connect
+    self.sock = self._create_connection(
+                ~~~~~~~~~~~~~~~~~~~~~~~^
+        (self.host,self.port), self.timeout, self.source_address)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/socket.py", line 870, in create_connection
+    raise exceptions[0]
+  File "/usr/lib/python3.14/socket.py", line 855, in create_connection
+    sock.connect(sa)
+    ~~~~~~~~~~~~^^^^
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 362, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 355, in main
+    phase_offload(a.base, a.out, a.label, a.offload_tokens)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 283, in phase_offload
+    rows["cold"] = ask(prefix, "\n\nReply with the single word OK.")
+                   ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 273, in ask
+    m0 = metrics(base)
+  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 38, in metrics
+    txt = urllib.request.urlopen(base + "/metrics", timeout=20).read().decode()
+          ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/urllib/request.py", line 187, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/urllib/request.py", line 487, in open
+    response = self._open(req, data)
+  File "/usr/lib/python3.14/urllib/request.py", line 504, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+                              '_open', req)
+  File "/usr/lib/python3.14/urllib/request.py", line 464, in _call_chain
+    result = func(*args)
+  File "/usr/lib/python3.14/urllib/request.py", line 1350, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/urllib/request.py", line 1324, in do_open
+    raise URLError(err)
+urllib.error.URLError: <urlopen error [Errno 111] Connection refused>
+[23:45:04] after:
+  spark-06c4 _models_glm-5.3_54903f9e584c_r0 files=0 8.0K
+  spark-365c _models_glm-5.3_54903f9e584c_r1 files=0 8.0K
+  spark-ddbf _models_glm-5.3_54903f9e584c_r2 files=0 8.0K
+  spark-a218 _models_glm-5.3_54903f9e584c_r3 files=0 8.0K
+  spark-06c4 avail=118299MiB swapfree=16186MiB
+  spark-365c avail=5547MiB swapfree=14152MiB
+  spark-ddbf avail=5840MiB swapfree=14125MiB
+  spark-a218 avail=5907MiB swapfree=14131MiB
+[23:45:07] log scan:
+     28 frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xc8 (0xf6fc375f66e8 in /usr/local/lib
+     28 frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xc8 (0xf62d842966e8 in /usr/local/lib
+     28 frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xc8 (0xf49e9bda66e8 in /usr/local/lib
+      4 INFO 09-04 23:42:59 [factory.py:62] Creating v1 connector with name: MultiNodeSlabConnector and engine_id: 5dd30973-3412-477a-b657-1f2747900a78
+      4 INFO 09-04 23:42:59 [factory.py:61] Creating offloading spec with name: MultiNodeSlabOffloadingSpec
+      1 INFO:     192.168.1.41:53498 - "POST /v1/chat/completions HTTP/1.1" 500 Internal Server Error
+      1 INFO 09-04 23:44:00 [factory.py:62] Creating v1 connector with name: MultiNodeSlabConnector and engine_id: 5dd30973-3412-477a-b657-1f2747900a78
+      1 INFO 09-04 23:44:00 [factory.py:61] Creating offloading spec with name: MultiNodeSlabOffloadingSpec
+      1 INFO 09-04 23:35:52 [api_utils.py:273] non-default args: {'model_tag': '/models/glm-5.3', 'default_chat_template_kwargs': {'reasoning_effort': 'high'}, 'enable_auto_tool_
+      1 ERROR 09-04 23:44:35 [core.py:1231] Traceback (most recent call last):
+      1 ERROR 09-04 23:44:35 [core.py:1231] IndexError: list index out of range
+      1 ERROR 09-04 23:44:35 [async_llm.py:704] vllm.v1.engine.exceptions.EngineDeadError: EngineCore encountered an issue. See stack trace (above) for the root cause.
+      1 ERROR 09-04 23:44:35 [async_llm.py:704] Traceback (most recent call last):
+[23:45:08] == offload checks done

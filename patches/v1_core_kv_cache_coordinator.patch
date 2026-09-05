@@ -1,0 +1,179 @@
+--- a/vllm/v1/core/kv_cache_coordinator.py
++++ b/vllm/v1/core/kv_cache_coordinator.py
+@@ -20,6 +20,8 @@
+ )
+ from vllm.v1.kv_cache_interface import (
+     FullAttentionSpec,
++    UniformTypeKVCacheSpecs,
++    cp_world_size_for_kv_cache_spec,
+     KVCacheConfig,
+     KVCacheSpec,
+     SlidingWindowSpec,
+@@ -103,6 +105,9 @@
+         if use_eagle and not self.eagle_group_ids:
+             self.eagle_group_ids = set(range(len(kv_cache_config.kv_cache_groups)))
+ 
++        # Token-sharded groups (full attention) see the process DCP size and
++        # scale their block size by it; replicated groups (sliding window)
++        # keep dcp_world_size == 1. See cp_world_size_for_kv_cache_spec.
+         self.single_type_managers = tuple(
+             get_manager_for_kv_cache_spec(
+                 kv_cache_spec=kv_cache_group.kv_cache_spec,
+@@ -111,7 +116,9 @@
+                 block_pool=self.block_pool,
+                 enable_caching=enable_caching,
+                 kv_cache_group_id=i,
+-                dcp_world_size=dcp_world_size,
++                dcp_world_size=cp_world_size_for_kv_cache_spec(
++                    kv_cache_group.kv_cache_spec, dcp_world_size
++                ),
+                 pcp_world_size=pcp_world_size,
+                 scheduler_block_size=self.scheduler_block_size,
+             )
+@@ -540,12 +547,34 @@
+         # different KV cache groups have different block sizes, the actual block size
+         # can be a multiple of hash_block_size.
+         self.hash_block_size = hash_block_size
+-        assert all(
+-            g.kv_cache_spec.block_size % hash_block_size == 0
+-            for g in kv_cache_config.kv_cache_groups
+-        ), "block_size must be divisible by hash_block_size"
+-        assert dcp_world_size == 1, "DCP not support hybrid attn now."
++        self.dcp_world_size = dcp_world_size
++        # The managers' block sizes are the real ones (DCP-scaled for sharded
++        # groups, raw for replicated ones); hashing must divide those.
++        group_block_sizes = [m.block_size for m in self.single_type_managers]
++        assert all(bs % hash_block_size == 0 for bs in group_block_sizes), (
++            "Each KV cache group's real block_size must be divisible by "
++            f"hash_block_size. block_sizes={group_block_sizes}, "
++            f"hash_block_size={hash_block_size}"
++        )
+         assert pcp_world_size == 1, "PCP not support hybrid attn now."
++        if dcp_world_size > 1:
++            # DCP shards full-attention groups across ranks and replicates
++            # sliding-window groups (the DFlash drafter); nothing else has a
++            # DCP-aware manager, so reject it explicitly.
++            for g in kv_cache_config.kv_cache_groups:
++                spec = g.kv_cache_spec
++                inner = (
++                    list(spec.kv_cache_specs.values())
++                    if isinstance(spec, UniformTypeKVCacheSpecs)
++                    else [spec]
++                )
++                assert all(
++                    isinstance(s, (FullAttentionSpec, SlidingWindowSpec)) for s in inner
++                ), (
++                    "DCP with hybrid KV cache layouts only supports "
++                    "full-attention (sharded) and sliding-window (replicated) "
++                    f"groups, got: {[type(s).__name__ for s in inner]}."
++                )
+         self.verify_and_split_kv_cache_groups()
+ 
+     def verify_and_split_kv_cache_groups(self) -> None:
+@@ -641,11 +670,11 @@
+                 - The number of tokens of the longest cache hit.
+         """
+ 
+-        def _get_block_hashes(kv_cache_spec: KVCacheSpec) -> BlockHashList:
+-            if kv_cache_spec.block_size == self.hash_block_size:
++        def _get_block_hashes(block_size: int) -> BlockHashList:
++            if block_size == self.hash_block_size:
+                 return block_hashes
+             return BlockHashListWithBlockSize(
+-                block_hashes, self.hash_block_size, kv_cache_spec.block_size
++                block_hashes, self.hash_block_size, block_size
+             )
+ 
+         num_groups = len(self.kv_cache_config.kv_cache_groups)
+@@ -670,13 +699,16 @@
+             for idx, (spec, group_ids, manager_cls, use_eagle) in enumerate(
+                 self.attention_groups
+             ):
++                # Real (possibly DCP-scaled) block geometry of this group.
++                group_manager = self.single_type_managers[group_ids[0]]
++                group_block_size = group_manager.block_size
+                 cached_blocks = hit_blocks_by_group[group_ids[0]]
+                 if isinstance(spec, FullAttentionSpec) and cached_blocks is not None:
+                     # Full attention is downward-closed: we only need to look
+                     # up cached blocks once; on subsequent iterations just trim
+                     # to the (reduced) current hit length.
+                     curr_hit_length = (
+-                        curr_hit_length // spec.block_size * spec.block_size
++                        curr_hit_length // group_block_size * group_block_size
+                     )
+                     continue
+ 
+@@ -686,18 +718,20 @@
+                 if drop_eagle_block:
+                     # Eagle needs to match one more block and then pop the last.
+                     _max_length = min(
+-                        curr_hit_length + spec.block_size, max_cache_hit_length
++                        curr_hit_length + group_block_size, max_cache_hit_length
+                     )
+                 hit_blocks = manager_cls.find_longest_cache_hit(
+-                    block_hashes=_get_block_hashes(spec),
++                    block_hashes=_get_block_hashes(group_block_size),
+                     max_length=_max_length,
+                     kv_cache_group_ids=group_ids,
+                     block_pool=self.block_pool,
+                     kv_cache_spec=spec,
+                     drop_eagle_block=drop_eagle_block,
+                     alignment_tokens=self.scheduler_block_size,
++                    dcp_world_size=group_manager.dcp_world_size,
++                    pcp_world_size=group_manager.pcp_world_size,
+                 )
+-                _new_hit_length = len(hit_blocks[0]) * spec.block_size
++                _new_hit_length = len(hit_blocks[0]) * group_block_size
+                 if drop_eagle_block:
+                     eagle_verified.add(idx)
+                 elif _new_hit_length < curr_hit_length:
+@@ -718,7 +752,10 @@
+         # Truncate full attention blocks to final hit_length (if present)
+         first_group = self.attention_groups[0]
+         if isinstance(first_group.spec, FullAttentionSpec):
+-            num_blocks = hit_length // first_group.spec.block_size
++            first_block_size = self.single_type_managers[
++                first_group.group_ids[0]
++            ].block_size
++            num_blocks = hit_length // first_block_size
+             for group_id in first_group.group_ids:
+                 if (blks := hit_blocks_by_group[group_id]) is not None:
+                     del blks[num_blocks:]
+@@ -741,11 +778,11 @@
+             (blocks_per_group, hit_lengths_per_group)
+         """
+ 
+-        def _get_block_hashes(kv_cache_spec: KVCacheSpec) -> BlockHashList:
+-            if kv_cache_spec.block_size == self.hash_block_size:
++        def _get_block_hashes(block_size: int) -> BlockHashList:
++            if block_size == self.hash_block_size:
+                 return block_hashes
+             return BlockHashListWithBlockSize(
+-                block_hashes, self.hash_block_size, kv_cache_spec.block_size
++                block_hashes, self.hash_block_size, block_size
+             )
+ 
+         num_groups = len(self.kv_cache_config.kv_cache_groups)
+@@ -753,16 +790,20 @@
+         hit_lengths: list[int] = [0] * num_groups
+ 
+         for spec, group_ids, manager_cls, use_eagle in self.attention_groups:
++            group_manager = self.single_type_managers[group_ids[0]]
++            group_block_size = group_manager.block_size
+             blocks = manager_cls.find_longest_cache_hit(
+-                block_hashes=_get_block_hashes(spec),
++                block_hashes=_get_block_hashes(group_block_size),
+                 max_length=max_cache_hit_length,
+                 kv_cache_group_ids=group_ids,
+                 block_pool=self.block_pool,
+                 kv_cache_spec=spec,
+                 drop_eagle_block=use_eagle,
+                 alignment_tokens=self.scheduler_block_size,
++                dcp_world_size=group_manager.dcp_world_size,
++                pcp_world_size=group_manager.pcp_world_size,
+             )
+-            group_hit = len(blocks[0]) * spec.block_size
++            group_hit = len(blocks[0]) * group_block_size
+             for gid, blks in zip(group_ids, blocks):
+                 hit_blocks[gid] = blks
+                 hit_lengths[gid] = group_hit

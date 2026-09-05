@@ -1,0 +1,19 @@
+[19:44:38] == post-boot checks for dcp4-dflash-300k-kvtier
+  spark-06c4 avail=3269MiB swapfree=13563MiB
+  spark-365c avail=4224MiB swapfree=14157MiB
+  spark-ddbf avail=4614MiB swapfree=14142MiB
+  spark-a218 avail=4544MiB swapfree=14148MiB
+[19:44:39] log scan (boot):
+      4 WARNING 09-04 19:44:35 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      4 INFO 09-04 19:43:48 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      1 INFO 09-04 19:36:05 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+[19:44:39] -- warmup sweep (inference-time JITs happen here, under observation)
+== dcp4-dflash-300k-kvtier @ http://spark-06c4.local:8000 phase=warmup
+  warmup     1 words -> 22 tok, 0.5s: 'OK'
+  warmup     4 words -> 25 tok, 0.7s: 'OK'
+  warmup    13 words -> 36 tok, 0.7s: 'OK'
+  warmup    70 words -> 94 tok, 0.9s: 'OK'
+  warmup   250 words -> 277 tok, 1.6s: 'OK'
+  warmup   700 words -> 747 tok, 2.9s: 'OK'
+  warmup  1400 words -> 1466 tok, 5.1s: 'OK'
+  warmup  2800 words -> 2949 tok, 9.8s: 'OK'

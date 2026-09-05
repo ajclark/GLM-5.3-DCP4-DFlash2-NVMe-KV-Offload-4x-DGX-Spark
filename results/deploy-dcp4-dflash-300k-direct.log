@@ -1,0 +1,14 @@
+[20:58:34] == deploy NVMe tier: dcp4-dflash-300k-direct MAXLEN=307200 KVBYTES=6000000000 tokens=100000
+[21:07:57] stack up; tier startup lines:
+      4 INFO 09-04 21:06:29 [factory.py:61] Creating offloading spec with name: MultiNodeDirectFsOffloadingSpec
+      4 INFO 09-04 21:06:29 [factory.py:62] Creating v1 connector with name: MultiNodeDirectConnector and engine_id: 102292ba-9ce1-4e95-aa89-5fd31ffb420f
+      1 INFO 09-04 21:07:31 [factory.py:61] Creating offloading spec with name: MultiNodeDirectFsOffloadingSpec
+      1 INFO 09-04 21:07:31 [factory.py:62] Creating v1 connector with name: MultiNodeDirectConnector and engine_id: 102292ba-9ce1-4e95-aa89-5fd31ffb420f
+      1 INFO 09-04 21:07:31 [scheduler.py:176] KV offloading: EAGLE/MTP draft attention groups [0, 1] detected. The trailing block of these groups will be excluded from
+[21:13:48] post-boot checks done; running offload checks
+[21:37:14] offload checks done; relaunching the same stack for the durability test
+[21:47:23] restarted; re-sending the cold prefix
+== dcp4-dflash-300k-direct @ http://spark-06c4.local:8000 phase=reload
+  reload-after-restart {'prompt_tokens': 99975, 'ttft_s': 335.33, 'content': 'OK', 'ext_hits': 0.0, 'ext_queries': 99975.0}
+== done
+[21:52:59] == deploy sequence done

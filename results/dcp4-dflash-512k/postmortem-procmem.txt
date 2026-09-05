@@ -1,0 +1,11 @@
+== spark-06c4 15:39:05
+avail=288 MiB swapfree=11466 MiB
+/usr/bin/python3 /usr/local/ VmHWM:	 1356876 kB VmRSS:	  345212 kB VmSwap:	 1091080 kB 
+VLLM::EngineCore             VmHWM:	  900780 kB VmRSS:	  202160 kB VmSwap:	  697592 kB 
+VLLM::Worker_TP0_DCP0        VmHWM:	 3743900 kB VmRSS:	 1319868 kB VmSwap:	 2781764 kB 
+bash -c awk "/MemAvailable/{ VmHWM:	    2908 kB VmRSS:	    2908 kB VmSwap:	       0 kB 
+== spark-365c 15:39:05
+avail=666 MiB swapfree=12562 MiB
+/usr/bin/python3 /usr/local/ VmHWM:	 1303012 kB VmRSS:	    5080 kB VmSwap:	  899068 kB 
+VLLM::Worker_TP1_DCP1        VmHWM:	 3746512 kB VmRSS:	 1434948 kB VmSwap:	 2652564 kB 
+bash -c awk "/MemAvailable/{ VmHWM:	    3100 kB VmRSS:	    3100 kB VmSwap:	       0 kB 

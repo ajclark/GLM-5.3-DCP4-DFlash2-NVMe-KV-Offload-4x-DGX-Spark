@@ -1,0 +1,337 @@
+--- a/vllm/model_executor/layers/sparse_attn_indexer.py
++++ b/vllm/model_executor/layers/sparse_attn_indexer.py
+@@ -8,6 +8,8 @@
+ from vllm import _custom_ops as ops
+ from vllm._aiter_ops import rocm_aiter_ops
+ from vllm.compilation.breakable_cudagraph import eager_break_during_capture
++from vllm.config import get_current_vllm_config
++from vllm.distributed import get_dcp_group
+ from vllm.forward_context import get_forward_context
+ from vllm.logger import init_logger
+ from vllm.model_executor.custom_op import CustomOp
+@@ -21,6 +23,7 @@
+     fp8_fp4_paged_mqa_logits,
+     has_deep_gemm,
+ )
++from vllm.utils.math_utils import cdiv
+ from vllm.utils.torch_utils import (
+     LayerNameType,
+     _encode_layer_name,
+@@ -47,6 +50,153 @@
+ MXFP4_BLOCK_SIZE = 32
+ 
+ 
++# The logits width and strides vary per batch (prefill: this rank's local
++# context; decode: the static width), and Triton specializes integer args on
++# divisibility by 16 and equality to 1 by default. Every new specialization is
++# a JIT *during inference*, which on the memory-starved Sparks has killed a
++# worker and wedged the TP ring (INCIDENT-20260904-0229). Compile once.
++@triton.jit(do_not_specialize=["logits_stride0", "logits_stride1", "num_cols"])
++def _pack_dcp_topk_candidates_kernel(
++    logits,           # f32 [rows, cols]  this rank's local logits
++    topk_indices,     # i32 [rows, TOPK]  this rank's LOCAL top-k positions
++    packed,           # f32 [rows, TOPK, 2] -> (score, global_id)
++    row_starts,       # i32 [rows] or aliased dummy
++    logits_stride0,
++    logits_stride1,
++    topk_stride0,
++    topk_stride1,
++    packed_stride0,
++    packed_stride1,
++    packed_stride2,
++    num_cols,
++    DCP_RANK: tl.constexpr,
++    DCP_WORLD_SIZE: tl.constexpr,
++    CP_INTERLEAVE: tl.constexpr,
++    HAS_ROW_STARTS: tl.constexpr,
++    TOPK: tl.constexpr,
++    BLOCK_SIZE: tl.constexpr,
++):
++    """Pair each local top-k position with its score and its GLOBAL position.
++
++    Inverse of the DCP slot mapping: a local position l on rank r corresponds
++    to global position (l // I) * (N * I) + r * I + l % I.
++    """
++    row = tl.program_id(0)
++    tile = tl.program_id(1)
++    cols = tile * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)
++    mask = cols < TOPK
++
++    local_idx = tl.load(
++        topk_indices + row * topk_stride0 + cols * topk_stride1, mask=mask, other=-1
++    )
++    valid = local_idx >= 0
++    safe_local_idx = tl.maximum(local_idx, 0)
++
++    row_start = 0
++    if HAS_ROW_STARTS:
++        row_start = tl.load(row_starts + row)
++
++    # Clamp so an invalid lane never reads out of bounds; it is masked anyway.
++    score_col = safe_local_idx + row_start
++    score_col = tl.minimum(score_col, tl.maximum(num_cols - 1, 0))
++    score = tl.load(
++        logits + row * logits_stride0 + score_col * logits_stride1,
++        mask=mask & valid,
++        other=-float("inf"),
++    )
++    # A -inf score would collide with the padding sentinel after the merge;
++    # invalid lanes already carry -inf, so nothing else needs to.
++    score = tl.where(valid, score, -float("inf"))
++
++    global_id = (
++        (safe_local_idx // CP_INTERLEAVE) * (DCP_WORLD_SIZE * CP_INTERLEAVE)
++        + DCP_RANK * CP_INTERLEAVE
++        + safe_local_idx % CP_INTERLEAVE
++    )
++    global_id = tl.where(valid, global_id, -1)
++
++    packed_base = packed + row * packed_stride0 + cols * packed_stride1
++    tl.store(packed_base, score, mask=mask)
++    tl.store(packed_base + packed_stride2, global_id.to(tl.float32), mask=mask)
++
++
++def _merge_dcp_topk_global(
++    logits: torch.Tensor | None,
++    topk_indices: torch.Tensor,
++    topk_tokens: int,
++    dcp_rank: int,
++    dcp_world_size: int,
++    cp_interleave: int,
++    row_starts: torch.Tensor | None = None,
++) -> None:
++    """Merge each DCP rank's local top-k into the global top-k, in place.
++
++    ``topk_indices`` holds this rank's top-k positions into its 1/N shard of
++    the context. A token in the global top-K must also be in its owning rank's
++    local top-K (at most K-1 tokens outrank it globally, hence at most K-1 on
++    its own rank), so exchanging only the per-rank candidates is *exact*:
++    equivalent to all-gathering the whole logit row, but shipping
++    ``N * K`` candidates instead of the whole context.
++
++    On return ``topk_indices`` holds GLOBAL positions (-1 for padding); the
++    attention backend maps them back to physical slots per rank.
++
++    Every rank runs identical arithmetic on the identical gathered tensor, so
++    all ranks agree on the selected set -- which they must, or a selected
++    token whose owner did not select it would silently drop out of the merge.
++    """
++    if dcp_world_size <= 1:
++        return
++
++    rows, k = topk_indices.shape
++    device = topk_indices.device
++    assert topk_indices.dtype == torch.int32
++    assert k == topk_tokens, (k, topk_tokens)
++
++    if logits is None or logits.numel() == 0:
++        # This rank owns nothing in this chunk; it still has to take part in
++        # the all-gather so the collective count matches the other ranks.
++        logits = torch.full((rows, 1), float("-inf"), dtype=torch.float32, device=device)
++        topk_indices.fill_(-1)
++
++    packed = torch.empty((rows, k, 2), dtype=torch.float32, device=device)
++    block = 512
++    grid = (rows, cdiv(k, block))
++    _pack_dcp_topk_candidates_kernel[grid](
++        logits,
++        topk_indices,
++        packed,
++        row_starts if row_starts is not None else topk_indices,
++        logits.stride(0),
++        logits.stride(1),
++        topk_indices.stride(0),
++        topk_indices.stride(1),
++        packed.stride(0),
++        packed.stride(1),
++        packed.stride(2),
++        logits.shape[1],
++        DCP_RANK=dcp_rank,
++        DCP_WORLD_SIZE=dcp_world_size,
++        CP_INTERLEAVE=cp_interleave,
++        HAS_ROW_STARTS=row_starts is not None,
++        TOPK=k,
++        BLOCK_SIZE=block,
++        num_warps=8,
++    )
++
++    # [rows, N * K, 2]
++    gathered = get_dcp_group().all_gather(packed, dim=1)
++    scores = gathered[..., 0]
++    ids = gathered[..., 1]
++    best_scores, sel = torch.topk(scores, topk_tokens, dim=1)
++    merged = torch.gather(ids, 1, sel).to(torch.int32)
++    # Candidates that were padding (or genuinely -inf) stay padding.
++    merged = torch.where(
++        best_scores > float("-inf"), merged, torch.full_like(merged, -1)
++    )
++    topk_indices.copy_(merged)
++
++
+ @triton.jit
+ def _fused_indexer_q_rope_quant_kernel(
+     positions,
+@@ -233,6 +383,9 @@
+     topk_indices_buffer: torch.Tensor,
+     skip_k_cache_insert: bool,
+     use_fp4_cache: bool = False,
++    dcp_rank: int = 0,
++    dcp_world_size: int = 1,
++    cp_kv_cache_interleave_size: int = 1,
+ ) -> torch.Tensor:
+     # careful! this will be None in dummy run
+     attn_metadata = get_forward_context().attn_metadata
+@@ -275,6 +428,9 @@
+             topk_indices_buffer,
+             skip_k_cache_insert,
+             use_fp4_cache,
++            dcp_rank,
++            dcp_world_size,
++            cp_kv_cache_interleave_size,
+         )
+     attn_metadata_narrowed = attn_metadata[k_cache_prefix]
+     assert isinstance(attn_metadata_narrowed, DeepseekV32IndexerMetadata)
+@@ -327,6 +483,27 @@
+             scales_spec,
+         )
+         for chunk in prefill_metadata.chunks:
++            topk_indices = topk_indices_buffer[
++                chunk.token_start : chunk.token_end, :topk_tokens
++            ]
++            # Under DCP a chunk that is globally non-empty can still be empty
++            # on this rank (every prompt's first tokens land on rank 0). Skip
++            # the gather/logits/top-k, but still enter the merge below so the
++            # collective count matches the other ranks.
++            logits = None
++            if chunk.total_seq_lens == 0:
++                topk_indices.fill_(-1)
++                _merge_dcp_topk_global(
++                    None,
++                    topk_indices,
++                    topk_tokens,
++                    dcp_rank,
++                    dcp_world_size,
++                    cp_kv_cache_interleave_size,
++                    row_starts=chunk.cu_seqlen_ks,
++                )
++                continue
++
+             k_quant = k_quant_full[: chunk.total_seq_lens]
+             k_scale = k_scale_full[: chunk.total_seq_lens]
+ 
+@@ -377,10 +554,6 @@
+                 )
+             num_rows = logits.shape[0]
+ 
+-            topk_indices = topk_indices_buffer[
+-                chunk.token_start : chunk.token_end, :topk_tokens
+-            ]
+-
+             ops.top_k_per_row_prefill(
+                 logits,
+                 chunk.cu_seqlen_ks,
+@@ -392,6 +565,19 @@
+                 topk_tokens,
+             )
+ 
++            # Local per-request positions -> global, merged across the group.
++            # cu_seqlen_ks is the row start of each query token in the gathered
++            # (local) K buffer, which is where the pack kernel reads scores.
++            _merge_dcp_topk_global(
++                logits,
++                topk_indices,
++                topk_tokens,
++                dcp_rank,
++                dcp_world_size,
++                cp_kv_cache_interleave_size,
++                row_starts=chunk.cu_seqlen_ks,
++            )
++
+     if has_decode:
+         decode_metadata = attn_metadata_narrowed.decode
+         assert decode_metadata is not None
+@@ -455,7 +641,7 @@
+                 seq_lens_xpu,
+                 decode_metadata.block_table,
+                 decode_metadata.schedule_metadata,
+-                max_model_len,
++                decode_metadata.logits_max_len,
+             )
+         else:
+             logits = fp8_fp4_paged_mqa_logits(
+@@ -465,7 +651,7 @@
+                 seq_lens,
+                 decode_metadata.block_table,
+                 decode_metadata.schedule_metadata,
+-                max_model_len=max_model_len,
++                max_model_len=decode_metadata.logits_max_len,
+                 clean_logits=False,
+             )
+         num_rows = logits.shape[0]
+@@ -482,7 +668,7 @@
+                 topk_indices,
+                 topk_workspace,
+                 topk_tokens,
+-                attn_metadata_narrowed.max_seq_len,
++                decode_metadata.topk_max_seq_len,
+             )
+         else:
+             ops.top_k_per_row_decode(
+@@ -496,6 +682,16 @@
+                 topk_tokens,
+             )
+ 
++        # Merge before unpacking: padded rows take part in the collective too.
++        _merge_dcp_topk_global(
++            logits,
++            topk_indices,
++            topk_tokens,
++            dcp_rank,
++            dcp_world_size,
++            cp_kv_cache_interleave_size,
++        )
++
+         if decode_metadata.requires_padding:
+             # if padded, we need to unpack
+             # the topk indices removing padded tokens
+@@ -527,6 +723,9 @@
+     topk_indices_buffer: torch.Tensor | None,
+     skip_k_cache_insert: bool,
+     use_fp4_cache: bool = False,
++    dcp_rank: int = 0,
++    dcp_world_size: int = 1,
++    cp_kv_cache_interleave_size: int = 1,
+ ) -> torch.Tensor:
+     return topk_indices_buffer
+ 
+@@ -577,6 +776,20 @@
+         self.topk_indices_buffer = topk_indices_buffer
+         self.skip_k_cache_insert = skip_k_cache_insert
+         self.use_fp4_cache = use_fp4_cache
++        parallel_config = get_current_vllm_config().parallel_config
++        self.dcp_world_size = parallel_config.decode_context_parallel_size
++        self.dcp_rank = (
++            get_dcp_group().rank_in_group if self.dcp_world_size > 1 else 0
++        )
++        self.cp_kv_cache_interleave_size = parallel_config.cp_kv_cache_interleave_size
++        if self.dcp_world_size > 1 and self.cp_kv_cache_interleave_size > 1:
++            # The code is parameterized by interleave size, but only
++            # interleave == 1 is validated end to end.
++            raise NotImplementedError(
++                "DCP sparse indexer currently supports only "
++                f"cp_kv_cache_interleave_size=1 (got "
++                f"{self.cp_kv_cache_interleave_size})."
++            )
+         if _sparse_indexer_requires_deep_gemm() and not has_deep_gemm():
+             raise RuntimeError(
+                 "Sparse Attention Indexer CUDA op requires DeepGEMM support in "
+@@ -630,6 +843,9 @@
+             self.topk_indices_buffer,
+             self.skip_k_cache_insert,
+             self.use_fp4_cache,
++            self.dcp_rank,
++            self.dcp_world_size,
++            self.cp_kv_cache_interleave_size,
+         )
+ 
+     def forward_xpu(

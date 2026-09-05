@@ -1,0 +1,67 @@
+--- a/vllm/v1/worker/gpu_model_runner.py
++++ b/vllm/v1/worker/gpu_model_runner.py
+@@ -151,6 +151,7 @@
+     MambaSpec,
+     SlidingWindowSpec,
+     UniformTypeKVCacheSpecs,
++    cp_world_size_for_kv_cache_spec,
+ )
+ from vllm.v1.kv_cache_spec_registry import KVCacheSpecRegistry
+ from vllm.v1.outputs import (
+@@ -658,6 +659,11 @@
+         )
+         self._init_block_sizes = [placeholder_block_size]
+         self._init_kernel_block_sizes = [placeholder_block_size]
++        # Per-group CP world size of the block tables (see
++        # may_reinitialize_input_batch). The placeholder MultiGroupBlockTable
++        # defaults every group to the process CP size; record the same value
++        # so a single-group model is not rebuilt for nothing.
++        self._init_cp_world_sizes: list[int] = [get_total_cp_world_size()]
+         self.input_batch = InputBatch(
+             max_num_reqs=self.max_num_reqs,
+             # We need to use the encoder length for encoder-decoder
+@@ -6966,15 +6972,22 @@
+         """
+         block_sizes = []
+         max_num_blocks = []
++        cp_world_sizes = []
+         max_model_len = max(self.max_model_len, self.max_encoder_len)
+         for kv_cache_group in kv_cache_config.kv_cache_groups:
+             if isinstance(kv_cache_group.kv_cache_spec, EncoderOnlyAttentionSpec):
+                 continue
+             block_size = kv_cache_group.kv_cache_spec.block_size
+             block_sizes.append(block_size)
+-            max_num_blocks_per_req = cdiv(
+-                max_model_len, block_size * get_total_cp_world_size()
++            # Token-sharded groups (full attention) hold max_model_len // cp
++            # positions per rank; replicated groups (sliding window under DCP)
++            # hold every position. The block table and its slot mapping follow
++            # the same per-group rule.
++            cp_world_size = cp_world_size_for_kv_cache_spec(
++                kv_cache_group.kv_cache_spec, get_total_cp_world_size()
+             )
++            cp_world_sizes.append(cp_world_size)
++            max_num_blocks_per_req = cdiv(max_model_len, block_size * cp_world_size)
+             if isinstance(kv_cache_group.kv_cache_spec, MambaSpec):
+                 max_num_blocks_per_req = (
+                     max_num_blocks_per_req
+@@ -6986,9 +6999,11 @@
+         if (
+             block_sizes != self._init_block_sizes
+             or kernel_block_sizes != self._init_kernel_block_sizes
++            or cp_world_sizes != self._init_cp_world_sizes
+         ):
+             self._init_block_sizes = block_sizes
+             self._init_kernel_block_sizes = kernel_block_sizes
++            self._init_cp_world_sizes = cp_world_sizes
+             self.input_batch = InputBatch(
+                 max_num_reqs=self.max_num_reqs,
+                 max_model_len=max_model_len,
+@@ -7004,6 +7019,7 @@
+                 logitsprocs_need_output_token_ids=self.input_batch.logitsprocs_need_output_token_ids,
+                 is_pooling_model=self.is_pooling_model,
+                 reasoning_config=self.vllm_config.reasoning_config,
++                cp_world_sizes=cp_world_sizes,
+             )
+ 
+         assert self._init_block_sizes == block_sizes, (

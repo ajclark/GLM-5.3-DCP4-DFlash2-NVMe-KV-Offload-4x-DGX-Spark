@@ -1,0 +1,59 @@
+--- a/vllm/distributed/kv_transfer/kv_connector/v1/offloading/scheduler.py
++++ b/vllm/distributed/kv_transfer/kv_connector/v1/offloading/scheduler.py
+@@ -83,6 +83,24 @@
+     is_eagle_group: bool = False
+ 
+ 
++def storable_blocks(group_config: GroupOffloadConfig, num_tokens: int) -> int:
++    """Blocks of a group that may be stored once `num_tokens` are computed.
++
++    DCP overlay: eagle trailing block is revisited next step. The trailing
++    block of an eagle group is volatile, so it is held back here; the store
++    progress index must be advanced to this same value (not to the raw block
++    count) so the held-back block is stored on the next step, once it is no
++    longer trailing. Advancing past it left one unstored block per prefill
++    step in every group (DFlash marks every group as eagle), which a later
++    request with the whole prompt in one step silently refilled, but which
++    broke every prefix lookup at the first hole after a restart.
++    """
++    num_blocks = num_tokens // group_config.offloaded_block_size
++    if group_config.is_eagle_group:
++        num_blocks = max(0, num_blocks - 1)
++    return num_blocks
++
++
+ def get_sliding_window_size_in_blocks(
+     kv_cache_spec: KVCacheSpec, offloaded_block_size: int
+ ) -> int | None:
+@@ -285,8 +303,9 @@
+         for group_config, group_state in zip(
+             self.config.kv_group_configs, self.group_states
+         ):
+-            num_blocks = num_offloadable_tokens // group_config.offloaded_block_size
+-            group_state.next_stored_block_idx = num_blocks
++            group_state.next_stored_block_idx = storable_blocks(
++                group_config, num_offloadable_tokens
++            )
+ 
+     def update_num_hit_blocks(self, num_cached_tokens: int) -> None:
+         for group_config, group_state in zip(
+@@ -844,9 +863,7 @@
+             for group_config, group_state in zip(
+                 self.config.kv_group_configs, req_status.group_states
+             ):
+-                num_blocks = num_offloadable_tokens // group_config.offloaded_block_size
+-                if group_config.is_eagle_group:
+-                    num_blocks = max(0, num_blocks - 1)
++                num_blocks = storable_blocks(group_config, num_offloadable_tokens)
+ 
+                 start_block_idx = group_state.next_stored_block_idx
+                 if num_blocks <= start_block_idx:
+@@ -915,7 +932,7 @@
+                 is_sliding_window = (
+                     group_config.sliding_window_size_in_blocks is not None
+                 )
+-                num_blocks = num_offloadable_tokens // group_config.offloaded_block_size
++                num_blocks = storable_blocks(group_config, num_offloadable_tokens)
+                 start_block_idx = group_state.next_stored_block_idx
+                 block_ids = group_state.block_ids
+                 num_group_blocks = 0

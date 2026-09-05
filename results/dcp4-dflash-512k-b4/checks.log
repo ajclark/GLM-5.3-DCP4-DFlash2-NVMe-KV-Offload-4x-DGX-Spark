@@ -1,0 +1,188 @@
+[16:21:04] == post-boot checks for dcp4-dflash-512k-b4
+  spark-06c4 avail=2368MiB swapfree=13597MiB
+  spark-365c avail=3746MiB swapfree=14148MiB
+  spark-ddbf avail=3622MiB swapfree=14173MiB
+  spark-a218 avail=3576MiB swapfree=14155MiB
+[16:21:06] log scan (boot):
+      4 WARNING 09-04 16:21:01 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      4 INFO 09-04 16:20:19 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      1 INFO 09-04 16:12:20 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+[16:21:06] -- warmup sweep (inference-time JITs happen here, under observation)
+== dcp4-dflash-512k-b4 @ http://spark-06c4.local:8000 phase=warmup
+  warmup     1 words -> 22 tok, 0.5s: 'OK'
+  warmup     4 words -> 25 tok, 0.7s: 'OK'
+  warmup    13 words -> 36 tok, 0.7s: 'OK'
+  warmup    70 words -> 94 tok, 0.9s: 'OK'
+  warmup   250 words -> 277 tok, 1.6s: 'OK'
+  warmup   700 words -> 747 tok, 2.9s: 'OK'
+  warmup  1400 words -> 1466 tok, 5.1s: 'OK'
+  warmup  2800 words -> 2949 tok, 9.8s: 'OK'
+  warmup 38500 words -> 40031 tok, 131.0s: 'OK'
+== done
+[16:23:40] log scan (warmup):
+      4 WARNING 09-04 16:21:07 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to
+      4 WARNING 09-04 16:21:01 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      4 INFO 09-04 16:20:19 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      1 INFO 09-04 16:12:20 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+  spark-06c4 avail=1168MiB swapfree=13614MiB
+  spark-365c avail=2548MiB swapfree=14165MiB
+  spark-ddbf avail=2440MiB swapfree=14189MiB
+  spark-a218 avail=2399MiB swapfree=14173MiB
+[16:23:41] -- determinism vs baseline
+== dcp4-dflash-512k-b4 @ http://spark-06c4.local:8000 phase=determinism
+  u512            431-> 128 tok  sha=ec848646e994632d  9.7s  '# Summary\n\nThe text is a stream of technical-sound'
+  u1536          1247-> 128 tok  sha=f83c2531a2891a3e  13.2s  '# Summary\n\nThe text is a long, repetitive sequence'
+  c1024-seed      824-> 128 tok  sha=32189e0dac88ea36  10.9s  '# Summary\n\nThe text is a stream of technical-sound'
+  c1024+u1536    2017-> 128 tok  sha=a52f4432ede0177a  14.2s  '# Summary\n\nThe text is a large collection of techn'
+== done
+[16:24:29] -- bench
+== dcp4-dflash-512k-b4 @ http://spark-06c4.local:8000 phase=bench
+  count100  rep0 gen= 299 ttft=0.411s decode=45.21 tok/s acc/cycle=7.868 cycle=173.5ms sha=34a4f1e5bb080915
+  count100  rep1 gen= 299 ttft=0.488s decode=45.01 tok/s acc/cycle=7.868 cycle=174.2ms sha=34a4f1e5bb080915
+  prose     rep0 gen= 450 ttft=0.611s decode=15.08 tok/s acc/cycle=2.637 cycle=174.1ms sha=6b1bfbc0d814aaf0
+  prose     rep1 gen= 450 ttft=0.455s decode=15.49 tok/s acc/cycle=2.747 cycle=174.6ms sha=c6ce3552257ea096
+  code      rep0 gen= 249 ttft=0.535s decode=34.65 tok/s acc/cycle=6.225 cycle=179.0ms sha=9eaa82769178e6ab
+  code      rep1 gen= 251 ttft=0.627s decode=34.71 tok/s acc/cycle=6.275 cycle=180.1ms sha=1a1a3e7b25b1706d
+== done
+baseline=results/baseline-dcp1-prod
+candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-512k-b4
+
+== determinism (greedy, thinking off)
+  u512         base=c98ba48947d00b5a cand=ec848646e994632d DIFFERS  tokens 128 vs 128
+     base: '# Summary\n\nThe text is a stream of technical vocabulary related to machine learning and GPU computing, mixing '
+     cand: '# Summary\n\nThe text is a stream of technical-sounding vocabulary drawn from machine learning and computing ter'
+  u1536        base=e0ade287d5ad19d3 cand=f83c2531a2891a3e DIFFERS  tokens 128 vs 128
+     base: '# Summary\n\nThe text is a large collection of technical and nature-related words—such as "glacier," "softmax," '
+     cand: '# Summary\n\nThe text is a long, repetitive sequence of technical and nature-themed words (such as "glacier," "s'
+  c1024-seed   base=f857338257e568af cand=32189e0dac88ea36 DIFFERS  tokens 128 vs 128
+     base: '# Summary\n\nThe text is a stream of technical-sounding vocabulary related to machine learning and GPU computing'
+     cand: '# Summary\n\nThe text is a stream of technical-sounding vocabulary drawn from machine learning and GPU computing'
+  c1024+u1536  base=c229bc4a76e4baf3 cand=a52f4432ede0177a DIFFERS  tokens 128 vs 128
+     base: '# Summary\n\nThe text is a large collection of technical vocabulary related to machine learning and GPU computin'
+     cand: '# Summary\n\nThe text is a large collection of technical-sounding words—drawn from machine learning and computin'
+  0/4 identical
+
+== bench (per prompt, mean over reps)
+  prompt              decode tok/s          acc/cycle           cycle ms           ttft s
+  count100            57.0 -> 45.1       7.87 -> 7.87     137.6 -> 173.8     0.39 -> 0.45
+  prose               21.3 -> 15.3       2.94 -> 2.69     137.9 -> 174.3     0.45 -> 0.53
+  code                44.8 -> 34.7       6.29 -> 6.25     140.1 -> 179.6     0.48 -> 0.58
+
+  count100  text hashes base=['34a4f1e5bb080915'] cand=['34a4f1e5bb080915'] IDENTICAL
+  prose     text hashes base=['3e54a1ff5fbc7c85', '6bb346226fc09c12'] cand=['6b1bfbc0d814aaf0', 'c6ce3552257ea096'] DIFFER
+  code      text hashes base=['0625f62aca0f3d82', 'a128d0b562fb18d1'] cand=['1a1a3e7b25b1706d', '9eaa82769178e6ab'] DIFFER
+[16:25:59] -- concurrent (mixed decode+prefill batches)
+== dcp4-dflash-512k-b4 @ http://spark-06c4.local:8000 phase=concurrent
+  gen-prose     46-> 350 tok ttft=0.487s decode=6.23 tok/s  '# Tensor Parallelism in Transformer Attention\n\n## How Attent'
+  pf-3k       2935->  96 tok ttft=9.938s decode=3.5 tok/s  'The text is a long, repetitive sequence of single words draw'
+  pf-6k       5841->  20 tok ttft=26.817s decode=6.02 tok/s  'amber, system, cache, fossil, marble, attention, gradient, m'
+  gen-code      52-> 225 tok ttft=25.239s decode=21.04 tok/s  '```python\ndef merge_intervals(intervals):\n    """Merge overl'
+  concurrent window: {'wall_s': 56.5, 'drafts': 210.0, 'accepted': 483.0, 'accepted_per_cycle': 3.3}
+== done
+[16:26:56] log scan (concurrent):
+      4 WARNING 09-04 16:26:02 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _build_prefill_chunk_metadata_kernel. This causes a latency spike; consider extending wa
+      4 WARNING 09-04 16:21:07 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to
+      4 WARNING 09-04 16:21:01 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      4 INFO 09-04 16:20:19 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      1 INFO 09-04 16:12:20 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+  spark-06c4 avail=1069MiB swapfree=13615MiB
+  spark-365c avail=2510MiB swapfree=14166MiB
+  spark-ddbf avail=2387MiB swapfree=14191MiB
+  spark-a218 avail=2392MiB swapfree=14174MiB
+[16:26:58] -- long context probe (500000 tokens)
+  spark-06c4 avail=1067MiB swapfree=13615MiB
+  spark-365c avail=2509MiB swapfree=14166MiB
+  spark-ddbf avail=2387MiB swapfree=14191MiB
+  spark-a218 avail=2391MiB swapfree=14174MiB
+[16:27:21] guard: 06c4=712MiB 365c=2496MiB ddbf=2377MiB a218=2390MiB 
+[16:27:44] guard: 06c4=712MiB 365c=2495MiB ddbf=2372MiB a218=2377MiB 
+[16:28:08] guard: 06c4=683MiB 365c=2475MiB ddbf=2376MiB a218=2355MiB 
+[16:28:31] guard: 06c4=672MiB 365c=2462MiB ddbf=2369MiB a218=2347MiB 
+[16:28:54] guard: 06c4=658MiB 365c=2448MiB ddbf=2360MiB a218=2355MiB 
+[16:29:19] guard: 06c4=661MiB 365c=2433MiB ddbf=2351MiB a218=2339MiB 
+[16:29:42] guard: 06c4=653MiB 365c=2428MiB ddbf=2347MiB a218=2341MiB 
+[16:30:05] guard: 06c4=645MiB 365c=2424MiB ddbf=2336MiB a218=2334MiB 
+[16:30:29] guard: 06c4=623MiB 365c=2394MiB ddbf=2321MiB a218=2326MiB 
+[16:30:52] guard: 06c4=619MiB 365c=2386MiB ddbf=2321MiB a218=2317MiB 
+[16:31:15] guard: 06c4=613MiB 365c=2372MiB ddbf=2312MiB a218=2314MiB 
+[16:31:40] guard: 06c4=603MiB 365c=2365MiB ddbf=2305MiB a218=2310MiB 
+[16:32:03] guard: 06c4=599MiB 365c=2351MiB ddbf=2295MiB a218=2301MiB 
+[16:32:26] guard: 06c4=604MiB 365c=2345MiB ddbf=2289MiB a218=2301MiB 
+[16:32:50] guard: 06c4=600MiB 365c=2342MiB ddbf=2288MiB a218=2296MiB 
+[16:33:13] guard: 06c4=599MiB 365c=2338MiB ddbf=2286MiB a218=2292MiB 
+[16:33:36] guard: 06c4=595MiB 365c=2324MiB ddbf=2279MiB a218=2287MiB 
+[16:34:00] guard: 06c4=583MiB 365c=2303MiB ddbf=2273MiB a218=2279MiB 
+[16:34:23] guard: 06c4=571MiB 365c=2291MiB ddbf=2263MiB a218=2211MiB 
+[16:34:47] guard: 06c4=556MiB 365c=2284MiB ddbf=2280MiB a218=2209MiB 
+[16:35:11] guard: 06c4=518MiB 365c=2269MiB ddbf=2272MiB a218=2212MiB 
+[16:35:34] guard: 06c4=522MiB 365c=2262MiB ddbf=2272MiB a218=2199MiB 
+[16:35:57] guard: 06c4=518MiB 365c=2256MiB ddbf=2267MiB a218=2194MiB 
+[16:36:21] guard: 06c4=476MiB 365c=2244MiB ddbf=2244MiB a218=2187MiB 
+[16:36:44] guard: 06c4=476MiB 365c=2238MiB ddbf=2237MiB a218=2173MiB 
+[16:37:07] guard: 06c4=460MiB 365c=2229MiB ddbf=2234MiB a218=2163MiB 
+[16:37:31] guard: 06c4=438MiB 365c=2231MiB ddbf=2206MiB a218=2127MiB 
+[16:37:54] guard: 06c4=437MiB 365c=2232MiB ddbf=2209MiB a218=2117MiB 
+[16:38:17] guard: 06c4=432MiB 365c=2219MiB ddbf=2213MiB a218=2111MiB 
+[16:38:42] guard: 06c4=429MiB 365c=2216MiB ddbf=2194MiB a218=2125MiB 
+[16:39:05] guard: 06c4=416MiB 365c=2214MiB ddbf=2186MiB a218=2114MiB 
+[16:39:28] guard: 06c4=418MiB 365c=2212MiB ddbf=2182MiB a218=2107MiB 
+[16:39:52] guard: 06c4=408MiB 365c=2213MiB ddbf=2201MiB a218=2089MiB 
+[16:40:15] guard: 06c4=416MiB 365c=2222MiB ddbf=2184MiB a218=2098MiB 
+[16:40:38] guard: 06c4=409MiB 365c=2217MiB ddbf=2170MiB a218=2088MiB 
+[16:41:02] guard: 06c4=404MiB 365c=2197MiB ddbf=2173MiB a218=2071MiB 
+[16:41:25] guard: 06c4=404MiB 365c=2191MiB ddbf=2160MiB a218=2077MiB 
+[16:41:49] guard: 06c4=400MiB 365c=2132MiB ddbf=2166MiB a218=2080MiB 
+[16:42:13] guard: 06c4=382MiB 365c=2091MiB ddbf=2141MiB a218=2045MiB 
+[16:42:36] guard: 06c4=374MiB 365c=1864MiB ddbf=2140MiB a218=2074MiB 
+[16:42:59] guard: 06c4=366MiB 365c=1814MiB ddbf=2150MiB a218=2059MiB 
+[16:43:24] guard: 06c4=352MiB 365c=1829MiB ddbf=2172MiB a218=2052MiB 
+[16:43:47] guard: 06c4=359MiB 365c=1820MiB ddbf=2173MiB a218=2027MiB 
+[16:44:10] guard: 06c4=353MiB 365c=1811MiB ddbf=2166MiB a218=2026MiB 
+[16:44:34] guard: 06c4=333MiB 365c=1838MiB ddbf=2149MiB a218=2007MiB 
+[16:44:57] guard: 06c4=317MiB 365c=1844MiB ddbf=2112MiB a218=2007MiB 
+[16:45:20] guard: 06c4=352MiB 365c=1846MiB ddbf=2101MiB a218=2006MiB 
+[16:45:45] guard: 06c4=342MiB 365c=1841MiB ddbf=2077MiB a218=1986MiB 
+[16:46:08] guard: 06c4=502MiB 365c=1827MiB ddbf=2067MiB a218=1984MiB 
+[16:46:31] guard: 06c4=480MiB 365c=1815MiB ddbf=2082MiB a218=1999MiB 
+[16:46:55] guard: 06c4=391MiB 365c=1851MiB ddbf=2065MiB a218=1998MiB 
+[16:47:19] guard: 06c4=395MiB 365c=1870MiB ddbf=2078MiB a218=1991MiB 
+[16:47:42] guard: 06c4=349MiB 365c=1882MiB ddbf=2084MiB a218=1980MiB 
+[16:48:06] guard: 06c4=327MiB 365c=1853MiB ddbf=2081MiB a218=1963MiB 
+[16:48:29] guard: 06c4=504MiB 365c=1846MiB ddbf=2079MiB a218=1967MiB 
+[16:48:53] guard: 06c4=462MiB 365c=1808MiB ddbf=2061MiB a218=1958MiB 
+[16:49:17] guard: 06c4=444MiB 365c=1773MiB ddbf=2014MiB a218=1989MiB 
+[16:49:40] guard: 06c4=425MiB 365c=1762MiB ddbf=2004MiB a218=1966MiB 
+[16:50:03] guard: 06c4=349MiB 365c=1660MiB ddbf=2007MiB a218=1994MiB 
+[16:50:27] guard: 06c4=328MiB 365c=1711MiB ddbf=1991MiB a218=2013MiB 
+[16:50:50] guard: 06c4=308MiB 365c=1716MiB ddbf=2004MiB a218=1991MiB 
+[16:51:13] guard: 06c4=294MiB 365c=1702MiB ddbf=1994MiB a218=1980MiB 
+[16:51:37] guard: 06c4=397MiB 365c=1701MiB ddbf=2005MiB a218=1991MiB 
+[16:52:00] guard: 06c4=389MiB 365c=1721MiB ddbf=1997MiB a218=1986MiB 
+[16:52:23] guard: 06c4=380MiB 365c=1714MiB ddbf=1996MiB a218=1987MiB 
+[16:52:48] guard: 06c4=347MiB 365c=1722MiB ddbf=1995MiB a218=1932MiB 
+[16:53:11] guard: 06c4=343MiB 365c=1696MiB ddbf=2002MiB a218=1930MiB 
+[16:53:34] guard: 06c4=312MiB 365c=1691MiB ddbf=2003MiB a218=1924MiB 
+[16:53:58] guard: 06c4=322MiB 365c=1689MiB ddbf=2002MiB a218=1881MiB 
+[16:54:21] guard: 06c4=309MiB 365c=1687MiB ddbf=2023MiB a218=1894MiB 
+[16:54:44] guard: 06c4=310MiB 365c=1689MiB ddbf=2011MiB a218=1896MiB 
+[16:55:08] guard: 06c4=306MiB 365c=1657MiB ddbf=2019MiB a218=1894MiB 
+[16:55:32] guard: 06c4=409MiB 365c=1642MiB ddbf=2021MiB a218=1884MiB 
+[16:55:55] guard: 06c4=409MiB 365c=1634MiB ddbf=2027MiB a218=1888MiB 
+[16:56:19] guard: 06c4=384MiB 365c=1627MiB ddbf=2023MiB a218=1859MiB 
+[16:56:42] guard: 06c4=344MiB 365c=1625MiB ddbf=2022MiB a218=1845MiB 
+[16:57:05] guard: 06c4=347MiB 365c=1592MiB ddbf=2020MiB a218=1842MiB 
+[16:57:29] guard: 06c4=335MiB 365c=1593MiB ddbf=2005MiB a218=1828MiB 
+[16:57:52] guard: 06c4=314MiB 365c=1614MiB ddbf=2011MiB a218=1860MiB 
+[16:58:16] guard: 06c4=346MiB 365c=1600MiB ddbf=2008MiB a218=1855MiB 
+[16:58:40] guard: 06c4=339MiB 365c=1593MiB ddbf=2024MiB a218=1876MiB 
+[16:59:03] guard: 06c4=335MiB 365c=1616MiB ddbf=2033MiB a218=1859MiB 
+[16:59:26] guard: 06c4=372MiB 365c=1622MiB ddbf=2024MiB a218=1852MiB 
+== dcp4-dflash-512k-b4 @ http://spark-06c4.local:8000 phase=longctx
+  longctx 499797 tok: ttft=1934.3s wall=1934.3s -> 'OK'
+== done
+  spark-06c4 avail=371MiB swapfree=13573MiB
+  spark-365c avail=1621MiB swapfree=14169MiB
+  spark-ddbf avail=2023MiB swapfree=14192MiB
+  spark-a218 avail=1852MiB swapfree=14175MiB
+[16:59:29] log scan (final):
+[16:59:29] == checks done; results in /home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-512k-b4

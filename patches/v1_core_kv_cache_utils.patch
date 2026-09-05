@@ -1,0 +1,48 @@
+--- a/vllm/v1/core/kv_cache_utils.py
++++ b/vllm/v1/core/kv_cache_utils.py
+@@ -32,6 +32,7 @@
+     SlidingWindowMLASpec,
+     SlidingWindowSpec,
+     UniformTypeKVCacheSpecs,
++    cp_world_size_for_kv_cache_spec,
+ )
+ from vllm.v1.kv_cache_spec_registry import KVCacheSpecRegistry
+ from vllm.v1.request import Request
+@@ -617,13 +618,21 @@
+         bs = cache_config.block_size * dcp * pcp
+         return bs, bs
+ 
+-    if dcp != 1 or pcp != 1:
++    if pcp != 1:
+         raise ValueError(
+-            "Hybrid KV cache groups with multiple block sizes do not "
+-            "support context parallelism (dcp_world_size/pcp_world_size > 1)."
++            "Hybrid KV cache groups do not support prefill context parallelism "
++            "(pcp_world_size > 1)."
+         )
+ 
+-    group_block_sizes = [g.kv_cache_spec.block_size for g in groups]
++    # Under DCP a token-sharded (full-attention) group's effective block spans
++    # block_size * dcp positions, while a replicated group (sliding window)
++    # keeps its raw block size. The scheduler aligns on the LCM of the
++    # effective sizes and hashes at their GCD.
++    group_block_sizes = [
++        g.kv_cache_spec.block_size
++        * cp_world_size_for_kv_cache_spec(g.kv_cache_spec, dcp)
++        for g in groups
++    ]
+     scheduler_block_size = math.lcm(*group_block_sizes)
+ 
+     # Block hashes are only consumed by prefix caching and KV connectors
+@@ -1274,9 +1283,8 @@
+ def _dsa_sliding_window_max_pages(
+     spec: SlidingWindowSpec, vllm_config: VllmConfig
+ ) -> int:
+-    assert vllm_config.parallel_config.decode_context_parallel_size == 1, (
+-        "DCP not support sliding window."
+-    )
++    # Replicated across DCP ranks (see cp_world_size_for_kv_cache_spec), so
++    # the per-rank page need is the global one.
+     max_model_len = vllm_config.model_config.max_model_len
+     max_num_batched_tokens = vllm_config.scheduler_config.max_num_batched_tokens
+     extra_retained_tokens = getattr(spec, "extra_retained_tokens", 0)

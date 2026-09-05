@@ -1,0 +1,98 @@
+[23:56:59] == post-boot checks for dcp4-dflash-300k-slab2-a
+  spark-06c4 avail=4613MiB swapfree=13551MiB
+  spark-365c avail=5809MiB swapfree=14138MiB
+  spark-ddbf avail=5785MiB swapfree=14152MiB
+  spark-a218 avail=5762MiB swapfree=14115MiB
+[23:57:01] log scan (boot):
+      4 WARNING 09-04 23:56:57 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      4 INFO 09-04 23:56:06 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      1 INFO 09-04 23:48:15 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+[23:57:01] -- warmup sweep (inference-time JITs happen here, under observation)
+== dcp4-dflash-300k-slab2-a @ http://spark-06c4.local:8000 phase=warmup
+  warmup     1 words -> 22 tok, 0.5s: 'OK'
+  warmup     4 words -> 25 tok, 0.7s: 'OK'
+  warmup    13 words -> 36 tok, 0.7s: 'OK'
+  warmup    70 words -> 94 tok, 0.9s: 'OK'
+  warmup   250 words -> 277 tok, 1.6s: 'OK'
+  warmup   700 words -> 747 tok, 3.0s: 'OK'
+  warmup  1400 words -> 1466 tok, 5.1s: 'OK'
+  warmup  2800 words -> 2949 tok, 9.9s: 'OK'
+  warmup 38500 words -> 40031 tok, 133.1s: 'OK'
+== done
+[23:59:37] log scan (warmup):
+      4 WARNING 09-04 23:57:02 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to
+      4 WARNING 09-04 23:56:57 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      4 INFO 09-04 23:56:06 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      1 INFO 09-04 23:48:15 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+  spark-06c4 avail=3336MiB swapfree=13552MiB
+  spark-365c avail=4537MiB swapfree=14154MiB
+  spark-ddbf avail=4550MiB swapfree=14170MiB
+  spark-a218 avail=4514MiB swapfree=14132MiB
+[23:59:38] -- determinism vs baseline
+== dcp4-dflash-300k-slab2-a @ http://spark-06c4.local:8000 phase=determinism
+  u512            431-> 128 tok  sha=0c5970bdbecf42c2  9.7s  '# Summary\n\nThe text is a stream of technical vocab'
+  u1536          1247-> 128 tok  sha=92a62d85c07a2e1a  11.6s  '# Summary\n\nThe text is a long, repetitive sequence'
+  c1024-seed      824-> 128 tok  sha=b8a14187b7141989  9.8s  '# Summary\n\nThe text is a stream of technical-sound'
+  c1024+u1536    2017-> 128 tok  sha=8b3b09dc2c84d215  13.2s  '# Summary\n\nThe text is a large collection of techn'
+== done
+[00:00:23] -- bench
+== dcp4-dflash-300k-slab2-a @ http://spark-06c4.local:8000 phase=bench
+  count100  rep0 gen= 299 ttft=0.418s decode=44.83 tok/s acc/cycle=7.868 cycle=174.9ms sha=34a4f1e5bb080915
+  count100  rep1 gen= 299 ttft=0.496s decode=44.46 tok/s acc/cycle=7.868 cycle=176.4ms sha=34a4f1e5bb080915
+  prose     rep0 gen= 450 ttft=0.605s decode=14.73 tok/s acc/cycle=2.595 cycle=176.2ms sha=69cc8e0497220210
+  prose     rep1 gen= 450 ttft=0.572s decode=14.34 tok/s acc/cycle=2.554 cycle=176.9ms sha=3c73c8db4b0a7d54
+  code      rep0 gen= 189 ttft=0.573s decode=38.18 tok/s acc/cycle=6.75 cycle=175.9ms sha=14cd9b0c98ce8b70
+  code      rep1 gen= 249 ttft=0.626s decode=34.07 tok/s acc/cycle=6.225 cycle=182.0ms sha=21787e63aa4650dd
+== done
+baseline=results/baseline-dcp1-prod
+candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-300k-slab2-a
+
+== determinism (greedy, thinking off)
+  u512         base=c98ba48947d00b5a cand=0c5970bdbecf42c2 DIFFERS  tokens 128 vs 128
+     base: '# Summary\n\nThe text is a stream of technical vocabulary related to machine learning and GPU computing, mixing '
+     cand: '# Summary\n\nThe text is a stream of technical vocabulary related to machine learning and GPU computing—words li'
+  u1536        base=e0ade287d5ad19d3 cand=92a62d85c07a2e1a DIFFERS  tokens 128 vs 128
+     base: '# Summary\n\nThe text is a large collection of technical and nature-related words—such as "glacier," "softmax," '
+     cand: '# Summary\n\nThe text is a long, repetitive sequence of isolated words drawn from technical and natural vocabula'
+  c1024-seed   base=f857338257e568af cand=b8a14187b7141989 DIFFERS  tokens 128 vs 128
+     base: '# Summary\n\nThe text is a stream of technical-sounding vocabulary related to machine learning and GPU computing'
+     cand: '# Summary\n\nThe text is a stream of technical-sounding vocabulary related to computing and machine learning—wor'
+  c1024+u1536  base=c229bc4a76e4baf3 cand=8b3b09dc2c84d215 DIFFERS  tokens 128 vs 128
+     base: '# Summary\n\nThe text is a large collection of technical vocabulary related to machine learning and GPU computin'
+     cand: '# Summary\n\nThe text is a large collection of technical-sounding vocabulary words—drawn from machine learning ('
+  0/4 identical
+
+== bench (per prompt, mean over reps)
+  prompt              decode tok/s          acc/cycle           cycle ms           ttft s
+  count100            57.0 -> 44.6       7.87 -> 7.87     137.6 -> 175.7     0.39 -> 0.46
+  prose               21.3 -> 14.5       2.94 -> 2.57     137.9 -> 176.6     0.45 -> 0.59
+  code                44.8 -> 36.1       6.29 -> 6.49     140.1 -> 178.9     0.48 -> 0.60
+
+  count100  text hashes base=['34a4f1e5bb080915'] cand=['34a4f1e5bb080915'] IDENTICAL
+  prose     text hashes base=['3e54a1ff5fbc7c85', '6bb346226fc09c12'] cand=['3c73c8db4b0a7d54', '69cc8e0497220210'] DIFFER
+  code      text hashes base=['0625f62aca0f3d82', 'a128d0b562fb18d1'] cand=['14cd9b0c98ce8b70', '21787e63aa4650dd'] DIFFER
+[00:01:54] -- concurrent (mixed decode+prefill batches)
+== dcp4-dflash-300k-slab2-a @ http://spark-06c4.local:8000 phase=concurrent
+  gen-prose     46-> 350 tok ttft=0.486s decode=6.29 tok/s  '# Tensor Parallelism in Transformer Attention\n\n## How Attent'
+  pf-3k       2935->  96 tok ttft=9.907s decode=3.39 tok/s  'The text is a long, repetitive sequence of single words draw'
+  pf-6k       5841->  20 tok ttft=27.143s decode=8.88 tok/s  'token, memory, attention, gradient, cache, system, matrix, b'
+  gen-code      52-> 246 tok ttft=25.561s decode=21.12 tok/s  '```python\ndef merge_intervals(intervals):\n    """Merge overl'
+  concurrent window: {'wall_s': 56.0, 'drafts': 206.0, 'accepted': 509.0, 'accepted_per_cycle': 3.471}
+== done
+[00:02:51] log scan (concurrent):
+      4 WARNING 09-05 00:01:56 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _build_prefill_chunk_metadata_kernel. This causes a latency spike; consider extending wa
+      4 WARNING 09-04 23:57:02 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to
+      4 WARNING 09-04 23:56:57 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      4 INFO 09-04 23:56:06 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      1 INFO 09-04 23:48:15 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+  spark-06c4 avail=3301MiB swapfree=13553MiB
+  spark-365c avail=4478MiB swapfree=14156MiB
+  spark-ddbf avail=4503MiB swapfree=14170MiB
+  spark-a218 avail=4499MiB swapfree=14134MiB
+[00:02:52] log scan (final):
+      4 WARNING 09-05 00:01:56 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _build_prefill_chunk_metadata_kernel. This causes a latency spike; consider extending wa
+      4 WARNING 09-04 23:57:02 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to
+      4 WARNING 09-04 23:56:57 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      4 INFO 09-04 23:56:06 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      1 INFO 09-04 23:48:15 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+[00:02:53] == checks done; results in /home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-300k-slab2-a

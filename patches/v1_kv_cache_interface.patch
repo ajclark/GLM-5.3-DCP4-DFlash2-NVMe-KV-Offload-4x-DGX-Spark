@@ -1,0 +1,57 @@
+--- a/vllm/v1/kv_cache_interface.py
++++ b/vllm/v1/kv_cache_interface.py
+@@ -520,9 +520,10 @@
+         return cdiv(num_tokens, self.block_size) + 1
+ 
+     def max_memory_usage_bytes(self, vllm_config: VllmConfig) -> int:
+-        assert vllm_config.parallel_config.decode_context_parallel_size == 1, (
+-            "DCP not support sliding window."
+-        )
++        # Sliding-window KV is replicated across DCP ranks (every rank keeps
++        # every position for its TP shard of heads), so unlike
++        # FullAttentionSpec the per-rank need is NOT divided by the DCP size.
++        # See cp_world_size_for_kv_cache_spec.
+         max_model_len = vllm_config.model_config.max_model_len
+         max_num_batched_tokens = vllm_config.scheduler_config.max_num_batched_tokens
+         max_blocks = self.max_admission_blocks_per_request(
+@@ -890,3 +891,40 @@
+     @property
+     def needs_kv_cache_zeroing(self) -> bool:
+         return self.has_mamba_layers
++
++
++def cp_world_size_for_kv_cache_spec(spec: KVCacheSpec, cp_world_size: int) -> int:
++    """The context-parallel world size that owns this group's block geometry.
++
++    Full-attention KV (``FullAttentionSpec``, which includes MLA, and
++    ``UniformTypeKVCacheSpecs`` made of it) is token-sharded across the DCP
++    group: block tables shrink by the CP size, the slot mapping writes ``-1``
++    for positions other ranks own, and prefix hashing works on
++    ``block_size * cp``. Every other spec (sliding window, chunked-local,
++    Mamba) keeps **replicated** per-rank state and must behave exactly as at
++    ``cp_world_size == 1`` even when the process runs with DCP > 1.
++
++    This is the single source of truth for that decision; the KV coordinator,
++    the block tables, the slot mapping and the attention builders all consult
++    it. (The DFlash drafter's sliding-window cache is the case that matters on
++    the Spark cluster: its 8 KV heads at TP4 cannot be DCP-sharded at all, and
++    the replicated layout is the one it already uses.)
++    """
++    if cp_world_size <= 1:
++        return 1
++    inner: list[KVCacheSpec]
++    if isinstance(spec, UniformTypeKVCacheSpecs):
++        inner = list(spec.kv_cache_specs.values())
++    else:
++        inner = [spec]
++    if not inner:
++        return 1
++    sharded = [
++        isinstance(s, FullAttentionSpec) and not isinstance(s, SlidingWindowSpec)
++        for s in inner
++    ]
++    assert all(sharded) or not any(sharded), (
++        "A KV cache group mixes token-sharded and replicated specs under DCP: "
++        f"{[type(s).__name__ for s in inner]}"
++    )
++    return cp_world_size if all(sharded) else 1

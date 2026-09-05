@@ -1,0 +1,33 @@
+[23:47:00] == A: boot with cap 4500000000
+INFO 09-04 23:55:10 [multinode.py:1706] Slab store: rank 0 at /kvcache/_models_glm-5.3_e2882ca48d1b_r0, slot bytes [3452928, 397312], slots [892, 3568] (4.5 GB cap), 48 b
+INFO 09-04 23:55:10 [multinode.py:1706] Slab store: rank 1 at /kvcache/_models_glm-5.3_e2882ca48d1b_r1, slot bytes [3452928, 397312], slots [892, 3568] (4.5 GB cap), 48 b
+INFO 09-04 23:55:10 [multinode.py:1706] Slab store: rank 2 at /kvcache/_models_glm-5.3_e2882ca48d1b_r2, slot bytes [3452928, 397312], slots [892, 3568] (4.5 GB cap), 48 b
+INFO 09-04 23:55:10 [multinode.py:1706] Slab store: rank 3 at /kvcache/_models_glm-5.3_e2882ca48d1b_r3, slot bytes [3452928, 397312], slots [892, 3568] (4.5 GB cap), 48 b
+INFO 09-04 23:56:11 [multinode.py:1671] Slab store: scheduler will index rank 0's slabs under /kvcache
+[00:02:53] A: offload probe (reload expected to MISS: cap 4500000000 < 4 prefixes)
+[00:32:06] A: slab sizes after 4 prefixes (cap 4500000000):
+  spark-06c4 slab bytes=4497616384 4.2G
+  spark-365c slab bytes=4497616384 4.2G
+  spark-ddbf slab bytes=4497616384 4.2G
+  spark-a218 slab bytes=4497616384 4.2G
+[00:32:08] == B: restart into cap 150000000000
+INFO 09-05 00:40:06 [multinode.py:1706] Slab store: rank 0 at /kvcache/_models_glm-5.3_e2882ca48d1b_r0, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 00:40:06 [multinode.py:1706] Slab store: rank 1 at /kvcache/_models_glm-5.3_e2882ca48d1b_r1, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 00:40:06 [multinode.py:1706] Slab store: rank 2 at /kvcache/_models_glm-5.3_e2882ca48d1b_r2, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 00:40:06 [multinode.py:1706] Slab store: rank 3 at /kvcache/_models_glm-5.3_e2882ca48d1b_r3, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 00:41:07 [multinode.py:1671] Slab store: scheduler will index rank 0's slabs under /kvcache
+[01:05:31] == C: restart again (durability at cap 150000000000)
+INFO 09-05 01:14:09 [multinode.py:1706] Slab store: rank 0 at /kvcache/_models_glm-5.3_e2882ca48d1b_r0, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 01:14:09 [multinode.py:1706] Slab store: rank 1 at /kvcache/_models_glm-5.3_e2882ca48d1b_r1, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 01:14:09 [multinode.py:1706] Slab store: rank 2 at /kvcache/_models_glm-5.3_e2882ca48d1b_r2, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 01:14:09 [multinode.py:1706] Slab store: rank 3 at /kvcache/_models_glm-5.3_e2882ca48d1b_r3, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap)
+INFO 09-05 01:15:10 [multinode.py:1671] Slab store: scheduler will index rank 0's slabs under /kvcache
+== dcp4-dflash-300k-slab2-b @ http://spark-06c4.local:8000 phase=reload
+  reload-after-restart {'prompt_tokens': 99975, 'ttft_s': 5.39, 'content': 'OK', 'ext_hits': 99328.0, 'ext_queries': 99975.0}
+== done
+[01:15:57] C: slab sizes:
+  spark-06c4 slab bytes=7468146176 7.0G
+  spark-365c slab bytes=7468146176 7.0G
+  spark-ddbf slab bytes=7468146176 7.0G
+  spark-a218 slab bytes=7468146176 7.0G
+[01:15:59] == slab sequence done

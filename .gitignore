@@ -1,0 +1,16 @@
+# local tooling
+.venv/
+__pycache__/
+.pytest_cache/
+# a full upstream vLLM clone, used only to locate the fork's base commit
+upstream-vllm/
+# superseded staging snapshot
+stage-boot2/
+# raw node logs and console captures from the cluster runs (~160 MB);
+# the curated results (json, checks/offload/rollout logs, snapshots) stay
+results/**/*-spark-*.log
+results/**/*.console.log
+results/**/*.nohup
+results/**/pre-*.log
+results/**/up-*.log
+results/**/failed-*.log
