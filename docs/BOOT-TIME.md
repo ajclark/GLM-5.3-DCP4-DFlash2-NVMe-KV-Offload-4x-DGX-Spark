@@ -49,3 +49,30 @@ In `launch-glm53big-dcp.sh`, add env flags:
 -e INSTANTTENSOR_MAX_FREE_MEM_USAGE=0.25 -e INSTANTTENSOR_IO_DEPTH=32 -e INSTANTTENSOR_DEBUG=1 \
 ```
 and to `vllm serve`: `--load-format instanttensor --kernel-config '{"enable_flashinfer_autotune": false}'`. Optionally mount an overlay of `model_executor/model_loader/weight_utils.py` with `process_group=None` in `instanttensor_weights_iterator` (local reads, no NCCL). Expect ~300-350 s on this boot, ~240-290 s on the next same-config boot (compile hit); #4 then targets ~150 s. Check `Loading safetensors using InstantTensor loader`, `Loading weights took`, `Skipping FlashInfer autotune`, min avail on 06c4 in mem.log, and a real generation plus the hash comparison before adopting.
+
+## The disk-image design (decision 2026-09-05: NVMe artifacts, no resident memory)
+
+The human ruled out resident-memory routes (tmpfs adoption, CUDA-IPC holder): a cold power-up has to be fast too, so every derived artifact lives on the node's NVMe, keyed by what produced it, and a boot reads artifacts and re-derives only what a new process cannot load. Codex's independent review (`results/codex-review-boot-time.md`) reaches the same first choice and adds three corrections folded in below.
+
+**What is on each node's NVMe after a one-time bake**
+
+- `weights-rank<r>.bin` + manifest: this rank's post-processed tensors in final kernel layout (marlin-repacked int4 experts, dequantized MLA `W_UK_T`/`W_UV`, scales, everything `process_weights_after_loading` produces), ~95 GB, a few thousand fused tensors instead of 177,569. The manifest records every final parameter (name, shape, strides, dtype, offset) and every attribute PWAL creates outside `state_dict`. Written once by a maintenance boot that loads the normal way and dumps its state; the 380 GB checkpoint stays for re-baking.
+- `draft-rank<r>.bin`: the DFlash drafter the same way, ~4.6 GB.
+- The torch.compile AOT + Inductor cache (~1 GB per lane) that this vLLM already writes, pointed at the mounted disk via `VLLM_CACHE_ROOT` (hit path `compilation/decorators.py:565`, validated against traced source files, so overlay edits invalidate correctly).
+- Autotune: FlashInfer autotune off via `--kernel-config '{"enable_flashinfer_autotune": false}'` (this stack's hot kernels are marlin, Triton sparse MLA, FLASH_ATTN); its persistent cache stays compiled out because the fork disables it for tactic-key collisions (`kernel_warmup.py:115`), so do not just flip that constant. Triton configs pinned in the sm12x overlays if the window is Triton's.
+- A key file: hashes of checkpoint, quant config, vLLM build, the 16 overlay files, and the lane (TP, DCP, window, KV dtype). Mismatch → loader refuses the image and falls back to a normal load, which is also how a re-bake is triggered.
+
+**What a boot does with it**
+
+1. Container start, imports, CUDA context, NCCL init: ~25-40 s, unchanged (unmeasured after the load-path change; this is where the Claude 70-90 s and Codex 105-145 s floors differ).
+2. Build the model, then construct the final-shape parameters directly from the manifest (Codex: do not run PWAL on garbage in production; it performs real transformations and parameter replacement, and `base_loader.py:64-80` re-runs it after `load_weights`, so the plugin overrides `load_model` and PWAL never runs on loaded data).
+3. Read the rank image with O_DIRECT through a bounded pinned ring buffer into those parameters: 95 GB at 9-10 GB/s is 10-12 s storage-bound, 15-25 s realistic with the staging copy (no GDS). Same on a cold power-up because direct I/O bypasses the page cache, and no page-cache growth means no swap pressure on rank 0 during load.
+4. Load the compiled graphs from the cache instead of compiling: ~5 s.
+5. Capture CUDA graphs, the one thing a new process must do: ~10-14 s, less with `cudagraph_capture_sizes` trimmed to the shapes we serve.
+6. KV pool, slab index, server tail: ~15-20 s.
+
+Target 80-120 s from `docker run` to serving, warm restart or cold power-up alike, against 505 s today.
+
+**Build order.** (1) Flags-only boot (section above): compile cache persisted, autotune off, instanttensor direct-I/O loader → ~250-300 s and a measurement of the pre-worker startup and tail. (2) Round-trip one post-processed MoE+MLA layer through the image format and compare bytes and kernel outputs. (3) The loader plugin (`register_model_loader`, ~300 lines) plus a `--bake` mode in the launcher; validate with the byte-identical count100 hash against a normal load and the standard post-boot checks. Disk ~100 GB per node of 1.2 TB free.
+
+**Cold-boot extras.** The 2000 MHz clock lock does not survive a reboot (make it a systemd unit). The slab NVMe cache wipes itself when the node's boot id changes (a deliberate safety choice); a clean-shutdown marker could let it survive planned power cycles. CRIU + cuda-checkpoint is out on the installed 580-series ARM drivers (ARM support arrived in 595) and would copy device memory into host allocations on UMA anyway.
