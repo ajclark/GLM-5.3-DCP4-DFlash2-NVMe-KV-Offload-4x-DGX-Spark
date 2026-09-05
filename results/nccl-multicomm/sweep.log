@@ -1,0 +1,58 @@
+[15:22:17] == NCCL multi-communicator sweep: default ll
+[15:22:17] -- stopping the serving stack
+[15:22:29] -- variant default
+nccl_multicomm_default launched rank=3 variant=default
+nccl_multicomm_default launched rank=2 variant=default
+nccl_multicomm_default launched rank=1 variant=default
+nccl_multicomm_default launched rank=0 variant=default
+[15:22:53]   5 results; 4 warnings/errors in the log
+  spark-06c4: [2026-09-05 15:22:49] spark-06c4:1:64 [0] os/linux.cc:804 (ncclOsShmOpen) NCCL WARN Error: failed to extend /dev/shm/nccl-6UO9Je to 34210196 bytes, error: No space left on device (28)
+  spark-06c4: [2026-09-05 15:22:49] spark-06c4:1:64 [0] os/linux.cc:851 (ncclOsShmOpen) NCCL WARN Error while creating shared memory segment /dev/shm/nccl-6UO9Je (size 34210192), error: No space left on device (28)
+  spark-06c4: [rank0]:     raise RuntimeError(f"NCCL error: {error_str}")
+  spark-365c: [2026-09-05 15:22:49] spark-365c:1:61 [0] os/linux.cc:804 (ncclOsShmOpen) NCCL WARN Error: failed to extend /dev/shm/nccl-72sbso to 34210196 bytes, error: No space left on device (28)
+  spark-365c: [2026-09-05 15:22:49] spark-365c:1:61 [0] os/linux.cc:851 (ncclOsShmOpen) NCCL WARN Error while creating shared memory segment /dev/shm/nccl-72sbso (size 34210192), error: No space left on device (28)
+  spark-365c: [rank1]:     raise RuntimeError(f"NCCL error: {error_str}")
+  spark-ddbf: [2026-09-05 15:22:49] spark-ddbf:1:111 [0] os/linux.cc:804 (ncclOsShmOpen) NCCL WARN Error: failed to extend /dev/shm/nccl-CC3qyJ to 34210196 bytes, error: No space left on device (28)
+  spark-ddbf: [2026-09-05 15:22:49] spark-ddbf:1:111 [0] os/linux.cc:851 (ncclOsShmOpen) NCCL WARN Error while creating shared memory segment /dev/shm/nccl-CC3qyJ (size 34210192), error: No space left on device (28)
+  spark-ddbf: [rank2]:     raise RuntimeError(f"NCCL error: {error_str}")
+  spark-a218: [rank3]:     raise RuntimeError(f"NCCL error: {error_str}")
+  spark-a218: [rank3]: RuntimeError: NCCL error: unhandled system error (run with NCCL_DEBUG=INFO for details)
+  spark-a218: [2026-09-05 15:22:49] spark-a218:1:111 [0] os/linux.cc:804 (ncclOsShmOpen) NCCL WARN Error: failed to extend /dev/shm/nccl-bDBdzd to 34210196 bytes, error: No space left on device (28)
+[15:22:54] -- variant ll
+nccl_multicomm_ll launched rank=3 variant=ll
+nccl_multicomm_ll launched rank=2 variant=ll
+nccl_multicomm_ll launched rank=1 variant=ll
+nccl_multicomm_ll launched rank=0 variant=ll
+[15:24:44] == NCCL multi-communicator sweep: default
+[15:24:44] -- stopping the serving stack
+[15:24:54] -- variant default
+nccl_multicomm_default launched rank=3 variant=default
+nccl_multicomm_default launched rank=2 variant=default
+nccl_multicomm_default launched rank=1 variant=default
+nccl_multicomm_default launched rank=0 variant=default
+[15:25:26]   15 results; 0 warnings/errors in the log
+[15:25:28] == sweep done (NO_RESTORE=1: serving stack left down)
+[15:25:55] == NCCL multi-communicator sweep: default ll
+[15:25:55] -- stopping the serving stack
+[15:26:05] -- variant default
+nccl_multicomm_default launched rank=3 variant=default
+nccl_multicomm_default launched rank=2 variant=default
+nccl_multicomm_default launched rank=1 variant=default
+nccl_multicomm_default launched rank=0 variant=default
+[15:26:59]   35 results; 0 warnings/errors in the log
+[15:27:02] -- variant ll
+nccl_multicomm_ll launched rank=3 variant=ll
+nccl_multicomm_ll launched rank=2 variant=ll
+nccl_multicomm_ll launched rank=1 variant=ll
+nccl_multicomm_ll launched rank=0 variant=ll
+[15:27:55]   35 results; 0 warnings/errors in the log
+[15:27:57] == sweep done (NO_RESTORE=1: serving stack left down)
+[15:28:57] == NCCL multi-communicator sweep: gm0
+[15:28:57] -- stopping the serving stack
+[15:29:06] -- variant gm0
+nccl_multicomm_gm0 launched rank=3 variant=gm0
+nccl_multicomm_gm0 launched rank=2 variant=gm0
+nccl_multicomm_gm0 launched rank=1 variant=gm0
+nccl_multicomm_gm0 launched rank=0 variant=gm0
+[15:29:54]   25 results; 0 warnings/errors in the log
+[15:29:56] == sweep done (NO_RESTORE=1: serving stack left down)

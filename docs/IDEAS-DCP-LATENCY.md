@@ -10,6 +10,20 @@ ring pairs) was measured right after: predicted ~147 ms, measured 143.8 ms
 (count100 54.5 tok/s, ~198k KV tokens at the 6 GB pool). Nothing else below
 has been tried yet. Treat the gains as estimates with the arithmetic shown.
 
+**Update 2026-09-05 15:30, idea 1 measured and rejected** (`bench/nccl_multicomm.py`,
+`results/nccl-multicomm/RESULTS.md`): with raw NCCL communicators in the
+serving image, two communicators cut the big collectives by ~10% (query
+gather 121 -> 109 us, reduce-scatter 115 -> 105, TP all-reduce 89 -> 84),
+four or eight are slower on the query gather (146, 200 us; not launch-bound),
+forcing LL is worse alone (232 us) and only recovers to 144 us with four
+chunks. The reversed-ring communicator [0,3,2,1] is legal on this topology
+but brings nothing. The per-collective floor is the shared host-staged
+proxy path, not the protocol, so chunking does not parallelise it. Worth at
+most ~2 ms per cycle; not pursued. Idea 9 (pair/cross two-rank exchanges)
+was not run and is unlikely to beat this given the same per-communicator
+overhead. What remains is removing collectives (ideas 2, 3), glue fusion
+(4), adaptive verify length (7), or DCP=2 / the switch.
+
 ## What the measured picture says that the docs slightly misread
 
 1. **"Bytes are not the problem" is only half true.** The TP all-reduce is 31 us at 1 KiB and 84 us at 96 KB (8 x 6144 x bf16): 60% of it is size-dependent, at ~2.2 GB/s (the NCCL LL protocol with one CTA and one proxy thread; the "Forced LL" column's slope confirms 0.45 us/KiB moved). The big all-gathers/reduce-scatters run under the Simple protocol whose *per-hop* cost is ~25 us (3 hops = the ~75 us floor you see at either payload) versus LL's ~5 us/hop (31 us / 6 hops). So the lever is protocol and channel parallelism, not payload. The `ctas4` sweep proved nothing: CTAs are capped by channels, and channels were pinned at 1.

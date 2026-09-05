@@ -1,0 +1,53 @@
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 13.0.2
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+{"type": "metadata", "variant": "ll", "nccl": "2.31.2", "torch": "2.11.0+cu130", "ns": [1, 2, 4, 8], "repeats": 7, "iters": 100, "proto_env": "LL", "world": 4}
+{"type": "result", "variant": "ll", "collective": "q_allgather", "kind": "ag", "send_bytes_per_rank": 147456, "n_comms": 1, "order": "fwd", "eager": {"p50_us": 231.5, "min_us": 222.2, "max_us": 241.2}, "graph": {"p50_us": 1255.7, "min_us": 1085.2, "max_us": 1499.4}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "lse_allgather", "kind": "ag", "send_bytes_per_rank": 512, "n_comms": 1, "order": "fwd", "eager": {"p50_us": 37.5, "min_us": 28.7, "max_us": 48.4}, "graph": {"p50_us": 972.5, "min_us": 823.5, "max_us": 1035.2}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "indexer_allgather", "kind": "ag", "send_bytes_per_rank": 32768, "n_comms": 1, "order": "fwd", "eager": {"p50_us": 69.0, "min_us": 58.4, "max_us": 72.9}, "graph": {"p50_us": 1020.2, "min_us": 878.0, "max_us": 1131.2}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "out_reducescatter", "kind": "rs", "send_bytes_per_rank": 524288, "n_comms": 1, "order": "fwd", "eager": {"p50_us": 201.9, "min_us": 200.8, "max_us": 217.6}, "graph": {"p50_us": 1232.9, "min_us": 1140.3, "max_us": 1335.8}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "tp_allreduce", "kind": "ar", "send_bytes_per_rank": 98304, "n_comms": 1, "order": "fwd", "eager": {"p50_us": 88.1, "min_us": 84.9, "max_us": 91.3}, "graph": {"p50_us": 1102.5, "min_us": 978.9, "max_us": 1137.9}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "q_allgather", "kind": "ag", "send_bytes_per_rank": 147456, "n_comms": 2, "order": "fwd", "eager": {"p50_us": 162.8, "min_us": 160.1, "max_us": 175.7}, "graph": {"p50_us": 1015.1, "min_us": 931.0, "max_us": 1109.4}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "lse_allgather", "kind": "ag", "send_bytes_per_rank": 512, "n_comms": 2, "order": "fwd", "eager": {"p50_us": 54.3, "min_us": 42.8, "max_us": 65.0}, "graph": {"p50_us": 910.6, "min_us": 650.4, "max_us": 1021.9}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "indexer_allgather", "kind": "ag", "send_bytes_per_rank": 32768, "n_comms": 2, "order": "fwd", "eager": {"p50_us": 65.9, "min_us": 52.1, "max_us": 69.6}, "graph": {"p50_us": 775.0, "min_us": 689.8, "max_us": 994.2}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "out_reducescatter", "kind": "rs", "send_bytes_per_rank": 524288, "n_comms": 2, "order": "fwd", "eager": {"p50_us": 133.0, "min_us": 126.2, "max_us": 144.9}, "graph": {"p50_us": 912.8, "min_us": 823.9, "max_us": 977.7}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "tp_allreduce", "kind": "ar", "send_bytes_per_rank": 98304, "n_comms": 2, "order": "fwd", "eager": {"p50_us": 83.9, "min_us": 78.5, "max_us": 88.6}, "graph": {"p50_us": 890.4, "min_us": 698.8, "max_us": 946.2}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "q_allgather", "kind": "ag", "send_bytes_per_rank": 147456, "n_comms": 2, "order": "alt", "eager": {"p50_us": 165.8, "min_us": 159.1, "max_us": 170.5}, "graph": {"p50_us": 1121.5, "min_us": 1049.5, "max_us": 1150.3}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "lse_allgather", "kind": "ag", "send_bytes_per_rank": 512, "n_comms": 2, "order": "alt", "eager": {"p50_us": 36.3, "min_us": 30.2, "max_us": 47.0}, "graph": {"p50_us": 854.5, "min_us": 747.0, "max_us": 990.7}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "indexer_allgather", "kind": "ag", "send_bytes_per_rank": 32768, "n_comms": 2, "order": "alt", "eager": {"p50_us": 61.2, "min_us": 55.4, "max_us": 64.1}, "graph": {"p50_us": 892.3, "min_us": 823.7, "max_us": 1058.4}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "out_reducescatter", "kind": "rs", "send_bytes_per_rank": 524288, "n_comms": 2, "order": "alt", "eager": {"p50_us": 138.3, "min_us": 135.3, "max_us": 151.1}, "graph": {"p50_us": 1092.9, "min_us": 957.7, "max_us": 1120.7}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "tp_allreduce", "kind": "ar", "send_bytes_per_rank": 98304, "n_comms": 2, "order": "alt", "eager": {"p50_us": 82.5, "min_us": 76.2, "max_us": 87.8}, "graph": {"p50_us": 1044.5, "min_us": 878.8, "max_us": 1122.4}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "q_allgather", "kind": "ag", "send_bytes_per_rank": 147456, "n_comms": 4, "order": "fwd", "eager": {"p50_us": 144.2, "min_us": 136.7, "max_us": 148.6}, "graph": {"p50_us": 815.5, "min_us": 764.2, "max_us": 948.6}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "lse_allgather", "kind": "ag", "send_bytes_per_rank": 512, "n_comms": 4, "order": "fwd", "eager": {"p50_us": 99.7, "min_us": 92.8, "max_us": 112.7}, "graph": {"p50_us": 850.8, "min_us": 770.6, "max_us": 903.3}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "indexer_allgather", "kind": "ag", "send_bytes_per_rank": 32768, "n_comms": 4, "order": "fwd", "eager": {"p50_us": 75.5, "min_us": 70.2, "max_us": 81.5}, "graph": {"p50_us": 832.4, "min_us": 746.4, "max_us": 893.3}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "out_reducescatter", "kind": "rs", "send_bytes_per_rank": 524288, "n_comms": 4, "order": "fwd", "eager": {"p50_us": 121.3, "min_us": 117.8, "max_us": 131.7}, "graph": {"p50_us": 885.2, "min_us": 867.9, "max_us": 962.0}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "tp_allreduce", "kind": "ar", "send_bytes_per_rank": 98304, "n_comms": 4, "order": "fwd", "eager": {"p50_us": 96.2, "min_us": 92.6, "max_us": 100.3}, "graph": {"p50_us": 842.4, "min_us": 775.0, "max_us": 911.6}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "q_allgather", "kind": "ag", "send_bytes_per_rank": 147456, "n_comms": 4, "order": "alt", "eager": {"p50_us": 148.0, "min_us": 142.0, "max_us": 153.8}, "graph": {"p50_us": 967.7, "min_us": 913.5, "max_us": 1046.7}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "lse_allgather", "kind": "ag", "send_bytes_per_rank": 512, "n_comms": 4, "order": "alt", "eager": {"p50_us": 63.4, "min_us": 58.3, "max_us": 66.5}, "graph": {"p50_us": 801.5, "min_us": 649.7, "max_us": 897.3}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "indexer_allgather", "kind": "ag", "send_bytes_per_rank": 32768, "n_comms": 4, "order": "alt", "eager": {"p50_us": 78.0, "min_us": 67.2, "max_us": 85.2}, "graph": {"p50_us": 861.3, "min_us": 752.2, "max_us": 890.4}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "out_reducescatter", "kind": "rs", "send_bytes_per_rank": 524288, "n_comms": 4, "order": "alt", "eager": {"p50_us": 122.6, "min_us": 116.7, "max_us": 128.0}, "graph": {"p50_us": 742.5, "min_us": 683.3, "max_us": 919.8}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "tp_allreduce", "kind": "ar", "send_bytes_per_rank": 98304, "n_comms": 4, "order": "alt", "eager": {"p50_us": 94.6, "min_us": 91.7, "max_us": 110.0}, "graph": {"p50_us": 787.8, "min_us": 675.5, "max_us": 924.1}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "q_allgather", "kind": "ag", "send_bytes_per_rank": 147456, "n_comms": 8, "order": "fwd", "eager": {"p50_us": 198.2, "min_us": 187.4, "max_us": 209.7}, "graph": {"p50_us": 1035.3, "min_us": 960.9, "max_us": 1084.2}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "lse_allgather", "kind": "ag", "send_bytes_per_rank": 512, "n_comms": 8, "order": "fwd", "eager": {"p50_us": 154.7, "min_us": 123.8, "max_us": 166.9}, "graph": {"p50_us": 893.3, "min_us": 871.4, "max_us": 996.4}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "indexer_allgather", "kind": "ag", "send_bytes_per_rank": 32768, "n_comms": 8, "order": "fwd", "eager": {"p50_us": 163.9, "min_us": 155.2, "max_us": 168.8}, "graph": {"p50_us": 951.9, "min_us": 888.6, "max_us": 1116.0}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "out_reducescatter", "kind": "rs", "send_bytes_per_rank": 524288, "n_comms": 8, "order": "fwd", "eager": {"p50_us": 192.5, "min_us": 179.2, "max_us": 201.7}, "graph": {"p50_us": 868.3, "min_us": 689.2, "max_us": 966.3}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "tp_allreduce", "kind": "ar", "send_bytes_per_rank": 98304, "n_comms": 8, "order": "fwd", "eager": {"p50_us": 192.1, "min_us": 184.4, "max_us": 203.3}, "graph": {"p50_us": 1111.5, "min_us": 1030.7, "max_us": 1158.2}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "q_allgather", "kind": "ag", "send_bytes_per_rank": 147456, "n_comms": 8, "order": "alt", "eager": {"p50_us": 195.9, "min_us": 186.5, "max_us": 206.4}, "graph": {"p50_us": 1104.1, "min_us": 962.5, "max_us": 1202.2}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "lse_allgather", "kind": "ag", "send_bytes_per_rank": 512, "n_comms": 8, "order": "alt", "eager": {"p50_us": 155.8, "min_us": 136.6, "max_us": 170.6}, "graph": {"p50_us": 1020.7, "min_us": 889.8, "max_us": 1085.9}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "indexer_allgather", "kind": "ag", "send_bytes_per_rank": 32768, "n_comms": 8, "order": "alt", "eager": {"p50_us": 161.4, "min_us": 158.6, "max_us": 168.5}, "graph": {"p50_us": 998.9, "min_us": 942.2, "max_us": 1065.9}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "out_reducescatter", "kind": "rs", "send_bytes_per_rank": 524288, "n_comms": 8, "order": "alt", "eager": {"p50_us": 189.1, "min_us": 179.6, "max_us": 190.8}, "graph": {"p50_us": 1098.1, "min_us": 1005.3, "max_us": 1148.5}, "max_err": 0.0}
+{"type": "result", "variant": "ll", "collective": "tp_allreduce", "kind": "ar", "send_bytes_per_rank": 98304, "n_comms": 8, "order": "alt", "eager": {"p50_us": 181.2, "min_us": 179.6, "max_us": 188.9}, "graph": {"p50_us": 1121.4, "min_us": 1057.6, "max_us": 1176.6}, "max_err": 0.0}
+{"type": "done", "variant": "ll"}
+NCCL version 2.31.2+cuda13.0

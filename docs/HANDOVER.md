@@ -25,7 +25,7 @@ reasoning; this file is the operational summary.
   candidate compaction (`DCP_COMPACT=1`, launcher default): the DCP verify
   cycle went from 173 to ~151-158 ms, count100 44.6 -> 49.7 tok/s, prose
   14.5 -> 17.1, code 36.1 -> 43.2 (DESIGN.md §8). Serving label:
-  `dcp4-dflash-300k-compact-prod3` (same config, relaunched after the
+  `dcp4-dflash-300k-compact-prod4` (same config, relaunched after the
   same-clock DCP1 re-baseline of 06:00 and the DCP2 experiment of 06:22).
   A DCP2 lane is measured and one env away: `DCP_SIZE=2 ./rollout_dcp.sh
   <label> 180224 2048 6000000000 1` gives 54.5 tok/s at 144 ms with ~198k
