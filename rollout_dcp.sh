@@ -7,7 +7,7 @@
 set -uo pipefail
 
 LABEL="${1:?usage: rollout_dcp.sh <label> [MAXLEN] [MAXBATCHED] [KVBYTES] [KVTIER]}"
-MAXLEN="${2:-307200}"
+MAXLEN="${2:-180224}"
 MAXBATCHED="${3:-2048}"
 KVBYTES="${4:-6000000000}"
 KVTIER="${5:-1}"
@@ -131,7 +131,7 @@ say "stopping production ranks"
 teardown; sleep 5
 start_flushers || say "warning: flushers did not start (continuing; admission check is skipped with a fixed KV pool)"
 say "launching DCP ranks (worker-first)"
-launch_ranks "$DCPL" "MAXLEN=$MAXLEN MAXBATCHED=$MAXBATCHED KVBYTES=$KVBYTES KVTIER=$KVTIER KVTIER_MODE=${KVTIER_MODE:-slab} KVTIER_BOUNCE=${KVTIER_BOUNCE:-48} KVTIER_DISK_BYTES=${KVTIER_DISK_BYTES:-150000000000} PROFILER_DIR=${PROFILER_DIR:-} DCP_Q_PREGATHER=${DCP_Q_PREGATHER:-0} DCP_COMPACT=${DCP_COMPACT:-1} DCP_SIZE=${DCP_SIZE:-4}" || { restore_production; exit 2; }
+launch_ranks "$DCPL" "MAXLEN=$MAXLEN MAXBATCHED=$MAXBATCHED KVBYTES=$KVBYTES KVTIER=$KVTIER KVTIER_MODE=${KVTIER_MODE:-slab} KVTIER_BOUNCE=${KVTIER_BOUNCE:-48} KVTIER_DISK_BYTES=${KVTIER_DISK_BYTES:-150000000000} PROFILER_DIR=${PROFILER_DIR:-} DCP_Q_PREGATHER=${DCP_Q_PREGATHER:-0} DCP_COMPACT=${DCP_COMPACT:-1} DCP_SIZE=${DCP_SIZE:-2}" || { restore_production; exit 2; }
 
 # 5. wait with watchdog
 wait_healthy 1800; rc=$?

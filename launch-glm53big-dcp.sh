@@ -72,8 +72,8 @@ KERNELS_DIR="${KERNELS_DIR:-$HOME/glm-triton}"
 DCP_DIR="${DCP_DIR:-$HOME/glm-dcp}"
 WEIGHTS=/var/tmp/models/GLM-5.3-Int4-Int8Mix
 
-DCP_SIZE="${DCP_SIZE:-4}"
-MAXLEN="${MAXLEN:-307200}"
+DCP_SIZE="${DCP_SIZE:-2}"
+MAXLEN="${MAXLEN:-180224}"
 # DFlash draft tokens per cycle. 7 is trained in (block_size 8); not a knob.
 DFLASH_K="${DFLASH_K:-7}"
 MAXBATCHED="${MAXBATCHED:-2048}"

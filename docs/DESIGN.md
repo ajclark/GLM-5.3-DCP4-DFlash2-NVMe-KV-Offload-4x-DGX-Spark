@@ -918,6 +918,7 @@ long sessions must stay resident at once.
 (307,200 window, 6 GB/rank pool, slab tier, compaction on by default,
 profiler and pre-gather off), briefly (2026-09-05 16:24-17:00) the DCP2 lane
 `dcp2-dflash-180k-prod` (180,224 window, same pool and tier), then DCP4
-again as `dcp4-dflash-300k-compact-prod5`, which the user is evaluating as
-the daily default; both lanes stay one launcher env apart.
+again (`dcp4-dflash-300k-compact-prod5/6`) while the user evaluated it, and
+after the concurrency sweep the DCP2 lane as the default from 17:50
+(`dcp2-dflash-180k-prod2`); both lanes stay one launcher env apart.
 

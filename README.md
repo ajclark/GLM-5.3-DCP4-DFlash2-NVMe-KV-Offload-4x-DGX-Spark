@@ -56,12 +56,12 @@ with twice its KV. For multi-session use DCP=2 is the better lane unless one
 session needs more than its 180k window; DCP=4 is the lane for the largest
 single contexts.
 
-The serving default is the DCP=4 lane: a 307,200-token window with a
-6 GB/rank pool (396k KV tokens, one copy) and a 150 GB/rank slab store, at
-89% of production's decode speed. The DCP=2 lane (180,224 window, ~198k
-tokens, 96% of production's speed) is one launcher env away
-(`DCP_SIZE=2 MAXLEN=180224`); 512k works at DCP=4 but leaves no host memory
-for the tier. The DCP cost was +36 ms per verify cycle; a profiler trace showed a third
+The serving default is the DCP=2 lane: a 180,224-token window with a
+6 GB/rank pool (~198k KV tokens, two copies) and a 150 GB/rank slab store,
+within 5-8% of production's decode speed at every concurrency. The DCP=4
+lane (307,200 window, 396k tokens, one copy) is one launcher env away
+(`DCP_SIZE=4 MAXLEN=307200`) for the largest single contexts; 512k works at
+DCP=4 but leaves no host memory for the tier. The DCP cost was +36 ms per verify cycle; a profiler trace showed a third
 of it was the sparse attention kernel walking masked candidates, which
 compaction removed, leaving ~13 ms of ring collectives (`docs/DESIGN.md`
 §8). The drafter is untouched, so acceptance is too.

@@ -25,12 +25,13 @@ reasoning; this file is the operational summary.
   candidate compaction (`DCP_COMPACT=1`, launcher default): the DCP verify
   cycle went from 173 to ~151-158 ms, count100 44.6 -> 49.7 tok/s, prose
   14.5 -> 17.1, code 36.1 -> 43.2 (DESIGN.md §8). Serving label:
-  `dcp4-dflash-300k-compact-prod6` since 2026-09-05 17:35 (the DCP2 lane
-  served as `dcp2-dflash-180k-prod` from 16:24 to 17:00; the user is trying
-  DCP4 as the daily default). Launcher and rollout defaults: `DCP_SIZE=4
-  MAXLEN=307200 KVBYTES=6e9 KVTIER=1`; the DCP2 lane is `DCP_SIZE=2
-  ./rollout_dcp.sh <label> 180224 2048 6000000000 1`. pi's glm-5.3 entry on
-  the sandbox is a 270,336 context window with 32,768 max tokens. The rule:
+  `dcp2-dflash-180k-prod2` since 2026-09-05 17:50: after the three-lane
+  concurrency sweep the user chose DCP2 as the daily default (within 5-8% of
+  DCP1 at every concurrency, twice its KV; DCP4 loses 19% at C=12). Launcher
+  and rollout defaults: `DCP_SIZE=2 MAXLEN=180224 KVBYTES=6e9 KVTIER=1`; the
+  DCP4 lane is `DCP_SIZE=4 ./rollout_dcp.sh <label> 307200 2048 6000000000 1`.
+  pi's glm-5.3 entry on the sandbox is a 155,648 context window with 32,768
+  max tokens (270,336 for the DCP4 lane). The rule:
   vLLM rejects a request whose prompt plus max_tokens exceeds the window
   (measured, HTTP 400), pi sends its full maxTokens every time and compacts
   at contextWindow minus a 16,384 reserve, so (contextWindow - 16,384) x 1.05
