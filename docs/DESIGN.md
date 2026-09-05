@@ -881,6 +881,26 @@ costs about 1% at DCP1. Against the compaction stack's 50.5 tok/s at 155.2 ms,
 the DCP4 penalty at the same clock is 16.3 ms per cycle, 11% on count100
 (it was 36 ms and 22% before compaction).
 
+**DCP=2 on adjacent ring links** (`DCP_SIZE=2`; TP4 with the two DCP groups
+(06c4, 365c) and (ddbf, a218), each a single ring hop). Boot
+`dcp2-dflash-180k-prof`, 180k window at the 6 GB pool (two KV copies halve
+the token capacity: ~198k tokens vs 396k at DCP4 and 99k at DCP1), one rep:
+
+| per verify pass / bench | DCP=1 | DCP=2 | DCP=4 + compaction |
+|---|---:|---:|---:|
+| all-gathers | 0.4 ms | 5.7 ms (36 us each) | 12.1 ms (~105 us) |
+| reduce-scatters | 0 | 3.2 ms (43 us) | 7.5 ms (99 us) |
+| verify pass | 136 ms | 139.0 ms | 150.7 ms |
+| count100 decode, cycle | 56.5 tok/s, 138.9 ms | 54.5, 143.8 ms | 50.5, 155.2 ms |
+| prose / code | 19.6 / 48.0 | 18.1 / 41.5 | 17.5 / 38.6 |
+| KV tokens at 6 GB/rank | 99k | ~198k | 396k |
+
+Every DCP collective becomes one hop, so the ring's latency floor drops
+from ~3 hops to 1 and DCP2 sits within 5 ms per cycle of DCP1. It is a
+legitimate middle lane: twice the context of production at 96% of its
+decode speed. The 262k window would need an 8 GB pool at DCP2, which the
+host headroom does not allow next to the tier.
+
 **Serving configuration after this work:** `dcp4-dflash-300k-compact-prod`,
 307,200 window, 6 GB/rank pool, slab tier, compaction on by default
 (`DCP_COMPACT=1` in the launcher), profiler and pre-gather off.

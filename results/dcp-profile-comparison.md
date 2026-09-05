@@ -37,6 +37,9 @@ What this says:
   and passing the count (`GLM_DCP_COMPACT=1`, `compact_dcp_candidates`,
   b12x `topk_length`) lets the kernel walk ~1/4 of the slots: expected
   ~-11 ms per pass, no memory cost.
+- DCP=2 on adjacent ring pairs (`dcp2-dflash-180k-prof`): all-gathers 36 us
+  and reduce-scatters 43 us (one hop), verify pass 139.0 ms, count100 54.5
+  tok/s at 143.8 ms; two KV copies, ~198k tokens at the 6 GB pool.
 - Same-clock DCP=1 baseline (production launcher at the 2000 MHz lock,
   `results/baseline-dcp1-prod-2000mhz`): count100 56.5 tok/s at 138.9 ms,
   so the residual DCP4 cost after compaction is 16.3 ms per cycle.
