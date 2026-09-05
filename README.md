@@ -35,6 +35,27 @@ Accepted tokens per cycle are the same across lanes (7.87 of 8 on count100,
 code vary run to run at greedy on every lane, so treat those two columns as
 ±5%.
 
+Aggregate decode throughput under concurrency (count-to-400 prompts, C
+simultaneous streams, the engine's own cycle metrics; `results/concurrency-sweeps.md`):
+
+| C | DCP=1 | DCP=2 | DCP=4 | DCP=2 vs 1 | DCP=4 vs 1 |
+|---:|---:|---:|---:|---:|---:|
+| 1 | 54.0 tok/s | 49.9 | 46.9 | -8% | -13% |
+| 2 | 82.6 | 77.3 | 71.3 | -6% | -14% |
+| 4 | 136.4 | 125.3 | 114.6 | -8% | -16% |
+| 8 | 192.1 | 187.7 | 167.2 | -2% | -13% |
+| 12 | 245.7 | 232.7 | 198.8 | -5% | -19% |
+
+Single-stream, DCP costs a fixed per-cycle collective floor. Under load the
+per-step payloads grow (the query gather carries ~7 MB at 96 tokens per
+step), so DCP=4's three-hop ring collectives become bandwidth-bound: its
+marginal cost stays ~2.9 ms per token while DCP=1 and DCP=2 fall to
+1.9-2.1 ms, and its penalty widens from 11% to 19%. DCP=2, whose DCP groups
+sit on adjacent ring links, stays within 5-8% of DCP=1 at every concurrency
+with twice its KV. For multi-session use DCP=2 is the better lane unless one
+session needs more than its 180k window; DCP=4 is the lane for the largest
+single contexts.
+
 The serving default is the DCP=4 lane: a 307,200-token window with a
 6 GB/rank pool (396k KV tokens, one copy) and a 150 GB/rank slab store, at
 89% of production's decode speed. The DCP=2 lane (180,224 window, ~198k
