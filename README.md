@@ -1,6 +1,6 @@
 # GLM-5.3 on 4x DGX Spark: TP4 + DCP4 + DFlash2, with an NVMe-durable KV cache
 
-A patch set for the community DGX Spark vLLM image that keeps **one copy of
+A patch set for [tonyd2wild's GLM-5.3 Int4-Int8Mix TP4 recipe for 4x DGX Spark](https://github.com/tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark), whose vLLM image, sparse-MLA kernels and DFlash2 speculative decoding this work builds on, that keeps **one copy of
 the KV cache across the four ranks instead of four**, so the context window
 grows with the group instead of being replicated across it, while keeping
 DFlash2 speculative decoding. On top of that, a **multi-node NVMe KV tier**
@@ -154,3 +154,13 @@ on and verifies the ring. One script, mirrored from
 Stop the serving stack before `--down`, relaunch after `--up` with
 `SKIP_PREFLIGHT=1 ./rollout_dcp.sh <label>`. Background: `docs/CX7-POWER.md`,
 `docs/IDLE-POWER.md`.
+
+## Credits
+
+Everything here starts from
+[tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark](https://github.com/tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark):
+the vLLM image these sixteen files are overlaid on, the sm12x sparse-MLA
+kernels, the DFlash2 drafter port and the launcher that made GLM-5.3 run on
+four Sparks in the first place. This repo adds decode context parallelism and
+the NVMe tier on top of that recipe; the "production" lane in every table above
+is that recipe unmodified.
