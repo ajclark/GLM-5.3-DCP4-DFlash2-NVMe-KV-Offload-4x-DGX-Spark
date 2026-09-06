@@ -17,7 +17,7 @@
 set -uo pipefail
 
 HOSTS=(spark-06c4 spark-365c spark-ddbf spark-a218)   # edit for your cluster
-SSH_USER="${SSH_USER:-napta2k}"; SSH_SUFFIX="${SSH_SUFFIX:-.local}"
+SSH_USER="${SSH_USER:-$USER}"; SSH_SUFFIX="${SSH_SUFFIX:-.local}"
 CONTAINER="${CONTAINER:-vllm_glm53big}"               # refuse --idle while this container runs
 RING_IFS="enP2p1s0f0np0 enP2p1s0f1np1"                # the two cabled 200G ports
 MGMT_IF="enP7s7"                                      # 10GbE management link (domain 0007)
