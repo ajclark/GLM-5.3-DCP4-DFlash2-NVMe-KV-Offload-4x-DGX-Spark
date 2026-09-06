@@ -26,28 +26,35 @@ Open: cause on a218/ddbf (need their previous-boot journal + pstore:
 the newer kernel/driver build and both went through the hot-plug cycle ~70 min earlier.
 Sequential (97 s apart), so not a shared power event.
 
-## Resolution (01:46-01:55 UTC)
+## Resolution (01:46-02:05 UTC)
 
-Both nodes were powered on by the human at ~01:45 UTC. Their previous-boot journals
-(`spark-a218-capture.txt`, `spark-ddbf-capture.txt`, plus a targeted pull) settle the cause:
+Both nodes were powered on by the human at ~01:45 UTC. Their previous-boot journals settle it:
 
 ```
-spark-a218  2026-09-05T17:40:21-07:00  systemd-logind: Power key pressed short.  -> Powering off...
-spark-ddbf  2026-09-05T17:41:58-07:00  systemd-logind: Power key pressed short.  -> Powering off...
+spark-a218  2026-09-05T17:40:21-07:00  systemd-logind: Power key pressed short. -> Powering off...
+spark-ddbf  2026-09-05T17:40:22..24     kernel: input: NVIDIA SHIELD Remote (BLUETOOTH HID 0955:7217)
+                                        systemd-logind: Watching system buttons on /dev/input/event7 (NVIDIA SHIELD Remote)
+spark-ddbf  2026-09-05T17:41:58-07:00  systemd-logind: Power key pressed short. -> Powering off...
 ```
 
-Each was an **orderly power-off started by a short press of the physical power button**,
-98 s apart. No kernel error, no pstore entry, no kdump; `last -x` records a clean
-"shutdown system down". The CX-7 hot-plug cycle, the newer kernel build, the slot-power
-warnings and every script are exonerated: the correlation noted above was coincidence.
+Each was an **orderly power-off triggered by a KEY_POWER input event**, not a crash (no
+kernel error, no pstore, no kdump; `last -x` shows a clean shutdown). Nobody touched the
+Sparks: the key came from an **NVIDIA SHIELD Remote paired over Bluetooth** with exactly
+these two nodes (`bluetoothctl devices Paired` on ddbf and a218 lists 48:B0:2D:39:56:1F
+"NVIDIA SHIELD Remote"; 06c4 and 365c have no paired devices). logind treats any
+input device with a power key as a system button. The remote had been connected to a218
+since 2026-08-31; its power button was pressed at 17:40:21, a218 shut down, the remote
+re-homed to its other paired host ddbf within a second, and a second press at 17:41:58
+took ddbf down. The kernel-build correlation, the CX-7 hot-plug cycle and the slot-power
+warnings are exonerated.
 
 Both nodes came back healthy (CX-7 powered, four functions, ring at 200G with the right IPs,
-RDMA ACTIVE, governor performance, 115 GB free). The 2000 MHz GPU clock lock was re-applied
-by hand (it does not survive a reboot); the slab caches on those two nodes were wiped by
-design (boot id changed). Serving relaunched with `SKIP_PREFLIGHT=1 ./rollout_dcp.sh
-dcp2-dflash-180k-prod4`.
+RDMA ACTIVE, governor performance). The 2000 MHz GPU clock lock was re-applied by hand (it
+does not survive a reboot); the slab caches on those two nodes were wiped by design (boot id
+changed). Serving relaunched with `SKIP_PREFLIGHT=1 ./rollout_dcp.sh dcp2-dflash-180k-prod4`.
 
-Follow-up worth considering: logind's default `HandlePowerKey=poweroff` means one short
-press shuts a Spark down. `HandlePowerKey=ignore` (or requiring a long press via
-`HandlePowerKeyLongPress=poweroff`) in `/etc/systemd/logind.conf.d/` on each node would make
-an accidental touch harmless; power-on still needs the button either way.
+Remedy (human's call): the pairing persists, so the remote can do it again whenever it
+reconnects. Options, cheapest first: `bluetoothctl remove 48:B0:2D:39:56:1F` on ddbf and
+a218; `rfkill block bluetooth` on all four (nothing on the cluster uses it); and/or
+`HandlePowerKey=ignore` in `/etc/systemd/logind.conf.d/` so no power key, physical or HID,
+shuts a node down (power-on still needs the button).
