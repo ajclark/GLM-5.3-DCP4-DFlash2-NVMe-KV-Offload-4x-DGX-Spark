@@ -7,6 +7,12 @@ DFlash2 speculative decoding. On top of that, a **multi-node NVMe KV tier**
 (a fixed-size slab ring buffer on each node's disk) makes long cold prefills
 durable across evictions and engine restarts.
 
+## Highlights
+
+- **Decode context parallelism for GLM-5.3's sparse MLA, with speculative decoding kept.** One KV cache shared across the four Sparks instead of four copies: 4.00x the KV tokens at the same window (131k → 524k), a 262k window with 462k tokens, a 500k-token prompt served. DFlash2 (K=7) runs alongside it through a replicated drafter group; acceptance is unchanged and greedy output is byte-identical to the stock lane.
+- **NVMe-durable KV cache.** A multi-node slab tier on each node's disk: a 100k-token prefix reloads in 3-8 s instead of a 335 s recompute, and survives evictions and engine restarts. Fixed-size ring buffer, no janitor needed.
+- **Idle power, in a sibling repo.** Switching the ConnectX-7 off with the cables attached takes four idle nodes from 202 W to 120 W: [dgx-spark-idle-power](https://github.com/ajclark/dgx-spark-idle-power).
+
 Deployed and serving on the author's cluster since 2026-09-04 (GLM-5.3
 Int4-Int8Mix, TP4 over a switchless RoCE ring). Measured against the
 production DCP1 lane of the same image:
