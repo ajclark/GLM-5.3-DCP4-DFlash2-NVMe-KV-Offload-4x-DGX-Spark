@@ -141,9 +141,10 @@ support at all. `docs/DESIGN.md` section 2 has the details.
 
 ## Idle power
 
-The idle-power toolkit (ConnectX-7 hot-plug power-off, 202 -> 120 W for the four
-idle nodes with cables attached; `enter-low-power-idle-mode.sh` / `un-idle.sh` /
-`cx7-power.sh`) lives in its own repo,
-[ajclark/dgx-spark-idle-power](https://github.com/ajclark/dgx-spark-idle-power).
-The copies here are kept in sync so `un-idle.sh` can relaunch the serving lane
-through `rollout_dcp.sh`; see `docs/CX7-POWER.md` and `docs/IDLE-POWER.md`.
+The idle-power toolkit lives in its own repo,
+[ajclark/dgx-spark-idle-power](https://github.com/ajclark/dgx-spark-idle-power):
+`enter-low-power-idle-mode.sh` powers the ConnectX-7 off on every node with the
+cables attached (202 -> 120 W measured for the four idle nodes), `un-idle.sh`
+powers it back on and verifies the ring. Stop the serving stack before, relaunch
+it after (`SKIP_PREFLIGHT=1 ./rollout_dcp.sh <label>`). Copies are kept here in
+sync; see `docs/CX7-POWER.md` and `docs/IDLE-POWER.md`.

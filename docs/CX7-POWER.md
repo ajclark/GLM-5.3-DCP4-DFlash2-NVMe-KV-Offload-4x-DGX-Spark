@@ -111,12 +111,11 @@ timers fired 16:28:44, all recovered by 16:29:11; ring pings and MST reload
 
 ## 4. What it means for the idle design
 
-- Deep idle (`enter-low-power-idle-mode.sh --deep`) should gain a `--cx7-off`
-  add-on built on this sequence, replacing the speculative `--ring-down`
-  admin-down: ~20 W per node measured versus unknown. Preflight, dead-man
-  timer, all-four-functions checks and the mstflint unload/reload go into the
-  script; un-idle's verification (IPs, MTU, RDMA, 200G) already matches what
-  the restore needs before relaunching the stack.
+- The idle scripts are this lever and nothing else (human's decision,
+  2026-09-06): `enter-low-power-idle-mode.sh` = `cx7-power.sh off`,
+  `un-idle.sh` = `cx7-power.sh on` + ring verification. Preflight, optional
+  dead-man timer, all-four-functions checks and the mstflint unload/reload
+  live in `cx7-power.sh`.
 - It only works with the serving stack down: removing the PCIe functions
   destroys NCCL/RDMA state, so the cost is the 505 s relaunch (or the
   disk-image boot in `docs/BOOT-TIME.md` once that exists).

@@ -60,67 +60,28 @@ cluster, and the smart plug that makes it recoverable also gives this cluster
 the remote power-cycle it does not have today (the forum thread's author does
 exactly this: BIOS "auto boot" on AC + a phone-controlled plug).
 
-## 3. The scripts
+## 3. The scripts (decision 2026-09-06: ConnectX-7 only)
 
-`./enter-low-power-idle-mode.sh` and `./un-idle.sh` share `idle-power-lib.sh`
-(hosts, MACs, IPs, one-SSH status line, journal, WoL sender). Both run from
-the sandbox; both have `--dry-run` (prints every remote command) and
-`--status` (read-only, one line per node: governor, MHz, online mask, mgmt
-link speed, ring operstate, RDMA state, ring IPv4/MTU, radios, GPU W/MHz/pm,
-container, MemAvailable).
+After the CX-7 measurement the human cut the scripts down to the one lever
+that is worth double digits: `enter-low-power-idle-mode.sh` runs
+`cx7-power.sh off` on every node, `un-idle.sh` runs `cx7-power.sh on` and
+verifies the ring (four functions, 200G, IPv4, MTU 9000, RDMA ACTIVE, jumbo
+pings, mstflint reloaded). They do not touch the GPU clock lock, governor,
+radios, management link or the serving stack; the stack is stopped and started
+by the operator around them. The light-tier levers in section 2 stay
+documented for reference only: none was measured and the estimates are
+single-digit watts. `cx7-power.sh` keeps the safety preflight (refuses while
+the serving container runs or anything holds an RDMA/MST device open) and the
+optional node-side dead-man restore timer (`--restore-after SECONDS`).
 
-Enter, tiers: `--light` (default, serving stays up: `-rgc`, schedutil,
-rfkill), `--deep` (drain, `docker rm -f` on all four + flushers, light steps,
-`-pm 0`; needs `--yes`), `--shutdown` (deep + `shutdown -h now`; needs
-`--yes` and either `PLUG_ON_CMD` or `I_AM_PRESENT=1`). Add-ons: `--ring-down`
-(deep only), `--eth-1g`, `--suspend` (deep only). Add-ons refuse to run
-unattended until qualified: run once with `I_AM_PRESENT=1` while watching;
-when un-idle recovers cleanly it drops `results/idle-power/<addon>-qualified`.
-`--suspend` always needs `I_AM_PRESENT=1`.
+## 4. First run (with a meter on the plugs)
 
-Safety in enter: refuses if already idle (the baseline journal is never
-overwritten), if a rollout/deploy is running on the sandbox, if a node is
-unreachable, or if requests are in flight (override `--yes`). The 1G
-renegotiation arms a node-side `systemd-run --on-active=150` timer that
-reverts to 10G unless the sandbox confirms SSH at 1G and cancels it; nodes
-are done one at a time and the script stops at the first one that does not
-come back. Journal: `results/idle-power/current.env` with the tier, add-ons,
-whether the stack was up, `I_AM_PRESENT`, and the full baseline status line
-per node.
-
-Un-idle is status-driven and idempotent (fine with no journal): (1) wake
-unreachable nodes via `PLUG_ON_CMD` (`%h` = host) and WoL, wait ≤300 s, stop
-if one stays away; (2) per node: cpus online, `nmcli dev connect` on the ring
-connections (`roce-p0`, `roce-p2p`, `roce-p2p-unused`) + `ip link set up`,
-radios back to the baseline, governor performance, `-pm 1`, `-lgc 2000,2000`;
-(2b) mgmt link back to 10G with a revert-to-1G timer; (3) verify for ≤60 s:
-governor, `0-19` online, ring `up/up`, RDMA `ACTIVE/ACTIVE`, ring IPv4 and MTU
-equal to the baseline, `eth=10000M`, pm Enabled, SM clock ≥1900 MHz; a mismatch
-is reported and the script stops, it never resets a NIC or GPU; (4) container
-running on all four **and a real generation** (not `/health`), else
-`./rollout_dcp.sh <label>` with the daily defaults unless `--no-relaunch`;
-(5) journal → `last.env`, qualification markers.
-
-Exercised so far: `--status` and every tier's `--dry-run` against the live
-cluster, and the gates (`--deep` without `--yes`, unqualified add-ons,
-`--suspend` without presence, `--ring-down` without `--deep`). Not yet
-exercised: a real light entry and un-idle (the stack was in use), any
-add-on, any measurement.
-
-## 4. Qualification protocol (with a human, meter on the plugs)
-
-1. Light: `./enter-low-power-idle-mode.sh` during a quiet hour, read the
-   meter after 10 min, `./un-idle.sh`, confirm the count100 hash and cycle
-   time are unchanged. Decide whether light is worth automating at all.
-2. `--eth-1g` once with `I_AM_PRESENT=1`, one node at a time is built in;
-   watch the 150 s timer do nothing.
-3. Deep + `--ring-down` with `I_AM_PRESENT=1`: this is the only lever that
-   can be worth double digits; the meter decides. Un-idle then relaunches
-   (505 s) and checks the ring came back with the right IPs/MTU.
-4. ASPM `powersave` on one node, manually, meter in hand; revert on any
-   Realtek hiccup.
-5. Suspend: only if steps 1-4 leave you wanting more, with a finger on the
-   button, one node, short interval first.
+1. Stop the serving stack.
+2. `./enter-low-power-idle-mode.sh --hosts <one-node> --restore-after 180`; watch
+   the meter drop and the node come back by itself.
+3. `./enter-low-power-idle-mode.sh` (all nodes, stays off), read the settled
+   watts, `./un-idle.sh`, confirm every node reports the ring verified.
+4. Start the serving stack and run a real generation.
 
 ## 5. Measuring
 
