@@ -172,3 +172,34 @@ processes rather than the communicators, which only becomes cheap once the
 disk-image boot (`BOOT-TIME.md` in the DCP repo) exists, or to find a lower
 CX-7 power state that keeps the device contexts alive (ports admin-down; its
 savings are unmeasured).
+
+## 7. Experiment 2026-09-06 02:21 UTC: adapter cycle under a live, unaware serving stack
+
+Question from the owner: power the CX-7s down with vLLM up and unaware, bring them
+back, does the stack still work? Run with the owner watching, `spark-idle.sh --down
+--restore-after 300` then `--up`, lane `dcp2-dflash-180k-prod5` idle (no requests).
+
+| step | observed |
+|---|---|
+| baseline | `/health` 200, generation OK |
+| `--down` (all four, 02:21:54) | all four adapters off in ~20 s; containers stay `running`; all worker and engine processes alive; **no NCCL or engine log line at all** (nothing was in flight); `/health` still 200; kernel: clean `cx7-pcie-hotplug: Cable removal`, a218 logged correctable PCIe RxErr on both root ports at removal |
+| `--up` (02:23:21) | four functions, both ports 200G, IPs, MTU 9000, RDMA ACTIVE, jumbo pings, mstflint reloaded on all four in **12 s**; GID index 3 = IPv4 RoCEv2 everywhere (the hot-plug path re-packs correctly; only the peer-reboot link flap moved it) |
+| generation probe (02:24:04) | **silent hang**: 0 bytes after 90 s; rank 0 engine core logs "No available shared memory broadcast block found in 60 seconds" every minute; workers at ~50 % CPU with four runnable threads (busy-polling NCCL/CUDA on queue pairs that died with the device); no NCCL error, no exception, `/health` 200 |
+| recovery | `SKIP_PREFLIGHT=1 ./rollout_dcp.sh dcp2-dflash-180k-prod6` (full relaunch) |
+
+Conclusions for the idle design:
+
+- The processes survive the removal; the RDMA state does not. NCCL's queue pairs and
+  the ibverbs contexts opened at init are dead after re-enumeration, and the next
+  collective spins forever. Nothing tells the engine.
+- The failure is **silent**: health stays green, no error is raised, the request never
+  returns. Any proxy or scheduler that cycles the adapter must treat "stack up" as
+  unknown after a cycle and either restart the stack or drive an explicit rebuild.
+- A transparent proxy that just flips the NIC (Option A without a restart) therefore
+  cannot work; Option A must stop and relaunch the stack, Option B must add the engine
+  suspend/resume RPC. This experiment also removes one worry for Option B: the worker
+  processes and their CUDA state are intact through the cycle, so a resume path only
+  has to rebuild communicators and graphs.
+- The ring hardware path is now qualified end to end: 20 s down, 12 s up, addresses,
+  MTU, GID index and RDMA state all correct, four times out of four today (Codex's
+  canary and all-four runs, this run).

@@ -5,19 +5,15 @@
 # Uses NVIDIA's cx7-pcie-hotplug driver (DGX OS package dgx-spark-mlnx-hotplug).
 #
 # Usage: ./spark-idle.sh --down|--up|--status [--hosts a,b] [--restore-after SECONDS] [--dry-run]
-#   --down     Preflight every node (hotplug enabled, exactly the four CX-7 PCIe
-#              functions, serving container not running, nothing holding an RDMA or
-#              MST device, firmware manager idle), unload mstflint_access, remove the
-#              four functions, power the adapter down. Stays off until --up;
-#              --restore-after 180 arms a node-side dead-man timer that powers it back
-#              on by itself (use it for a first try). Nothing is powered down on a node
-#              unless all four functions removed cleanly. The 10GbE link is never touched.
-#   --up       Power up, rescan, wait for the four functions, both ring ports at 200G
-#              with IPv4 and MTU 9000, RDMA ACTIVE, then jumbo-ping each ring neighbour
-#              and reload mstflint_access. Non-zero exit if any node fails a check.
+#   --down     Unload mstflint_access, remove the four CX-7 PCIe functions, power the adapter
+#              down. No checks: down means down, whatever is running. Stays off until --up;
+#              --restore-after N arms a node-side dead-man timer that powers it back on itself.
+#   --up       Power up, rescan, wait for the four functions, both ring ports at 200G with IPv4
+#              and MTU 9000, RDMA ACTIVE, jumbo-ping each neighbour, reload mstflint_access.
+#              Reports what came back; exit status non-zero if a node did not fully recover.
 #   --status   One line per node (read-only). (--idle / --unidle are aliases of --down / --up.)
-# Stop whatever uses the ring (your serving stack) before --down and start it after
-# --up; the script does not touch it. Needs passwordless sudo on the nodes.
+# Needs passwordless sudo on the nodes. Powering the adapter down kills every RDMA/NCCL
+# connection on it; stop or expect to restart whatever uses the ring.
 set -uo pipefail
 
 HOSTS=(spark-06c4 spark-365c spark-ddbf spark-a218)   # edit for your cluster
@@ -49,23 +45,9 @@ STATUS='
 echo "cx7=$(cat '"$SYS"'/debug_state 2>/dev/null) hotplug_enabled=$(cat '"$SYS"'/hotplug_enabled 2>/dev/null) fns=$(lspci -D -d 15b3:1021 2>/dev/null | wc -l) ring=$(for d in '"$RING_IFS"'; do echo -n "$(cat /sys/class/net/$d/operstate 2>/dev/null || echo absent)/$(cat /sys/class/net/$d/speed 2>/dev/null || echo -)/mtu$(cat /sys/class/net/$d/mtu 2>/dev/null || echo -) "; done)rdma_active=$(rdma link show 2>/dev/null | grep -c " ACTIVE ") mgmt=$(cat /sys/class/net/'"$MGMT_IF"'/speed 2>/dev/null)M mstflint=$( [ -d /sys/module/mstflint_access ] && echo loaded || echo unloaded) timer=$(systemctl list-timers --no-legend cx7-restore.timer 2>/dev/null | awk "{print \$1, \$2, \$3}" | grep . || echo none) ctr=$(docker inspect -f "{{.State.Status}}" '"$CONTAINER"' 2>/dev/null || echo none)"
 '
 
-PREFLIGHT='
-set -euo pipefail
-test -f /etc/nvidia/cx7-hotplug-enabled || { echo "FAIL: /etc/nvidia/cx7-hotplug-enabled missing"; exit 1; }
-test "$(cat '"$SYS"'/hotplug_enabled)" = 1 || { echo "FAIL: hotplug_enabled != 1"; exit 1; }
-test "$(cat '"$SYS"'/debug_state)" = 1 || { echo "FAIL: CX-7 is not powered (debug_state != 1)"; exit 1; }
-st=$(docker inspect -f "{{.State.Running}}" '"$CONTAINER"' 2>/dev/null || echo false); test "$st" = false || { echo "FAIL: serving container '"$CONTAINER"' is running; stop it first"; exit 1; }
-for bdf in '"$CX7_BDFS"'; do
-  test "$(cat /sys/bus/pci/devices/$bdf/vendor)" = 0x15b3 && test "$(cat /sys/bus/pci/devices/$bdf/device)" = 0x1021 || { echo "FAIL: $bdf is not a ConnectX-7"; exit 1; }
-done
-test "$(lspci -D -d 15b3:1021 | wc -l)" = 4 || { echo "FAIL: expected exactly four CX-7 functions"; exit 1; }
-test "$(lspci -D -s 0000:: | grep -vc "PCI bridge")" = 2 && test "$(lspci -D -s 0002:: | grep -vc "PCI bridge")" = 2 || { echo "FAIL: unexpected devices in the CX-7 PCIe domains"; exit 1; }
-case "$(readlink -f /sys/class/net/'"$MGMT_IF"'/device)" in *0007:01:00.0) ;; *) echo "FAIL: management NIC is not in domain 0007"; exit 1 ;; esac
-test "$(systemctl show nvidia-spark-mlnx-firmware-manager.service -p ActiveState --value)" != active || { echo "FAIL: mlnx firmware manager active"; exit 1; }
-if sudo -n fuser -s /dev/infiniband/uverbs* /dev/infiniband/rdma_cm /dev/*_mstconf 2>/dev/null; then echo "FAIL: something holds an RDMA/MST device open:"; sudo -n fuser -v /dev/infiniband/uverbs* /dev/infiniband/rdma_cm /dev/*_mstconf 2>&1 | head -8; exit 1; fi
-if test -d /sys/module/mstflint_access; then sudo -n modprobe -r mstflint_access; fi
-test ! -d /sys/module/mstflint_access || { echo "FAIL: mstflint_access still loaded"; exit 1; }
-echo PREFLIGHT_OK
+PREP='
+if test -d /sys/module/mstflint_access; then sudo -n modprobe -r mstflint_access 2>/dev/null && echo "mstflint_access unloaded" || echo "mstflint_access busy, left loaded"; fi
+echo "before: cx7=$(cat '"$SYS"'/debug_state 2>/dev/null) fns=$(lspci -D -d 15b3:1021 2>/dev/null | wc -l) ctr=$(docker inspect -f "{{.State.Status}}" '"$CONTAINER"' 2>/dev/null || echo none)"
 '
 
 OFF='
@@ -121,9 +103,7 @@ case "$CMD" in
   status) status_all ;;
   down)
     say "== down: CX-7 off on ${HOSTS[*]} (restore-after=${RESTORE_AFTER}s dry-run=$DRY_RUN)"
-    say "-- preflight"; ok=1
-    for h in "${HOSTS[@]}"; do run_node "$h" "$PREFLIGHT" || ok=0; done
-    [ "$ok" = 1 ] || { say "preflight failed on at least one node; nothing powered down"; exit 1; }
+    for h in "${HOSTS[@]}"; do run_node "$h" "$PREP"; done
     say "-- powering the adapters down"
     pids=(); for h in "${HOSTS[@]}"; do run_node "$h" "${OFF//RESTORE_AFTER/$RESTORE_AFTER}" & pids+=($!); done
     rc=0; for p in "${pids[@]}"; do wait "$p" || rc=1; done
