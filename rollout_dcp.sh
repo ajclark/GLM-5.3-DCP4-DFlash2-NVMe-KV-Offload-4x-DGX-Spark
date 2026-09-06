@@ -110,6 +110,28 @@ save_logs "pre"
 "$WS/../spark-cluster-experiments/node_snapshot.sh" > "$OUT/snap-pre.txt" 2>/dev/null || true
 memline | tee -a "$LOG"
 
+# 0b. ring GID sanity: the launchers pin NCCL_IB_GID_INDEX=3 (IPv4 RoCEv2). A ring
+#     port that flapped (peer rebooted) can come back with that GID at index 4 and
+#     index 3 empty -> ibv_modify_qp "No data available" on every rank. Re-adding the
+#     IP (NM connection bounce) re-packs the table. Checked before anything is stopped.
+ring_gid_check() {
+  local h d bad=0
+  for h in "${HOSTS[@]}"; do
+    for d in roceP2p1s0f0 roceP2p1s0f1; do
+      t=$(sshq "$h" "cat /sys/class/infiniband/$d/ports/1/gid_attrs/types/3 2>/dev/null; cat /sys/class/infiniband/$d/ports/1/gids/3 2>/dev/null" | paste -sd' ')
+      case "$t" in *"RoCE v2"*ffff:*) ;; *)
+        say "  $h $d: GID index 3 is '$t', expected IPv4 RoCE v2; bouncing its NM connection"
+        sshq "$h" "n=\$(rdma link show $d/1 | awk '{print \$NF}'); c=\$(nmcli -t -f DEVICE,CONNECTION dev | awk -F: -v n="\$n" '\$1==n{print \$2}'); sudo -n nmcli con down "\$c" >/dev/null 2>&1; sleep 2; sudo -n nmcli con up "\$c" >/dev/null 2>&1; sleep 3" 
+        t=$(sshq "$h" "cat /sys/class/infiniband/$d/ports/1/gid_attrs/types/3 2>/dev/null; cat /sys/class/infiniband/$d/ports/1/gids/3 2>/dev/null" | paste -sd' ')
+        case "$t" in *"RoCE v2"*ffff:*) say "  $h $d: fixed ($t)" ;; *) say "  $h $d: STILL WRONG ($t)"; bad=1 ;; esac ;;
+      esac
+    done
+  done
+  return $bad
+}
+say "ring GID check (NCCL_IB_GID_INDEX=3 on both ring ports of every node)"
+ring_gid_check || { say "ring GID table wrong on at least one node; refusing to start (nothing was stopped)"; exit 1; }
+
 # 1. stage overlays + launcher (production launcher untouched)
 WANT_L=$(sha256sum "$WS/launch-glm53big-dcp.sh" | cut -d' ' -f1)
 for h in "${HOSTS[@]}"; do
