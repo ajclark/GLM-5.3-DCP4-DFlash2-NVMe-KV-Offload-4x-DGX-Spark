@@ -98,7 +98,7 @@ and the acpitz/mlx5/nvme temperatures.
 ## 6. Cold-boot housekeeping this surfaced
 
 - The 2000 MHz clock lock and `performance` governor do not survive a
-  reboot; un-idle reapplies both, and a systemd unit on each node would make
+  reboot; a systemd unit on each node would make
   the serving profile boot-persistent.
 - The slab NVMe cache wipes itself when the boot id changes; a shutdown tier
   used routinely would benefit from the clean-shutdown marker discussed in

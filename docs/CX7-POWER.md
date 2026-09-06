@@ -132,7 +132,7 @@ no `cx7-*` systemd units, timers, transient files or unit files left, no
 leftover scripts, zero kernel errors since the experiment. The serving
 containers exist but are **stopped** (`docker stop` at 23:16-23:17 UTC), the
 cache flushers are gone, ~115 GB free per node. Relaunch is
-`./rollout_dcp.sh <label>` (daily DCP=2 lane) or `./un-idle.sh`.
+`SKIP_PREFLIGHT=1 ./rollout_dcp.sh <label>` (daily DCP=2 lane) after `spark-idle.sh --up`.
 
 ## 6. Roadmap: idle with the model resident ("just-in-time inference")
 
@@ -148,9 +148,9 @@ engine, per worker, on `suspend`:
    the drafter's replicated group, plus vLLM's PyNccl communicators) while
    the adapter is still up, so the teardown is clean. Gloo/TCP-store traffic
    rides the 10GbE and survives.
-4. `cx7-power.sh off`.
+4. `spark-idle.sh --down`.
 
-On `resume` (triggered by the first request or by hand): `cx7-power.sh on`,
+On `resume` (triggered by the first request or by hand): `spark-idle.sh --up`,
 re-create the process groups with fresh NCCL ids through the surviving TCP
 store (elastic EP's `StatelessGroupCoordinator` / `_replace_active_groups`),
 `compile_or_warm_up_model()` to re-capture graphs with the block tables saved
@@ -164,7 +164,7 @@ once per process and caches them. After a hot-remove those contexts are dead
 queue pairs even though the adapter is back. Crux experiment, stack down, no
 meter needed: a small script in the serving image on all four nodes that
 builds a NCCL communicator over the ring, all-reduces, destroys it, waits
-while the host runs `cx7-power.sh off` then `on`, builds a new communicator
+while the host runs `spark-idle.sh --down` then `--up`, builds a new communicator
 and all-reduces again. If that passes, the engine-side work is a
 `suspend_network` / `resume_network` RPC pair built from elastic EP's parts
 (days, in the fork). If it fails, the fallback is to restart the worker
