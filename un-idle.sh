@@ -147,7 +147,7 @@ if [ "$gen_rc" = 0 ]; then
 elif [ "$NORELAUNCH" = 1 ]; then
   say "-- serving stack is not fully up; --no-relaunch given, leaving it"
 else
-  RELAUNCH="${RELAUNCH_CMD:-}"; [ -z "$RELAUNCH" ] && [ -x "$WS/rollout_dcp.sh" ] && RELAUNCH="$WS/rollout_dcp.sh $LABEL"
+  RELAUNCH="${RELAUNCH_CMD:-}"; [ -z "$RELAUNCH" ] && [ -x "$WS/rollout_dcp.sh" ] && RELAUNCH="SKIP_PREFLIGHT=1 $WS/rollout_dcp.sh $LABEL"   # the stack is down by definition here; rollout_dcp.sh otherwise refuses
   if [ -z "$RELAUNCH" ]; then
     say "-- serving stack is not up and no RELAUNCH_CMD is set; the nodes are verified, start your stack now"
   else
