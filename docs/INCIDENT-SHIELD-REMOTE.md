@@ -118,6 +118,12 @@ all four nodes) and the NVMe slab cache (wiped on boot-id change by design).
 
 ## 5. Fixes, cheapest first
 
+**Applied 2026-09-06 02:10 UTC at the owner's request:** the remote was unpaired on
+both nodes (`bluetoothctl remove 48:B0:2D:39:56:1F`; no paired devices remain
+anywhere) and Bluetooth is soft-blocked on all four nodes (`rfkill block
+bluetooth`, state persisted by `systemd-rfkill`, adapter reports Powered: no).
+The logind change below was not applied; it remains available.
+
 - **Unpair the remote** on the two nodes:
   `bluetoothctl remove 48:B0:2D:39:56:1F`. The remote is otherwise useless
   to a headless server.
