@@ -111,11 +111,11 @@ timers fired 16:28:44, all recovered by 16:29:11; ring pings and MST reload
 
 ## 4. What it means for the idle design
 
-- The idle scripts are this lever and nothing else (human's decision,
-  2026-09-06): `enter-low-power-idle-mode.sh` = `cx7-power.sh off`,
-  `un-idle.sh` = `cx7-power.sh on` + ring verification. Preflight, optional
-  dead-man timer, all-four-functions checks and the mstflint unload/reload
-  live in `cx7-power.sh`.
+- The tooling is this lever and nothing else (human's decision, 2026-09-06):
+  one script, `spark-idle.sh --down|--up|--status` (repo
+  ajclark/dgx-spark-idle-power, mirrored here). Preflight, optional dead-man
+  timer (`--restore-after`), all-four-functions checks, mstflint
+  unload/reload and the ring verification live in it.
 - It only works with the serving stack down: removing the PCIe functions
   destroys NCCL/RDMA state, so the cost is the 505 s relaunch (or the
   disk-image boot in `docs/BOOT-TIME.md` once that exists).

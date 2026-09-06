@@ -60,27 +60,28 @@ cluster, and the smart plug that makes it recoverable also gives this cluster
 the remote power-cycle it does not have today (the forum thread's author does
 exactly this: BIOS "auto boot" on AC + a phone-controlled plug).
 
-## 3. The scripts (decision 2026-09-06: ConnectX-7 only)
+## 3. The script (decision 2026-09-06: one script, ConnectX-7 only)
 
-After the CX-7 measurement the human cut the scripts down to the one lever
-that is worth double digits: `enter-low-power-idle-mode.sh` runs
-`cx7-power.sh off` on every node, `un-idle.sh` runs `cx7-power.sh on` and
-verifies the ring (four functions, 200G, IPv4, MTU 9000, RDMA ACTIVE, jumbo
-pings, mstflint reloaded). They do not touch the GPU clock lock, governor,
-radios, management link or the serving stack; the stack is stopped and started
-by the operator around them. The light-tier levers in section 2 stay
-documented for reference only: none was measured and the estimates are
-single-digit watts. `cx7-power.sh` keeps the safety preflight (refuses while
-the serving container runs or anything holds an RDMA/MST device open) and the
-optional node-side dead-man restore timer (`--restore-after SECONDS`).
+After the CX-7 measurement the human cut the tooling to one script for the one
+lever worth double digits: `spark-idle.sh --down` runs the preflight (hotplug
+enabled, exactly the four CX-7 functions, serving container not running, no
+RDMA/MST users, firmware manager idle), unloads `mstflint_access`, removes the
+four PCIe functions and powers the adapter down (optionally with a node-side
+dead-man restore timer, `--restore-after SECONDS`); `spark-idle.sh --up`
+powers it on and verifies four functions, 200G, IPv4, MTU 9000, RDMA ACTIVE,
+jumbo pings, mstflint reloaded; `--status` is read-only. It does not touch the
+GPU clock lock, governor, radios, management link or the serving stack; the
+operator stops and starts the stack around it. The light-tier levers in
+section 2 stay documented for reference only: none was measured and the
+estimates are single-digit watts.
 
 ## 4. First run (with a meter on the plugs)
 
 1. Stop the serving stack.
-2. `./enter-low-power-idle-mode.sh --hosts <one-node> --restore-after 180`; watch
+2. `./spark-idle.sh --down --hosts <one-node> --restore-after 180`; watch
    the meter drop and the node come back by itself.
-3. `./enter-low-power-idle-mode.sh` (all nodes, stays off), read the settled
-   watts, `./un-idle.sh`, confirm every node reports the ring verified.
+3. `./spark-idle.sh --down` (all nodes, stays off), read the settled watts,
+   `./spark-idle.sh --up`, confirm every node reports the ring verified.
 4. Start the serving stack and run a real generation.
 
 ## 5. Measuring
