@@ -16,6 +16,7 @@ blocks), then re-verified the cluster state afterwards (section 5).
 | canary: spark-06c4's CX-7 off, other three on | 177 W | -25 to -30 W on that node |
 | all four CX-7 off | 168 W after ~30 s, **120 W settled** | **-20.5 W** |
 | all four restored | ~202 W | back to baseline |
+| serving stack **resident and idle**, CX-7 on / off (02:21, next day) | 208 W / **125 W** | the resident stack adds ~1 W per node |
 
 The two ring cables stayed plugged in throughout. Every node stayed reachable
 over the 10GbE management link at 10G the whole time. Restoration was fully in
@@ -182,12 +183,16 @@ back, does the stack still work? Run with the owner watching, `spark-idle.sh --d
 | step | observed |
 |---|---|
 | baseline | `/health` 200, generation OK |
-| `--down` (all four, 02:21:54) | all four adapters off in ~20 s; containers stay `running`; all worker and engine processes alive; **no NCCL or engine log line at all** (nothing was in flight); `/health` still 200; kernel: clean `cx7-pcie-hotplug: Cable removal`, a218 logged correctable PCIe RxErr on both root ports at removal |
+| `--down` (all four, 02:21:54) | wall power **208 W → 125 W** (owner's meter; stack resident, ~5 W above the 120 W stack-stopped figure); all four adapters off in ~20 s; containers stay `running`; all worker and engine processes alive; **no NCCL or engine log line at all** (nothing was in flight); `/health` still 200; kernel: clean `cx7-pcie-hotplug: Cable removal`, a218 logged correctable PCIe RxErr on both root ports at removal |
 | `--up` (02:23:21) | four functions, both ports 200G, IPs, MTU 9000, RDMA ACTIVE, jumbo pings, mstflint reloaded on all four in **12 s**; GID index 3 = IPv4 RoCEv2 everywhere (the hot-plug path re-packs correctly; only the peer-reboot link flap moved it) |
 | generation probe (02:24:04) | **silent hang**: 0 bytes after 90 s; rank 0 engine core logs "No available shared memory broadcast block found in 60 seconds" every minute; workers at ~50 % CPU with four runnable threads (busy-polling NCCL/CUDA on queue pairs that died with the device); no NCCL error, no exception, `/health` 200 |
 | recovery | `SKIP_PREFLIGHT=1 ./rollout_dcp.sh dcp2-dflash-180k-prod6` (full relaunch) |
 
 Conclusions for the idle design:
+
+- **Idle with the model resident and the adapters off is 125 W for four nodes**, so
+  keeping vLLM up costs ~1 W per node. The CX-7 is the entire idle bill; there is no
+  power reason to stop the stack, only the RDMA-state reason below.
 
 - The processes survive the removal; the RDMA state does not. NCCL's queue pairs and
   the ibverbs contexts opened at init are dead after re-enumeration, and the next
