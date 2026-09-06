@@ -1,0 +1,192 @@
+== spark-ddbf 2026-09-06T01:46:20+00:00 uptime: up 0 minutes
+== boots
+ -2 5348f25b5be340bb924f626515d9e5cb Mon 2026-08-31 12:31:56 PDT Wed 2026-09-02 19:41:56 PDT
+ -1 049a1c6fba4c4c5da5649373c223e451 Wed 2026-09-02 19:45:38 PDT Sat 2026-09-05 17:42:11 PDT
+  0 94486d8f2b704a85b03fc2a004654f4b Sat 2026-09-05 18:45:47 PDT Sat 2026-09-05 18:46:20 PDT
+== previous boot: last 60 kernel lines
+2026-09-05T16:28:49-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.0: firmware version: 28.45.4028
+2026-09-05T16:28:49-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.0: 126.028 Gb/s available PCIe bandwidth (32.0 GT/s PCIe x4 link)
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0000:01:00.1 enp1s0f1np1: Link down
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0000:01:00.1: Port module event: module 1, Cable plugged
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0000:01:00.1: mlx5_pcie_event:326:(pid 951095): Detected insufficient power on the PCIe slot (27W).
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.0: Rate limit: 127 rates are supported, range: 0Mbps to 195312Mbps
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.0: E-Switch: Total vports 10, per vport: max uc(128) max mc(2048)
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.0: Flow counters bulk query buffer size increased, bulk_query_len(8)
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.0: mlx5e: IPSec ESP acceleration enabled
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0000:01:00.0: Port module event: module 0, Cable plugged
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.0: Port module event: module 0, Cable plugged
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.0: mlx5_pcie_event:326:(pid 951100): Detected insufficient power on the PCIe slot (27W).
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0000:01:00.0: mlx5_pcie_event:326:(pid 950283): Detected insufficient power on the PCIe slot (27W).
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0000:01:00.0 enp1s0f0np0: Link up
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0000:01:00.1 enp1s0f1np1: Link up
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0000:01:00.0 rocep1s0f0: Port: 1 Link ACTIVE
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0000:01:00.1 rocep1s0f1: Port: 1 Link ACTIVE
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.0: MLX5E: StrdRq(1) RqSz(8) StrdSz(2048) RxCqeCmprss(0 enhanced)
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.0 enP2p1s0f0np0: renamed from eth0
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1: enabling device (0000 -> 0002)
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1: firmware version: 28.45.4028
+2026-09-05T16:28:50-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1: 126.028 Gb/s available PCIe bandwidth (32.0 GT/s PCIe x4 link)
+2026-09-05T16:28:51-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1: Rate limit: 127 rates are supported, range: 0Mbps to 195312Mbps
+2026-09-05T16:28:51-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1: E-Switch: Total vports 10, per vport: max uc(128) max mc(2048)
+2026-09-05T16:28:51-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1: Flow counters bulk query buffer size increased, bulk_query_len(8)
+2026-09-05T16:28:51-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1: Port module event: module 1, Cable plugged
+2026-09-05T16:28:51-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1: mlx5_pcie_event:326:(pid 951194): Detected insufficient power on the PCIe slot (27W).
+2026-09-05T16:28:51-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1: mlx5e: IPSec ESP acceleration enabled
+2026-09-05T16:28:51-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.0 enP2p1s0f0np0: Link up
+2026-09-05T16:28:51-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.0 roceP2p1s0f0: Port: 1 Link ACTIVE
+2026-09-05T16:28:51-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1: MLX5E: StrdRq(1) RqSz(8) StrdSz(2048) RxCqeCmprss(0 enhanced)
+2026-09-05T16:28:51-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1 enP2p1s0f1np1: renamed from eth0
+2026-09-05T16:28:52-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1 enP2p1s0f1np1: Link up
+2026-09-05T16:28:52-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1 roceP2p1s0f1: Port: 1 Link ACTIVE
+2026-09-05T16:32:09-07:00 spark-ddbf kernel:   MST::  : mst_init 1963: Mellanox Technologies Software Tools Driver - version 2.0.0
+2026-09-05T16:32:09-07:00 spark-ddbf kernel:   MST::  : mst_init 1976: found device - domain=0x0, bus=0x1, slot=0x0, func=0x0, vendor=0x15b3, device=0x1021
+2026-09-05T16:32:09-07:00 spark-ddbf kernel:   MST::  : mst_init 1976: found device - domain=0x0, bus=0x1, slot=0x0, func=0x1, vendor=0x15b3, device=0x1021
+2026-09-05T16:32:09-07:00 spark-ddbf kernel:   MST::  : mst_init 1976: found device - domain=0x2, bus=0x1, slot=0x0, func=0x0, vendor=0x15b3, device=0x1021
+2026-09-05T16:32:09-07:00 spark-ddbf kernel:   MST::  : mst_init 1976: found device - domain=0x2, bus=0x1, slot=0x0, func=0x1, vendor=0x15b3, device=0x1021
+2026-09-05T17:09:38-07:00 spark-ddbf kernel: tee (956934): drop_caches: 3
+2026-09-05T17:09:38-07:00 spark-ddbf kernel: tee (956940): drop_caches: 3
+2026-09-05T17:10:38-07:00 spark-ddbf kernel: tee (958130): drop_caches: 3
+2026-09-05T17:11:38-07:00 spark-ddbf kernel: tee (958880): drop_caches: 3
+2026-09-05T17:12:39-07:00 spark-ddbf kernel: tee (960452): drop_caches: 3
+2026-09-05T17:13:39-07:00 spark-ddbf kernel: tee (961302): drop_caches: 3
+2026-09-05T17:14:39-07:00 spark-ddbf kernel: tee (962339): drop_caches: 3
+2026-09-05T17:15:39-07:00 spark-ddbf kernel: tee (963038): drop_caches: 3
+2026-09-05T17:16:39-07:00 spark-ddbf kernel: tee (964081): drop_caches: 3
+2026-09-05T17:17:39-07:00 spark-ddbf kernel: tee (964790): drop_caches: 3
+2026-09-05T17:18:40-07:00 spark-ddbf kernel: tee (965870): drop_caches: 3
+2026-09-05T17:40:22-07:00 spark-ddbf kernel: hid: raw HID events driver (C) Jiri Kosina
+2026-09-05T17:40:24-07:00 spark-ddbf kernel: input: NVIDIA SHIELD Remote as /devices/virtual/misc/uhid/0005:0955:7217.0001/input/input7
+2026-09-05T17:40:24-07:00 spark-ddbf kernel: hid-generic 0005:0955:7217.0001: input,hidraw0: BLUETOOTH HID v0.02 Gamepad [NVIDIA SHIELD Remote] on f8:3d:c6:af:d1:29
+2026-09-05T17:40:34-07:00 spark-ddbf kernel: mlx5_core 0000:01:00.1 enp1s0f1np1: Link down
+2026-09-05T17:40:34-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1 enP2p1s0f1np1: Link down
+2026-09-05T17:40:34-07:00 spark-ddbf kernel: mlx5_core 0000:01:00.1 rocep1s0f1: Port: 1 Link DOWN
+2026-09-05T17:40:35-07:00 spark-ddbf kernel: mlx5_core 0002:01:00.1 roceP2p1s0f1: Port: 1 Link DOWN
+2026-09-05T17:42:07-07:00 spark-ddbf kernel: fbcon: Taking over console
+2026-09-05T17:42:11-07:00 spark-ddbf systemd-shutdown[1]: Syncing filesystems and block devices.
+2026-09-05T17:42:11-07:00 spark-ddbf systemd-shutdown[1]: Sending SIGTERM to remaining processes...
+== previous boot: errors/warnings (last 40)
+2026-09-05T17:09:23-07:00 spark-ddbf systemd-xdg-autostart-generator[955124]: Configuration file /home/napta2k/.config/autostart/spark.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:09:23-07:00 spark-ddbf pipewire[955133]: mod.jackdbus-detect: Failed to receive jackdbus reply: org.freedesktop.DBus.Error.ServiceUnknown: The name org.jackaudio.service was not provided by any .service files
+2026-09-05T17:09:36-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788653376.0064] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:10:21-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788653421.0068] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:11:06-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788653466.0077] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:11:51-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788653511.0146] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:17:36-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788653856.0062] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:18:21-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788653901.0065] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:19:06-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788653946.0078] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:19:51-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788653991.0054] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:19:51-07:00 spark-ddbf systemd[955119]: xdg-permission-store.service: Failed with result 'exit-code'.
+2026-09-05T17:19:51-07:00 spark-ddbf systemd[955119]: xdg-document-portal.service: Failed with result 'exit-code'.
+2026-09-05T17:19:51-07:00 spark-ddbf systemd[955119]: snap.snapd-desktop-integration.snapd-desktop-integration.service: Failed with result 'exit-code'.
+2026-09-05T17:20:12-07:00 spark-ddbf systemd-xdg-autostart-generator[967290]: Configuration file /home/napta2k/.config/autostart/dgx-desktop-init.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:20:12-07:00 spark-ddbf systemd-xdg-autostart-generator[967290]: Configuration file /home/napta2k/.config/autostart/spark.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:20:12-07:00 spark-ddbf pipewire[967296]: mod.jackdbus-detect: Failed to receive jackdbus reply: org.freedesktop.DBus.Error.ServiceUnknown: The name org.jackaudio.service was not provided by any .service files
+2026-09-05T17:20:22-07:00 spark-ddbf systemd[967285]: snap.snapd-desktop-integration.snapd-desktop-integration.service: Failed with result 'exit-code'.
+2026-09-05T17:23:55-07:00 spark-ddbf systemd-xdg-autostart-generator[967645]: Configuration file /home/napta2k/.config/autostart/dgx-desktop-init.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:23:55-07:00 spark-ddbf systemd-xdg-autostart-generator[967645]: Configuration file /home/napta2k/.config/autostart/spark.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:23:55-07:00 spark-ddbf pipewire[967650]: mod.jackdbus-detect: Failed to receive jackdbus reply: org.freedesktop.DBus.Error.ServiceUnknown: The name org.jackaudio.service was not provided by any .service files
+2026-09-05T17:24:09-07:00 spark-ddbf systemd[967640]: xdg-permission-store.service: Failed with result 'exit-code'.
+2026-09-05T17:24:09-07:00 spark-ddbf systemd[967640]: snap.snapd-desktop-integration.snapd-desktop-integration.service: Failed with result 'exit-code'.
+2026-09-05T17:24:09-07:00 spark-ddbf systemd[967640]: xdg-document-portal.service: Failed with result 'exit-code'.
+2026-09-05T17:24:50-07:00 spark-ddbf systemd-xdg-autostart-generator[968336]: Configuration file /home/napta2k/.config/autostart/dgx-desktop-init.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:24:50-07:00 spark-ddbf systemd-xdg-autostart-generator[968336]: Configuration file /home/napta2k/.config/autostart/spark.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:24:50-07:00 spark-ddbf pipewire[968343]: mod.jackdbus-detect: Failed to receive jackdbus reply: org.freedesktop.DBus.Error.ServiceUnknown: The name org.jackaudio.service was not provided by any .service files
+2026-09-05T17:25:01-07:00 spark-ddbf systemd[968331]: xdg-permission-store.service: Failed with result 'exit-code'.
+2026-09-05T17:25:01-07:00 spark-ddbf systemd[968331]: snap.snapd-desktop-integration.snapd-desktop-integration.service: Failed with result 'exit-code'.
+2026-09-05T17:25:01-07:00 spark-ddbf systemd[968331]: xdg-document-portal.service: Failed with result 'exit-code'.
+2026-09-05T17:25:36-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788654336.0071] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:26:21-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788654381.0068] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:27:06-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788654426.0137] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:27:51-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788654471.0076] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:33:36-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788654816.0070] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:34:21-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788654861.0062] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:35:06-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788654906.0069] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:35:51-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788654951.0076] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:41:36-07:00 spark-ddbf NetworkManager[1699]: <warn>  [1788655296.0062] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:41:58-07:00 spark-ddbf rasdaemon[968722]: Can't write to set_event
+2026-09-05T17:41:58-07:00 spark-ddbf rasdaemon[968722]: Can't write to set_event
+== previous boot: last 30 journal lines of any kind
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: Stopped target local-fs-pre.target - Preparation for Local File Systems.
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: Stopped target swap.target - Swaps.
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: Deactivating swap swap.img.swap - /swap.img...
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: Stopping lvm2-monitor.service - Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling...
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: Stopping multipathd.service - Device-Mapper Multipath Device Controller...
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: systemd-tmpfiles-setup-dev.service: Deactivated successfully.
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: Stopped systemd-tmpfiles-setup-dev.service - Create Static Device Nodes in /dev.
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: systemd-tmpfiles-setup-dev-early.service: Deactivated successfully.
+2026-09-05T17:42:10-07:00 spark-ddbf multipathd[663]: multipathd: shut down
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: Stopped systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully.
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: multipathd.service: Deactivated successfully.
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: Stopped multipathd.service - Device-Mapper Multipath Device Controller.
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: multipathd.service: Consumed 22.055s CPU time, 22.5M memory peak, 4.0K memory swap peak.
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: swap.img.swap: Deactivated successfully.
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: Deactivated swap swap.img.swap - /swap.img.
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: Reached target umount.target - Unmount All Filesystems.
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: systemd-remount-fs.service: Deactivated successfully.
+2026-09-05T17:42:10-07:00 spark-ddbf systemd[1]: Stopped systemd-remount-fs.service - Remount Root and Kernel File Systems.
+2026-09-05T17:42:11-07:00 spark-ddbf systemd[1]: lvm2-monitor.service: Deactivated successfully.
+2026-09-05T17:42:11-07:00 spark-ddbf systemd[1]: Stopped lvm2-monitor.service - Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling.
+2026-09-05T17:42:11-07:00 spark-ddbf systemd[1]: Reached target shutdown.target - System Shutdown.
+2026-09-05T17:42:11-07:00 spark-ddbf systemd[1]: Reached target final.target - Late Shutdown Services.
+2026-09-05T17:42:11-07:00 spark-ddbf systemd[1]: Starting nvidia-disable-aqc-nic.service - Remove AQC nic before shutdown...
+2026-09-05T17:42:11-07:00 spark-ddbf systemd[1]: systemd-poweroff.service: Deactivated successfully.
+2026-09-05T17:42:11-07:00 spark-ddbf systemd[1]: Finished systemd-poweroff.service - System Power Off.
+2026-09-05T17:42:11-07:00 spark-ddbf systemd[1]: Reached target poweroff.target - System Power Off.
+2026-09-05T17:42:11-07:00 spark-ddbf systemd[1]: Shutting down.
+2026-09-05T17:42:11-07:00 spark-ddbf systemd-shutdown[1]: Syncing filesystems and block devices.
+2026-09-05T17:42:11-07:00 spark-ddbf systemd-shutdown[1]: Sending SIGTERM to remaining processes...
+2026-09-05T17:42:11-07:00 spark-ddbf systemd-journald[623]: Journal stopped
+== pstore
+== /var/crash
+total 2328160
+drwxrwsrwt  2 root root       4096 Sep  5 18:45 .
+drwxr-xr-x 13 root root       4096 Sep 30  2025 ..
+-rw-r--r--  1 root root          0 Sep  5 18:45 kdump_lock
+-rw-r-----  1 root root 2384019877 Sep  2 19:28 _usr_bin_python3.12.0.crash
+== this boot: first 40 kernel lines
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: Booting Linux on physical CPU 0x0000000000 [0x410fd871]
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: Linux version 6.17.0-1031-nvidia (buildd@bos03-arm64-037) (aarch64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, GNU ld (GNU Binutils for Ubuntu) 2.42) #31-Ubuntu SMP PREEMPT_DYNAMIC Fri Jul 24 22:03:06 UTC 2026 (Ubuntu 6.17.0-1031.31-nvidia 6.17.13)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: KASLR enabled
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: earlycon: uart0 at MMIO32 0x0000000016a00000 (options '')
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: printk: legacy bootconsole [uart0] enabled
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: efi: EFI v2.9 by American Megatrends
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: efi: RTPROP=0x86f4fd18 ACPI 2.0=0x8707e018 SMBIOS=0x86dd0000 SMBIOS 3.0=0x86dc0000 TPMFinalLog=0x86fe0000 ESRT=0x855bad98 MOKvar=0x86d10000 INITRD=0x84814f98 RNG=0x87065d18 MEMRESERVE=0x84835818 
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: random: crng init done
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: secureboot: Secure boot enabled
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: Kernel is locked down from EFI Secure Boot mode; see man kernel_lockdown.7
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: esrt: Reserving ESRT space from 0x00000000855bad98 to 0x00000000855bae20.
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: Early table checksum verification disabled
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: RSDP 0x000000008707E018 000024 (v02 ALASKA)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: XSDT 0x000000008707E098 0000AC (v01 ALASKA A M I    01072009 AMI  01000013)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: FACP 0x000000008707EB18 000114 (v06 ALASKA A M I    01072009 AMI  00010013)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: DSDT 0x000000008706C018 0111FF (v02 ALASKA A M I    01072009 INTL 20230628)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: FIDT 0x000000008707EF18 00009C (v01 ALASKA A M I    01072009 AMI  00010013)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: SSDT 0x000000008706A018 001A08 (v02 MTKINC ANGUS    00000001 INTL 20230628)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: SSDT 0x0000000087069018 000305 (v02 MTKINC ANGUSCPU 000000FF INTL 20230628)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: CSRT 0x0000000087069E98 000068 (v00 ALASKA A M I    20130221 AMI  00000099)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: DBG2 0x000000008707EC98 000175 (v00 ALASKA A M I    20130221 AMI  00000099)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: GTDT 0x0000000087069418 0001D8 (v03 ALASKA A M I    20130221 AMI  00000099)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: APIC 0x0000000087067018 0006A8 (v05 ALASKA A M I    20130221 AMI  00000099)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: MCFG 0x0000000087067E98 00012C (v01 ALASKA A M I    20130221 AMI  00000099)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: PPTT 0x0000000087066018 0008B8 (v02 ALASKA A M I    20130221 AMI  00000099)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: SPCR 0x0000000087069F98 000050 (v02 ALASKA A M I    20130221 AMI  00000099)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: SDEV 0x0000000087066E98 000024 (v01 ALASKA NVSDEV   00000000 AMI  00000001)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: SSDT 0x0000000087065018 000793 (v02 ALASKA A M I    00000001 INTL 20230628)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: SSDT 0x0000000087065A98 000171 (v01 NVIDIA NBCI     00000001 INTL 20230628)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: IORT 0x0000000087068018 000F40 (v06 MEDTEK MTKSGI   00000000 MTK  00000001)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: FPDT 0x0000000087066F18 000044 (v01 ALASKA A M I    01072009 AMI  01000013)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: WSMT 0x0000000087066F98 000028 (v01 ALASKA A M I    01072009 AMI  00010013)
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: SPCR: console: uart,mmio32,0x16a00000,115200
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: ACPI: Use ACPI SPCR as default console: Yes
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: NUMA: Faking a node at [mem 0x0000000080000000-0x000000207fffffff]
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: NODE_DATA(0) allocated [mem 0x206966f440-0x2069674fff]
+2026-09-05T18:45:47-07:00 spark-ddbf kernel: Zone ranges:
+2026-09-05T18:45:47-07:00 spark-ddbf kernel:   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+2026-09-05T18:45:47-07:00 spark-ddbf kernel:   DMA32    empty
+2026-09-05T18:45:47-07:00 spark-ddbf kernel:   Normal   [mem 0x0000000100000000-0x000000207fffffff]
+== cx7 now
+1
+4
+== kernel/driver
+6.17.0-1031-nvidia
+NVRM version: NVIDIA UNIX Open Kernel Module for aarch64  580.173.02  Release Build  (dvs-builder@U22-A24-5-4)  Tue Jun 23 08:34:19 UTC 2026

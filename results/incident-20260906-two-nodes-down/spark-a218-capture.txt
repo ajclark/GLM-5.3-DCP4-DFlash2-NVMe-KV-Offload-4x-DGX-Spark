@@ -1,0 +1,192 @@
+== spark-a218 2026-09-06T01:46:45+00:00 uptime: up 0 minutes
+== boots
+ -2 7dbc03cd6fba483daf3b91e6facbd661 Mon 2026-08-31 10:14:06 PDT Mon 2026-08-31 12:30:20 PDT
+ -1 31d43a4ca4c241f8ad6d4cf7cca3b99a Mon 2026-08-31 12:31:56 PDT Sat 2026-09-05 17:40:33 PDT
+  0 ca1f16e31203454aaead268d1e28465b Sat 2026-09-05 18:46:12 PDT Sat 2026-09-05 18:46:45 PDT
+== previous boot: last 60 kernel lines
+2026-09-05T16:28:49-07:00 spark-a218 kernel: pci 0002:01:00.0: ROM [mem 0x5d100000-0x5d1fffff pref]: assigned
+2026-09-05T16:28:49-07:00 spark-a218 kernel: pci 0002:01:00.0: VF BAR 0 [mem 0x3d04000000-0x3d047fffff 64bit pref]: assigned
+2026-09-05T16:28:49-07:00 spark-a218 kernel: pci 0002:01:00.1: ROM [mem 0x5d200000-0x5d2fffff pref]: assigned
+2026-09-05T16:28:49-07:00 spark-a218 kernel: pci 0002:01:00.1: VF BAR 0 [mem 0x3d04800000-0x3d04ffffff 64bit pref]: assigned
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0002:01:00.0: enabling device (0000 -> 0002)
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0002:01:00.0: firmware version: 28.45.4028
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0002:01:00.0: 126.028 Gb/s available PCIe bandwidth (32.0 GT/s PCIe x4 link)
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0000:01:00.0: Port module event: module 0, Cable plugged
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0000:01:00.1: Port module event: module 1, Cable plugged
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0000:01:00.0: mlx5_pcie_event:326:(pid 1098929): Detected insufficient power on the PCIe slot (27W).
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0000:01:00.1: mlx5_pcie_event:326:(pid 1096416): Detected insufficient power on the PCIe slot (27W).
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0002:01:00.0: Rate limit: 127 rates are supported, range: 0Mbps to 195312Mbps
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0002:01:00.0: E-Switch: Total vports 10, per vport: max uc(128) max mc(2048)
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0002:01:00.0: Flow counters bulk query buffer size increased, bulk_query_len(8)
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0002:01:00.0: Port module event: module 0, Cable plugged
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0002:01:00.0: mlx5_pcie_event:326:(pid 1098929): Detected insufficient power on the PCIe slot (27W).
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0002:01:00.0: mlx5e: IPSec ESP acceleration enabled
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0000:01:00.1 enp1s0f1np1: Link down
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0002:01:00.0: MLX5E: StrdRq(1) RqSz(8) StrdSz(2048) RxCqeCmprss(0 enhanced)
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0002:01:00.0 enP2p1s0f0np0: renamed from eth0
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0002:01:00.1: enabling device (0000 -> 0002)
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0002:01:00.1: firmware version: 28.45.4028
+2026-09-05T16:28:49-07:00 spark-a218 kernel: mlx5_core 0002:01:00.1: 126.028 Gb/s available PCIe bandwidth (32.0 GT/s PCIe x4 link)
+2026-09-05T16:28:50-07:00 spark-a218 kernel: mlx5_core 0000:01:00.0 enp1s0f0np0: Link up
+2026-09-05T16:28:50-07:00 spark-a218 kernel: mlx5_core 0002:01:00.1: Rate limit: 127 rates are supported, range: 0Mbps to 195312Mbps
+2026-09-05T16:28:50-07:00 spark-a218 kernel: mlx5_core 0002:01:00.1: E-Switch: Total vports 10, per vport: max uc(128) max mc(2048)
+2026-09-05T16:28:50-07:00 spark-a218 kernel: mlx5_core 0002:01:00.1: Flow counters bulk query buffer size increased, bulk_query_len(8)
+2026-09-05T16:28:50-07:00 spark-a218 kernel: mlx5_core 0002:01:00.0 enP2p1s0f0np0: Link up
+2026-09-05T16:28:50-07:00 spark-a218 kernel: mlx5_core 0002:01:00.0 enP2p1s0f0np0: Link up
+2026-09-05T16:28:50-07:00 spark-a218 kernel: mlx5_core 0002:01:00.0 roceP2p1s0f0: Port: 1 Link ACTIVE
+2026-09-05T16:28:50-07:00 spark-a218 kernel: mlx5_core 0000:01:00.0 rocep1s0f0: Port: 1 Link ACTIVE
+2026-09-05T16:28:50-07:00 spark-a218 kernel: mlx5_core 0002:01:00.1: mlx5e: IPSec ESP acceleration enabled
+2026-09-05T16:28:50-07:00 spark-a218 kernel: mlx5_core 0002:01:00.1: Port module event: module 1, Cable plugged
+2026-09-05T16:28:50-07:00 spark-a218 kernel: mlx5_core 0002:01:00.1: mlx5_pcie_event:326:(pid 1099983): Detected insufficient power on the PCIe slot (27W).
+2026-09-05T16:28:50-07:00 spark-a218 kernel: mlx5_core 0000:01:00.1 enp1s0f1np1: Link up
+2026-09-05T16:28:51-07:00 spark-a218 kernel: mlx5_core 0000:01:00.1 rocep1s0f1: Port: 1 Link ACTIVE
+2026-09-05T16:28:51-07:00 spark-a218 kernel: mlx5_core 0002:01:00.1: MLX5E: StrdRq(1) RqSz(8) StrdSz(2048) RxCqeCmprss(0 enhanced)
+2026-09-05T16:28:51-07:00 spark-a218 kernel: mlx5_core 0002:01:00.1 enP2p1s0f1np1: renamed from eth0
+2026-09-05T16:28:51-07:00 spark-a218 kernel: mlx5_core 0002:01:00.1 enP2p1s0f1np1: Link up
+2026-09-05T16:28:51-07:00 spark-a218 kernel: mlx5_core 0002:01:00.1 roceP2p1s0f1: Port: 1 Link ACTIVE
+2026-09-05T16:32:12-07:00 spark-a218 kernel:   MST::  : mst_init 1963: Mellanox Technologies Software Tools Driver - version 2.0.0
+2026-09-05T16:32:12-07:00 spark-a218 kernel:   MST::  : mst_init 1976: found device - domain=0x0, bus=0x1, slot=0x0, func=0x0, vendor=0x15b3, device=0x1021
+2026-09-05T16:32:12-07:00 spark-a218 kernel:   MST::  : mst_init 1976: found device - domain=0x0, bus=0x1, slot=0x0, func=0x1, vendor=0x15b3, device=0x1021
+2026-09-05T16:32:12-07:00 spark-a218 kernel:   MST::  : mst_init 1976: found device - domain=0x2, bus=0x1, slot=0x0, func=0x0, vendor=0x15b3, device=0x1021
+2026-09-05T16:32:12-07:00 spark-a218 kernel:   MST::  : mst_init 1976: found device - domain=0x2, bus=0x1, slot=0x0, func=0x1, vendor=0x15b3, device=0x1021
+2026-09-05T17:09:39-07:00 spark-a218 kernel: tee (1106313): drop_caches: 3
+2026-09-05T17:09:40-07:00 spark-a218 kernel: tee (1106319): drop_caches: 3
+2026-09-05T17:10:40-07:00 spark-a218 kernel: tee (1107507): drop_caches: 3
+2026-09-05T17:11:40-07:00 spark-a218 kernel: tee (1108259): drop_caches: 3
+2026-09-05T17:12:40-07:00 spark-a218 kernel: tee (1109887): drop_caches: 3
+2026-09-05T17:13:40-07:00 spark-a218 kernel: tee (1110675): drop_caches: 3
+2026-09-05T17:14:40-07:00 spark-a218 kernel: tee (1111710): drop_caches: 3
+2026-09-05T17:15:40-07:00 spark-a218 kernel: tee (1112410): drop_caches: 3
+2026-09-05T17:16:41-07:00 spark-a218 kernel: tee (1113453): drop_caches: 3
+2026-09-05T17:17:41-07:00 spark-a218 kernel: tee (1114160): drop_caches: 3
+2026-09-05T17:18:41-07:00 spark-a218 kernel: tee (1115239): drop_caches: 3
+2026-09-05T17:40:30-07:00 spark-a218 kernel: fbcon: Taking over console
+2026-09-05T17:40:33-07:00 spark-a218 systemd-shutdown[1]: Syncing filesystems and block devices.
+2026-09-05T17:40:33-07:00 spark-a218 systemd-shutdown[1]: Sending SIGTERM to remaining processes...
+2026-09-05T17:40:33-07:00 spark-a218 systemd-journald[625]: Received SIGTERM from PID 1 (systemd-shutdow).
+== previous boot: errors/warnings (last 40)
+2026-09-05T17:08:53-07:00 spark-a218 systemd-xdg-autostart-generator[1104101]: Configuration file /home/napta2k/.config/autostart/dgx-desktop-init.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:08:53-07:00 spark-a218 systemd-xdg-autostart-generator[1104101]: Configuration file /home/napta2k/.config/autostart/spark.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:08:53-07:00 spark-a218 pipewire[1104109]: mod.jackdbus-detect: Failed to receive jackdbus reply: org.freedesktop.DBus.Error.ServiceUnknown: The name org.jackaudio.service was not provided by any .service files
+2026-09-05T17:09:04-07:00 spark-a218 systemd[1104096]: snap.snapd-desktop-integration.snapd-desktop-integration.service: Failed with result 'exit-code'.
+2026-09-05T17:09:23-07:00 spark-a218 systemd-xdg-autostart-generator[1104503]: Configuration file /home/napta2k/.config/autostart/dgx-desktop-init.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:09:23-07:00 spark-a218 systemd-xdg-autostart-generator[1104503]: Configuration file /home/napta2k/.config/autostart/spark.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:09:23-07:00 spark-a218 pipewire[1104511]: mod.jackdbus-detect: Failed to receive jackdbus reply: org.freedesktop.DBus.Error.ServiceUnknown: The name org.jackaudio.service was not provided by any .service files
+2026-09-05T17:09:35-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788653375.9934] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:10:20-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788653420.9928] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:11:05-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788653465.9937] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:11:50-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788653510.9991] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:17:35-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788653855.9928] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:18:20-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788653900.9927] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:19:05-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788653945.9934] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:19:50-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788653990.9964] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:19:51-07:00 spark-a218 systemd[1104498]: snap.snapd-desktop-integration.snapd-desktop-integration.service: Failed with result 'exit-code'.
+2026-09-05T17:20:12-07:00 spark-a218 systemd-xdg-autostart-generator[1116651]: Configuration file /home/napta2k/.config/autostart/dgx-desktop-init.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:20:12-07:00 spark-a218 systemd-xdg-autostart-generator[1116651]: Configuration file /home/napta2k/.config/autostart/spark.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:20:13-07:00 spark-a218 pipewire[1116659]: mod.jackdbus-detect: Failed to receive jackdbus reply: org.freedesktop.DBus.Error.ServiceUnknown: The name org.jackaudio.service was not provided by any .service files
+2026-09-05T17:20:23-07:00 spark-a218 systemd[1116646]: snap.snapd-desktop-integration.snapd-desktop-integration.service: Failed with result 'exit-code'.
+2026-09-05T17:20:23-07:00 spark-a218 systemd[1116646]: xdg-document-portal.service: Failed with result 'exit-code'.
+2026-09-05T17:23:56-07:00 spark-a218 systemd-xdg-autostart-generator[1117014]: Configuration file /home/napta2k/.config/autostart/dgx-desktop-init.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:23:56-07:00 spark-a218 systemd-xdg-autostart-generator[1117014]: Configuration file /home/napta2k/.config/autostart/spark.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:23:56-07:00 spark-a218 pipewire[1117021]: mod.jackdbus-detect: Failed to receive jackdbus reply: org.freedesktop.DBus.Error.ServiceUnknown: The name org.jackaudio.service was not provided by any .service files
+2026-09-05T17:24:09-07:00 spark-a218 systemd[1117009]: xdg-permission-store.service: Failed with result 'exit-code'.
+2026-09-05T17:24:09-07:00 spark-a218 systemd[1117009]: snap.snapd-desktop-integration.snapd-desktop-integration.service: Failed with result 'exit-code'.
+2026-09-05T17:24:51-07:00 spark-a218 systemd-xdg-autostart-generator[1117707]: Configuration file /home/napta2k/.config/autostart/dgx-desktop-init.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:24:51-07:00 spark-a218 systemd-xdg-autostart-generator[1117707]: Configuration file /home/napta2k/.config/autostart/spark.desktop is marked executable. Please remove executable permission bits. Proceeding anyway.
+2026-09-05T17:24:51-07:00 spark-a218 pipewire[1117713]: mod.jackdbus-detect: Failed to receive jackdbus reply: org.freedesktop.DBus.Error.ServiceUnknown: The name org.jackaudio.service was not provided by any .service files
+2026-09-05T17:25:01-07:00 spark-a218 systemd[1117702]: snap.snapd-desktop-integration.snapd-desktop-integration.service: Failed with result 'exit-code'.
+2026-09-05T17:25:35-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788654335.9927] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:26:20-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788654380.9931] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:27:05-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788654425.9953] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:27:50-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788654470.9939] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:33:35-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788654815.9930] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:34:20-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788654860.9926] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:35:05-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788654905.9929] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:35:50-07:00 spark-a218 NetworkManager[1626]: <warn>  [1788654950.9921] device (enp1s0f0np0): Activation: failed for connection 'Wired connection 2'
+2026-09-05T17:40:21-07:00 spark-a218 rasdaemon[1118069]: Can't write to set_event
+2026-09-05T17:40:21-07:00 spark-a218 rasdaemon[1118069]: Can't write to set_event
+== previous boot: last 30 journal lines of any kind
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Stopped target swap.target - Swaps.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Deactivating swap swap.img.swap - /swap.img...
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Stopping lvm2-monitor.service - Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling...
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Stopping multipathd.service - Device-Mapper Multipath Device Controller...
+2026-09-05T17:40:33-07:00 spark-a218 multipathd[667]: multipathd: shut down
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: systemd-tmpfiles-setup-dev.service: Deactivated successfully.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Stopped systemd-tmpfiles-setup-dev.service - Create Static Device Nodes in /dev.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: systemd-tmpfiles-setup-dev-early.service: Deactivated successfully.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Stopped systemd-tmpfiles-setup-dev-early.service - Create Static Device Nodes in /dev gracefully.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: multipathd.service: Deactivated successfully.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Stopped multipathd.service - Device-Mapper Multipath Device Controller.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: multipathd.service: Consumed 39.538s CPU time, 22.4M memory peak, 4.0K memory swap peak.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: swap.img.swap: Deactivated successfully.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Deactivated swap swap.img.swap - /swap.img.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Reached target umount.target - Unmount All Filesystems.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: systemd-remount-fs.service: Deactivated successfully.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Stopped systemd-remount-fs.service - Remount Root and Kernel File Systems.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: lvm2-monitor.service: Deactivated successfully.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Stopped lvm2-monitor.service - Monitoring of LVM2 mirrors, snapshots etc. using dmeventd or progress polling.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Reached target shutdown.target - System Shutdown.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Reached target final.target - Late Shutdown Services.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Starting nvidia-disable-aqc-nic.service - Remove AQC nic before shutdown...
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: systemd-poweroff.service: Deactivated successfully.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Finished systemd-poweroff.service - System Power Off.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Reached target poweroff.target - System Power Off.
+2026-09-05T17:40:33-07:00 spark-a218 systemd[1]: Shutting down.
+2026-09-05T17:40:33-07:00 spark-a218 systemd-shutdown[1]: Syncing filesystems and block devices.
+2026-09-05T17:40:33-07:00 spark-a218 systemd-shutdown[1]: Sending SIGTERM to remaining processes...
+2026-09-05T17:40:33-07:00 spark-a218 systemd-journald[625]: Received SIGTERM from PID 1 (systemd-shutdow).
+2026-09-05T17:40:33-07:00 spark-a218 systemd-journald[625]: Journal stopped
+== pstore
+== /var/crash
+total 2328072
+drwxrwsrwt  2 root root       4096 Sep  5 18:46 .
+drwxr-xr-x 13 root root       4096 Sep 30  2025 ..
+-rw-r--r--  1 root root          0 Sep  5 18:46 kdump_lock
+-rw-r-----  1 root root 2383930129 Sep  2 19:28 _usr_bin_python3.12.0.crash
+== this boot: first 40 kernel lines
+2026-09-05T18:46:12-07:00 spark-a218 kernel: Booting Linux on physical CPU 0x0000000000 [0x410fd871]
+2026-09-05T18:46:12-07:00 spark-a218 kernel: Linux version 6.17.0-1031-nvidia (buildd@bos03-arm64-037) (aarch64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, GNU ld (GNU Binutils for Ubuntu) 2.42) #31-Ubuntu SMP PREEMPT_DYNAMIC Fri Jul 24 22:03:06 UTC 2026 (Ubuntu 6.17.0-1031.31-nvidia 6.17.13)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: KASLR enabled
+2026-09-05T18:46:12-07:00 spark-a218 kernel: earlycon: uart0 at MMIO32 0x0000000016a00000 (options '')
+2026-09-05T18:46:12-07:00 spark-a218 kernel: printk: legacy bootconsole [uart0] enabled
+2026-09-05T18:46:12-07:00 spark-a218 kernel: efi: EFI v2.9 by American Megatrends
+2026-09-05T18:46:12-07:00 spark-a218 kernel: efi: RTPROP=0x86f4fd18 ACPI 2.0=0x8707e018 SMBIOS=0x86dd0000 SMBIOS 3.0=0x86dc0000 TPMFinalLog=0x86fe0000 ESRT=0x855bad98 MOKvar=0x86d10000 INITRD=0x84814f98 RNG=0x87065d18 MEMRESERVE=0x84835818 
+2026-09-05T18:46:12-07:00 spark-a218 kernel: random: crng init done
+2026-09-05T18:46:12-07:00 spark-a218 kernel: secureboot: Secure boot enabled
+2026-09-05T18:46:12-07:00 spark-a218 kernel: Kernel is locked down from EFI Secure Boot mode; see man kernel_lockdown.7
+2026-09-05T18:46:12-07:00 spark-a218 kernel: esrt: Reserving ESRT space from 0x00000000855bad98 to 0x00000000855bae20.
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: Early table checksum verification disabled
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: RSDP 0x000000008707E018 000024 (v02 ALASKA)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: XSDT 0x000000008707E098 0000AC (v01 ALASKA A M I    01072009 AMI  01000013)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: FACP 0x000000008707EB18 000114 (v06 ALASKA A M I    01072009 AMI  00010013)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: DSDT 0x000000008706C018 0111FF (v02 ALASKA A M I    01072009 INTL 20230628)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: FIDT 0x000000008707EF18 00009C (v01 ALASKA A M I    01072009 AMI  00010013)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: SSDT 0x000000008706A018 001A08 (v02 MTKINC ANGUS    00000001 INTL 20230628)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: SSDT 0x0000000087069018 000305 (v02 MTKINC ANGUSCPU 000000FF INTL 20230628)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: CSRT 0x0000000087069E98 000068 (v00 ALASKA A M I    20130221 AMI  00000099)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: DBG2 0x000000008707EC98 000175 (v00 ALASKA A M I    20130221 AMI  00000099)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: GTDT 0x0000000087069418 0001D8 (v03 ALASKA A M I    20130221 AMI  00000099)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: APIC 0x0000000087067018 0006A8 (v05 ALASKA A M I    20130221 AMI  00000099)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: MCFG 0x0000000087067E98 00012C (v01 ALASKA A M I    20130221 AMI  00000099)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: PPTT 0x0000000087066018 0008B8 (v02 ALASKA A M I    20130221 AMI  00000099)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: SPCR 0x0000000087069F98 000050 (v02 ALASKA A M I    20130221 AMI  00000099)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: SDEV 0x0000000087066E98 000024 (v01 ALASKA NVSDEV   00000000 AMI  00000001)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: SSDT 0x0000000087065018 000793 (v02 ALASKA A M I    00000001 INTL 20230628)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: SSDT 0x0000000087065A98 000171 (v01 NVIDIA NBCI     00000001 INTL 20230628)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: IORT 0x0000000087068018 000F40 (v06 MEDTEK MTKSGI   00000000 MTK  00000001)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: FPDT 0x0000000087066F18 000044 (v01 ALASKA A M I    01072009 AMI  01000013)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: WSMT 0x0000000087066F98 000028 (v01 ALASKA A M I    01072009 AMI  00010013)
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: SPCR: console: uart,mmio32,0x16a00000,115200
+2026-09-05T18:46:12-07:00 spark-a218 kernel: ACPI: Use ACPI SPCR as default console: Yes
+2026-09-05T18:46:12-07:00 spark-a218 kernel: NUMA: Faking a node at [mem 0x0000000080000000-0x000000207fffffff]
+2026-09-05T18:46:12-07:00 spark-a218 kernel: NODE_DATA(0) allocated [mem 0x2069670440-0x2069675fff]
+2026-09-05T18:46:12-07:00 spark-a218 kernel: Zone ranges:
+2026-09-05T18:46:12-07:00 spark-a218 kernel:   DMA      [mem 0x0000000080000000-0x00000000ffffffff]
+2026-09-05T18:46:12-07:00 spark-a218 kernel:   DMA32    empty
+2026-09-05T18:46:12-07:00 spark-a218 kernel:   Normal   [mem 0x0000000100000000-0x000000207fffffff]
+== cx7 now
+1
+4
+== kernel/driver
+6.17.0-1031-nvidia
+NVRM version: NVIDIA UNIX Open Kernel Module for aarch64  580.173.02  Release Build  (dvs-builder@U22-A24-5-4)  Tue Jun 23 08:34:19 UTC 2026
