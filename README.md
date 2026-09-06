@@ -155,6 +155,13 @@ Stop the serving stack before `--down`, relaunch after `--up` with
 `SKIP_PREFLIGHT=1 ./rollout_dcp.sh <label>`. Background: `docs/CX7-POWER.md`,
 `docs/IDLE-POWER.md`.
 
+## Incident write-up
+
+`docs/INCIDENT-SHIELD-REMOTE.md`: a Bluetooth NVIDIA SHIELD Remote that had once
+been paired with two of the Sparks powered them off from another room (its power
+key is a HID power key; logind's default for any power key is poweroff). Evidence,
+mechanism, the GID-index fragility it exposed on relaunch, and fixes.
+
 ## Credits
 
 Everything here starts from

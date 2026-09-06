@@ -58,3 +58,5 @@ reconnects. Options, cheapest first: `bluetoothctl remove 48:B0:2D:39:56:1F` on 
 a218; `rfkill block bluetooth` on all four (nothing on the cluster uses it); and/or
 `HandlePowerKey=ignore` in `/etc/systemd/logind.conf.d/` so no power key, physical or HID,
 shuts a node down (power-on still needs the button).
+
+Full write-up with mechanism, research and fixes: `docs/INCIDENT-SHIELD-REMOTE.md`.
