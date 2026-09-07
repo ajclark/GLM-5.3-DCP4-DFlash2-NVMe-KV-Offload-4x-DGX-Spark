@@ -1,0 +1,130 @@
+
+==========
+== CUDA ==
+==========
+
+CUDA Version 13.0.2
+
+Container image Copyright (c) 2016-2023, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+This container image and its contents are governed by the NVIDIA Deep Learning Container License.
+By pulling and using the container, you accept the terms and conditions of this license:
+https://developer.nvidia.com/ngc/nvidia-deep-learning-container-license
+
+A copy of this license is made available in this container at /NGC-DL-CONTAINER-LICENSE for your convenience.
+
+{"phase": "init", "nccl": "2.31.2", "torch": "2.11.0+cu130", "world": 4, "plugin": "hotplug", "ctl": "/var/tmp/nccl-hotplug"}
+spark-06c4:1:1 [0] NCCL INFO ENV/Plugin: Could not find: libnccl-env.so
+spark-06c4:1:1 [0] NCCL INFO NCCL_SOCKET_IFNAME set to enP7s7
+spark-06c4:1:1 [0] NCCL INFO cudaDriverVersion 13000
+spark-06c4:1:1 [0] NCCL INFO NCCL version 2.31.2+cuda13.0
+spark-06c4:1:1 [0] NCCL INFO NCCL git version master nccl4py-v0.2.0-1041-gfd168324
+spark-06c4:1:1 [0] NCCL INFO NCCL_NET_PLUGIN set by environment to hotplug
+spark-06c4:1:1 [0] NCCL INFO NET/Plugin: Loaded net plugin NCCL RDMA Plugin v11 (v11)
+spark-06c4:1:1 [0] NCCL INFO Successfully loaded external network plugin /lib/aarch64-linux-gnu/libnccl-net-hotplug.so
+spark-06c4:1:1 [0] NCCL INFO Plugin Path : /lib/aarch64-linux-gnu/libnccl-net-hotplug.so
+spark-06c4:1:1 [0] NCCL INFO P2P plugin v11 IBext_v11
+spark-06c4:1:1 [0] NCCL INFO NCCL_SOCKET_IFNAME set to enP7s7
+spark-06c4:1:1 [0] NCCL INFO NET/IB : Made virtual device [0] name=roceP2p1s0f0 speed=200000 ndevs=1
+spark-06c4:1:1 [0] NCCL INFO NET/IB : Made virtual device [1] name=roceP2p1s0f1 speed=200000 ndevs=1
+spark-06c4:1:1 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:192.168.1.228<0>
+spark-06c4:1:1 [0] NCCL INFO NET/IB/hotplug: control thread watching /var/tmp/nccl-hotplug/cmd
+spark-06c4:1:1 [0] NCCL INFO Initialized NET plugin NCCL RDMA Plugin v11
+spark-06c4:1:1 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-06c4:1:1 [0] NCCL INFO Assigned NET plugin NCCL RDMA Plugin v11 to comm
+spark-06c4:1:1 [0] NCCL INFO RMA/Plugin: Could not find: libnccl-rma.so
+spark-06c4:1:1 [0] NCCL INFO dlvsym failed on mlx5dv_get_data_direct_sysfs_path - /usr/lib/aarch64-linux-gnu/libmlx5.so.1: undefined symbol: mlx5dv_get_data_direct_sysfs_path, version MLX5_1.25 version MLX5_1.25
+spark-06c4:1:1 [0] NCCL INFO dlvsym failed on mlx5dv_reg_dmabuf_mr - /usr/lib/aarch64-linux-gnu/libmlx5.so.1: undefined symbol: mlx5dv_reg_dmabuf_mr, version MLX5_1.25 version MLX5_1.25
+spark-06c4:1:1 [0] NCCL INFO NCCL_IB_HCA set to =roceP2p1s0f0,roceP2p1s0f1
+spark-06c4:1:1 [0] NCCL INFO NET/IB: [2] roceP2p1s0f0:uverbs2:1/RoCE provider=Mlx5 speed=200000 context=0x3d9abb60 pciPath=/sys/devices/pci0002:00/0002:00:00.0/0002:01:00.0 ar=0 oooRqSize=0
+spark-06c4:1:1 [0] NCCL INFO NET/IB: [3] roceP2p1s0f1:uverbs3:1/RoCE provider=Mlx5 speed=200000 context=0x3d9ed260 pciPath=/sys/devices/pci0002:00/0002:00:00.0/0002:01:00.0 ar=0 oooRqSize=0
+spark-06c4:1:1 [0] NCCL INFO NET/IB : Made virtual device [0] name=roceP2p1s0f0 speed=200000 ndevs=1 rail=-1 plane=-1
+spark-06c4:1:1 [0] NCCL INFO NET/IB : Made virtual device [1] name=roceP2p1s0f1 speed=200000 ndevs=1 rail=-1 plane=-1
+spark-06c4:1:1 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:192.168.1.228<0>
+spark-06c4:1:1 [0] NCCL INFO RMA/Plugin: Assigned plugin RMA_IB_PROXY to comm
+spark-06c4:1:1 [0] NCCL INFO GIN/Plugin: Could not find: libnccl-gin.so
+spark-06c4:1:1 [0] NCCL INFO Using network NCCL RDMA Plugin v11
+spark-06c4:1:1 [0] NCCL INFO Loaded NVML from libnvidia-ml.so.1
+spark-06c4:1:1 [0] NCCL INFO [Rank 0] ncclCommInitRank comm 0x3999d2b0 rank 0 nranks 4 cudaDev 0 nvmlDev 0 busId f01000 commId 0xbe891cf310b71dbf - Init START
+spark-06c4:1:1 [0] NCCL INFO RAS client listening socket at 127.0.0.1<28028>
+spark-06c4:1:1 [0] NCCL INFO NET/GIN_IB_GDAKI : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-06c4:1:1 [0] NCCL INFO NET/GIN_IB_GDAKI : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-06c4:1:1 [0] NCCL INFO NET/RMA_IB_PROXY : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-06c4:1:1 [0] NCCL INFO NET/RMA_IB_PROXY : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-06c4:1:1 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-06c4:1:1 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-06c4:1:1 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-06c4:1:1 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-06c4:1:1 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-06c4:1:1 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-06c4:1:1 [0] NCCL INFO NET/IB : Made virtual device [2] name=roceP2p1s0f0+roceP2p1s0f1 speed=400000 ndevs=2
+spark-06c4:1:1 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-06c4:1:1 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-06c4:1:1 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-06c4:1:1 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-06c4:1:1 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-06c4:1:1 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-06c4:1:1 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 2 'roceP2p1s0f0+roceP2p1s0f1'
+spark-06c4:1:1 [0] NCCL INFO ncclTopoGetCpuAffinity: Affinity for GPU 0 is empty, ignoring. (GPU affinity = ).
+spark-06c4:1:1 [0] NCCL INFO Rank 0: 3 Net devices
+spark-06c4:1:1 [0] NCCL INFO Rank 0: 0 CollNet devices
+spark-06c4:1:1 [0] NCCL INFO Local Net device counts across ranks: min 3 max 3
+spark-06c4:1:1 [0] NCCL INFO Local CollNet device counts across ranks: min 0 max 0
+spark-06c4:1:1 [0] NCCL INFO comm 0x3999d2b0 rank 0 nRanks 4 nNodes 4 localRanks 1 localRank 0 MNNVL 0
+spark-06c4:1:1 [0] NCCL INFO Channel 00/01 : 0 1 2 3
+spark-06c4:1:1 [0] NCCL INFO Trees [0] 2/-1/-1->0->-1
+spark-06c4:1:1 [0] NCCL INFO P2P Chunksize set to 262144
+spark-06c4:1:1 [0] NCCL INFO Tuning P2P operations with maxP2pPeers = 4
+spark-06c4:1:1 [0] NCCL INFO PROFILER/Plugin: Could not find: libnccl-profiler.so
+spark-06c4:1:1 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
+spark-06c4:1:63 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 3
+spark-06c4:1:62 [0] NCCL INFO [Proxy Service] Device 0 CPU core 13
+spark-06c4:1:62 [0] NCCL INFO proxy listening socket at 192.168.1.228<33243>
+spark-06c4:1:1 [0] NCCL INFO TUNER/Plugin: Could not find: libnccl-tuner.so
+spark-06c4:1:1 [0] NCCL INFO threadThresholds 8/8/64 | 32/8/64 | 512 | 512
+spark-06c4:1:1 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls channels, 1 p2p channels, 1 p2p channels per peer
+spark-06c4:1:1 [0] NCCL INFO symmetricSupport 0, cuMemEnable 1, globalGinSupport 0, cuMemGdrSupport 0, contiguousRanksPerHost 1, crossNicSupport 1
+spark-06c4:1:1 [0] NCCL INFO CC Off, workFifoBytes 1048576
+spark-06c4:1:1 [0] NCCL INFO ncclCommInitRank comm 0x3999d2b0 rank 0 nranks 4 cudaDev 0 nvmlDev 0 busId f01000 commId 0xbe891cf310b71dbf - Init COMPLETE
+spark-06c4:1:1 [0] NCCL INFO Init timings - ncclCommInitRank: rank 0 nranks 4 total 0.28 (kernels 0.18, alloc 0.07, bootstrap 0.02, allgathers 0.00, topo 0.01, graphs 0.00, connections 0.00, rest 0.00)
+spark-06c4:1:62 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-06c4:1:1 [0] NCCL INFO Channel 00/0 : 3[0] -> 0[0] [receive] via NET/NCCL RDMA Plugin v11/2
+spark-06c4:1:62 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-06c4:1:1 [0] NCCL INFO Channel 00/0 : 0[0] -> 1[0] [send] via NET/NCCL RDMA Plugin v11/2
+spark-06c4:1:64 [0] NCCL INFO [Proxy Progress] Device 0 CPU core 14
+spark-06c4:1:62 [0] NCCL INFO NET/IB: Subnet-aware routing: connect on dev 1 instead of dev 2
+spark-06c4:1:62 [0] NCCL INFO NET/IB: NCCL Dev 1 IbDev 1 Port 1 qpn 682 mtu 5 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0} GID 3 (0/164A8C0FFFF0000) fifoRkey=0x1dab99 fifoLkey=0x1dab99
+spark-06c4:1:62 [0] NCCL INFO NET/IB: NCCL Dev 1 IbDev 1 Port 1 qpn 683 mtu 5 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0} GID 3 (0/164A8C0FFFF0000) fifoRkey=0x1dab99 fifoLkey=0x1dab99
+spark-06c4:1:62 [0] NCCL INFO NET/IB: Subnet-aware routing: accept on dev 0 instead of dev 2
+spark-06c4:1:62 [0] NCCL INFO NET/IB: IbDev 1 Port 1 qpn 683 set_ece={supported=1, vendor_id=0x15b3, options=0x300{"phase": "baseline", "correct": true, "max_err": 0.0, "allreduce_us": 338.7, "allgather_us": 384.6}
+{"phase": "plugin", "status_gen": 0, "status_state": "active"}
+{"phase": "ready-for-cycle", "cycle": 1, "note": "run spark-idle.sh --down then --up now"}
+{"phase": "resumed", "cycle": 1, "wall_s": 79.6}
+{"phase": "after-cycle-1", "correct": true, "max_err": 0.0, "allreduce_us": 577.9, "allgather_us": 409.4}
+{"phase": "ready-for-cycle", "cycle": 2, "note": "run spark-idle.sh --down then --up now"}
+{"phase": "resumed", "cycle": 2, "wall_s": 79.1}
+{"phase": "after-cycle-2", "correct": true, "max_err": 0.0, "allreduce_us": 570.5, "allgather_us": 419.3}
+{"phase": "done", "ok": true}
+00002, comp_mask=0x0}
+spark-06c4:1:62 [0] NCCL INFO NET/IB: IbDev 1 Port 1 qpn 685 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+spark-06c4:1:1 [0] NCCL INFO Connected all rings, use ring PXN 0 GDR 0
+spark-06c4:1:1 [0] NCCL INFO Symmetric VA size=124GB
+spark-06c4:1:58 [0] NCCL INFO NET/IB/hotplug: prepared: 2 comm(s) gated, nothing in flight
+spark-06c4:1:58 [0] NCCL INFO NET/IB/hotplug: suspended 2 comm(s), 2 device(s) closed
+
+[2026-09-07 05:29:39] spark-06c4:1:59 [0] transport/net_ib/common.cc:179 (ncclIbAsyncThreadMain) NCCL WARN NET/IB : roceP2p1s0f0:1 async fatal event: local catastrophic error
+
+[2026-09-07 05:29:45] spark-06c4:1:60 [0] transport/net_ib/common.cc:179 (ncclIbAsyncThreadMain) NCCL WARN NET/IB : roceP2p1s0f1:1 async fatal event: local catastrophic error
+spark-06c4:1:58 [0] NCCL INFO NET/IB/hotplug: resume: re-opening 2 device(s)
+spark-06c4:1:58 [0] NCCL INFO NET/IB/hotplug: reopened roceP2p1s0f0 port 1 (state ACTIVE, mtu 5)
+spark-06c4:1:58 [0] NCCL INFO NET/IB/hotplug: reopened roceP2p1s0f1 port 1 (state ACTIVE, mtu 5)
+spark-06c4:1:58 [0] NCCL INFO NET/IB/hotplug: resume: devices back, re-connecting 2 comm(s) (timeout 300000 ms)
+spark-06c4:1:58 [0] NCCL INFO NET/IB/hotplug: resumed 2 comm(s)
+spark-06c4:1:58 [0] NCCL INFO NET/IB/hotplug: prepared: 2 comm(s) gated, nothing in flight
+spark-06c4:1:58 [0] NCCL INFO NET/IB/hotplug: suspended 2 comm(s), 2 device(s) closed
+spark-06c4:1:58 [0] NCCL INFO NET/IB/hotplug: resume: re-opening 2 device(s)
+spark-06c4:1:58 [0] NCCL INFO NET/IB/hotplug: reopened roceP2p1s0f0 port 1 (state ACTIVE, mtu 5)
+spark-06c4:1:58 [0] NCCL INFO NET/IB/hotplug: reopened roceP2p1s0f1 port 1 (state ACTIVE, mtu 5)
+spark-06c4:1:58 [0] NCCL INFO NET/IB/hotplug: resume: devices back, re-connecting 2 comm(s) (timeout 300000 ms)
+spark-06c4:1:58 [0] NCCL INFO NET/IB/hotplug: resumed 2 comm(s)
+spark-06c4:1:1 [0] NCCL INFO Unloading plugin hotplug

@@ -1,0 +1,18 @@
+[05:34:09] == NCCL hot-plug probe: cycles=0 hold=30s out=/home/napta2k/spark-cluster-mla-dcp/results/nccl-hotplug-probe/20260907-053406
+[05:34:09] -- staging
+  spark-06c4 plugin sha d890fb4d82daba44
+  spark-365c plugin sha d890fb4d82daba44
+  spark-ddbf plugin sha d890fb4d82daba44
+  spark-a218 plugin sha d890fb4d82daba44
+[05:34:13] -- launching probe containers
+nccl_hotplug_probe launched rank=3 cycles=0 net=builtin plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+nccl_hotplug_probe launched rank=2 cycles=0 net=builtin plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+nccl_hotplug_probe launched rank=1 cycles=0 net=builtin plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+nccl_hotplug_probe launched rank=0 cycles=0 net=builtin plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+[05:34:23] -- waiting for the baseline and ready-for-cycle
+{"phase": "init", "nccl": "2.31.2", "torch": "2.11.0+cu130", "world": 4, "plugin": "none", "ctl": "/var/tmp/nccl-hotplug"}
+{"phase": "baseline", "correct": true, "max_err": 0.0, "allreduce_us": 346.8, "allgather_us": 371.8}
+{"phase": "plugin", "status_gen": null, "status_state": null}
+{"phase": "done", "ok": true}
+[05:34:32] -- waiting for the probe to finish
+[05:34:34] == probe exit code on rank 0: 0 (PASS); logs in /home/napta2k/spark-cluster-mla-dcp/results/nccl-hotplug-probe/20260907-053406

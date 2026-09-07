@@ -1,0 +1,9 @@
+{"phase": "init", "nccl": "2.31.2", "torch": "2.11.0+cu130", "world": 4, "plugin": "hotplug", "ctl": "/var/tmp/nccl-hotplug"}
+{"phase": "plugin", "status_gen": 0, "status_state": "active"}
+{"phase": "ready-for-cycle", "cycle": 1, "note": "run spark-idle.sh --down then --up now"}
+{"phase": "resumed", "cycle": 1, "wall_s": 79.6}
+{"phase": "after-cycle-1", "correct": true, "max_err": 0.0, "allreduce_us": 577.9, "allgather_us": 409.4}
+{"phase": "ready-for-cycle", "cycle": 2, "note": "run spark-idle.sh --down then --up now"}
+{"phase": "resumed", "cycle": 2, "wall_s": 79.1}
+{"phase": "after-cycle-2", "correct": true, "max_err": 0.0, "allreduce_us": 570.5, "allgather_us": 419.3}
+{"phase": "done", "ok": true}

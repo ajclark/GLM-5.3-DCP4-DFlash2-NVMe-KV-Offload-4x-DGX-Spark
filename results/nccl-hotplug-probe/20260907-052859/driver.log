@@ -1,0 +1,167 @@
+[05:29:02] == NCCL hot-plug probe: cycles=2 hold=30s out=/home/napta2k/spark-cluster-mla-dcp/results/nccl-hotplug-probe/20260907-052859
+[05:29:02] -- staging
+  spark-06c4 plugin sha d890fb4d82daba44
+  spark-365c plugin sha d890fb4d82daba44
+  spark-ddbf plugin sha d890fb4d82daba44
+  spark-a218 plugin sha d890fb4d82daba44
+[05:29:06] -- launching probe containers
+nccl_hotplug_probe launched rank=3 cycles=2 plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+nccl_hotplug_probe launched rank=2 cycles=2 plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+nccl_hotplug_probe launched rank=1 cycles=2 plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+nccl_hotplug_probe launched rank=0 cycles=2 plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+[05:29:17] -- waiting for the baseline and ready-for-cycle
+{"phase": "init", "nccl": "2.31.2", "torch": "2.11.0+cu130", "world": 4, "plugin": "hotplug", "ctl": "/var/tmp/nccl-hotplug"}
+{"phase": "plugin", "status_gen": 0, "status_state": "active"}
+{"phase": "ready-for-cycle", "cycle": 1, "note": "run spark-idle.sh --down then --up now"}
+[05:29:23] -- cycle 1: spark-idle.sh --down
+[05:29:25] == down: CX-7 off on spark-06c4 spark-365c spark-ddbf spark-a218 (restore-after=0s dry-run=0)
+[05:29:26] -- plugin prepare on spark-06c4 spark-365c spark-ddbf spark-a218 (gate the data path; refused if anything is in flight)
+  spark-365c: PLUGIN_OK 1 process(es) prepared|suspended
+  spark-a218: PLUGIN_OK 1 process(es) prepared|suspended
+  spark-06c4: PLUGIN_OK 1 process(es) prepared|suspended
+  spark-ddbf: PLUGIN_OK 1 process(es) prepared|suspended
+[05:29:26] -- plugin commit on spark-06c4 spark-365c spark-ddbf spark-a218 (tear the RDMA state down)
+  spark-365c: PLUGIN_OK 1 process(es) suspended
+  spark-ddbf: PLUGIN_OK 1 process(es) suspended
+  spark-06c4: PLUGIN_OK 1 process(es) suspended
+  spark-a218: PLUGIN_OK 1 process(es) suspended
+  spark-06c4: mstflint_access unloaded
+  spark-06c4: before: cx7=1 fns=4 ctr=
+  spark-06c4: none
+  spark-365c: mstflint_access unloaded
+  spark-365c: before: cx7=1 fns=4 ctr=
+  spark-365c: none
+  spark-ddbf: mstflint_access unloaded
+  spark-ddbf: before: cx7=1 fns=4 ctr=
+  spark-ddbf: none
+  spark-a218: mstflint_access unloaded
+  spark-a218: before: cx7=1 fns=4 ctr=
+  spark-a218: none
+[05:29:29] -- powering the adapters down
+  spark-06c4: CX7_OFF mgmt=10000M
+  spark-365c: CX7_OFF mgmt=10000M
+  spark-ddbf: CX7_OFF mgmt=10000M
+  spark-a218: CX7_OFF mgmt=10000M
+[05:29:54] -- state
+spark-06c4  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=
+none
+spark-365c  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=
+none
+spark-ddbf  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=
+none
+spark-a218  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=
+none
+[05:29:56] == down: CX-7 off on 4 node(s); bring it back with: ./spark-idle.sh --up
+[05:29:56] -- adapters off, holding 30s (read the meter)
+[05:30:26] -- cycle 1: spark-idle.sh --up
+[05:30:28] == up: CX-7 on for spark-06c4 spark-365c spark-ddbf spark-a218 (dry-run=0)
+[05:30:28] -- power up, rescan, wait for links
+  spark-ddbf: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+  spark-a218: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+  spark-365c: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+  spark-06c4: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+[05:30:36] -- ring pings and mstflint reload
+  spark-ddbf: enP2p1s0f0np0 192.168.102.2 -> 192.168.102.1 jumbo ping ok
+  spark-ddbf: enP2p1s0f1np1 192.168.103.2 -> 192.168.103.1 jumbo ping ok
+  spark-ddbf: mstflint_access reloaded
+  spark-365c: enP2p1s0f0np0 192.168.102.1 -> 192.168.102.2 jumbo ping ok
+  spark-365c: enP2p1s0f1np1 192.168.100.2 -> 192.168.100.1 jumbo ping ok
+  spark-365c: mstflint_access reloaded
+  spark-06c4: enP2p1s0f0np0 192.168.104.2 -> 192.168.104.1 jumbo ping ok
+  spark-06c4: enP2p1s0f1np1 192.168.100.1 -> 192.168.100.2 jumbo ping ok
+  spark-06c4: mstflint_access reloaded
+  spark-a218: enP2p1s0f0np0 192.168.104.1 -> 192.168.104.2 jumbo ping ok
+  spark-a218: enP2p1s0f1np1 192.168.103.1 -> 192.168.103.2 jumbo ping ok
+  spark-a218: mstflint_access reloaded
+[05:30:40] -- plugin resume on spark-06c4 spark-365c spark-ddbf spark-a218 (re-open devices, re-connect over the retained sockets)
+  spark-ddbf: PLUGIN_OK 1 process(es) active
+  spark-06c4: PLUGIN_OK 1 process(es) active
+  spark-a218: PLUGIN_OK 1 process(es) active
+  spark-365c: PLUGIN_OK 1 process(es) active
+[05:30:41] -- state
+spark-06c4  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=
+none
+spark-365c  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=
+none
+spark-ddbf  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=
+none
+spark-a218  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=
+none
+[05:30:42] == up: CX-7 on and ring verified on 4 node(s)
+[05:30:42] -- cycle 2: spark-idle.sh --down
+[05:30:44] == down: CX-7 off on spark-06c4 spark-365c spark-ddbf spark-a218 (restore-after=0s dry-run=0)
+[05:30:45] -- plugin prepare on spark-06c4 spark-365c spark-ddbf spark-a218 (gate the data path; refused if anything is in flight)
+  spark-06c4: PLUGIN_OK 1 process(es) prepared|suspended
+  spark-365c: PLUGIN_OK 1 process(es) prepared|suspended
+  spark-a218: PLUGIN_OK 1 process(es) prepared|suspended
+  spark-ddbf: PLUGIN_OK 1 process(es) prepared|suspended
+[05:30:46] -- plugin commit on spark-06c4 spark-365c spark-ddbf spark-a218 (tear the RDMA state down)
+  spark-a218: PLUGIN_OK 1 process(es) suspended
+  spark-06c4: PLUGIN_OK 1 process(es) suspended
+  spark-365c: PLUGIN_OK 1 process(es) suspended
+  spark-ddbf: PLUGIN_OK 1 process(es) suspended
+  spark-06c4: mstflint_access unloaded
+  spark-06c4: before: cx7=1 fns=4 ctr=
+  spark-06c4: none
+  spark-365c: mstflint_access unloaded
+  spark-365c: before: cx7=1 fns=4 ctr=
+  spark-365c: none
+  spark-ddbf: mstflint_access unloaded
+  spark-ddbf: before: cx7=1 fns=4 ctr=
+  spark-ddbf: none
+  spark-a218: mstflint_access unloaded
+  spark-a218: before: cx7=1 fns=4 ctr=
+  spark-a218: none
+[05:30:48] -- powering the adapters down
+  spark-365c: CX7_OFF mgmt=10000M
+  spark-a218: CX7_OFF mgmt=10000M
+  spark-ddbf: CX7_OFF mgmt=10000M
+  spark-06c4: CX7_OFF mgmt=10000M
+[05:31:13] -- state
+spark-06c4  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=
+none
+spark-365c  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=
+none
+spark-ddbf  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=
+none
+spark-a218  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=
+none
+[05:31:15] == down: CX-7 off on 4 node(s); bring it back with: ./spark-idle.sh --up
+[05:31:15] -- adapters off, holding 30s (read the meter)
+[05:31:45] -- cycle 2: spark-idle.sh --up
+[05:31:48] == up: CX-7 on for spark-06c4 spark-365c spark-ddbf spark-a218 (dry-run=0)
+[05:31:48] -- power up, rescan, wait for links
+  spark-365c: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+  spark-06c4: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+  spark-a218: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+  spark-ddbf: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+[05:31:56] -- ring pings and mstflint reload
+  spark-ddbf: enP2p1s0f0np0 192.168.102.2 -> 192.168.102.1 jumbo ping ok
+  spark-ddbf: enP2p1s0f1np1 192.168.103.2 -> 192.168.103.1 jumbo ping ok
+  spark-ddbf: mstflint_access reloaded
+  spark-a218: enP2p1s0f0np0 192.168.104.1 -> 192.168.104.2 jumbo ping ok
+  spark-a218: enP2p1s0f1np1 192.168.103.1 -> 192.168.103.2 jumbo ping ok
+  spark-a218: mstflint_access reloaded
+  spark-365c: enP2p1s0f0np0 192.168.102.1 -> 192.168.102.2 jumbo ping ok
+  spark-365c: enP2p1s0f1np1 192.168.100.2 -> 192.168.100.1 jumbo ping ok
+  spark-365c: mstflint_access reloaded
+  spark-06c4: enP2p1s0f0np0 192.168.104.2 -> 192.168.104.1 jumbo ping ok
+  spark-06c4: enP2p1s0f1np1 192.168.100.1 -> 192.168.100.2 jumbo ping ok
+  spark-06c4: mstflint_access reloaded
+[05:31:59] -- plugin resume on spark-06c4 spark-365c spark-ddbf spark-a218 (re-open devices, re-connect over the retained sockets)
+  spark-365c: PLUGIN_OK 1 process(es) active
+  spark-06c4: PLUGIN_OK 1 process(es) active
+  spark-a218: PLUGIN_OK 1 process(es) active
+  spark-ddbf: PLUGIN_OK 1 process(es) active
+[05:32:00] -- state
+spark-06c4  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=
+none
+spark-365c  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=
+none
+spark-ddbf  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=
+none
+spark-a218  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=
+none
+[05:32:02] == up: CX-7 on and ring verified on 4 node(s)
+[05:32:02] -- waiting for the probe to finish
+[05:32:04] == probe exit code on rank 0: 0 (PASS); logs in /home/napta2k/spark-cluster-mla-dcp/results/nccl-hotplug-probe/20260907-052859

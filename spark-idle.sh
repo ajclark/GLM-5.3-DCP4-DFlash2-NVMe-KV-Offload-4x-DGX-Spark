@@ -59,25 +59,31 @@ run_node()  { if [ "$DRY_RUN" = 1 ]; then echo "  [dry-run] $1: $2"; return 0; f
 # that is busy at prepare makes the whole operation abort (gates dropped again, nothing torn down).
 plugin_present() { sshq "$1" "ls $CTL_DIR/status.* >/dev/null 2>&1"; }
 plugin_hosts() { PHOSTS=(); local h; for h in "${HOSTS[@]}"; do plugin_present "$h" && PHOSTS+=("$h"); done; }
+# Every verb goes to all nodes at once and then waits for all: a resume re-handshakes with the
+# peers over the retained sockets, so resuming one node at a time makes the first one wait for
+# peers that have not been told yet (and time out into the plugin's failed state).
+plugin_all() {       # verb expected-state(s) -> 0 when every node reported it
+  local verb=$1 want=$2 h pids=() rc=0
+  for h in "${PHOSTS[@]}"; do plugin_cmd "$h" "$verb" "$want" & pids+=($!); done
+  for p in "${pids[@]}"; do wait "$p" || rc=1; done
+  return $rc
+}
 plugin_quiesce() {   # -> 0 when every plugin process on every node is suspended; 1 (and nothing torn down) otherwise
   plugin_hosts; [ "${#PHOSTS[@]}" -gt 0 ] || return 0
-  local h fail=0
-  for h in "${PHOSTS[@]}"; do say "-- $h: plugin prepare (gate the data path)"; plugin_cmd "$h" prepare 'prepared|suspended' || fail=1; done
-  if [ "$fail" = 1 ]; then
+  say "-- plugin prepare on ${PHOSTS[*]} (gate the data path; refused if anything is in flight)"
+  if ! plugin_all prepare 'prepared|suspended'; then
     say "-- a process was busy or failed at prepare: dropping the gates again, nothing torn down"
-    for h in "${PHOSTS[@]}"; do plugin_cmd "$h" abort 'active|suspended' || true; done
+    plugin_all abort 'active|suspended' || true
     return 1
   fi
-  for h in "${PHOSTS[@]}"; do
-    say "-- $h: plugin commit (tear the RDMA state down)"
-    plugin_cmd "$h" commit suspended || { say "$h: commit FAILED; that process is in its failed state and the serving stack must be restarted"; return 1; }
-  done
+  say "-- plugin commit on ${PHOSTS[*]} (tear the RDMA state down)"
+  plugin_all commit suspended || { say "-- commit FAILED somewhere; that process is in its failed state and the serving stack must be restarted"; return 1; }
   return 0
 }
 plugin_resume() {    # -> 0 when every plugin process on every node is active again
-  plugin_hosts; local h rc=0
-  for h in "${PHOSTS[@]}"; do say "-- $h: plugin resume (re-connect its RDMA state)"; plugin_cmd "$h" resume active || rc=1; done
-  return $rc
+  plugin_hosts; [ "${#PHOSTS[@]}" -gt 0 ] || return 0
+  say "-- plugin resume on ${PHOSTS[*]} (re-open devices, re-connect over the retained sockets)"
+  plugin_all resume active
 }
 plugin_cmd() {   # host verb expected-state(s, a|b case pattern) -> waits for every status file to report gen+state
   local h=$1 verb=$2 want=$3 gen; gen=$(date +%s%N)
