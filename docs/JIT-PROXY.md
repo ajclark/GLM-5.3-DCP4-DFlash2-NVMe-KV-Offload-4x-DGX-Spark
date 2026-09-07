@@ -279,6 +279,28 @@ Sparks: `GDR 0` in the serving logs). The on-cluster plan is
 `docs/NCCL-HOTPLUG-TEST.md` (one downtime window); the probe that runs first is
 `bench/nccl-hotplug-probe.sh`.
 
+## 5f. On the cluster (2026-09-07 window): it works, and without a proxy
+
+Probe A passed (two adapter cycles under a live NCCL 2.31.2 communicator,
+data path at parity with the builtin backend: `docs/NCCL-HOTPLUG-TEST.md`,
+Results). The serving lane was then rolled out on the plugin
+(`dcp2-hotplug-1`, healthy, count100 200 tokens in 4.9 s wall) and step 5
+run with the model resident: `spark-idle.sh --down` found every rank idle
+(prepared, then suspended; the non-zero ranks do not sit in a blocking
+receive while idle, so the pending-receive question in 5e is closed),
+adapters off; a request sent while off was held by the plugin and raised
+`wanted=1` on all four ranks within 3 s; `spark-idle.sh --up` took 14 s and
+the held request completed at normal speed (TTFT 32 s including the
+operator's delay, decode unchanged); count100 after the cycle equals the
+baseline.
+
+The proxy of sections 2 and 3 is therefore not needed. The plugin's status
+line carries the idle clock (`idle=` seconds since the last send/receive)
+and the wake request (`wanted=`), and `spark-idle-watch.sh` in the sibling
+repo turns them into `--down` after `IDLE_MIN` idle minutes on every node and
+`--up` on the first `wanted=1`. Nothing sits on the request path; the first
+request after a spin-down pays the wake and nothing else changes.
+
 ## 6. Decision
 
 Route P (the hot-plug-aware NCCL net plugin) is the design: it meets the
