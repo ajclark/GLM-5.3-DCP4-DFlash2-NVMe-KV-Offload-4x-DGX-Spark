@@ -136,6 +136,7 @@ ring_gid_check || { say "ring GID table wrong on at least one node; refusing to 
 WANT_L=$(sha256sum "$WS/launch-glm53big-dcp.sh" | cut -d' ' -f1)
 for h in "${HOSTS[@]}"; do
   ( rsync -a --delete "$WS/stage/glm-dcp/" "napta2k@$h.local:glm-dcp/" && \
+    rsync -a --delete "$WS/stage/glm-triton/" "napta2k@$h.local:glm-triton/" && \
     rsync -a "$WS/stage/nccl-hotplug/" "napta2k@$h.local:nccl-hotplug/" && \
     scp -q "$WS/launch-glm53big-dcp.sh" "napta2k@$h.local:$DCPL" && \
     sshq "$h" "chmod +x $DCPL" ) &
@@ -167,6 +168,12 @@ for h in "${HOSTS[@]}"; do sshq "$h" "pkill -f '[c]ache_flusher.sh' 2>/dev/null;
 # 6. real generation (the /health-lies check)
 if ! generate_ok | tee -a "$LOG"; then
   say "generation probe FAILED on the DCP stack"; restore_production; exit 4
+fi
+# 7. warm every request path while the process is fresh (Triton kernels compile and load now,
+#    not hours later: a late CUDA module load on GB10 can kill a rank, see results/incident-20260907-1418-*)
+say "warming the request paths (long prefill, odd lengths, a concurrent batch)"
+if python3 "$WS/bench/warm_kernels.py" --base "http://${HOSTS[0]}.local:8000" 2>&1 | tee -a "$LOG" | tail -3 | grep -q '"ok": false'; then
+  say "  warm-up had a failing request; the stack is up but check the logs"
 fi
 save_logs "up"
 "$WS/../spark-cluster-experiments/node_snapshot.sh" > "$OUT/snap-up.txt" 2>/dev/null || true

@@ -2,7 +2,7 @@
 """count100 decode check: greedy, thinking off, streamed; one JSON line per run.
 Usage: bench/count100.py [--base http://spark-06c4.local:8000] [--runs 2] [--tag label]
 Fields come from dcp_probe.chat: completion_tokens, wall_s, ttft_s, decode_tok_s, cycle_ms, accepted_per_cycle."""
-import argparse, json, os, sys, time
+import argparse, hashlib, json, os, sys, time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import dcp_probe as P  # noqa: E402
 
@@ -27,7 +27,7 @@ def main():
         content = (r.get("content") or "")
         row = {"tag": a.tag, "run": i, "completion_tokens": r.get("completion_tokens"), "wall_s": round(r.get("wall_s") or 0, 2),
                "ttft_s": round(r.get("ttft_s") or 0, 2), "decode_tok_s": r.get("decode_tok_s"), "cycle_ms": r.get("cycle_ms"),
-               "accepted_per_cycle": r.get("accepted_per_cycle"), "starts_ok": content.strip().startswith("1 2 3"), "tail": content.strip()[-20:]}
+               "accepted_per_cycle": r.get("accepted_per_cycle"), "starts_ok": content.strip().startswith("1 2 3"), "sha": hashlib.sha256(content.encode()).hexdigest()[:16], "tail": content.strip()[-20:]}
         print(json.dumps(row), flush=True)
         ok = ok and bool(row["starts_ok"])
     raise SystemExit(0 if ok else 1)
