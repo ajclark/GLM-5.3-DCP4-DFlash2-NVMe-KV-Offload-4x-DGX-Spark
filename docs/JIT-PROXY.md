@@ -176,16 +176,89 @@ earlier review had: NCCL's core caches the virtual-NIC list once per process
 and vLLM creates an `_EP` group for every MoE model, so there are three PyNccl
 communicators per worker, not two. Experiments E0-E4 are listed in the report.
 
+## 5d. Route P: a hot-plug-aware NCCL network plugin (decision 2026-09-07)
+
+The owner's requirements: model-agnostic, framework-agnostic (vLLM today,
+maybe SGLang later), and a plugin to NCCL if such a path exists. It does, and
+it is a better seam than patching NCCL (option 2) or interposing verbs
+(option 3). Facts verified in NCCL v2.31.2-1 and NVIDIA's out-of-tree plugin:
+
+- NCCL loads external network plugins (`NCCL_NET_PLUGIN=<name>` →
+  `libnccl-net-<name>.so`, API `ncclNet_v12` at 2.31.2 with v6-v11 accepted,
+  `src/include/plugin/net/net_v*.h`), and unloads/reloads them at refcount
+  zero (`src/plugin/net.cc:78-97, 314-328`), so plugin static state resets
+  by construction.
+- NCCL core keeps only opaque handles from the plugin: `netSendComm`,
+  `netRecvComm` and per-protocol `mhandles` (`src/transport/net.cc:90-148`).
+  It never sees queue pair numbers, keys or device contexts. Everything RDMA
+  is the plugin's private state, so it can be rebuilt underneath a live
+  communicator without NCCL core, torch, the engine or the captured CUDA
+  graphs noticing (the graphs reference NCCL core's own FIFO/flag buffers,
+  not plugin objects).
+- The IB transport keeps its TCP control socket to the peer for the whole
+  life of a connection (`ncclIbNetCommBase.sock`, closed only in
+  `ncclIbCloseSend/Recv`, `connect.cc:1718-1760`); it is bound to
+  `NCCL_SOCKET_IFNAME` = the 10GbE, which is exactly the out-of-band channel
+  a re-handshake needs after both adapters were cycled. Receiver-side keys
+  and addresses already travel per request through the FIFO protocol, so
+  re-registered memory picks up new keys on the next receive; only the FIFO
+  base itself needs re-exchange.
+- NVIDIA's out-of-tree IB plugin (github.com/Mellanox/nccl-rdma-sharp-plugins,
+  active, pushed 2026-08) is a standalone C port of NCCL's IB transport:
+  plugin API v6-v11, subnet-aware routing (which is also upstream in 2.31.2's
+  `connect.cc`), merged NICs, ECE, relaxed ordering; no async-event thread. It
+  is the natural base to fork.
+
+Design: `libnccl-net-hotplug.so` = the out-of-tree IB plugin plus a
+suspend/resume layer driven by a local control channel (Unix socket or file
+under `/run`) that the proxy or `spark-idle.sh` toggles on every node:
+
+1. `suspend`: assert no outstanding requests (idle by construction; otherwise
+   refuse), destroy queue pairs, completion queues, registrations, protection
+   domains, close the device contexts, keep every comm's TCP socket and every
+   `mhandle` struct (now marked stale). The adapter can then be removed with
+   no RDMA users at all.
+2. `resume`: re-enumerate devices by name, re-open, re-create PD/CQ, re-register
+   every `mhandle`'s VA range (new keys behind the same handle), re-create
+   queue pairs, re-exchange QP numbers, GIDs and the FIFO base with the peer
+   plugin over the retained socket (the same handshake as connect), bring
+   them to RTS, mark comms active. A request arriving while suspended is held
+   (`test` returns not-done) or failed fast, configurable.
+3. Fallback detection: an async-event thread that treats `DEVICE_FATAL` /
+   disassociation as an implicit suspend, so an unplanned cycle degrades to a
+   clean error instead of a silent spin.
+
+What this removes from the earlier plan: the NCCL patch, every vLLM change
+(no RPCs, no communicator teardown, no graph recapture, no RNG concerns),
+and any dependence on the model or the serving framework. The proxy stays,
+as policy and as the thing that calls `spark-idle.sh` and toggles the plugin.
+Wake becomes adapter (12 s) + plugin resume (~1 s) + normal first token.
+
+Sandbox-buildable: the plugin is plain C against libibverbs, no CUDA. Develop
+and test it on this VM with soft-RoCE (`rdma_rxe` on enp1s0, verified working)
+and a NCCL-free harness that drives the `ncclNet_v11` entry points in two
+processes, including `rdma link delete/add` as the hot-plug stand-in. Then
+build for aarch64 (plain C, trivial cross or CI) and test on the Sparks with
+`NCCL_NET_PLUGIN=hotplug` under the existing NCCL bench before the stack.
+
+Open questions for the first Spark run: performance parity with the builtin
+IB net on this ring (same code lineage, expect none); plugin API v11 on a
+v12 core (NCCL's compatibility path); whether `NCCL_IB_GID_INDEX` should be
+unset in favour of subnet-aware selection; behaviour of torch's NCCL
+watchdog if a collective is ever issued during a suspension (the proxy's job
+is to make sure none is). Effort: 600-1000 lines of C on the plugin, two to
+three weeks, almost all of it on the sandbox.
+
 ## 6. Decision
 
-Run experiment 1 next (with the unmanaged-before-down fix). If the
-links-down route saves most of the 20 W per node and the stack answers
-afterwards, build the proxy with links-down hooks and stop there. GLM's two
-additions to the order stand: run a *new-process* NCCL all-reduce inside the
-serving container after a full adapter cycle before any same-process gate
-(it validates device nodes, permissions, GIDs and fresh uverbs cheaply and
-every route needs it), and build the proxy with route A hooks in parallel
-because it is route-agnostic and needed in every outcome. Otherwise build the proxy with stop/relaunch hooks (route A),
-push the disk-image boot to cut the wake to ~100 s, and treat route B as a
-separate NCCL project. In no case should the wake be promised as 12 seconds:
-that is the adapter, not inference.
+Route P (the hot-plug-aware NCCL net plugin) is the design: it meets the
+owner's constraints (model- and framework-agnostic, a plugin to NCCL) and
+needs no engine work. Route L is dropped on the owner's judgement that a
+link bounce saves too little. Route A (proxy + stop/relaunch) remains the
+interim and the fallback. Options 2 and 3 are superseded by P. Order: fork
+the out-of-tree IB plugin and build it on the sandbox; add suspend/resume
+and test it against soft-RoCE with device delete/add; build the proxy with
+route A hooks in parallel; then one downtime window on the Sparks for the
+NCCL bench with `NCCL_NET_PLUGIN=hotplug`, an adapter cycle under it, and
+finally the serving stack. In no case promise a 12-second wake: that is the
+adapter, not the first token.
