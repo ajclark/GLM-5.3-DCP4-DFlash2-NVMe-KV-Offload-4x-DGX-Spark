@@ -1,0 +1,95 @@
+0002:01:00.0 Ethernet controller: Mellanox Technologies MT2910 Family [ConnectX-7]
+	Subsystem: Mellanox Technologies MT2910 Family [ConnectX-7]
+	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx+
+	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
+	Latency: 0
+	Interrupt: pin A routed to IRQ 278
+	IOMMU group: 10
+	Region 0: Memory at 3d00000000 (64-bit, prefetchable) [size=32M]
+	Expansion ROM at 5d100000 [virtual] [disabled] [size=1M]
+	Capabilities: [60] Express (v2) Endpoint, MSI 00
+		DevCap:	MaxPayload 512 bytes, PhantFunc 0, Latency L0s unlimited, L1 unlimited
+			ExtTag+ AttnBtn- AttnInd- PwrInd- RBE+ FLReset+ SlotPowerLimit 0W
+		DevCtl:	CorrErr+ NonFatalErr+ FatalErr+ UnsupReq+
+			RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop+ FLReset-
+			MaxPayload 512 bytes, MaxReadReq 512 bytes
+		DevSta:	CorrErr- NonFatalErr- FatalErr- UnsupReq- AuxPwr- TransPend-
+		LnkCap:	Port #0, Speed 32GT/s, Width x4, ASPM not supported
+			ClockPM- Surprise- LLActRep- BwNot- ASPMOptComp+
+		LnkCtl:	ASPM Disabled; RCB 64 bytes, Disabled- CommClk-
+			ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
+		LnkSta:	Speed 32GT/s, Width x4
+			TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
+		DevCap2: Completion Timeout: Range ABC, TimeoutDis+ NROPrPrP- LTR-
+			 10BitTagComp+ 10BitTagReq+ OBFF Not Supported, ExtFmt- EETLPPrefix-
+			 EmergencyPowerReduction Not Supported, EmergencyPowerReductionInit-
+			 FRS- TPHComp- ExtTPHComp-
+			 AtomicOpsCap: 32bit+ 64bit+ 128bitCAS+
+		DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis- LTR- 10BitTagReq- OBFF Disabled,
+			 AtomicOpsCtl: ReqEn-
+		LnkCap2: Supported Link Speeds: 2.5-32GT/s, Crosslink- Retimer+ 2Retimers+ DRS-
+		LnkCtl2: Target Link Speed: 32GT/s, EnterCompliance- SpeedDis-
+			 Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
+			 Compliance Preset/De-emphasis: -6dB de-emphasis, 0dB preshoot
+		LnkSta2: Current De-emphasis Level: -6dB, EqualizationComplete+ EqualizationPhase1+
+			 EqualizationPhase2+ EqualizationPhase3+ LinkEqualizationRequest-
+			 Retimer- 2Retimers- CrosslinkRes: unsupported
+	Capabilities: [48] Vital Product Data
+		Product Name: NVIDIA DGX Spark, P4242-0000, 2-port QSFP up to 200G, Ethernet, PCIe5                                                                                                                 
+		Read-only fields:
+			[PN] Part number: P4242-0000               
+			[EC] Engineering changes: A0
+			[V2] Vendor specific: P4242-0000               
+			[SN] Serial number: 1983825003999\x0d 
+			[V3] Vendor specific: 705fc1d2debfd31180004cbb472b06c5
+			[VA] Vendor specific: MLX:MN=MLNX:CSKU=V2:UUID=V3:PCI=V0:MODL=P4242          
+			[V0] Vendor specific: PCIeGen5     
+			[VU] Vendor specific: 8916E2122DB5E487368A710795749C9E298BED94E8156758ED0B6D8B690A0B27MLNXS0D0F0
+			[RV] Reserved: checksum good, 1 byte(s) reserved
+		End
+	Capabilities: [9c] MSI-X: Enable+ Count=64 Masked-
+		Vector table: BAR=0 offset=00002000
+		PBA: BAR=0 offset=00003000
+	Capabilities: [c0] Vendor Specific Information: Len=18 <?>
+	Capabilities: [40] Power Management version 3
+		Flags: PMEClk- DSI- D1- D2- AuxCurrent=375mA PME(D0-,D1-,D2-,D3hot-,D3cold+)
+		Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
+	Capabilities: [100 v1] Advanced Error Reporting
+		UESta:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+		UEMsk:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+		UESvrt:	DLP+ SDES- TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
+		CESta:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNonFatalErr-
+		CEMsk:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNonFatalErr+
+		AERCap:	First Error Pointer: 08, ECRCGenCap+ ECRCGenEn- ECRCChkCap+ ECRCChkEn-
+			MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
+		HeaderLog: 00000000 00000000 00000000 00000000
+	Capabilities: [150 v1] Alternative Routing-ID Interpretation (ARI)
+		ARICap:	MFVC- ACS-, Next Function: 1
+		ARICtl:	MFVC- ACS-, Function Group: 0
+	Capabilities: [180 v1] Single Root I/O Virtualization (SR-IOV)
+		IOVCap:	Migration- 10BitTagReq- Interrupt Message Number: 000
+		IOVCtl:	Enable- Migration- Interrupt- MSE- ARIHierarchy+ 10BitTagReq-
+		IOVSta:	Migration-
+		Initial VFs: 8, Total VFs: 8, Number of VFs: 0, Function Dependency Link: 00
+		VF offset: 2, stride: 1, Device ID: 101e
+		Supported Page Size: 000007ff, System Page Size: 00000001
+		Region 0: Memory at 0000003d04000000 (64-bit, prefetchable)
+		VF Migration: offset: 00000000, BIR: 0
+	Capabilities: [1c0 v1] Secondary PCI Express
+		LnkCtl3: LnkEquIntrruptEn- PerformEqu-
+		LaneErrStat: 0
+	Capabilities: [230 v1] Access Control Services
+		ACSCap:	SrcValid- TransBlk- ReqRedir- CmpltRedir- UpstreamFwd- EgressCtrl- DirectTrans-
+		ACSCtl:	SrcValid- TransBlk- ReqRedir- CmpltRedir- UpstreamFwd- EgressCtrl- DirectTrans-
+	Capabilities: [240 v1] Precision Time Measurement
+		PTMCap: Requester:+ Responder:- Root:-
+		PTMClockGranularity: Unimplemented
+		PTMControl: Enabled:- RootSelected:-
+		PTMEffectiveGranularity: Unknown
+	Capabilities: [320 v1] Lane Margining at the Receiver <?>
+	Capabilities: [370 v1] Physical Layer 16.0 GT/s <?>
+	Capabilities: [3b0 v1] Extended Capability ID 0x2a
+	Capabilities: [420 v1] Data Link Feature <?>
+	Kernel driver in use: mlx5_core
+	Kernel modules: mlx5_core
+
