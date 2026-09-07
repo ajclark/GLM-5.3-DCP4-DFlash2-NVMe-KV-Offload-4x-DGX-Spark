@@ -12,7 +12,7 @@ NAME="nccl_hotplug_probe"
 MASTER_ADDR="192.168.1.228"; MASTER_PORT="${NCCL_PROBE_MASTER_PORT:-29613}"
 PROBE="$HOME/glm53big/nccl_hotplug_probe.py"
 PLUGIN="$HOME/nccl-hotplug/libnccl-net-hotplug.so"
-CTL="${HOTPLUG_CTL:-/var/tmp/nccl-hotplug}"
+CTL_PORT="${HOTPLUG_PORT:-5711}"
 case "$NODE_RANK" in
   0) HOST_IP=192.168.1.228 ;; 1) HOST_IP=192.168.1.88 ;; 2) HOST_IP=192.168.1.149 ;; 3) HOST_IP=192.168.1.31 ;;
   *) echo "rank must be 0-3" >&2; exit 2 ;;
@@ -20,8 +20,7 @@ esac
 test -f "$PROBE"; test -f "$PLUGIN"
 ip -o -4 addr show enP7s7 | grep -q "$HOST_IP"
 ! docker inspect vllm_glm53big >/dev/null 2>&1 || { echo "serving container is still present on this node" >&2; exit 3; }
-mkdir -p "$CTL" && chmod 1777 "$CTL" && rm -f "$CTL"/status.* "$CTL"/cmd
-if [ "${PROBE_NET:-hotplug}" = builtin ]; then NET_ENV=(-e NCCL_NET=IB -e NCCL_NET_PLUGIN=none); else NET_ENV=(-e NCCL_NET_PLUGIN=hotplug -e NCCL_HOTPLUG_CTL_DIR="$CTL"); fi
+if [ "${PROBE_NET:-hotplug}" = builtin ]; then NET_ENV=(-e NCCL_NET=IB -e NCCL_NET_PLUGIN=none); else NET_ENV=(-e NCCL_NET_PLUGIN=hotplug -e NCCL_HOTPLUG_CTL_PORT="$CTL_PORT"); fi
 docker rm -f "$NAME" >/dev/null 2>&1 || true
 docker run -d --name "$NAME" --restart no \
   --cap-add IPC_LOCK --ulimit memlock=-1:-1 \
@@ -29,7 +28,6 @@ docker run -d --name "$NAME" --restart no \
   -v /dev/infiniband:/dev/infiniband --device-cgroup-rule 'c 231:* rwm' --device-cgroup-rule 'c 10:* rwm' \
   -v "$PROBE:/bench/nccl_hotplug_probe.py:ro" \
   -v "$PLUGIN:/usr/lib/aarch64-linux-gnu/libnccl-net-hotplug.so:ro" \
-  -v "$CTL:$CTL" \
   -e MASTER_ADDR="$MASTER_ADDR" -e MASTER_PORT="$MASTER_PORT" \
   -e RANK="$NODE_RANK" -e WORLD_SIZE=4 -e LOCAL_RANK=0 \
   -e NCCL_HOTPLUG_PROBE_CYCLES="$CYCLES" -e NCCL_HOTPLUG_PROBE_SETTLE_S="${PROBE_SETTLE_S:-0}" \
@@ -51,4 +49,4 @@ docker run -d --name "$NAME" --restart no \
   -e NCCL_CUMEM_ENABLE=1 -e NCCL_IGNORE_CPU_AFFINITY=1 \
   -e NCCL_DEBUG=INFO -e NCCL_DEBUG_SUBSYS=INIT,NET \
   "$IMAGE" python3 /bench/nccl_hotplug_probe.py
-echo "$NAME launched rank=$NODE_RANK cycles=$CYCLES net=${PROBE_NET:-hotplug} plugin=$PLUGIN ctl=$CTL"
+echo "$NAME launched rank=$NODE_RANK cycles=$CYCLES net=${PROBE_NET:-hotplug} plugin=$PLUGIN ctl=127.0.0.1:$CTL_PORT"

@@ -15,8 +15,8 @@
 #   --suspend / --resume   Only the plugin step (quiesce / re-connect its RDMA state), no adapter action.
 # Needs passwordless sudo on the nodes. Powering the adapter down kills every RDMA/NCCL
 # connection on it; stop or expect to restart whatever uses the ring, UNLESS the workload
-# runs NCCL with the hot-plug-aware net plugin (github.com/ajclark/nccl-net-hotplug): if
-# CTL_DIR (default /var/tmp/nccl-hotplug) holds plugin status files on a node, --down first
+# runs NCCL with the hot-plug-aware net plugin (github.com/ajclark/nccl-net-hotplug): if a
+# node's plugin answers on 127.0.0.1:CTL_PORT (default 5711, NCCL_HOTPLUG_CTL_PORT), --down first
 # quiesces every plugin process in two phases (prepare on every node: gate the data path,
 # refused if a collective is in flight, in which case everything is aborted and nothing is
 # powered down; then commit on every node: tear the RDMA state down) and --up asks them to
@@ -30,7 +30,7 @@ SSH_USER="${SSH_USER:-$USER}"; SSH_SUFFIX="${SSH_SUFFIX:-.local}"
 CONTAINER="${CONTAINER:-vllm_glm53big}"               # refuse --idle while this container runs
 RING_IFS="enP2p1s0f0np0 enP2p1s0f1np1"                # the two cabled 200G ports
 MGMT_IF="enP7s7"                                      # 10GbE management link (domain 0007)
-CTL_DIR="${CTL_DIR:-/var/tmp/nccl-hotplug}"                # NCCL_HOTPLUG_CTL_DIR of the plugin, same path in the container
+CTL_PORT="${CTL_PORT:-5711}"                                 # NCCL_HOTPLUG_CTL_PORT of the plugin (127.0.0.1 inside each node)
 CX7_BDFS="0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1"
 SYS=/sys/devices/platform/MTKP0001:00/pcie_hotplug
 HANDLER=/opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh
@@ -53,16 +53,19 @@ sshq()  { if [ "$1" = localhost ]; then bash -c "$2"; else ssh -o BatchMode=yes 
 reachable() { sshq "$1" true >/dev/null 2>&1; }
 run_node()  { if [ "$DRY_RUN" = 1 ]; then echo "  [dry-run] $1: $2"; return 0; fi; sshq "$1" "$2" 2>&1 | sed "s/^/  $1: /"; return "${PIPESTATUS[0]}"; }
 
-# --- hot-plug plugin control: <CTL_DIR>/cmd = "<gen> prepare|commit|abort|resume", one status.<pid> per NCCL process.
-# Quiescing is two-phase across the nodes: every process must report "prepared" (data path gated,
-# nothing in flight) before any of them is told to "commit" (tear the RDMA state down). A process
-# that is busy at prepare makes the whole operation abort (gates dropped again, nothing torn down).
-plugin_present() { sshq "$1" "ls $CTL_DIR/status.* >/dev/null 2>&1"; }
+# --- hot-plug plugin control: one NCCL process per node listens on 127.0.0.1:CTL_PORT inside the
+# node (host network namespace); one verb line in (status|prepare|commit|resume), one reply line out
+# ("<state> comms=N idle=<s since the last NCCL send/receive> wanted=<0|1> <detail>"); a verb runs to
+# completion before it answers. Reached with ssh + bash's /dev/tcp: no files anywhere.
+# Quiescing is two-phase across the nodes: every process must answer "prepared" (data path gated,
+# nothing in flight) before any is told "commit" (RDMA state torn down). A busy process makes the
+# whole operation back out (resume everywhere, which drops the gates) and nothing is powered off.
+plugin_query() {   # host verb -> reply line on stdout; non-zero if unreachable or no answer
+  sshq "$1" "exec 3<>/dev/tcp/127.0.0.1/$CTL_PORT || exit 1; printf '%s\\n' '$2' >&3; IFS= read -r -t ${PLUGIN_TIMEOUT:-400} line <&3; [ -n \"\$line\" ] && printf '%s\\n' \"\$line\""
+}
+plugin_present() { plugin_query "$1" status >/dev/null 2>&1; }
 plugin_hosts() { PHOSTS=(); local h; for h in "${HOSTS[@]}"; do plugin_present "$h" && PHOSTS+=("$h"); done; }
-# Every verb goes to all nodes at once and then waits for all: a resume re-handshakes with the
-# peers over the retained sockets, so resuming one node at a time makes the first one wait for
-# peers that have not been told yet (and time out into the plugin's failed state).
-plugin_all() {       # verb expected-state(s) -> 0 when every node reported it
+plugin_all() {       # verb expected-state(s, a|b) -> 0 when every node answered with one of them; all nodes in parallel
   local verb=$1 want=$2 h pids=() rc=0
   for h in "${PHOSTS[@]}"; do plugin_cmd "$h" "$verb" "$want" & pids+=($!); done
   for p in "${pids[@]}"; do wait "$p" || rc=1; done
@@ -70,14 +73,15 @@ plugin_all() {       # verb expected-state(s) -> 0 when every node reported it
 }
 plugin_quiesce() {   # -> 0 when every plugin process on every node is suspended; 1 (and nothing torn down) otherwise
   plugin_hosts; [ "${#PHOSTS[@]}" -gt 0 ] || return 0
+  [ "${#PHOSTS[@]}" -eq "${#HOSTS[@]}" ] || { say "-- plugin answers on ${PHOSTS[*]} but not on every node: not powering anything off"; return 1; }
   say "-- plugin prepare on ${PHOSTS[*]} (gate the data path; refused if anything is in flight)"
   if ! plugin_all prepare 'prepared|suspended'; then
     say "-- a process was busy or failed at prepare: dropping the gates again, nothing torn down"
-    plugin_all abort 'active|suspended' || true
+    plugin_all resume 'active|suspended' || true
     return 1
   fi
   say "-- plugin commit on ${PHOSTS[*]} (tear the RDMA state down)"
-  plugin_all commit suspended || { say "-- commit FAILED somewhere; that process is in its failed state and the serving stack must be restarted"; return 1; }
+  plugin_all commit suspended || { say "-- commit FAILED somewhere: that process is in its failed state, the serving stack must be relaunched; not powering anything off"; return 1; }
   return 0
 }
 plugin_resume() {    # -> 0 when every plugin process on every node is active again
@@ -85,13 +89,12 @@ plugin_resume() {    # -> 0 when every plugin process on every node is active ag
   say "-- plugin resume on ${PHOSTS[*]} (re-open devices, re-connect over the retained sockets)"
   plugin_all resume active
 }
-plugin_cmd() {   # host verb expected-state(s, a|b case pattern) -> waits for every status file to report gen+state
-  local h=$1 verb=$2 want=$3 gen; gen=$(date +%s%N)
-  if [ "$DRY_RUN" = 1 ]; then echo "  [dry-run] $h: echo '$gen $verb' > $CTL_DIR/cmd; wait for status.* = $want"; return 0; fi
-  sshq "$h" "n=\$(ls $CTL_DIR/status.* 2>/dev/null | wc -l); printf '%s %s\n' $gen $verb > $CTL_DIR/cmd.tmp && mv $CTL_DIR/cmd.tmp $CTL_DIR/cmd
-    for i in \$(seq 1 600); do ok=0; bad=''; for f in $CTL_DIR/status.*; do read g st rest < \$f; if [ \"\$g\" = $gen ]; then case \"\$st\" in $want) ok=\$((ok+1)) ;; *) bad=\"\$bad \$(basename \$f):\$st \$rest\" ;; esac; fi; done
-      [ -n \"\$bad\" ] && { echo \"PLUGIN_FAIL \$bad\"; exit 1; }; [ \"\$ok\" -ge \"\$n\" ] && [ \"\$n\" -gt 0 ] && { echo \"PLUGIN_OK \$ok process(es) $want\"; exit 0; }; sleep 0.25; done
-    echo 'PLUGIN_TIMEOUT'; exit 1" 2>&1 | sed "s/^/  $h: /"; return "${PIPESTATUS[0]}"
+plugin_cmd() {   # host verb expected-state(s, a|b case pattern) -> the verb's reply must carry one of them
+  local h=$1 verb=$2 want=$3 line st
+  if [ "$DRY_RUN" = 1 ]; then echo "  [dry-run] $h: $verb -> expect $want"; return 0; fi
+  line=$(plugin_query "$h" "$verb") || { echo "  $h: PLUGIN_UNREACHABLE (127.0.0.1:$CTL_PORT on the node)"; return 1; }
+  st=${line%% *}
+  case "$st" in $want) echo "  $h: PLUGIN_OK $line"; return 0 ;; *) echo "  $h: PLUGIN_FAIL $line"; return 1 ;; esac
 }
 
 STATUS='
@@ -154,8 +157,7 @@ for h in "${HOSTS[@]}"; do [ "$h" = localhost ] || reachable "$h" || { say "$h u
 
 case "$CMD" in
   suspend|resume)
-    plugin_hosts; [ "${#PHOSTS[@]}" -eq "${#HOSTS[@]}" ] || say "-- note: plugin status files in $CTL_DIR only on: ${PHOSTS[*]:-none}"
-    [ "${#PHOSTS[@]}" -gt 0 ] || exit 1
+    plugin_hosts; [ "${#PHOSTS[@]}" -gt 0 ] || { say "no node answers on 127.0.0.1:$CTL_PORT"; exit 1; }
     if [ "$CMD" = suspend ]; then plugin_quiesce; else plugin_resume; fi
     exit $? ;;
   status) status_all ;;

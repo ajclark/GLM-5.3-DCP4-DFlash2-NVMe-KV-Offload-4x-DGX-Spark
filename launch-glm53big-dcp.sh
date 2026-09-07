@@ -211,7 +211,7 @@ if [ "$SPEC_MODE" = "dflash" ]; then KVDTYPE=fp8; KVSKIP="--kv-cache-dtype-skip-
 # (bind-mounted at the same path; spark-idle.sh writes <gen> suspend|resume into it).
 NCCL_HOTPLUG="${NCCL_HOTPLUG:-0}"
 HOTPLUG_SO="${HOTPLUG_SO:-$HOME/nccl-hotplug/libnccl-net-hotplug.so}"
-HOTPLUG_CTL="${HOTPLUG_CTL:-/var/tmp/nccl-hotplug}"
+HOTPLUG_PORT="${HOTPLUG_PORT:-5711}"   # the plugin's control endpoint, 127.0.0.1:port inside the node (host network namespace)
 NET_ENV=(-e NCCL_NET=IB -e NCCL_NET_PLUGIN=none)
 HOTPLUG_MOUNTS=()
 # /dev/infiniband: the default lane hands the container static copies of the device nodes present at
@@ -223,11 +223,9 @@ IB_DEV=(--device /dev/infiniband:/dev/infiniband)
 if [ "$NCCL_HOTPLUG" = 1 ]; then
   IB_DEV=(-v /dev/infiniband:/dev/infiniband --device-cgroup-rule 'c 231:* rwm' --device-cgroup-rule 'c 10:* rwm')
   [ -f "$HOTPLUG_SO" ] || { echo "NCCL_HOTPLUG=1 but $HOTPLUG_SO is missing" >&2; exit 7; }
-  mkdir -p "$HOTPLUG_CTL" && chmod 1777 "$HOTPLUG_CTL"
-  rm -f "$HOTPLUG_CTL"/status.* "$HOTPLUG_CTL"/cmd
   # dlopen search: NCCL_NET_PLUGIN=hotplug -> libnccl-net-hotplug.so on the library path
-  HOTPLUG_MOUNTS=(-v "$HOTPLUG_SO:/usr/lib/aarch64-linux-gnu/libnccl-net-hotplug.so:ro" -v "$HOTPLUG_CTL:$HOTPLUG_CTL")
-  NET_ENV=(-e NCCL_NET_PLUGIN=hotplug -e "NCCL_HOTPLUG_CTL_DIR=$HOTPLUG_CTL")
+  HOTPLUG_MOUNTS=(-v "$HOTPLUG_SO:/usr/lib/aarch64-linux-gnu/libnccl-net-hotplug.so:ro")
+  NET_ENV=(-e NCCL_NET_PLUGIN=hotplug -e "NCCL_HOTPLUG_CTL_PORT=$HOTPLUG_PORT")
 fi
 
 [ "${DRYRUN:-0}" = 1 ] || docker rm -f "$NAME" 2>/dev/null   # never touch a running container in a dry run

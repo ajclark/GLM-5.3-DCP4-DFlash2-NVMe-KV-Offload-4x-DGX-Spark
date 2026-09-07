@@ -35,7 +35,7 @@ from vllm.distributed.device_communicators.pynccl_wrapper import (
 
 DTYPE = torch.bfloat16
 NCCL_DTYPE = ncclDataTypeEnum.ncclBfloat16
-CTL = os.environ.get("NCCL_HOTPLUG_CTL_DIR", "/var/tmp/nccl-hotplug")
+CTL_PORT = int(os.environ.get("NCCL_HOTPLUG_CTL_PORT", "5711"))
 
 
 def log(rank, **kw):
@@ -44,12 +44,13 @@ def log(rank, **kw):
 
 
 def plugin_status():
-    """(gen, state) from this process's status file, or (None, None)."""
-    path = os.path.join(CTL, f"status.{os.getpid()}")
+    """(0, state) from this process's plugin endpoint on 127.0.0.1, or (None, None)."""
+    import socket
     try:
-        with open(path) as f:
-            parts = f.read().split()
-        return int(parts[0]), parts[1]
+        with socket.create_connection(("127.0.0.1", CTL_PORT), timeout=5) as s:
+            s.sendall(b"status\n")
+            line = s.makefile().readline().split()
+        return 0, line[0]
     except Exception:
         return None, None
 
@@ -75,7 +76,7 @@ def main():
     dist.init_process_group(backend="gloo", rank=rank, world_size=world, timeout=timedelta(minutes=30))
     lib = NCCLLibrary()
     log(rank, phase="init", nccl=lib.ncclGetVersion(), torch=torch.__version__, world=world,
-        plugin=os.environ.get("NCCL_NET_PLUGIN", ""), ctl=CTL)
+        plugin=os.environ.get("NCCL_NET_PLUGIN", ""), ctl=f"127.0.0.1:{CTL_PORT}")
 
     obj = [bytes(lib.ncclGetUniqueId().internal)] if rank == 0 else [None]
     dist.broadcast_object_list(obj, src=0)
