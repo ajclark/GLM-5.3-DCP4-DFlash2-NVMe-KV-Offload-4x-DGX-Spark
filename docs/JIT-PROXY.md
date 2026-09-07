@@ -161,6 +161,21 @@ first-byte timeouts.
 - **Route A is not resident idle.** It is "accept the reload"; say so in any
   status page or README so nobody expects the 40-60 s wake from it.
 
+## 5c. Route B evaluated in depth (sub-agent, 2026-09-07)
+
+`results/subagent-nccl-rebuild-vs-shim.md`: option 2 (patch NCCL so the IB
+backend resets at refcount zero, rebuild communicators in vLLM) is **feasible**,
+150-250 lines in three NCCL files plus 500-800 lines in the fork, two to three
+weeks; option 3 (a verbs interposer that keeps NCCL's handles alive) is
+**feasible but brittle and not recommended**: LD_PRELOAD cannot reach NCCL's
+verbs calls (it dlopens libibverbs and resolves versioned symbols itself, and
+the data path is inlined through `context->ops`), so the shim must virtualize
+every verbs object and rewrite rkeys and QPNs in flight. Two facts neither
+earlier review had: NCCL's core caches the virtual-NIC list once per process
+(`topo.cc`), so a backend-only reset still fails on the merged `f0+f1` device,
+and vLLM creates an `_EP` group for every MoE model, so there are three PyNccl
+communicators per worker, not two. Experiments E0-E4 are listed in the report.
+
 ## 6. Decision
 
 Run experiment 1 next (with the unmanaged-before-down fix). If the
