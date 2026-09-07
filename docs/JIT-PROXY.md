@@ -249,6 +249,23 @@ watchdog if a collective is ever issued during a suspension (the proxy's job
 is to make sure none is). Effort: 600-1000 lines of C on the plugin, two to
 three weeks, almost all of it on the sandbox.
 
+## 5e. Route P status (2026-09-07): built and sandbox-tested
+
+The plugin exists: github.com/ajclark/nccl-net-hotplug (local
+`~/nccl-net-hotplug/plugin`), a fork of NVIDIA's out-of-tree IB plugin with
+the suspend/resume layer, a file control channel and exported
+`ncclHotplugSuspend/Resume`. On the sandbox against soft-RoCE it passes:
+bidirectional comms re-connected concurrently, suspend refused while a
+receive is pending, `isend` held while suspended, ten device delete/re-add
+cycles with flat memory and descriptor counts, and the file channel driven by
+`spark-idle.sh --suspend/--resume`. Cross-compiled for the Sparks
+(`stage/nccl-hotplug/libnccl-net-hotplug.so`, depends only on libmlx5,
+libibverbs, libc). Cluster wiring is in place behind `NCCL_HOTPLUG=1`
+(launcher, rollout) and `spark-idle.sh --down/--up` suspends/resumes the
+plugin around the adapter cycle. The on-cluster plan is
+`docs/NCCL-HOTPLUG-TEST.md` (one downtime window); the probe that runs first is
+`bench/nccl-hotplug-probe.sh`.
+
 ## 6. Decision
 
 Route P (the hot-plug-aware NCCL net plugin) is the design: it meets the
