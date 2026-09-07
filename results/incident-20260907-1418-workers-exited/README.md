@@ -10,3 +10,41 @@ Timeline (PDT):
 Not the hot-plug plugin and not the idle logic: no prepare/commit/resume ran between 10:54 and the hang, the adapters were up, and the plugin logs are clean. This is the known Triton-JIT-during-inference wedge (memory note "GLM JIT hang risk"): a request with a new shape compiles a kernel at inference time; here the CUDA module load failed on one rank, which is fatal for a TP ring.
 
 Watcher observation: between 13:59:30 and 14:18:10 it logged nothing because its status line did not change (the NCCL proxy kept retrying, so `idle=` stayed 0). A hung stack therefore looks like "busy" to the watcher; only the process exit made it visible. Recovery: relaunch (`dcp2-hotplug-3`).
+
+## Root cause (Codex review `results/codex-review-triton-crash.md`, upstream vllm-project/vllm#52877)
+
+Two levels.
+
+1. **Platform.** On DGX Spark (GB10, driver 580.159.03) a CUDA module load
+   performed hours into a long-running process can fail with
+   `CUDA_ERROR_NOT_PERMITTED` (800). Upstream issue #52877 shows the identical
+   Triton `load_binary` failure on three unrelated stacks (Nemotron, Qwen3.8,
+   ours) after 1.5 to 3 days of uptime, with no Xid or NVRM message; the exact
+   CUDA call that fails and why is still unproven (Triton's loader does not
+   name it). Both of our crashes had the nodes deep in swap, the strongest
+   correlate, but not a proven mechanism.
+2. **Amplifier, ours.** The vendored sm12x indexer kernels (tonyd2wild's
+   overlay, `stage/glm-triton/sm12x_mqa.py`) declared `num_q`, `seq_len_kv`
+   and every stride as `tl.constexpr`, so each new prompt or context length
+   produced a new binary, compiled and loaded at inference. vLLM's warmup never
+   launches the indexer (its profiling path returns early), so those loads
+   happened all day long, hours after start, which is exactly the exposure the
+   platform bug needs. That is why we hit it in hours where others hit it in
+   days, and why it started when the lanes grew memory-hungry (LMCache on the
+   4th, the DCP=2 180k lane now).
+
+## Fix (commit ee30068)
+
+- `do_not_specialize` for the varying dimensions and strides of the three
+  mqa-logits kernels: one binary each, loaded once. Structural constants
+  (heads, head_dim, block sizes, next_n) stay compile-time.
+- Every launch site logs uptime, MemAvailable, swap, RSS and capture state
+  before re-raising, so the next failure yields the trace the review asked
+  for.
+- `bench/warm_kernels.py` runs in `rollout_dcp.sh` after the generation probe:
+  a 12k-token prefill, two odd-length prompts, six concurrent requests. Every
+  request path compiles and loads its Triton kernels (including the DFlash
+  prepare and chunk-metadata kernels we do not own) while the process is
+  fresh.
+- Not changed: memory headroom of the lane. Still the lever if the platform
+  bug turns out to be pressure-driven.
