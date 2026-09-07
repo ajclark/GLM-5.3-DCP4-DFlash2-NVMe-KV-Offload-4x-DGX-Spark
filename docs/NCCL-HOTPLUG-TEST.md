@@ -104,6 +104,37 @@ Either keep the plugin lane serving (it is the new default candidate) or
 relaunch the builtin-backend lane: `SKIP_PREFLIGHT=1 ./rollout_dcp.sh <label>`.
 Record the results in `docs/JIT-PROXY.md` and the plugin README's Status.
 
+## Results (2026-09-07, first window)
+
+**Probe A: PASS** (`results/nccl-hotplug-probe/20260907-052859`). NCCL
+2.31.2 loaded the v11 plugin (`Using network NCCL RDMA Plugin v11`), one
+four-rank communicator over the ring, two full adapter cycles under it
+(`--down`: prepared then suspended on all four nodes, adapters off, 30 s
+hold; `--up`: adapters on, ring verified, resume on all four in parallel), and
+the same communicator all-reduced and all-gathered correctly after each cycle.
+Wall time from `--down` to "active" again: ~80 s including the 30 s hold.
+
+| measurement | allreduce µs | allgather µs |
+|---|---:|---:|
+| builtin IB backend, same probe (`PROBE_NET=builtin`, `20260907-053406`) | 346.8 | 371.8 |
+| plugin, before any cycle | 338.7 | 384.6 |
+| plugin, right after cycle 1 | 577.9 | 409.4 |
+| plugin, right after cycle 2 | 570.5 | 419.3 |
+
+Parity before the cycle. The all-reduce measured right after a cycle is
+slower (1.7x) while the all-gather is nearly unchanged; the re-added
+adapters are at full PCIe capability (32 GT/s x4, ASPM off), so this is not
+the link. Open: whether it settles (`PROBE_SETTLE_S=N` re-measures N seconds
+later) and what the serving stack's decode cycle shows.
+
+Three things the first attempts taught, all fixed in the staged build and
+scripts: the cross build must not pull glibc symbols newer than the image
+(`__inet_pton_chk@GLIBC_2.42` made dlopen fail silently, NCCL fell back to
+the builtin backend); the plugin needed NCCL's subnet-aware routing for the
+switchless ring (first RTR on the wrong port timed out); and the operator
+must send `resume` to every node before waiting on any (a resume
+re-handshakes with its peers).
+
 ## What is deliberately not in this window
 
 - The proxy. It is route-agnostic and only needs the hooks that already

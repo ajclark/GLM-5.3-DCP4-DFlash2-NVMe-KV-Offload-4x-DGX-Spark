@@ -32,7 +32,7 @@ docker run -d --name "$NAME" --restart no \
   -v "$CTL:$CTL" \
   -e MASTER_ADDR="$MASTER_ADDR" -e MASTER_PORT="$MASTER_PORT" \
   -e RANK="$NODE_RANK" -e WORLD_SIZE=4 -e LOCAL_RANK=0 \
-  -e NCCL_HOTPLUG_PROBE_CYCLES="$CYCLES" \
+  -e NCCL_HOTPLUG_PROBE_CYCLES="$CYCLES" -e NCCL_HOTPLUG_PROBE_SETTLE_S="${PROBE_SETTLE_S:-0}" \
   "${NET_ENV[@]}" \
   -e NCCL_IB_DISABLE=0 \
   -e NCCL_IB_HCA='=roceP2p1s0f0,roceP2p1s0f1' \

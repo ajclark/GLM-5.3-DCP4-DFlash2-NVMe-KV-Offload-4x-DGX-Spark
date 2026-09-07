@@ -138,6 +138,10 @@ def main():
             ok_all = False
         log(rank, phase="resumed", cycle=cyc, wall_s=round(time.time() - t0, 1))
         ok_all = check(f"after-cycle-{cyc}") and ok_all
+        settle = int(os.environ.get("NCCL_HOTPLUG_PROBE_SETTLE_S", "0"))
+        if settle > 0:   # does a slow first measurement after the cycle recover by itself?
+            time.sleep(settle)
+            ok_all = check(f"after-cycle-{cyc}-settled-{settle}s") and ok_all
 
     lib.ncclCommDestroy(comm)
     dist.barrier()

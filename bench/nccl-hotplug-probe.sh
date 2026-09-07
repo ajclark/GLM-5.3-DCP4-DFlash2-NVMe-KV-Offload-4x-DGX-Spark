@@ -47,7 +47,7 @@ for c in $(seq 1 "$CYCLES"); do
     say "-- cycle $c: spark-idle.sh --up"
     ./spark-idle.sh --up 2>&1 | tee -a "$OUT/driver.log"
   fi
-  [ "$c" -lt "$CYCLES" ] && wait_for "\"phase\": \"ready-for-cycle\", \"cycle\": $((c+1))" 300
+  [ "$c" -lt "$CYCLES" ] && wait_for "\"phase\": \"ready-for-cycle\", \"cycle\": $((c+1))" $((300 + ${PROBE_SETTLE_S:-0}))
 done
 say "-- waiting for the probe to finish"
 for i in $(seq 1 150); do st=$(sshq spark-06c4 "docker inspect -f '{{.State.Status}}' nccl_hotplug_probe 2>/dev/null"); [ "$st" = exited ] && break; sleep 2; done
