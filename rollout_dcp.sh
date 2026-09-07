@@ -136,6 +136,7 @@ ring_gid_check || { say "ring GID table wrong on at least one node; refusing to 
 WANT_L=$(sha256sum "$WS/launch-glm53big-dcp.sh" | cut -d' ' -f1)
 for h in "${HOSTS[@]}"; do
   ( rsync -a --delete "$WS/stage/glm-dcp/" "napta2k@$h.local:glm-dcp/" && \
+    rsync -a "$WS/stage/nccl-hotplug/" "napta2k@$h.local:nccl-hotplug/" && \
     scp -q "$WS/launch-glm53big-dcp.sh" "napta2k@$h.local:$DCPL" && \
     sshq "$h" "chmod +x $DCPL" ) &
 done; wait
@@ -153,7 +154,7 @@ say "stopping production ranks"
 teardown; sleep 5
 start_flushers || say "warning: flushers did not start (continuing; admission check is skipped with a fixed KV pool)"
 say "launching DCP ranks (worker-first)"
-launch_ranks "$DCPL" "MAXLEN=$MAXLEN MAXBATCHED=$MAXBATCHED KVBYTES=$KVBYTES KVTIER=$KVTIER KVTIER_MODE=${KVTIER_MODE:-slab} KVTIER_BOUNCE=${KVTIER_BOUNCE:-48} KVTIER_DISK_BYTES=${KVTIER_DISK_BYTES:-150000000000} PROFILER_DIR=${PROFILER_DIR:-} DCP_Q_PREGATHER=${DCP_Q_PREGATHER:-0} DCP_COMPACT=${DCP_COMPACT:-1} DCP_SIZE=${DCP_SIZE:-2}" || { restore_production; exit 2; }
+launch_ranks "$DCPL" "MAXLEN=$MAXLEN MAXBATCHED=$MAXBATCHED KVBYTES=$KVBYTES KVTIER=$KVTIER KVTIER_MODE=${KVTIER_MODE:-slab} KVTIER_BOUNCE=${KVTIER_BOUNCE:-48} KVTIER_DISK_BYTES=${KVTIER_DISK_BYTES:-150000000000} PROFILER_DIR=${PROFILER_DIR:-} DCP_Q_PREGATHER=${DCP_Q_PREGATHER:-0} DCP_COMPACT=${DCP_COMPACT:-1} DCP_SIZE=${DCP_SIZE:-2} NCCL_HOTPLUG=${NCCL_HOTPLUG:-0}" || { restore_production; exit 2; }
 
 # 5. wait with watchdog
 wait_healthy 1800; rc=$?

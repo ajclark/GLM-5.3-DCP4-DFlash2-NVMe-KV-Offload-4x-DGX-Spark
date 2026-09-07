@@ -203,6 +203,26 @@ if [ "$SPEC_MODE" = "none" ]; then MAXSEQS="${MAXSEQS:-4}"; else MAXSEQS="${MAXS
 KVDTYPE=fp8_ds_mla; KVSKIP=""
 if [ "$SPEC_MODE" = "dflash" ]; then KVDTYPE=fp8; KVSKIP="--kv-cache-dtype-skip-layers sliding_window"; fi
 
+# NCCL_HOTPLUG=1: load the hot-plug-aware external NCCL net plugin (github.com/ajclark, fork of
+# NVIDIA's nccl-rdma-sharp-plugins) instead of the builtin IB net. The plugin can suspend and
+# resume every RDMA object under live communicators so the ConnectX-7 can be powered off at
+# idle (spark-idle.sh --down/--up) with the serving stack resident. HOTPLUG_SO is the aarch64
+# build staged by rollout_dcp.sh; HOTPLUG_CTL is the host directory the control files live in
+# (bind-mounted at the same path; spark-idle.sh writes <gen> suspend|resume into it).
+NCCL_HOTPLUG="${NCCL_HOTPLUG:-0}"
+HOTPLUG_SO="${HOTPLUG_SO:-$HOME/nccl-hotplug/libnccl-net-hotplug.so}"
+HOTPLUG_CTL="${HOTPLUG_CTL:-/var/tmp/nccl-hotplug}"
+NET_ENV=(-e NCCL_NET=IB -e NCCL_NET_PLUGIN=none)
+HOTPLUG_MOUNTS=()
+if [ "$NCCL_HOTPLUG" = 1 ]; then
+  [ -f "$HOTPLUG_SO" ] || { echo "NCCL_HOTPLUG=1 but $HOTPLUG_SO is missing" >&2; exit 7; }
+  mkdir -p "$HOTPLUG_CTL" && chmod 1777 "$HOTPLUG_CTL"
+  rm -f "$HOTPLUG_CTL"/status.* "$HOTPLUG_CTL"/cmd
+  # dlopen search: NCCL_NET_PLUGIN=hotplug -> libnccl-net-hotplug.so on the library path
+  HOTPLUG_MOUNTS=(-v "$HOTPLUG_SO:/usr/lib/aarch64-linux-gnu/libnccl-net-hotplug.so:ro" -v "$HOTPLUG_CTL:$HOTPLUG_CTL")
+  NET_ENV=(-e NCCL_NET_PLUGIN=hotplug -e "NCCL_HOTPLUG_CTL_DIR=$HOTPLUG_CTL")
+fi
+
 [ "${DRYRUN:-0}" = 1 ] || docker rm -f "$NAME" 2>/dev/null   # never touch a running container in a dry run
 
 # DRYRUN=1 prints the docker command (shell-quoted) instead of running it.
@@ -240,6 +260,7 @@ run_docker run -d --name "$NAME" \
   -v "$DCP_DIR/scheduler.py:$VLLM/v1/core/sched/scheduler.py:ro" \
   "${KVTIER_MOUNTS[@]}" \
   "${DRAFT_MOUNT[@]}" \
+  "${HOTPLUG_MOUNTS[@]}" \
   -e VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS=1800 \
   -e VLLM_ENGINE_READY_TIMEOUT_S=3600 \
   -e HF_HOME=/cache/huggingface \
@@ -258,7 +279,7 @@ run_docker run -d --name "$NAME" \
   -e GLM52_B12X_MLA=1 -e VLLM_DISABLE_FLASHINFER_AUTOTUNE=1 \
   -e VLLM_MARLIN_USE_ATOMIC_ADD=1 \
   -e TORCH_CUDA_ARCH_LIST=12.1a \
-  -e NCCL_NET=IB -e NCCL_NET_PLUGIN=none -e NCCL_IB_DISABLE=0 \
+  "${NET_ENV[@]}" -e NCCL_IB_DISABLE=0 \
   -e NCCL_IB_HCA='=roceP2p1s0f0,roceP2p1s0f1' \
   -e NCCL_IB_GID_INDEX=3 \
   -e NCCL_IB_SUBNET_AWARE_ROUTING=1 -e NCCL_IB_SUBNET_PREFIX_LEN=24 \
@@ -303,7 +324,7 @@ run_docker run -d --name "$NAME" \
     --master-addr "$HEAD_IP" --master-port "$MASTER_PORT" \
     $( [ "$HEADLESS" = 1 ] && echo --headless )
 
-echo "launched $NAME rank=$NODE_RANK host=$HOST_IP spec=$SPEC_MODE $( [ "$SPEC_MODE" = dflash ] && echo "k=$DFLASH_K" ) tp4 dcp$DCP_SIZE maxlen=$MAXLEN maxseqs=$MAXSEQS kvtier=$KVTIER/$KVTIER_MODE image=$IMAGE"
+echo "launched $NAME rank=$NODE_RANK host=$HOST_IP nccl_hotplug=$NCCL_HOTPLUG spec=$SPEC_MODE $( [ "$SPEC_MODE" = dflash ] && echo "k=$DFLASH_K" ) tp4 dcp$DCP_SIZE maxlen=$MAXLEN maxseqs=$MAXSEQS kvtier=$KVTIER/$KVTIER_MODE image=$IMAGE"
 sleep 3
 docker ps --format '{{.Names}} {{.Status}}' | grep "$NAME" || {
   echo "$NAME exited immediately; docker logs $NAME" >&2; exit 1; }

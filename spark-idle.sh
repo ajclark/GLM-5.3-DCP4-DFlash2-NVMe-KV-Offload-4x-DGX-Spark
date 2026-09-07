@@ -12,8 +12,15 @@
 #              and MTU 9000, RDMA ACTIVE, jumbo-ping each neighbour, reload mstflint_access.
 #              Reports what came back; exit status non-zero if a node did not fully recover.
 #   --status   One line per node (read-only). (--idle / --unidle are aliases of --down / --up.)
+#   --suspend / --resume   Only the plugin step (quiesce / re-connect its RDMA state), no adapter action.
 # Needs passwordless sudo on the nodes. Powering the adapter down kills every RDMA/NCCL
-# connection on it; stop or expect to restart whatever uses the ring.
+# connection on it; stop or expect to restart whatever uses the ring, UNLESS the workload
+# runs NCCL with the hot-plug-aware net plugin (github.com/ajclark/nccl-net-hotplug): if
+# CTL_DIR (default /var/tmp/nccl-hotplug) holds plugin status files on a node, --down first
+# asks every plugin instance there to suspend (refused, and --down stops, if a collective is
+# in flight) and --up asks them to resume after the ring is verified. Then the serving stack
+# survives the cycle with its communicators and CUDA graphs intact.
+#   --no-plugin  skip the plugin suspend/resume even if status files are present
 set -uo pipefail
 
 HOSTS=(spark-06c4 spark-365c spark-ddbf spark-a218)   # edit for your cluster
@@ -21,25 +28,39 @@ SSH_USER="${SSH_USER:-$USER}"; SSH_SUFFIX="${SSH_SUFFIX:-.local}"
 CONTAINER="${CONTAINER:-vllm_glm53big}"               # refuse --idle while this container runs
 RING_IFS="enP2p1s0f0np0 enP2p1s0f1np1"                # the two cabled 200G ports
 MGMT_IF="enP7s7"                                      # 10GbE management link (domain 0007)
+CTL_DIR="${CTL_DIR:-/var/tmp/nccl-hotplug}"                # NCCL_HOTPLUG_CTL_DIR of the plugin, same path in the container
 CX7_BDFS="0000:01:00.0 0000:01:00.1 0002:01:00.0 0002:01:00.1"
 SYS=/sys/devices/platform/MTKP0001:00/pcie_hotplug
 HANDLER=/opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh
 
-CMD=""; RESTORE_AFTER=0; DRY_RUN=0
+CMD=""; RESTORE_AFTER=0; DRY_RUN=0; PLUGIN=1
 while [ $# -gt 0 ]; do case "$1" in
   --down|--idle) CMD=down ;; --up|--unidle) CMD=up ;; --status) CMD=status ;;
+  --suspend) CMD=suspend ;; --resume) CMD=resume ;;   # plugin only, no adapter action
   --hosts) IFS=, read -r -a HOSTS <<<"${2:?}"; shift ;;
   --restore-after) RESTORE_AFTER="${2:?}"; shift ;;
   --dry-run) DRY_RUN=1 ;;
+  --no-plugin) PLUGIN=0 ;;
   -h|--help) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
   *) echo "unknown argument: $1 (try --help)" >&2; exit 2 ;;
 esac; shift; done
 [ -n "$CMD" ] || { echo "usage: $0 --down|--up|--status [--hosts a,b] [--restore-after SECONDS] [--dry-run]" >&2; exit 2; }
 
 say()   { echo "[$(date '+%H:%M:%S')] $*"; }
-sshq()  { ssh -o BatchMode=yes -o ConnectTimeout=8 -o ServerAliveInterval=5 -o ServerAliveCountMax=2 "$SSH_USER@$1$SSH_SUFFIX" "$2"; }
+sshq()  { if [ "$1" = localhost ]; then bash -c "$2"; else ssh -o BatchMode=yes -o ConnectTimeout=8 -o ServerAliveInterval=5 -o ServerAliveCountMax=2 "$SSH_USER@$1$SSH_SUFFIX" "$2"; fi; }
 reachable() { sshq "$1" true >/dev/null 2>&1; }
 run_node()  { if [ "$DRY_RUN" = 1 ]; then echo "  [dry-run] $1: $2"; return 0; fi; sshq "$1" "$2" 2>&1 | sed "s/^/  $1: /"; return "${PIPESTATUS[0]}"; }
+
+# --- hot-plug plugin control: <CTL_DIR>/cmd = "<gen> suspend|resume", one status.<pid> per NCCL process
+plugin_present() { sshq "$1" "ls $CTL_DIR/status.* >/dev/null 2>&1"; }
+plugin_cmd() {   # host verb expected-state -> waits for every status file to report gen+state
+  local h=$1 verb=$2 want=$3 gen; gen=$(date +%s%N)
+  if [ "$DRY_RUN" = 1 ]; then echo "  [dry-run] $h: echo '$gen $verb' > $CTL_DIR/cmd; wait for status.* = $want"; return 0; fi
+  sshq "$h" "n=\$(ls $CTL_DIR/status.* 2>/dev/null | wc -l); printf '%s %s\n' $gen $verb > $CTL_DIR/cmd.tmp && mv $CTL_DIR/cmd.tmp $CTL_DIR/cmd
+    for i in \$(seq 1 600); do ok=0; bad=''; for f in $CTL_DIR/status.*; do read g st rest < \$f; if [ \"\$g\" = $gen ]; then if [ \"\$st\" = $want ]; then ok=\$((ok+1)); else bad=\"\$bad \$(basename \$f):\$st \$rest\"; fi; fi; done
+      [ -n \"\$bad\" ] && { echo \"PLUGIN_FAIL \$bad\"; exit 1; }; [ \"\$ok\" -ge \"\$n\" ] && [ \"\$n\" -gt 0 ] && { echo \"PLUGIN_OK \$ok process(es) $want\"; exit 0; }; sleep 0.25; done
+    echo 'PLUGIN_TIMEOUT'; exit 1" 2>&1 | sed "s/^/  $h: /"; return "${PIPESTATUS[0]}"
+}
 
 STATUS='
 echo "cx7=$(cat '"$SYS"'/debug_state 2>/dev/null) hotplug_enabled=$(cat '"$SYS"'/hotplug_enabled 2>/dev/null) fns=$(lspci -D -d 15b3:1021 2>/dev/null | wc -l) ring=$(for d in '"$RING_IFS"'; do echo -n "$(cat /sys/class/net/$d/operstate 2>/dev/null || echo absent)/$(cat /sys/class/net/$d/speed 2>/dev/null || echo -)/mtu$(cat /sys/class/net/$d/mtu 2>/dev/null || echo -) "; done)rdma_active=$(rdma link show 2>/dev/null | grep -c " ACTIVE ") mgmt=$(cat /sys/class/net/'"$MGMT_IF"'/speed 2>/dev/null)M mstflint=$( [ -d /sys/module/mstflint_access ] && echo loaded || echo unloaded) timer=$(systemctl list-timers --no-legend cx7-restore.timer 2>/dev/null | awk "{print \$1, \$2, \$3}" | grep . || echo none) ctr=$(docker inspect -f "{{.State.Status}}" '"$CONTAINER"' 2>/dev/null || echo none)"
@@ -97,12 +118,21 @@ exit $fail
 '
 
 status_all() { for h in "${HOSTS[@]}"; do printf "%-11s %s\n" "$h" "$(sshq "$h" "$STATUS" 2>/dev/null || echo UNREACHABLE)"; done; }
-for h in "${HOSTS[@]}"; do reachable "$h" || { say "$h unreachable; aborting"; exit 1; }; done
+for h in "${HOSTS[@]}"; do [ "$h" = localhost ] || reachable "$h" || { say "$h unreachable; aborting"; exit 1; }; done
 
 case "$CMD" in
+  suspend|resume)
+    rc=0; want=$( [ "$CMD" = suspend ] && echo suspended || echo active )
+    for h in "${HOSTS[@]}"; do if plugin_present "$h"; then say "-- $h: plugin $CMD"; plugin_cmd "$h" "$CMD" "$want" || rc=1; else say "-- $h: no plugin status files in $CTL_DIR"; rc=1; fi; done
+    exit $rc ;;
   status) status_all ;;
   down)
     say "== down: CX-7 off on ${HOSTS[*]} (restore-after=${RESTORE_AFTER}s dry-run=$DRY_RUN)"
+    if [ "$PLUGIN" = 1 ]; then
+      for h in "${HOSTS[@]}"; do
+        if plugin_present "$h"; then say "-- $h: NCCL hot-plug plugin present, suspending its RDMA state"; plugin_cmd "$h" suspend suspended || { say "$h: plugin refused/failed to suspend; not powering anything down"; exit 1; }; fi
+      done
+    fi
     for h in "${HOSTS[@]}"; do run_node "$h" "$PREP"; done
     say "-- powering the adapters down"
     pids=(); for h in "${HOSTS[@]}"; do run_node "$h" "${OFF//RESTORE_AFTER/$RESTORE_AFTER}" & pids+=($!); done
@@ -122,7 +152,12 @@ case "$CMD" in
       pids=(); for h in "${HOSTS[@]}"; do run_node "$h" "$ON_B" & pids+=($!); done
       for p in "${pids[@]}"; do wait "$p" || rc=1; done
     fi
+    if [ "$rc" = 0 ] && [ "$PLUGIN" = 1 ]; then
+      for h in "${HOSTS[@]}"; do
+        if plugin_present "$h"; then say "-- $h: NCCL hot-plug plugin present, resuming its RDMA state"; plugin_cmd "$h" resume active || rc=1; fi
+      done
+    fi
     say "-- state"; status_all
-    [ "$rc" = 0 ] && say "== up: CX-7 on and ring verified on ${#HOSTS[@]} node(s); start your serving stack" || say "== at least one node FAILED verification; do not start the serving stack until fixed"
+    [ "$rc" = 0 ] && say "== up: CX-7 on and ring verified on ${#HOSTS[@]} node(s)" || say "== at least one node FAILED verification/resume; do not trust the serving stack until fixed"
     exit $rc ;;
 esac
