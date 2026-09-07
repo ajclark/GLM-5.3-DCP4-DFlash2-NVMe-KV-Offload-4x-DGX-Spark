@@ -15,7 +15,7 @@
 #   --suspend / --resume   Only the plugin step (quiesce / re-connect its RDMA state), no adapter action.
 # Needs passwordless sudo on the nodes. Powering the adapter down kills every RDMA/NCCL
 # connection on it; stop or expect to restart whatever uses the ring, UNLESS the workload
-# runs NCCL with the hot-plug-aware net plugin (github.com/ajclark/nccl-net-hotplug): if a
+# runs NCCL with the hot-plug-aware net plugin (github.com/ajclark/nccl-plugin-low-power-dgx-sparks): if a
 # node's plugin answers on 127.0.0.1:CTL_PORT (default 5711, NCCL_HOTPLUG_CTL_PORT), --down first
 # quiesces every plugin process in two phases (prepare on every node: gate the data path,
 # refused if a collective is in flight, in which case everything is aborted and nothing is

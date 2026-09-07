@@ -1,7 +1,7 @@
 # NCCL hot-plug plugin: the on-cluster test plan (one downtime window, ~1 h)
 
 Everything up to here was built and tested on the sandbox against soft-RoCE
-(github.com/ajclark/nccl-net-hotplug, `README.md`). What only the Sparks can
+(github.com/ajclark/nccl-plugin-low-power-dgx-sparks, `README.md`). What only the Sparks can
 answer: NCCL 2.31.2 core loading the v11 plugin, the real ConnectX-7 hot-plug
 under it, performance parity with the builtin IB backend, and the serving
 stack surviving a cycle. Steps are ordered so each one can stop the plan

@@ -251,7 +251,7 @@ three weeks, almost all of it on the sandbox.
 
 ## 5e. Route P status (2026-09-07): built, reviewed, sandbox-tested
 
-The plugin exists: github.com/ajclark/nccl-net-hotplug (local
+The plugin exists: github.com/ajclark/nccl-plugin-low-power-dgx-sparks (local
 `~/nccl-net-hotplug/plugin`), a fork of NVIDIA's out-of-tree IB plugin with
 a two-phase quiesce layer (`prepare` gates the data path and refuses if
 anything is in flight, `commit` tears the RDMA state down, `abort` drops the
