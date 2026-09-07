@@ -1,0 +1,400 @@
+spark-a218:226:226 [0] NCCL INFO NCCL version 2.31.2+cuda13.0
+spark-a218:226:226 [0] NCCL INFO NCCL git version master nccl4py-v0.2.0-1041-gfd168324
+spark-a218:226:226 [0] NCCL INFO NCCL_NET_PLUGIN set by environment to hotplug
+spark-a218:226:226 [0] NCCL INFO NET/Plugin: Loaded net plugin NCCL RDMA Plugin v11 (v11)
+spark-a218:226:226 [0] NCCL INFO Successfully loaded external network plugin /lib/aarch64-linux-gnu/libnccl-net-hotplug.so
+spark-a218:226:226 [0] NCCL INFO Plugin Path : /lib/aarch64-linux-gnu/libnccl-net-hotplug.so
+spark-a218:226:226 [0] NCCL INFO P2P plugin v11 IBext_v11
+spark-a218:226:226 [0] NCCL INFO NCCL_SOCKET_IFNAME set to enP7s7
+spark-a218:226:226 [0] NCCL INFO NET/IB : Made virtual device [0] name=roceP2p1s0f0 speed=200000 ndevs=1
+spark-a218:226:226 [0] NCCL INFO NET/IB : Made virtual device [1] name=roceP2p1s0f1 speed=200000 ndevs=1
+spark-a218:226:226 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:192.168.1.31<0>
+spark-a218:226:226 [0] NCCL INFO NET/IB/hotplug: control endpoint on 127.0.0.1:5711 (status|prepare|commit|resume)
+spark-a218:226:226 [0] NCCL INFO Initialized NET plugin NCCL RDMA Plugin v11
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Assigned NET plugin NCCL RDMA Plugin v11 to comm
+spark-a218:226:226 [0] NCCL INFO RMA/Plugin: Could not find: libnccl-rma.so
+spark-a218:226:226 [0] NCCL INFO dlvsym failed on mlx5dv_get_data_direct_sysfs_path - /lib/aarch64-linux-gnu/libmlx5.so.1: undefined symbol: mlx5dv_get_data_direct_sysfs_path, version MLX5_1.25 version MLX5_1.25
+spark-a218:226:226 [0] NCCL INFO dlvsym failed on mlx5dv_reg_dmabuf_mr - /lib/aarch64-linux-gnu/libmlx5.so.1: undefined symbol: mlx5dv_reg_dmabuf_mr, version MLX5_1.25 version MLX5_1.25
+spark-a218:226:226 [0] NCCL INFO NCCL_IB_HCA set to =roceP2p1s0f0,roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/IB: [2] roceP2p1s0f0:uverbs2:1/RoCE provider=Mlx5 speed=200000 context=0x3b5e7d60 pciPath=/sys/devices/pci0002:00/0002:00:00.0/0002:01:00.0 ar=0 oooRqSize=0
+spark-a218:226:226 [0] NCCL INFO NET/IB: [3] roceP2p1s0f1:uverbs3:1/RoCE provider=Mlx5 speed=200000 context=0x3b629460 pciPath=/sys/devices/pci0002:00/0002:00:00.0/0002:01:00.0 ar=0 oooRqSize=0
+spark-a218:226:226 [0] NCCL INFO NET/IB : Made virtual device [0] name=roceP2p1s0f0 speed=200000 ndevs=1 rail=-1 plane=-1
+spark-a218:226:226 [0] NCCL INFO NET/IB : Made virtual device [1] name=roceP2p1s0f1 speed=200000 ndevs=1 rail=-1 plane=-1
+spark-a218:226:226 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:192.168.1.31<0>
+spark-a218:226:226 [0] NCCL INFO RMA/Plugin: Assigned plugin RMA_IB_PROXY to comm
+spark-a218:226:226 [0] NCCL INFO GIN/Plugin: Could not find: libnccl-gin.so
+spark-a218:226:226 [0] NCCL INFO Using network NCCL RDMA Plugin v11
+spark-a218:226:226 [0] NCCL INFO Loaded NVML from libnvidia-ml.so.1
+spark-a218:226:226 [0] NCCL INFO [Rank 3] ncclCommInitRank comm 0x375d2580 rank 3 nranks 4 cudaDev 0 nvmlDev 0 busId f01000 commId 0xc6e67c9620a5e9a7 - Init START
+spark-a218:226:226 [0] NCCL INFO RAS client listening socket at 127.0.0.1<28028>
+spark-a218:226:226 [0] NCCL INFO NET/GIN_IB_GDAKI : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/GIN_IB_GDAKI : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/RMA_IB_PROXY : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/RMA_IB_PROXY : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/IB : Made virtual device [2] name=roceP2p1s0f0+roceP2p1s0f1 speed=400000 ndevs=2
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 2 'roceP2p1s0f0+roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO ncclTopoGetCpuAffinity: Affinity for GPU 0 is empty, ignoring. (GPU affinity = ).
+spark-a218:226:226 [0] NCCL INFO Rank 3: 3 Net devices
+spark-a218:226:226 [0] NCCL INFO Rank 3: 0 CollNet devices
+spark-a218:226:226 [0] NCCL INFO comm 0x375d2580 rank 3 nRanks 4 nNodes 4 localRanks 1 localRank 0 MNNVL 0
+spark-a218:226:226 [0] NCCL INFO Trees [0] -1/-1/-1->3->2
+spark-a218:226:226 [0] NCCL INFO P2P Chunksize set to 262144
+spark-a218:226:226 [0] NCCL INFO Tuning P2P operations with maxP2pPeers = 4
+spark-a218:226:226 [0] NCCL INFO PROFILER/Plugin: Could not find: libnccl-profiler.so
+spark-a218:226:226 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
+spark-a218:226:253 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 7
+spark-a218:226:252 [0] NCCL INFO [Proxy Service] Device 0 CPU core 10
+spark-a218:226:252 [0] NCCL INFO proxy listening socket at 192.168.1.31<34049>
+spark-a218:226:226 [0] NCCL INFO TUNER/Plugin: Could not find: libnccl-tuner.so
+spark-a218:226:226 [0] NCCL INFO threadThresholds 8/8/64 | 32/8/64 | 512 | 512
+spark-a218:226:226 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls channels, 1 p2p channels, 1 p2p channels per peer
+spark-a218:226:226 [0] NCCL INFO symmetricSupport 0, cuMemEnable 1, globalGinSupport 0, cuMemGdrSupport 0, contiguousRanksPerHost 1, crossNicSupport 1
+spark-a218:226:226 [0] NCCL INFO ncclCommInitRank comm 0x375d2580 rank 3 nranks 4 cudaDev 0 nvmlDev 0 busId f01000 commId 0xc6e67c9620a5e9a7 - Init COMPLETE
+spark-a218:226:226 [0] NCCL INFO Init timings - ncclCommInitRank: rank 3 nranks 4 total 0.43 (kernels 0.27, alloc 0.10, bootstrap 0.02, allgathers 0.01, topo 0.02, graphs 0.00, connections 0.00, rest 0.00)
+spark-a218:226:252 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Channel 00/0 : 2[0] -> 3[0] [receive] via NET/NCCL RDMA Plugin v11/2
+spark-a218:226:252 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Channel 00/0 : 3[0] -> 0[0] [send] via NET/NCCL RDMA Plugin v11/2
+spark-a218:226:254 [0] NCCL INFO [Proxy Progress] Device 0 CPU core 16
+spark-a218:226:252 [0] NCCL INFO NET/IB: Subnet-aware routing: connect on dev 0 instead of dev 2
+spark-a218:226:252 [0] NCCL INFO NET/IB: NCCL Dev 0 IbDev 0 Port 1 qpn 430 mtu 5 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0} GID 3 (0/168A8C0FFFF0000) fifoRkey=0x19cdb8 fifoLkey=0x19cdb8
+spark-a218:226:252 [0] NCCL INFO NET/IB: NCCL Dev 0 IbDev 0 Port 1 qpn 431 mtu 5 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0} GID 3 (0/168A8C0FFFF0000) fifoRkey=0x19cdb8 fifoLkey=0x19cdb8
+spark-a218:226:252 [0] NCCL INFO NET/IB: Subnet-aware routing: accept on dev 1 instead of dev 2
+spark-a218:226:252 [0] NCCL INFO NET/IB: IbDev 0 Port 1 qpn 444 set_ece={supporte(Worker pid=226) WARNING 09-07 17:42:50 [symm_mem.py:66] SymmMemCommunicator: Device capability 12.1 not supported, communicator is not available.
+d=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+spark-a218:226:252 [0] NCCL INFO NET/IB: IbDev 0 Port 1 qpn 446 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+spark-a218:226:226 [0] NCCL INFO Connected all rings, use ring PXN 0 GDR 0
+spark-a218:226:226 [0] NCCL INFO Initialized NET plugin NCCL RDMA Plugin v11
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Assigned NET plugin NCCL RDMA Plugin v11 to comm
+spark-a218:226:226 [0] NCCL INFO RMA/Plugin: Assigned plugin RMA_IB_PROXY to comm
+spark-a218:226:226 [0] NCCL INFO Using network NCCL RDMA Plugin v11
+spark-a218:226:226 [0] NCCL INFO [Rank 1] ncclCommInitRank comm 0x3c5beac0 rank 1 nranks 2 cudaDev 0 nvmlDev 0 busId f01000 commId 0x2c206fab3fb709d1 - Init START
+spark-a218:226:226 [0] NCCL INFO NET/GIN_IB_GDAKI : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/GIN_IB_GDAKI : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/RMA_IB_PROXY : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/RMA_IB_PROXY : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 2 'roceP2p1s0f0+roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO ncclTopoGetCpuAffinity: Affinity for GPU 0 is empty, ignoring. (GPU affinity = ).
+spark-a218:226:226 [0] NCCL INFO Rank 1: 3 Net devices
+spark-a218:226:226 [0] NCCL INFO Rank 1: 0 CollNet devices
+spark-a218:226:226 [0] NCCL INFO comm 0x3c5beac0 rank 1 nRanks 2 nNodes 2 localRanks 1 localRank 0 MNNVL 0
+spark-a218:226:226 [0] NCCL INFO Trees [0] -1/-1/-1->1->0
+spark-a218:226:226 [0] NCCL INFO P2P Chunksize set to 262144
+spark-a218:226:226 [0] NCCL INFO Tuning P2P operations with maxP2pPeers = 2
+spark-a218:226:226 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
+spark-a218:226:262 [0] NCCL INFO [Proxy Service] Device 0 CPU core 17
+spark-a218:226:262 [0] NCCL INFO proxy listening socket at 192.168.1.31<58917>
+spark-a218:226:263 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 1
+spark-a218:226:226 [0] NCCL INFO threadThresholds 8/8/64 | 16/8/64 | 512 | 512
+spark-a218:226:226 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls channels, 1 p2p channels, 1 p2p channels per peer
+spark-a218:226:226 [0] NCCL INFO symmetricSupport 0, cuMemEnable 1, globalGinSupport 0, cuMemGdrSupport 0, contiguousRanksPerHost 1, crossNicSupport 1
+spark-a218:226:226 [0] NCCL INFO ncclCommInitRank comm 0x3c5beac0 rank 1 nranks 2 cudaDev 0 nvmlDev 0 busId f01000 commId 0x2c206fab3fb709d1 - Init COMPLETE
+spark-a218:226:226 [0] NCCL INFO Init timings - ncclCommInitRank: rank 1 nranks 2 total 0.01 (kernels 0.00, alloc 0.00, bootstrap 0.00, allgathers 0.00, topo 0.00, graphs 0.00, connections 0.00, rest 0.00)
+spark-a218:226:264 [0] NCCL INFO [Proxy Progress] Device 0 CPU core 17
+spark-a218:226:262 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Channel 00/0 : 0[0] -> 1[0] [receive] via NET/NCCL RDMA Plugin v11/2
+spark-a218:226:262 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Channel 00/0 : 1[0] -> 0[0] [send] via NET/NCCL RDMA Plugin v11/2
+spark-a218:226:262 [0] NCCL INFO NET/IB: Subnet-aware routing: connect on dev 1 instead of dev 2
+spark-a218:226:262 [0] NCCL INFO NET/IB: NCCL Dev 1 IbDev 1 Port 1 qpn 748 mtu 5 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0} GID 3 (0/167A8C0FFFF0000) fifoRkey=0x1d9987 fifoLkey=0x1d9987
+spark-a218:226:262 [0] NCCL INFO NET/IB: NCCL Dev 1 IbDev 1 Port 1 qpn 749 mtu 5 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0} GID 3 (0/167A8C0FFFF0000) fifoRkey=0x1d9987 fifoLkey=0x1d9987
+spark-a218:226:262 [0] NCCL INFO NET/IB: Subnet-aware routing: accept on dev 1 instead of dev 2
+spark-a218:226:262 [0] NCCL INFO NET/IB: IbDev 1 Port 1 qpn 710 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+spark-a218:226:262 [0] NCCL INFO NET/IB: IbDev 1 Port 1 qpn 711 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+spark-a218:226:226 [0] NCCL INFO Connected all rings, use ring PXN 0 GDR 0
+spark-a218:226:226 [0] NCCL INFO Initialized NET plugin NCCL RDMA Plugin v11
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Assigned NET plugin NCCL RDMA Plugin v11 to comm
+spark-a218:226:226 [0] NCCL INFO RMA/Plugin: Assigned plugin RMA_IB_PROXY to comm
+spark-a218:226:226 [0] NCCL INFO Using network NCCL RDMA Plugin v11
+spark-a218:226:226 [0] NCCL INFO [Rank 3] ncclCommInitRank comm 0x3c77d830 rank 3 nranks 4 cudaDev 0 nvmlDev 0 busId f01000 commId 0xd74db6f99b759e58 - Init START
+spark-a218:226:226 [0] NCCL INFO NET/GIN_IB_GDAKI : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/GIN_IB_GDAKI : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/RMA_IB_PROXY : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/RMA_IB_PROXY : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 2 'roceP2p1s0f0+roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO ncclTopoGetCpuAffinity: Affinity for GPU 0 is empty, ignoring. (GPU affinity = ).
+spark-a218:226:226 [0] NCCL INFO Rank 3: 3 Net devices
+spark-a218:226:226 [0] NCCL INFO Rank 3: 0 CollNet devices
+spark-a218:226:226 [0] NCCL INFO comm 0x3c77d830 rank 3 nRanks 4 nNodes 4 localRanks 1 localRank 0 MNNVL 0
+spark-a218:226:226 [0] NCCL INFO Trees [0] -1/-1/-1->3->2
+spark-a218:226:226 [0] NCCL INFO P2P Chunksize set to 262144
+spark-a218:226:226 [0] NCCL INFO Tuning P2P operations with maxP2pPeers = 4
+spark-a218:226:226 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
+spark-a218:226:287 [0] NCCL INFO [Proxy Servic(Worker pid=226) INFO 09-07 17:42:50 [parallel_state.py:1903] rank 3 in world size 4 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 3, EP rank 3, EPLB rank N/A
+(Worker pid=226) INFO 09-07 17:42:50 [gpu_worker.py:303] Using V2 Model Runner
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:51 [model_runner.py:282] Loading model from scratch...
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:51 [patch_flashmla_ops.py:83] Registered missing env var VLLM_TRITON_MLA_SPARSE into vllm.envs
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:51 [patch_flashmla_ops.py:83] Registered missing env var VLLM_TRITON_MLA_SPARSE_TOPK_CHUNK_SIZE into vllm.envs
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:51 [patch_flashmla_ops.py:83] Registered missing env var VLLM_TRITON_MLA_SPARSE_QUERY_CHUNK_SIZE into vllm.envs
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:51 [patch_flashmla_ops.py:83] Registered missing env var VLLM_TRITON_MLA_SPARSE_HEAD_BLOCK_SIZE into vllm.envs
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:51 [patch_flashmla_ops.py:83] Registered missing env var VLLM_TRITON_MLA_SPARSE_MATMUL_DECODE into vllm.envs
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:51 [patch_flashmla_ops.py:181] Patched vllm.v1.attention.ops.flashmla: flash_mla_sparse_fwd and flash_mla_with_kvcache now use portable Triton sparse-MLA kernels (SM12x / no _flashmla_C).
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:51 [cuda.py:436] Using FLASHMLA_SPARSE attention backend out of potential backends: ['FLASHMLA_SPARSE'].
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:51 [mla_attention.py:435] Using DeepSeek's fp8_ds_mla KV cache format. To use standard fp8 kv-cache format, please set `--attention-backend FLASHINFER_MLA_SPARSE`
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:51 [workspace.py:182] [WORKSPACE DEBUG] Resized workspace from 'flashmla_sparse.py:696:__init__': 0.00 MB -> 36.00 MB (ubatch 0)
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:51 [selector.py:166] Using FLASH_ATTN MLA prefill backend.
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:51 [compressed_tensors_wNa16.py:112] Using MarlinLinearKernel for CompressedTensorsWNA16
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:51 [compressed_tensors_moe.py:155] Using CompressedTensorsWNA16MarlinMoEMethod
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:51 [int_wna16.py:158] Using 'MARLIN' WNA16 MoE backend.
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:55 [weight_utils.py:849] Filesystem type for checkpoints: EXT4. Checkpoint size: 377.41 GiB. Available RAM: 16.07 GiB.
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:42:55 [weight_utils.py:879] Auto-prefetch is disabled because the filesystem (EXT4) is not a recognized network FS (NFS/Lustre) and the checkpoint size (377.41 GiB) exceeds 90% of available RAM (16.07 GiB).
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:47:22 [default_loader.py:430] Loading weights took 266.16 seconds
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:47:23 [int_wna16.py:250] Using MoEPrepareAndFinalizeNoDPEPModular
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:47:30 [eagle3_utils.py:28] Using Eagle3 auxiliary layers from config: (6, 20, 34, 48, 62, 76)
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:47:30 [vllm.py:1029] Asynchronous scheduling is enabled.
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:47:30 [kernel.py:274] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
+(Worker_TP3_DCP1 pid=226) WARNING 09-07 17:47:30 [vllm.py:1637] max_num_scheduled_tokens is set to 1976 based on the speculative decoding settings. This may lead to suboptimal performance. Consider increasing max_num_batched_tokens to accommodate the additional draft token slots, or decrease num_speculative_tokens or max_num_seqs.
+(Worker_TP3_DCP1 pid=226) WARNING 09-07 17:47:31 [vllm.py:2127] Model Runner V2 does not yet support the thinking_token_budget request parameter. Set VLLM_USE_V2_MODEL_RUNNER=0 if this is required.
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:47:31 [cuda.py:436] Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'TRITON_ATTN', 'FLEX_ATTENTION'].
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:47:31 [flash_attn.py:734] Using FlashAttention version 2
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:47:32 [weight_utils.py:849] Filesystem type for checkpoints: EXT4. Checkpoint size: 4.58 GiB. Available RAM: 15.20 GiB.
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:47:32 [weight_utils.py:872] Auto-prefetch is disabled because the filesystem (EXT4) is not a recognized network FS (NFS/Lustre). If you want to force prefetching, start vLLM with --safetensors-load-strategy=prefetch.
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:47:40 [default_loader.py:430] Loading weights took 8.00 seconds
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:47:48 [model_runner.py:303] Model loading took 96.32 GiB and 297.166788 seconds
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:47:48 [interface.py:519] Setting kv cache block size to 64 for DEEPSEEK_V32_INDEXER backend.
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:48:34 [backends.py:1089] Using cache directory: /root/.cache/vllm/torch_compile_cache/ad2f0adfc2/rank_3_0/backbone for vLLM's torch.compile
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:48:34 [backends.py:1148] Dynamo bytecode transform time: 13.61 s
+(Worker_TP3_DCP1 pid=226) [rank3]:W0907 17:48:37.078000 226 torch/_inductor/utils.py:1731] Not enough SMs to use max_autotune_gemm mode
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:48:38 [backends.py:378] Cache the graph of compile range (1, 2048) for later use
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:48:58 [backends.py:393] Compiling a graph for compile range (1, 2048) takes 22.92 s
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:06 [decorators.py:708] saved AOT compiled function to /root/.cache/vllm/torch_compile_cache/torch_aot_compile/e99f17b8668a89b733806588ee04f4a9d2f2ef9eea989ceade69fb9ca1ea05f4/rank_3_0/model
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:06 [monitor.py:53] torch.compile took 45.07 s in total
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:07 [workspace.py:182] [WORKSPACE DEBUG] Resized workspace from 'sparse_attn_indexer.py:401:sparse_attn_indexer': 36.00 MB -> 454.75 MB (ubatch 0)
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:17 [monitor.py:81] Initial profiling/warmup run took 11.30 s
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:18 [backends.py:1089] Using cache directory: /root/.cache/vllm/torch_compile_cache/ad2f0adfc2/rank_3_0/dflash_head for vLLM's torch.compile
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:18 [backends.py:1148] Dynamo bytecode transform time: 1.00 s
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:23 [backends.py:393] Compiling a graph for compile range (1, 2048) takes 4.48 s
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:24 [decorators.py:708] saved AOT compiled function to /root/.cache/vllm/torch_compile_cache/torch_aot_compile/f3eb4649cbd313c0f154534d16a01f180ec7ab2ebf9ec4ead5e256a82666afeb/rank_3_0/model
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:24 [monitor.py:53] torch.compile took 6.59 s in total
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:24 [monitor.py:81] Initial profiling/warmup run took 0.91 s
+e] Device 0 CPU core 17
+spark-a218:226:287 [0] NCCL INFO proxy listening socket at 192.168.1.31<48809>
+spark-a218:226:288 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 4
+spark-a218:226:226 [0] NCCL INFO threadThresholds 8/8/64 | 32/8/64 | 512 | 512
+spark-a218:226:226 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls channels, 1 p2p channels, 1 p2p channels per peer
+spark-a218:226:226 [0] NCCL INFO symmetricSupport 0, cuMemEnable 1, globalGinSupport 0, cuMemGdrSupport 0, contiguousRanksPerHost 1, crossNicSupport 1
+spark-a218:226:226 [0] NCCL INFO ncclCommInitRank comm 0x3c77d830 rank 3 nranks 4 cudaDev 0 nvmlDev 0 busId f01000 commId 0xd74db6f99b759e58 - Init COMPLETE
+spark-a218:226:226 [0] NCCL INFO Init timings - ncclCommInitRank: rank 3 nranks 4 total 0.01 (kernels 0.00, alloc 0.00, bootstrap 0.00, allgathers 0.00, topo 0.00, graphs 0.00, connections 0.00, rest 0.00)
+spark-a218:226:289 [0] NCCL INFO [Proxy Progress] Device 0 CPU core 17
+spark-a218:226:287 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Channel 00/0 : 2[0] -> 3[0] [receive] via NET/NCCL RDMA Plugin v11/2
+spark-a218:226:287 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Channel 00/0 : 3[0] -> 0[0] [send] via NET/NCCL RDMA Plugin v11/2
+spark-a218:226:287 [0] NCCL INFO NET/IB: Subnet-aware routing: connect on dev 0 instead of dev 2
+spark-a218:226:287 [0] NCCL INFO NET/IB: NCCL Dev 0 IbDev 0 Port 1 qpn 432 mtu 5 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0} GID 3 (0/168A8C0FFFF0000) fifoRkey=0x19b8a6 fifoLkey=0x19b8a6
+spark-a218:226:287 [0] NCCL INFO NET/IB: NCCL Dev 0 IbDev 0 Port 1 qpn 433 mtu 5 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0} GID 3 (0/168A8C0FFFF0000) fifoRkey=0x19b8a6 fifoLkey=0x19b8a6
+spark-a218:226:287 [0] NCCL INFO NET/IB: Subnet-aware routing: accept on dev 1 instead of dev 2
+spark-a218:226:287 [0] NCCL INFO NET/IB: IbDev 0 Port 1 qpn 448 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+spark-a218:226:287 [0] NCCL INFO NET/IB: IbDev 0 Port 1 qpn 449 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+spark-a218:226:226 [0] NCCL INFO Connected all rings, use ring PXN 0 GDR 0
+spark-a218:226:226 [0] NCCL INFO Initialized NET plugin NCCL RDMA Plugin v11
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Assigned NET plugin NCCL RDMA Plugin v11 to comm
+spark-a218:226:226 [0] NCCL INFO RMA/Plugin: Assigned plugin RMA_IB_PROXY to comm
+spark-a218:226:226 [0] NCCL INFO Using network NCCL RDMA Plugin v11
+spark-a218:226:226 [0] NCCL INFO [Rank 3] ncclCommInitRankConfig comm 0x774b8510 rank 3 nranks 4 cudaDev 0 nvmlDev 0 busId f01000 commId 0x9ff52954f25dd508 - Init START
+spark-a218:226:226 [0] NCCL INFO NET/GIN_IB_GDAKI : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/GIN_IB_GDAKI : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/RMA_IB_PROXY : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/RMA_IB_PROXY : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/IB : GP(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:25 [backends.py:1089] Using cache directory: /root/.cache/vllm/torch_compile_cache/ad2f0adfc2/rank_3_0/dflash2_candidate_selector for vLLM's torch.compile
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:25 [backends.py:1148] Dynamo bytecode transform time: 0.13 s
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:26 [backends.py:393] Compiling a graph for compile range (1, 2048) takes 0.83 s
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:26 [decorators.py:708] saved AOT compiled function to /root/.cache/vllm/torch_compile_cache/torch_aot_compile/505286e547d8e9a012df5804edc6d026f5937b9bc7ad6d5cf094fcd7f6e25fa5/rank_3_0/model
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:26 [monitor.py:53] torch.compile took 1.02 s in total
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:27 [monitor.py:81] Initial profiling/warmup run took 0.45 s
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:27 [gpu_worker.py:401] Initial free memory 112.78 GiB, reserved 5.59 GiB memory for KV Cache as specified by kv_cache_memory_bytes config and skipped memory profiling. This does not respect the gpu_memory_utilization config. Only use kv_cache_memory_bytes config when you want manual control of KV cache memory size. If OOM'ed, check the difference of initial free memory between the current run and the previous run where kv_cache_memory_bytes is suggested and update it correspondingly.
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:28 [gpu_worker.py:607] Cleared 2.69 GiB of cached CUDA allocator memory before KV cache allocation.
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:28 [factory.py:62] Creating v1 connector with name: MultiNodeSlabConnector and engine_id: fb961676-64ed-4cd1-9928-3a2c3b220366
+(Worker_TP3_DCP1 pid=226) WARNING 09-07 17:49:28 [base.py:190] Initializing KVConnectorBase_V1. This API is experimental and subject to change in the future as we iterate the design.
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:28 [factory.py:61] Creating offloading spec with name: MultiNodeSlabOffloadingSpec
+(Worker_TP3_DCP1 pid=226) WARNING 09-07 17:49:28 [base.py:435] Initializing OffloadingSpec. This API is experimental and subject to change in the future as we iterate the design.
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:28 [indexer.py:325] DSA indexer decode path: use_flattening=True (next_n=8, use_fp4_indexer_cache=False)
+(Worker_TP3_DCP1 pid=226) WARNING 09-07 17:49:28 [compilation.py:1358] CUDAGraphMode.FULL is not supported with DeepseekV32IndexerBackend backend (support: AttentionCGSupport.UNIFORM_BATCH); setting cudagraph_mode=FULL_AND_PIECEWISE
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:28 [multinode.py:1706] Slab store: rank 3 at /kvcache/_models_glm-5.3_b096e4c3d4ce_r3, slot bytes [3452928, 397312], slots [29749, 118996] (150.0 GB cap), 48 bounce slots
+(Worker_TP3_DCP1 pid=226) 2026-09-07 17:49:28,907 - INFO - autotuner.py:972 - flashinfer.jit: [Autotuner]: Autotuning process starts ...
+U Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 2 'roceP2p1s0f0+roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO ncclTopoGetCpuAffinity: Affinity for GPU 0 is empty, ignoring. (GPU affinity = ).
+spark-a218:226:226 [0] NCCL INFO Rank 3: 3 Net devices
+spark-a218:226:226 [0] NCCL INFO Rank 3: 0 CollNet devices
+spark-a218:226:226 [0] NCCL INFO comm 0x774b8510 rank 3 nRanks 4 nNodes 4 localRanks 1 localRank 0 MNNVL 0
+spark-a218:226:226 [0] NCCL INFO Trees [0] -1/-1/-1->3->2
+spark-a218:226:226 [0] NCCL INFO P2P Chunksize set to 262144
+spark-a218:226:226 [0] NCCL INFO Tuning P2P operations with maxP2pPeers = 4
+spark-a218:226:226 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
+spark-a218:226:304 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 7
+spark-a218:226:303 [0] NCCL INFO [Proxy Service] Device 0 CPU core 15
+spark-a218:226:303 [0] NCCL INFO proxy listening socket at 192.168.1.31<40637>
+spark-a218:226:226 [0] NCCL INFO threadThresholds 8/8/64 | 32/8/64 | 512 | 512
+spark-a218:226:226 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls channels, 1 p2p channels, 1 p2p channels per peer
+spark-a218:226:226 [0] NCCL INFO symmetricSupport 0, cuMemEnable 1, globalGinSupport 0, cuMemGdrSupport 0, contiguousRanksPerHost 1, crossNicSupport 1
+spark-a218:226:226 [0] NCCL INFO ncclCommInitRankConfig comm 0x774b8510 rank 3 nranks 4 cudaDev 0 nvmlDev 0 busId f01000 commId 0x9ff52954f25dd508 - Init COMPLETE
+spark-a218:226:226 [0] NCCL INFO Init timings - ncclCommInitRankConfig: rank 3 nranks 4 total 0.20 (kernels 0.14, alloc 0.01, bootstrap 0.02, allgathers 0.01, topo 0.02, graphs 0.00, connections 0.00, rest 0.00)
+spark-a218:226:226 [0] NCCL INFO Symmetric VA size=124GB
+spark-a218:226:305 [0] NCCL INFO [Proxy Progress] Device 0 CPU core 15
+spark-a218:226:303 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Channel 00/0 : 2[0] -> 3[0] [receive] via NET/NCCL RDMA Plugin v11/2
+spark-a218:226:303 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Channel 00/0 : 3[0] -> 0[0] [send] via NET/NCCL RDMA Plugin v11/2
+spark-a218:226:303 [0] NCCL INFO NET/IB: Subnet-aware routing: connect on dev 0 instead of dev 2
+spark-a218:226:303 [0] NCCL INFO NET/IB: NCCL Dev 0 IbDev 0 Port 1 qpn 434 mtu 5 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0} GID 3 (0/168A8C0FFFF0000) fifoRkey=0x199f8a fifoLkey=0x199f8a
+spark-a218:226:303 [0] NCCL INFO NET/IB: NCCL Dev 0 IbDev 0 Port 1 qpn 435 mtu 5 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0} GID 3 (0/168A8C0FFFF0000) fifoRkey=0x199f8a fifoLkey=0x199f8a
+spark-a218:226:303 [0] NCCL INFO NET/IB: Subnet-aware routing: accept on dev 1 instead of dev 2
+spark-a218:226:303 [0] NCCL INFO NET/IB: IbDev 0 Port 1 qpn 451 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+spark-a218:226:303 [0] NCCL INFO NET/IB: IbDev 0 Port 1 qpn 452 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+spark-a218:226:226 [0] NCCL INFO Connected all rings, use ring PXN 0 GDR 0
+spark-a218:226:226 [0] NCCL INFO Initialized NET plugin NCCL RDMA Plugin v11
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Assigned NET plugin NCCL RDMA Plugin v11 to comm
+spark-a218:226:226 [0] NCCL INFO RMA/Plugin: Assigned plugin RMA_IB_PROXY to comm
+spark-a218:226:226 [0] NCCL INFO Using network NCCL RDMA Plugin v11
+spark-a218:226:226 [0] NCCL INFO [Rank 1] ncclCommInitRankConfig comm 0x81784180 rank 1 nranks 2 cudaDev 0 nvmlDev 0 busId f01000 commId 0x1f8fa8130b074353 - Init START
+spark-a218:226:226 [0] NCCL INFO NET/GIN_IB_GDAKI : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/GIN_IB_GDAKI : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/RMA_IB_PROXY : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/RMA_IB_PROXY : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 0 'roceP2p1s0f0'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 1 'roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 1 'roceP2p1s0f1
+spark-a218:226:226 [0] NCCL INFO NET/NCCL RDMA Plugin v11 : GPU Direct RDMA Disabled for HCA 2 'roceP2p1s0f0+roceP2p1s0f1'
+spark-a218:226:226 [0] NCCL INFO ncclTopoGetCpuAffinity: Affinity for GPU 0 is empty, ignoring. (GPU affinity = ).
+spark-a218:226:226 [0] NCCL INFO Rank 1: 3 Net devices
+spark-a218:226:226 [0] NCCL INFO Rank 1: 0 CollNet devices
+spark-a218:226:226 [0] NCCL INFO comm 0x81784180 rank 1 nRanks 2 nNodes 2 localRanks 1 localRank 0 MNNVL 0
+spark-a218:226:226 [0] NCCL INFO Trees [0] -1/-1/-1->1->0
+spark-a218:226:226 [0] NCCL INFO P2P Chunksize set to 262144
+spark-a218:226:226 [0] NCCL INFO Tuning P2P operations with maxP2pPeers = 2
+spark-a218:226:226 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
+spark-a218:226:226 [0] NCCL INFO threadThresholds 8/8/64 | 16/8/64 | 512 | 512
+spark-a218:226:226 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls channels, 1 p2p channels, 1 p2p channels per peer
+spark-a218:226:226 [0] NCCL INFO symmetricSupport 0, cuMemEnable 1, globalGinSupport 0, cuMemGdrSupport 0, contiguousRanksPerHost 1, crossNicSupport 1
+spark-a218:226:323 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 9
+spark-a218:226:322 [0] NCCL INFO [Proxy Service] Device 0 CPU core 10
+spark-a218:226:322 [0] NCCL INFO proxy listening socket at 192.168.1.31<46385>
+spark-a218:226:226 [0] NCCL INFO ncclCommInitRankConfig comm 0x81784180 rank 1 nranks 2 cudaDev 0 nvmlDev 0 busId f01000 commId 0x1f8fa8130b074353 - Init COMPLETE
+spark-a218:226:226 [0] NCCL INFO Init timings - ncclCommInitRankConfig: rank 1 nranks 2 total 0.01 (kernels 0.00, alloc 0.00, bootstrap 0.01, allgathers 0.00, topo 0.00, graphs 0.00, connections 0.00, rest 0.00)
+spark-a218:226:226 [0] NCCL INFO Symmetric VA size=124GB
+spark-a218:226:324 [0] NCCL INFO [Proxy Progress] Device 0 CPU core 10
+spark-a218:226:322 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Channel 00/0 : 0[0] -> 1[0] [receive] via NET/NCCL RDMA Plugin v11/2
+spark-a218:226:322 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
+spark-a218:226:226 [0] NCCL INFO Channel 00/0 : 1[0] -> 0[0] [send] via NET/NCCL RDMA Plugin v11/2
+spark-a218:226:322 [0] NCCL INFO NET/IB: Subnet-aware routing: connect on dev 1 instead of dev 2
+spark-a218:226:322 [0] NCCL INFO NET/IB: NCCL Dev 1 IbDev 1 Port 1 qpn 761 mtu 5 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0} GID 3 (0/167A8C0FFFF0000) fifoRkey=0x1d1e07 fifoLkey=0x1d1e07
+(Worker_TP3_DCP1 pid=226) 2026-09-07 17:50:13,244 - INFO - autotuner.py:995 - flashinfer.jit: [Autotuner]: Autotuning process ends
+spark-a218:226:322 [0] NCCL INFO NET/IB: NCCL Dev 1 IbDev 1 Port 1 qpn 762 mtu 5 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0} GID 3 (0/167A8C0FFFF0000)(Worker_TP3_DCP1 pid=226) INFO 09-07 17:50:38 [speculator.py:97] Capturing model for DFlash speculator...
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:50:39 [model_runner.py:727] Graph capturing finished in 25 secs, took 1.31 GiB
+(Worker_TP3_DCP1 pid=226) INFO 09-07 17:50:40 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+(Worker_TP3_DCP1 pid=226) WARNING 09-07 17:51:31 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+(Worker_TP3_DCP1 pid=226) WARNING 09-07 17:54:06 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+ fifoRkey=0x1d1e07 fifoLkey=0x1d1e07
+spark-a218:226:322 [0] NCCL INFO NET/IB: Subnet-aware routing: accept on dev 1 instead of dev 2
+spark-a218:226:322 [0] NCCL INFO NET/IB: IbDev 1 Port 1 qpn 721 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+spark-a218:226:322 [0] NCCL INFO NET/IB: IbDev 1 Port 1 qpn 722 set_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}
+spark-a218:226:226 [0] NCCL INFO Connected all rings, use ring PXN 0 GDR 0
+spark-a218:226:248 [0] NCCL INFO NET/IB/hotplug: prepared: 10 comm(s) gated, nothing in flight
+spark-a218:226:248 [0] NCCL INFO NET/IB/hotplug: prepared: 10 comm(s) gated, nothing in flight
+spark-a218:226:248 [0] NCCL INFO NET/IB/hotplug: suspended 10 comm(s), 2 device(s) closed
+
+[2026-09-07 17:53:03] spark-a218:226:249 [0] transport/net_ib/common.cc:179 (ncclIbAsyncThreadMain) NCCL WARN NET/IB : roceP2p1s0f0:1 async fatal event: local catastrophic error
+
+[2026-09-07 17:53:08] spark-a218:226:250 [0] transport/net_ib/common.cc:179 (ncclIbAsyncThreadMain) NCCL WARN NET/IB : roceP2p1s0f1:1 async fatal event: local catastrophic error
+spark-a218:226:248 [0] NCCL INFO NET/IB/hotplug: resume: re-opening 2 device(s)
+spark-a218:226:248 [0] NCCL INFO NET/IB/hotplug: reopened roceP2p1s0f0 port 1 (state ACTIVE, mtu 5)
+spark-a218:226:248 [0] NCCL INFO NET/IB/hotplug: reopened roceP2p1s0f1 port 1 (state ACTIVE, mtu 5)
+spark-a218:226:248 [0] NCCL INFO NET/IB/hotplug: resume: devices back, re-connecting 10 comm(s) (timeout 300000 ms)
+spark-a218:226:248 [0] NCCL INFO NET/IB/hotplug: resumed 10 comm(s)
+[rank3]:[E907 21:09:45.208866474 ProcessGroupNCCL.cpp:689] [Rank 1] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=15580, OpType=_ALLGATHER_BASE, NumelIn=8093696, NumelOut=16187392, Timeout(ms)=600000) ran for 600096 milliseconds before timing out.
+[rank3]:[E907 21:09:45.211195591 ProcessGroupNCCL.cpp:2303] [PG ID 3 PG GUID 7 Rank 1]  failure detected by watchdog at work sequence id: 15580 PG status: last enqueued work: 15614, last completed work: 15579
+[rank3]:[E907 21:09:45.212425326 ProcessGroupNCCL.cpp:733] Stack trace of the failed collective: 
+#0 all_gather_into_tensor from /usr/local/lib/python3.12/dist-packages/torch/distributed/distributed_c10d.py:4186
+#1 wrapper from /usr/local/lib/python3.12/dist-packages/torch/distributed/c10d_logger.py:83
+#2 all_gather from /usr/local/lib/python3.12/dist-packages/vllm/distributed/device_communicators/base_device_communicator.py:198
+#3 _all_gather_out_place from /usr/local/lib/python3.12/dist-packages/vllm/distributed/parallel_state.py:655
+#4 all_gather from /usr/local/lib/python3.12/dist-packages/vllm/distributed/parallel_state.py:167
+#5 __call__ from /usr/local/lib/python3.12/dist-packages/torch/_ops.py:1269
+#6 all_gather from /usr/local/lib/python3.12/dist-packages/vllm/distributed/parallel_state.py:646
+#7 _merge_dcp_topk_global from /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/sparse_attn_indexer.py:188
+#8 sparse_attn_indexer from /usr/local/lib/python3.12/dist-packages/vllm/model_executor/layers/sparse_attn_indexer.py:571
+#9 __call__ from /usr/local/lib/python3.12/dist-packages/torch/_ops.py:1269
+#10 __vllm_inlined_submods__4 from <string>:15
+#11 execution_fn from <string>:699
+#12 __call__ from /usr/local/lib/python3.12/dist-packages/vllm/compilation/caching.py:217
+#13 forward from /usr/local/lib/python3.12/dist-packages/vllm/model_executor/models/deepseek_v2.py:1327
+#14 __call__ from /usr/local/lib/python3.12/dist-packages/torch/_dynamo/aot_compile.py:224
+#15 __call__ from /usr/local/lib/python3.12/dist-packages/vllm/compilation/decorators.py:520
+#16 forward from /usr/local/lib/python3.12/dist-packages/vllm/model_executor/models/deepseek_v2.py:1754
+#17 _call_impl from /usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py:1790
+#18 _wrapped_call_impl from /usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py:1779
+#19 execute_model from /usr/local/lib/python3.12/dist-packages/vllm/v1/worker/gpu/model_runner.py:1293
+#20 decorate_context from /usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py:124
+#21 execute_model from /usr/local/lib/python3.12/dist-packages/vllm/v1/worker/gpu_worker.py:916
+#22 decorate_context from /usr/local/lib/python3.12/dist-packages/torch/utils/_contextlib.py:124
+#23 execute_model from /usr/local/lib/python3.12/dist-packages/vllm/v1/worker/worker_base.py:345
+#24 worker_busy_loop from /usr/local/lib/python3.12/dist-packages/vllm/v1/executor/multiproc_executor.py:982
+#25 worker_main from /usr/local/lib/python3.12/dist-packages/vllm/v1/executor/multiproc_executor.py:879
+#26 run from /usr/lib/python3.12/multiprocessing/process.py:108
+#27 _bootstrap from /usr/lib/python3.12/multiprocessing/process.py:314
+#28 _main from /usr/lib/python3.12/multiprocessing/spawn.py:135
+#29 spawn_main from /usr/lib/python3.12/multiprocessing/spawn.py:122
+#30 <module> from <string>:1
+
+[rank3]:[E907 21:09:45.212489102 ProcessGroupNCCL.cpp:2636] [PG ID 3 PG GUID 7 Rank 1] First PG on this rank to signal dumping.
+[rank3]:[E907 21:09:45.843547931 ProcessGroupNCCL.cpp:1914] [PG ID 0 PG GUID 0 Rank 3] Received a dump signal due to a collective timeout from this local rank and we will try our best to dump the debug info. Last enqueued NCCL work: -1, last completed NCCL work: -1.This is most likely caused by incorrect usages of collectives, e.g., wrong sizes used across ranks, the order of collectives is not same for all ranks or the scheduled collective, for some reason, didn't run. Additionally, this can be caused by GIL deadlock or other reasons such as network errors or bugs in the communications library (e.g. NCCL), etc. 
+[rank3]:[E907 21:09:45.853375089 ProcessGroupNCCL.cpp:1628] [PG ID 0 PG GUID 0 Rank 3] ProcessGroupNCCL preparing to dump debug info. Include stack trace: 1, only active collectives: 0
+[rank3]:[F907 21:17:45.886777875 ProcessGroupNCCL.cpp:1653] [PG ID 0 PG GUID 0 Rank 3] [PG ID 0 PG GUID 0 Rank 3] Terminating the process after attempting to dump debug info, due to collective timeout or exception.
+ERROR 09-07 21:18:48 [multiproc_executor.py:284] Worker proc VllmWorker-3 died unexpectedly, shutting down executor.
+INFO 09-07 21:18:48 [multiproc_executor.py:426] [shutdown] Executor: waiting for worker exit count=1
+INFO 09-07 21:18:50 [multiproc_executor.py:433] [shutdown] Executor: all workers exited gracefully

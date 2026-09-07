@@ -1,0 +1,13 @@
+[21:25:08] rollout 'dcp2-hotplug-3' MAXLEN=180224 MAXBATCHED=2048 KVBYTES=6000000000 KVTIER=1 out=/home/napta2k/spark-cluster-mla-dcp/results/rollout-dcp2-hotplug-3-20260907-212508
+[21:25:08] SKIP_PREFLIGHT=1: not requiring a healthy stack (recovery)
+[21:25:08] production healthy; saving pre-rollout logs + memory baseline
+spark-06c4 avail=115936MiB swapfree=14866MiB pswpout=2104183
+spark-365c avail=117277MiB swapfree=16277MiB pswpout=1597307
+spark-ddbf avail=117503MiB swapfree=16276MiB pswpout=1606130
+spark-a218 avail=117620MiB swapfree=16276MiB pswpout=1606190
+[21:25:10] ring GID check (NCCL_IB_GID_INDEX=3 on both ring ports of every node)
+[21:25:15]   spark-06c4 staged + verified
+[21:25:15]   spark-365c staged + verified
+[21:25:16]   spark-ddbf staged + verified
+[21:25:17]   spark-a218 staged + verified
+[21:25:17] stopping production ranks
