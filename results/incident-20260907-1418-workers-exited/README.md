@@ -57,6 +57,10 @@ Two levels.
   Module count alone is not it.
 - `bench/repro/indexer_kernel_specialization_stress.py` (the real kernel, real
   specializations) needs a node without the serving stack; scheduled for the next window.
-- First version of the fix (all strides runtime) cost 26% decode (181 vs 144 ms/cycle, output
-  byte-identical); narrowed to the per-request arguments in 487b91f, relaunched as
-  `dcp2-hotplug-5`.
+- The fix does not change results (count100 hash identical) and, contrary to my first
+  reading, does not change decode speed either: the broad version (all strides runtime) and
+  the narrowed one (per-request arguments only, 487b91f, lane `dcp2-hotplug-5`) both measure
+  181 ms/cycle, and so did the plugin lane before any kernel change (this afternoon's count100
+  on `dcp2-hotplug-1`: 200 tokens in 4.9 s). The 181 vs 144 ms gap is between the plugin lane
+  and the builtin-backend lane, under investigation (`dcp2-builtin-check` relaunch, then a
+  profiler trace of the plugin lane). GPU clocks are locked at 1995 MHz on all nodes.
