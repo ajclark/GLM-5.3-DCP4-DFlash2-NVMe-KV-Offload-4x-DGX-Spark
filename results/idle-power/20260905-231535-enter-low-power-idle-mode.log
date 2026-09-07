@@ -1,0 +1,36 @@
+[23:15:35] == enter idle mode: tier=light ring-down=0 eth-1g=0 suspend=0 dry-run=1 (log /home/napta2k/spark-cluster-mla-dcp/results/idle-power/20260905-231535-enter-low-power-idle-mode.log)
+[23:15:37] -- baseline
+[23:15:37]   spark-06c4 gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=192.168.104.2/24/192.168.100.1/24 mtu=9000/9000 radios_blocked=1/2 gpu_W/MHz/pm=7.89/1995/Enabled ctr=running availG=2.9
+[23:15:37]   spark-365c gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=192.168.102.1/24/192.168.100.2/24 mtu=9000/9000 radios_blocked=0/2 gpu_W/MHz/pm=8.70/1995/Enabled ctr=running availG=4.0
+[23:15:38]   spark-ddbf gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=192.168.102.2/24/192.168.103.2/24 mtu=9000/9000 radios_blocked=0/2 gpu_W/MHz/pm=8.39/1995/Enabled ctr=running availG=4.8
+[23:15:38]   spark-a218 gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=192.168.104.1/24/192.168.103.1/24 mtu=9000/9000 radios_blocked=0/2 gpu_W/MHz/pm=7.17/1976/Enabled ctr=running availG=4.7
+[23:15:38] -- light steps (clock lock, governor, radios)
+  [dry-run] spark-06c4: 
+sudo -n nvidia-smi -rgc >/dev/null 2>&1 && echo "gpu clock lock released" || echo "WARN: nvidia-smi -rgc failed"
+for g in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo schedutil | sudo -n tee "$g" >/dev/null; done
+echo "governor $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)"
+sudo -n rfkill block wlan; sudo -n rfkill block bluetooth
+echo "wifi+bt soft-blocked ($(rfkill list | grep -c "Soft blocked: yes")/2)"
+
+  [dry-run] spark-365c: 
+sudo -n nvidia-smi -rgc >/dev/null 2>&1 && echo "gpu clock lock released" || echo "WARN: nvidia-smi -rgc failed"
+for g in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo schedutil | sudo -n tee "$g" >/dev/null; done
+echo "governor $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)"
+sudo -n rfkill block wlan; sudo -n rfkill block bluetooth
+echo "wifi+bt soft-blocked ($(rfkill list | grep -c "Soft blocked: yes")/2)"
+
+  [dry-run] spark-a218: 
+sudo -n nvidia-smi -rgc >/dev/null 2>&1 && echo "gpu clock lock released" || echo "WARN: nvidia-smi -rgc failed"
+for g in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo schedutil | sudo -n tee "$g" >/dev/null; done
+echo "governor $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)"
+sudo -n rfkill block wlan; sudo -n rfkill block bluetooth
+echo "wifi+bt soft-blocked ($(rfkill list | grep -c "Soft blocked: yes")/2)"
+
+  [dry-run] spark-ddbf: 
+sudo -n nvidia-smi -rgc >/dev/null 2>&1 && echo "gpu clock lock released" || echo "WARN: nvidia-smi -rgc failed"
+for g in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo schedutil | sudo -n tee "$g" >/dev/null; done
+echo "governor $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)"
+sudo -n rfkill block wlan; sudo -n rfkill block bluetooth
+echo "wifi+bt soft-blocked ($(rfkill list | grep -c "Soft blocked: yes")/2)"
+
+[23:15:38] == dry run complete; nothing was changed

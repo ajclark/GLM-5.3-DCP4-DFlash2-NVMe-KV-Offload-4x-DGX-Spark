@@ -17,9 +17,11 @@
 # connection on it; stop or expect to restart whatever uses the ring, UNLESS the workload
 # runs NCCL with the hot-plug-aware net plugin (github.com/ajclark/nccl-net-hotplug): if
 # CTL_DIR (default /var/tmp/nccl-hotplug) holds plugin status files on a node, --down first
-# asks every plugin instance there to suspend (refused, and --down stops, if a collective is
-# in flight) and --up asks them to resume after the ring is verified. Then the serving stack
-# survives the cycle with its communicators and CUDA graphs intact.
+# quiesces every plugin process in two phases (prepare on every node: gate the data path,
+# refused if a collective is in flight, in which case everything is aborted and nothing is
+# powered down; then commit on every node: tear the RDMA state down) and --up asks them to
+# resume after the ring is verified. Then the serving stack survives the cycle with its
+# communicators and CUDA graphs intact.
 #   --no-plugin  skip the plugin suspend/resume even if status files are present
 set -uo pipefail
 
@@ -51,13 +53,37 @@ sshq()  { if [ "$1" = localhost ]; then bash -c "$2"; else ssh -o BatchMode=yes 
 reachable() { sshq "$1" true >/dev/null 2>&1; }
 run_node()  { if [ "$DRY_RUN" = 1 ]; then echo "  [dry-run] $1: $2"; return 0; fi; sshq "$1" "$2" 2>&1 | sed "s/^/  $1: /"; return "${PIPESTATUS[0]}"; }
 
-# --- hot-plug plugin control: <CTL_DIR>/cmd = "<gen> suspend|resume", one status.<pid> per NCCL process
+# --- hot-plug plugin control: <CTL_DIR>/cmd = "<gen> prepare|commit|abort|resume", one status.<pid> per NCCL process.
+# Quiescing is two-phase across the nodes: every process must report "prepared" (data path gated,
+# nothing in flight) before any of them is told to "commit" (tear the RDMA state down). A process
+# that is busy at prepare makes the whole operation abort (gates dropped again, nothing torn down).
 plugin_present() { sshq "$1" "ls $CTL_DIR/status.* >/dev/null 2>&1"; }
-plugin_cmd() {   # host verb expected-state -> waits for every status file to report gen+state
+plugin_hosts() { PHOSTS=(); local h; for h in "${HOSTS[@]}"; do plugin_present "$h" && PHOSTS+=("$h"); done; }
+plugin_quiesce() {   # -> 0 when every plugin process on every node is suspended; 1 (and nothing torn down) otherwise
+  plugin_hosts; [ "${#PHOSTS[@]}" -gt 0 ] || return 0
+  local h fail=0
+  for h in "${PHOSTS[@]}"; do say "-- $h: plugin prepare (gate the data path)"; plugin_cmd "$h" prepare 'prepared|suspended' || fail=1; done
+  if [ "$fail" = 1 ]; then
+    say "-- a process was busy or failed at prepare: dropping the gates again, nothing torn down"
+    for h in "${PHOSTS[@]}"; do plugin_cmd "$h" abort 'active|suspended' || true; done
+    return 1
+  fi
+  for h in "${PHOSTS[@]}"; do
+    say "-- $h: plugin commit (tear the RDMA state down)"
+    plugin_cmd "$h" commit suspended || { say "$h: commit FAILED; that process is in its failed state and the serving stack must be restarted"; return 1; }
+  done
+  return 0
+}
+plugin_resume() {    # -> 0 when every plugin process on every node is active again
+  plugin_hosts; local h rc=0
+  for h in "${PHOSTS[@]}"; do say "-- $h: plugin resume (re-connect its RDMA state)"; plugin_cmd "$h" resume active || rc=1; done
+  return $rc
+}
+plugin_cmd() {   # host verb expected-state(s, a|b case pattern) -> waits for every status file to report gen+state
   local h=$1 verb=$2 want=$3 gen; gen=$(date +%s%N)
   if [ "$DRY_RUN" = 1 ]; then echo "  [dry-run] $h: echo '$gen $verb' > $CTL_DIR/cmd; wait for status.* = $want"; return 0; fi
   sshq "$h" "n=\$(ls $CTL_DIR/status.* 2>/dev/null | wc -l); printf '%s %s\n' $gen $verb > $CTL_DIR/cmd.tmp && mv $CTL_DIR/cmd.tmp $CTL_DIR/cmd
-    for i in \$(seq 1 600); do ok=0; bad=''; for f in $CTL_DIR/status.*; do read g st rest < \$f; if [ \"\$g\" = $gen ]; then if [ \"\$st\" = $want ]; then ok=\$((ok+1)); else bad=\"\$bad \$(basename \$f):\$st \$rest\"; fi; fi; done
+    for i in \$(seq 1 600); do ok=0; bad=''; for f in $CTL_DIR/status.*; do read g st rest < \$f; if [ \"\$g\" = $gen ]; then case \"\$st\" in $want) ok=\$((ok+1)) ;; *) bad=\"\$bad \$(basename \$f):\$st \$rest\" ;; esac; fi; done
       [ -n \"\$bad\" ] && { echo \"PLUGIN_FAIL \$bad\"; exit 1; }; [ \"\$ok\" -ge \"\$n\" ] && [ \"\$n\" -gt 0 ] && { echo \"PLUGIN_OK \$ok process(es) $want\"; exit 0; }; sleep 0.25; done
     echo 'PLUGIN_TIMEOUT'; exit 1" 2>&1 | sed "s/^/  $h: /"; return "${PIPESTATUS[0]}"
 }
@@ -122,16 +148,15 @@ for h in "${HOSTS[@]}"; do [ "$h" = localhost ] || reachable "$h" || { say "$h u
 
 case "$CMD" in
   suspend|resume)
-    rc=0; want=$( [ "$CMD" = suspend ] && echo suspended || echo active )
-    for h in "${HOSTS[@]}"; do if plugin_present "$h"; then say "-- $h: plugin $CMD"; plugin_cmd "$h" "$CMD" "$want" || rc=1; else say "-- $h: no plugin status files in $CTL_DIR"; rc=1; fi; done
-    exit $rc ;;
+    plugin_hosts; [ "${#PHOSTS[@]}" -eq "${#HOSTS[@]}" ] || say "-- note: plugin status files in $CTL_DIR only on: ${PHOSTS[*]:-none}"
+    [ "${#PHOSTS[@]}" -gt 0 ] || exit 1
+    if [ "$CMD" = suspend ]; then plugin_quiesce; else plugin_resume; fi
+    exit $? ;;
   status) status_all ;;
   down)
     say "== down: CX-7 off on ${HOSTS[*]} (restore-after=${RESTORE_AFTER}s dry-run=$DRY_RUN)"
     if [ "$PLUGIN" = 1 ]; then
-      for h in "${HOSTS[@]}"; do
-        if plugin_present "$h"; then say "-- $h: NCCL hot-plug plugin present, suspending its RDMA state"; plugin_cmd "$h" suspend suspended || { say "$h: plugin refused/failed to suspend; not powering anything down"; exit 1; }; fi
-      done
+      plugin_quiesce || { say "== plugin could not be quiesced on every node; not powering anything down"; exit 1; }
     fi
     for h in "${HOSTS[@]}"; do run_node "$h" "$PREP"; done
     say "-- powering the adapters down"
@@ -153,9 +178,7 @@ case "$CMD" in
       for p in "${pids[@]}"; do wait "$p" || rc=1; done
     fi
     if [ "$rc" = 0 ] && [ "$PLUGIN" = 1 ]; then
-      for h in "${HOSTS[@]}"; do
-        if plugin_present "$h"; then say "-- $h: NCCL hot-plug plugin present, resuming its RDMA state"; plugin_cmd "$h" resume active || rc=1; fi
-      done
+      plugin_resume || rc=1
     fi
     say "-- state"; status_all
     [ "$rc" = 0 ] && say "== up: CX-7 on and ring verified on ${#HOSTS[@]} node(s)" || say "== at least one node FAILED verification/resume; do not trust the serving stack until fixed"

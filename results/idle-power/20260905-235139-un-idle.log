@@ -1,0 +1,43 @@
+[23:51:39] == un-idle: journal=0 tier=none dry-run=1 (log /home/napta2k/spark-cluster-mla-dcp/results/idle-power/20260905-235139-un-idle.log)
+[23:51:44] -- restoring the serving profile on every node
+  [dry-run] spark-06c4: 
+for c in /sys/devices/system/cpu/cpu[0-9]*; do [ -e "$c/online" ] && [ "$(cat "$c/online")" = 0 ] && echo 1 | sudo -n tee "$c/online" >/dev/null; done
+for d in enP2p1s0f0np0 enP2p1s0f1np1 enp1s0f1np1; do st=$(nmcli -t -f DEVICE,STATE dev 2>/dev/null | awk -F: -v d="$d" "\$1==d{print \$2}"); [ "$st" = connected ] || sudo -n nmcli dev connect "$d" >/dev/null 2>&1; done
+for d in enP2p1s0f0np0 enP2p1s0f1np1 enp1s0f0np0 enp1s0f1np1; do sudo -n ip link set "$d" up 2>/dev/null; done
+sudo -n rfkill unblock wlan; sudo -n rfkill unblock bluetooth; echo 'radios unblocked'
+for g in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo performance | sudo -n tee "$g" >/dev/null; done
+sudo -n nvidia-smi -pm 1 >/dev/null 2>&1 || echo "WARN: nvidia-smi -pm 1 failed"
+sudo -n nvidia-smi -lgc 2000,2000 >/dev/null 2>&1 && echo "gpu clocks locked at 2000,2000" || echo "WARN: nvidia-smi -lgc failed"
+echo "governor $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor), cpus $(cat /sys/devices/system/cpu/online)"
+
+  [dry-run] spark-365c: 
+for c in /sys/devices/system/cpu/cpu[0-9]*; do [ -e "$c/online" ] && [ "$(cat "$c/online")" = 0 ] && echo 1 | sudo -n tee "$c/online" >/dev/null; done
+for d in enP2p1s0f0np0 enP2p1s0f1np1 enp1s0f1np1; do st=$(nmcli -t -f DEVICE,STATE dev 2>/dev/null | awk -F: -v d="$d" "\$1==d{print \$2}"); [ "$st" = connected ] || sudo -n nmcli dev connect "$d" >/dev/null 2>&1; done
+for d in enP2p1s0f0np0 enP2p1s0f1np1 enp1s0f0np0 enp1s0f1np1; do sudo -n ip link set "$d" up 2>/dev/null; done
+sudo -n rfkill unblock wlan; sudo -n rfkill unblock bluetooth; echo 'radios unblocked'
+for g in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo performance | sudo -n tee "$g" >/dev/null; done
+sudo -n nvidia-smi -pm 1 >/dev/null 2>&1 || echo "WARN: nvidia-smi -pm 1 failed"
+sudo -n nvidia-smi -lgc 2000,2000 >/dev/null 2>&1 && echo "gpu clocks locked at 2000,2000" || echo "WARN: nvidia-smi -lgc failed"
+echo "governor $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor), cpus $(cat /sys/devices/system/cpu/online)"
+
+  [dry-run] spark-a218: 
+for c in /sys/devices/system/cpu/cpu[0-9]*; do [ -e "$c/online" ] && [ "$(cat "$c/online")" = 0 ] && echo 1 | sudo -n tee "$c/online" >/dev/null; done
+for d in enP2p1s0f0np0 enP2p1s0f1np1 enp1s0f1np1; do st=$(nmcli -t -f DEVICE,STATE dev 2>/dev/null | awk -F: -v d="$d" "\$1==d{print \$2}"); [ "$st" = connected ] || sudo -n nmcli dev connect "$d" >/dev/null 2>&1; done
+for d in enP2p1s0f0np0 enP2p1s0f1np1 enp1s0f0np0 enp1s0f1np1; do sudo -n ip link set "$d" up 2>/dev/null; done
+sudo -n rfkill unblock wlan; sudo -n rfkill unblock bluetooth; echo 'radios unblocked'
+for g in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo performance | sudo -n tee "$g" >/dev/null; done
+sudo -n nvidia-smi -pm 1 >/dev/null 2>&1 || echo "WARN: nvidia-smi -pm 1 failed"
+sudo -n nvidia-smi -lgc 2000,2000 >/dev/null 2>&1 && echo "gpu clocks locked at 2000,2000" || echo "WARN: nvidia-smi -lgc failed"
+echo "governor $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor), cpus $(cat /sys/devices/system/cpu/online)"
+
+  [dry-run] spark-ddbf: 
+for c in /sys/devices/system/cpu/cpu[0-9]*; do [ -e "$c/online" ] && [ "$(cat "$c/online")" = 0 ] && echo 1 | sudo -n tee "$c/online" >/dev/null; done
+for d in enP2p1s0f0np0 enP2p1s0f1np1 enp1s0f1np1; do st=$(nmcli -t -f DEVICE,STATE dev 2>/dev/null | awk -F: -v d="$d" "\$1==d{print \$2}"); [ "$st" = connected ] || sudo -n nmcli dev connect "$d" >/dev/null 2>&1; done
+for d in enP2p1s0f0np0 enP2p1s0f1np1 enp1s0f0np0 enp1s0f1np1; do sudo -n ip link set "$d" up 2>/dev/null; done
+sudo -n rfkill unblock wlan; sudo -n rfkill unblock bluetooth; echo 'radios unblocked'
+for g in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo performance | sudo -n tee "$g" >/dev/null; done
+sudo -n nvidia-smi -pm 1 >/dev/null 2>&1 || echo "WARN: nvidia-smi -pm 1 failed"
+sudo -n nvidia-smi -lgc 2000,2000 >/dev/null 2>&1 && echo "gpu clocks locked at 2000,2000" || echo "WARN: nvidia-smi -lgc failed"
+echo "governor $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor), cpus $(cat /sys/devices/system/cpu/online)"
+
+[23:51:44] == dry run complete; nothing was changed

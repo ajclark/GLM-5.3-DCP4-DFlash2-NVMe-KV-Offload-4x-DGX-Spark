@@ -214,7 +214,14 @@ HOTPLUG_SO="${HOTPLUG_SO:-$HOME/nccl-hotplug/libnccl-net-hotplug.so}"
 HOTPLUG_CTL="${HOTPLUG_CTL:-/var/tmp/nccl-hotplug}"
 NET_ENV=(-e NCCL_NET=IB -e NCCL_NET_PLUGIN=none)
 HOTPLUG_MOUNTS=()
+# /dev/infiniband: the default lane hands the container static copies of the device nodes present at
+# launch (--device). Under the hot-plug lane the adapters are removed and re-added while the container
+# lives, so the host directory is bind-mounted instead (udev's re-created nodes stay visible) and the
+# device cgroup allows the whole uverbs/umad major (231) plus misc (rdma_cm), whatever minor the
+# re-added devices get.
+IB_DEV=(--device /dev/infiniband:/dev/infiniband)
 if [ "$NCCL_HOTPLUG" = 1 ]; then
+  IB_DEV=(-v /dev/infiniband:/dev/infiniband --device-cgroup-rule 'c 231:* rwm' --device-cgroup-rule 'c 10:* rwm')
   [ -f "$HOTPLUG_SO" ] || { echo "NCCL_HOTPLUG=1 but $HOTPLUG_SO is missing" >&2; exit 7; }
   mkdir -p "$HOTPLUG_CTL" && chmod 1777 "$HOTPLUG_CTL"
   rm -f "$HOTPLUG_CTL"/status.* "$HOTPLUG_CTL"/cmd
@@ -232,7 +239,7 @@ run_docker run -d --name "$NAME" \
   --cap-add IPC_LOCK --ulimit memlock=-1:-1 \
   --ulimit nofile=1048576:1048576 \
   --network host --ipc host --shm-size 10gb --gpus all \
-  --device /dev/infiniband:/dev/infiniband \
+  "${IB_DEV[@]}" \
   -v /var/tmp/models:/cache/huggingface \
   -v "$WEIGHTS:/models/glm-5.3:ro" \
   -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro \

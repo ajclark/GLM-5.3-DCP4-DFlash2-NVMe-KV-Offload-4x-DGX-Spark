@@ -1,0 +1,57 @@
+[00:09:22] rollout 'dcp2-dflash-180k-prod3' MAXLEN=180224 MAXBATCHED=2048 KVBYTES=6000000000 KVTIER=1 out=/home/napta2k/spark-cluster-mla-dcp/results/rollout-dcp2-dflash-180k-prod3-20260906-000922
+[00:09:22] SKIP_PREFLIGHT=1: not requiring a healthy stack (recovery)
+[00:09:22] production healthy; saving pre-rollout logs + memory baseline
+spark-06c4 avail=117510MiB swapfree=16186MiB pswpout=33557232
+spark-365c avail=117309MiB swapfree=16253MiB pswpout=22857546
+spark-ddbf avail=117999MiB swapfree=16252MiB pswpout=22273993
+spark-a218 avail=117947MiB swapfree=16245MiB pswpout=37004014
+[00:09:26]   spark-06c4 staged + verified
+[00:09:27]   spark-365c staged + verified
+[00:09:27]   spark-ddbf staged + verified
+[00:09:28]   spark-a218 staged + verified
+[00:09:28] stopping production ranks
+[00:09:36]   flusher spark-06c4: STARTED 115G-avail
+[00:09:38]   flusher spark-365c: STARTED 115G-avail
+[00:09:39]   flusher spark-ddbf: STARTED 115G-avail
+[00:09:41]   flusher spark-a218: STARTED 115G-avail
+[00:09:41] launching DCP ranks (worker-first)
+[00:09:41]   launching rank 3 on spark-a218
+a1d2de8e7d668ec9a6fc38f0b19779ea9f98469f6b1d9565f94704352c4bd022
+launched vllm_glm53big rank=3 host=192.168.1.31 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+vllm_glm53big Up 3 seconds
+[00:09:48]   launching rank 2 on spark-ddbf
+073ace52cbf0983c56d67983f60a0d365a58c8c47a155c2a18f511d2deb15770
+launched vllm_glm53big rank=2 host=192.168.1.149 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+vllm_glm53big Up 3 seconds
+[00:09:55]   launching rank 1 on spark-365c
+f1f21e556cf14c54d68106b2e8eadb9c7ed1d3b78c7600c9f8b73a69c5e89fe2
+launched vllm_glm53big rank=1 host=192.168.1.88 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+vllm_glm53big Up 3 seconds
+[00:10:02]   launching rank 0 on spark-06c4
+46cb38df4c73efbacdfefbed467a445d15ec793993d89eae212eb07169eeb111
+launched vllm_glm53big rank=0 host=192.168.1.228 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+vllm_glm53big Up 3 seconds
+[00:19:36] HEALTHY after 566s
+  content: 'OK' tokens: 2
+spark-06c4 avail=4563MiB swapfree=13513MiB pswpout=34257290
+spark-365c avail=5802MiB swapfree=14103MiB pswpout=23387078
+spark-ddbf avail=5765MiB swapfree=14101MiB pswpout=22801620
+spark-a218 avail=5833MiB swapfree=14087MiB pswpout=37535432
+[00:19:41] DCP stack is up and generating. Startup facts:
+(Worker_TP0_DCP0 pid=231) 2026-09-06 00:18:29,928 - INFO - autotuner.py:995 - flashinfer.jit: [Autotuner]: Autotuning process ends
+(Worker_TP0_DCP0 pid=231) Capturing CUDA graphs (PIECEWISE):   0%|          | 0/24 [00:00<?, ?it/s]Capturing CUDA graphs (PIECEWISE):   4%|▍         | 1/24 [00:01<00:23,  1.02s/it]Capturing CUDA graphs (PIECEWISE):   8%|▊         | 2/24 [00:02<00:24,  1.13s/it]Capturing CUDA graphs (PIECEWISE):  12%|█▎        | 3/24 [00:03<00:23,  1.14s/it]Capturing CUDA graphs (PIECEWISE):  17%|█▋        | 4/24 [00:04<00:22,  1.11s/it]Capturing CUDA graphs (PIECEWISE):  21%|██        | 5/24 [00:05<00:20,  1.09s/it]Capturing CUDA graphs (PIECEWISE):  25%|██▌       | 6/24 [00:06<00:18,  1.05s/it]Capturing CUDA graphs (PIECEWISE):  29%|██▉       | 7/24 [00:07<00:17,  1.02s/it]Capturing CUDA graphs (PIECEWISE):  33%|███▎      | 8/24 [00:08<00:15,  1.01it/s]Capturing CUDA graphs (PIECEWISE):  38%|███▊      | 9/24 [00:09<00:14,  1.07it/s]Capturing CUDA graphs (PIECEWISE):  42%|████▏     | 10/24 [00:10<00:12,  1.10it/s]Capturing CUDA graphs (PIECEWISE):  46%|████▌     | 11/24 [00:10<00:11,  1.14it/s]Capturing CUDA graphs (PIECEWISE):  50%|█████     | 12/24 [00:11<00:10,  1.19it/s]Capturing CUDA graphs (PIECEWISE):  54%|█████▍    | 13/24 [00:12<00:08,  1.24it/s]Capturing CUDA graphs (PIECEWISE):  58%|█████▊    | 14/24 [00:12<00:07,  1.31it/s]Capturing CUDA graphs (PIECEWISE):  62%|██████▎   | 15/24 [00:13<00:06,  1.39it/s]Capturing CUDA graphs (PIECEWISE):  67%|██████▋   | 16/24 [00:14<00:05,  1.48it/s]Capturing CUDA graphs (PIECEWISE):  71%|███████   | 17/24 [00:14<00:04,  1.60it/s]Capturing CUDA graphs (PIECEWISE):  75%|███████▌  | 18/24 [00:15<00:03,  1.73it/s]Capturing CUDA graphs (PIECEWISE):  79%|███████▉  | 19/24 [00:15<00:02,  1.88it/s]Capturing CUDA graphs (PIECEWISE):  83%|████████▎ | 20/24 [00:15<00:01,  2.06it/s]Capturing CUDA graphs (PIECEWISE):  88%|████████▊ | 21/24 [00:16<00:01,  2.27it/s]Capturing CUDA graphs (PIECEWISE):  92%|█████████▏| 22/24 [00:16<00:00,  2.53it/s]Capturing CUDA graphs (PIECEWISE):  96%|█████████▌| 23/24 [00:16<00:00,  2.84it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 24/24 [00:17<00:00,  3.22it/s]Capturing CUDA graphs (PIECEWISE): 100%|██████████| 24/24 [00:17<00:00,  1.41it/s]
+(Worker_TP0_DCP0 pid=231) Capturing CUDA graphs (FULL):   0%|          | 0/12 [00:00<?, ?it/s]Capturing CUDA graphs (FULL):   8%|▊         | 1/12 [00:00<00:09,  1.20it/s]Capturing CUDA graphs (FULL):  17%|█▋        | 2/12 [00:01<00:07,  1.32it/s]Capturing CUDA graphs (FULL):  25%|██▌       | 3/12 [00:02<00:06,  1.42it/s]Capturing CUDA graphs (FULL):  33%|███▎      | 4/12 [00:02<00:05,  1.48it/s]Capturing CUDA graphs (FULL):  42%|████▏     | 5/12 [00:03<00:04,  1.59it/s]Capturing CUDA graphs (FULL):  50%|█████     | 6/12 [00:03<00:03,  1.69it/s]Capturing CUDA graphs (FULL):  58%|█████▊    | 7/12 [00:04<00:02,  1.80it/s]Capturing CUDA graphs (FULL):  67%|██████▋   | 8/12 [00:04<00:02,  1.94it/s]Capturing CUDA graphs (FULL):  75%|███████▌  | 9/12 [00:05<00:01,  2.09it/s]Capturing CUDA graphs (FULL):  83%|████████▎ | 10/12 [00:05<00:00,  2.27it/s]Capturing CUDA graphs (FULL):  92%|█████████▏| 11/12 [00:05<00:00,  2.49it/s]Capturing CUDA graphs (FULL): 100%|██████████| 12/12 [00:06<00:00,  2.74it/s]Capturing CUDA graphs (FULL): 100%|██████████| 12/12 [00:06<00:00,  1.96it/s]
+(Worker_TP0_DCP0 pid=231) INFO 09-06 00:18:55 [speculator.py:97] Capturing model for DFlash speculator...
+(Worker_TP0_DCP0 pid=231) Capturing dflash CUDA graphs (FULL):   0%|          | 0/12 [00:00<?, ?it/s]Capturing dflash CUDA graphs (FULL):  25%|██▌       | 3/12 [00:00<00:00, 24.68it/s]Capturing dflash CUDA graphs (FULL):  58%|█████▊    | 7/12 [00:00<00:00, 32.40it/s]Capturing dflash CUDA graphs (FULL): 100%|██████████| 12/12 [00:00<00:00, 38.31it/s]
+(Worker_TP0_DCP0 pid=231) INFO 09-06 00:18:56 [model_runner.py:727] Graph capturing finished in 24 secs, took 1.29 GiB
+(Worker_TP0_DCP0 pid=231) INFO 09-06 00:18:57 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+(Worker_TP0_DCP0 pid=231) WARNING 09-06 00:19:38 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+      1 (Worker_TP3_DCP1 pid=224) WARNING 09-06 00:19:38 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+      1 (Worker_TP3_DCP1 pid=224) INFO 09-06 00:18:57 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      1 (Worker_TP2_DCP0 pid=227) WARNING 09-06 00:19:38 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+      1 (Worker_TP2_DCP0 pid=227) INFO 09-06 00:18:57 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      1 (Worker_TP1_DCP1 pid=177) WARNING 09-06 00:19:38 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+      1 (Worker_TP1_DCP1 pid=177) INFO 09-06 00:18:57 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      1 (Worker_TP0_DCP0 pid=231) WARNING 09-06 00:19:38 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
+      1 (Worker_TP0_DCP0 pid=231) INFO 09-06 00:18:57 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+[00:19:41] rollout 'dcp2-dflash-180k-prod3' complete; results in /home/napta2k/spark-cluster-mla-dcp/results/rollout-dcp2-dflash-180k-prod3-20260906-000922

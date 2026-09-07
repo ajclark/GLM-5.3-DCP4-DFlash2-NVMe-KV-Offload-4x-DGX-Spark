@@ -24,7 +24,7 @@ docker rm -f "$NAME" >/dev/null 2>&1 || true
 docker run -d --name "$NAME" --restart no \
   --cap-add IPC_LOCK --ulimit memlock=-1:-1 \
   --network host --gpus all --shm-size 4g \
-  --device /dev/infiniband:/dev/infiniband \
+  -v /dev/infiniband:/dev/infiniband --device-cgroup-rule 'c 231:* rwm' --device-cgroup-rule 'c 10:* rwm' \
   -v "$PROBE:/bench/nccl_hotplug_probe.py:ro" \
   -v "$PLUGIN:/usr/lib/aarch64-linux-gnu/libnccl-net-hotplug.so:ro" \
   -v "$CTL:$CTL" \

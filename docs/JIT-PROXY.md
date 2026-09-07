@@ -249,20 +249,33 @@ watchdog if a collective is ever issued during a suspension (the proxy's job
 is to make sure none is). Effort: 600-1000 lines of C on the plugin, two to
 three weeks, almost all of it on the sandbox.
 
-## 5e. Route P status (2026-09-07): built and sandbox-tested
+## 5e. Route P status (2026-09-07): built, reviewed, sandbox-tested
 
 The plugin exists: github.com/ajclark/nccl-net-hotplug (local
 `~/nccl-net-hotplug/plugin`), a fork of NVIDIA's out-of-tree IB plugin with
-the suspend/resume layer, a file control channel and exported
-`ncclHotplugSuspend/Resume`. On the sandbox against soft-RoCE it passes:
-bidirectional comms re-connected concurrently, suspend refused while a
-receive is pending, `isend` held while suspended, ten device delete/re-add
-cycles with flat memory and descriptor counts, and the file channel driven by
-`spark-idle.sh --suspend/--resume`. Cross-compiled for the Sparks
+a two-phase quiesce layer (`prepare` gates the data path and refuses if
+anything is in flight, `commit` tears the RDMA state down, `abort` drops the
+gate, `resume` rebuilds and re-handshakes over the retained sockets), a file
+control channel and exported `ncclHotplug{Prepare,Commit,Abort,Suspend,Resume}`.
+Codex reviewed the first version against NCCL 2.31.2's sources
+(`results/codex-review-plugin.md`): the two-phase protocol, the fail-closed
+`failed` state (data path errors out instead of hanging), gating of
+connect/accept with pending-handshake tracking, deferred buffer registration
+and flush while gated, DMA-BUF descriptor duplication, one event thread per
+shared verbs context, GUID check on re-open, and thread/device teardown at
+the last finalize all come from that review. On the sandbox against
+soft-RoCE it passes: busy refusal at prepare and at suspend, gate held for
+`isend` and `connect`, abort, registration while suspended, device delete/re-add
+cycles (50 in a row with flat memory and descriptor counts), the file channel,
+and device removal after finalize. Cross-compiled for the Sparks
 (`stage/nccl-hotplug/libnccl-net-hotplug.so`, depends only on libmlx5,
 libibverbs, libc). Cluster wiring is in place behind `NCCL_HOTPLUG=1`
-(launcher, rollout) and `spark-idle.sh --down/--up` suspends/resumes the
-plugin around the adapter cycle. The on-cluster plan is
+(launcher, rollout; the hot-plug lane bind-mounts `/dev/infiniband` with a
+major-wide device-cgroup rule so re-created device nodes stay reachable) and
+`spark-idle.sh --down/--up` runs prepare-everywhere-then-commit and resume
+around the adapter cycle. Not exercised anywhere yet: the real NCCL core
+loading the plugin, the real adapter, GPU Direct RDMA paths (disabled on the
+Sparks: `GDR 0` in the serving logs). The on-cluster plan is
 `docs/NCCL-HOTPLUG-TEST.md` (one downtime window); the probe that runs first is
 `bench/nccl-hotplug-probe.sh`.
 

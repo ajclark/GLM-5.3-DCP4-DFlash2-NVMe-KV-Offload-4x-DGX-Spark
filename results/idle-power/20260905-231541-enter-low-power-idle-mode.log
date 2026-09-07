@@ -1,0 +1,8 @@
+[23:15:41] == enter idle mode: tier=deep ring-down=0 eth-1g=0 suspend=0 dry-run=0 (log /home/napta2k/spark-cluster-mla-dcp/results/idle-power/20260905-231541-enter-low-power-idle-mode.log)
+[23:15:41] tier deep discards the in-memory KV pool and costs a ~505 s relaunch on un-idle: add --yes
+[23:15:41] == enter idle mode: tier=deep ring-down=1 eth-1g=0 suspend=0 dry-run=0 (log /home/napta2k/spark-cluster-mla-dcp/results/idle-power/20260905-231541-enter-low-power-idle-mode.log)
+[23:15:41] REFUSED: --ring-down is not yet qualified on this cluster; run it once with I_AM_PRESENT=1 while watching (un-idle drops the marker after a clean recovery)
+[23:15:41] == enter idle mode: tier=deep ring-down=0 eth-1g=0 suspend=1 dry-run=0 (log /home/napta2k/spark-cluster-mla-dcp/results/idle-power/20260905-231541-enter-low-power-idle-mode.log)
+[23:15:41] REFUSED: NVIDIA states DGX Spark does not support Wake-on-LAN (forums.developer.nvidia.com/t/348168); a node that does not wake needs the power button. Set I_AM_PRESENT=1 only if you can press it.
+[23:15:41] == enter idle mode: tier=light ring-down=1 eth-1g=0 suspend=0 dry-run=0 (log /home/napta2k/spark-cluster-mla-dcp/results/idle-power/20260905-231541-enter-low-power-idle-mode.log)
+[23:15:41] --ring-down needs --deep: the serving stack runs on the ring

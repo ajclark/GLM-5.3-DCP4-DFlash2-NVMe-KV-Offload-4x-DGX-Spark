@@ -1,0 +1,60 @@
+[23:15:38] == enter idle mode: tier=deep ring-down=1 eth-1g=1 suspend=0 dry-run=1 (log /home/napta2k/spark-cluster-mla-dcp/results/idle-power/20260905-231538-enter-low-power-idle-mode.log)
+[23:15:39] -- baseline
+[23:15:40]   spark-06c4 gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=192.168.104.2/24/192.168.100.1/24 mtu=9000/9000 radios_blocked=1/2 gpu_W/MHz/pm=7.88/1995/Enabled ctr=running availG=2.9
+[23:15:40]   spark-365c gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=192.168.102.1/24/192.168.100.2/24 mtu=9000/9000 radios_blocked=0/2 gpu_W/MHz/pm=8.67/1995/Enabled ctr=running availG=4.0
+[23:15:41]   spark-ddbf gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=192.168.102.2/24/192.168.103.2/24 mtu=9000/9000 radios_blocked=0/2 gpu_W/MHz/pm=8.45/1995/Enabled ctr=running availG=4.8
+[23:15:41]   spark-a218 gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=192.168.104.1/24/192.168.103.1/24 mtu=9000/9000 radios_blocked=0/2 gpu_W/MHz/pm=7.14/1976/Enabled ctr=running availG=4.7
+[23:15:41] -- taking the serving stack down
+  [dry-run] spark-365c: docker rm -f vllm_glm53big >/dev/null 2>&1; pkill -f '[c]ache_flusher.sh' 2>/dev/null; echo 'container removed, flusher stopped'
+  [dry-run] spark-06c4: docker rm -f vllm_glm53big >/dev/null 2>&1; pkill -f '[c]ache_flusher.sh' 2>/dev/null; echo 'container removed, flusher stopped'
+  [dry-run] spark-ddbf: docker rm -f vllm_glm53big >/dev/null 2>&1; pkill -f '[c]ache_flusher.sh' 2>/dev/null; echo 'container removed, flusher stopped'
+  [dry-run] spark-a218: docker rm -f vllm_glm53big >/dev/null 2>&1; pkill -f '[c]ache_flusher.sh' 2>/dev/null; echo 'container removed, flusher stopped'
+[23:15:41] -- light steps (clock lock, governor, radios)
+  [dry-run] spark-06c4: 
+sudo -n nvidia-smi -rgc >/dev/null 2>&1 && echo "gpu clock lock released" || echo "WARN: nvidia-smi -rgc failed"
+for g in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo schedutil | sudo -n tee "$g" >/dev/null; done
+echo "governor $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)"
+sudo -n rfkill block wlan; sudo -n rfkill block bluetooth
+echo "wifi+bt soft-blocked ($(rfkill list | grep -c "Soft blocked: yes")/2)"
+
+  [dry-run] spark-365c: 
+sudo -n nvidia-smi -rgc >/dev/null 2>&1 && echo "gpu clock lock released" || echo "WARN: nvidia-smi -rgc failed"
+for g in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo schedutil | sudo -n tee "$g" >/dev/null; done
+echo "governor $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)"
+sudo -n rfkill block wlan; sudo -n rfkill block bluetooth
+echo "wifi+bt soft-blocked ($(rfkill list | grep -c "Soft blocked: yes")/2)"
+
+  [dry-run] spark-a218: 
+sudo -n nvidia-smi -rgc >/dev/null 2>&1 && echo "gpu clock lock released" || echo "WARN: nvidia-smi -rgc failed"
+for g in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo schedutil | sudo -n tee "$g" >/dev/null; done
+echo "governor $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)"
+sudo -n rfkill block wlan; sudo -n rfkill block bluetooth
+echo "wifi+bt soft-blocked ($(rfkill list | grep -c "Soft blocked: yes")/2)"
+
+  [dry-run] spark-ddbf: 
+sudo -n nvidia-smi -rgc >/dev/null 2>&1 && echo "gpu clock lock released" || echo "WARN: nvidia-smi -rgc failed"
+for g in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo schedutil | sudo -n tee "$g" >/dev/null; done
+echo "governor $(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor)"
+sudo -n rfkill block wlan; sudo -n rfkill block bluetooth
+echo "wifi+bt soft-blocked ($(rfkill list | grep -c "Soft blocked: yes")/2)"
+
+[23:15:41] -- deep steps (persistence mode off; no CUDA context left)
+  [dry-run] spark-06c4: sudo -n nvidia-smi -pm 0 >/dev/null 2>&1 && echo "gpu persistence mode off" || echo "WARN: nvidia-smi -pm 0 failed"
+  [dry-run] spark-365c: sudo -n nvidia-smi -pm 0 >/dev/null 2>&1 && echo "gpu persistence mode off" || echo "WARN: nvidia-smi -pm 0 failed"
+  [dry-run] spark-ddbf: sudo -n nvidia-smi -pm 0 >/dev/null 2>&1 && echo "gpu persistence mode off" || echo "WARN: nvidia-smi -pm 0 failed"
+  [dry-run] spark-a218: sudo -n nvidia-smi -pm 0 >/dev/null 2>&1 && echo "gpu persistence mode off" || echo "WARN: nvidia-smi -pm 0 failed"
+[23:15:41] -- ring ports admin-down (NetworkManager disconnect of all four ConnectX-7 functions)
+  [dry-run] spark-06c4: for d in enP2p1s0f0np0 enP2p1s0f1np1 enp1s0f0np0 enp1s0f1np1; do sudo -n nmcli dev disconnect "$d" >/dev/null 2>&1; sudo -n ip link set "$d" down 2>/dev/null; done; echo "ring: $(for d in enP2p1s0f0np0 enP2p1s0f1np1; do cat /sys/class/net/$d/operstate; done | paste -sd/) rdma: $(rdma link show 2>/dev/null | awk "/roceP2p1s0f[01]\//{print \$4}" | paste -sd/)"
+  [dry-run] spark-365c: for d in enP2p1s0f0np0 enP2p1s0f1np1 enp1s0f0np0 enp1s0f1np1; do sudo -n nmcli dev disconnect "$d" >/dev/null 2>&1; sudo -n ip link set "$d" down 2>/dev/null; done; echo "ring: $(for d in enP2p1s0f0np0 enP2p1s0f1np1; do cat /sys/class/net/$d/operstate; done | paste -sd/) rdma: $(rdma link show 2>/dev/null | awk "/roceP2p1s0f[01]\//{print \$4}" | paste -sd/)"
+  [dry-run] spark-ddbf: for d in enP2p1s0f0np0 enP2p1s0f1np1 enp1s0f0np0 enp1s0f1np1; do sudo -n nmcli dev disconnect "$d" >/dev/null 2>&1; sudo -n ip link set "$d" down 2>/dev/null; done; echo "ring: $(for d in enP2p1s0f0np0 enP2p1s0f1np1; do cat /sys/class/net/$d/operstate; done | paste -sd/) rdma: $(rdma link show 2>/dev/null | awk "/roceP2p1s0f[01]\//{print \$4}" | paste -sd/)"
+  [dry-run] spark-a218: for d in enP2p1s0f0np0 enP2p1s0f1np1 enp1s0f0np0 enp1s0f1np1; do sudo -n nmcli dev disconnect "$d" >/dev/null 2>&1; sudo -n ip link set "$d" down 2>/dev/null; done; echo "ring: $(for d in enP2p1s0f0np0 enP2p1s0f1np1; do cat /sys/class/net/$d/operstate; done | paste -sd/) rdma: $(rdma link show 2>/dev/null | awk "/roceP2p1s0f[01]\//{print \$4}" | paste -sd/)"
+[23:15:41] -- management link 10G -> 1G (SSH drops for a few seconds per node)
+  [dry-run] spark-06c4: sudo -n systemctl stop idle-eth-revert.timer idle-eth-revert.service >/dev/null 2>&1; sudo -n systemctl reset-failed idle-eth-revert.service >/dev/null 2>&1; sudo -n systemd-run --quiet --unit idle-eth-revert --on-active=150 /usr/sbin/ethtool -s enP7s7 autoneg on speed 10000 duplex full && echo 'revert-to-10G timer armed (150 s)'
+  [dry-run] spark-06c4: sudo -n setsid sh -c 'sleep 1; /usr/sbin/ethtool -s enP7s7 autoneg on speed 1000 duplex full' >/dev/null 2>&1 </dev/null & echo 'renegotiating'
+  [dry-run] spark-365c: sudo -n systemctl stop idle-eth-revert.timer idle-eth-revert.service >/dev/null 2>&1; sudo -n systemctl reset-failed idle-eth-revert.service >/dev/null 2>&1; sudo -n systemd-run --quiet --unit idle-eth-revert --on-active=150 /usr/sbin/ethtool -s enP7s7 autoneg on speed 10000 duplex full && echo 'revert-to-10G timer armed (150 s)'
+  [dry-run] spark-365c: sudo -n setsid sh -c 'sleep 1; /usr/sbin/ethtool -s enP7s7 autoneg on speed 1000 duplex full' >/dev/null 2>&1 </dev/null & echo 'renegotiating'
+  [dry-run] spark-ddbf: sudo -n systemctl stop idle-eth-revert.timer idle-eth-revert.service >/dev/null 2>&1; sudo -n systemctl reset-failed idle-eth-revert.service >/dev/null 2>&1; sudo -n systemd-run --quiet --unit idle-eth-revert --on-active=150 /usr/sbin/ethtool -s enP7s7 autoneg on speed 10000 duplex full && echo 'revert-to-10G timer armed (150 s)'
+  [dry-run] spark-ddbf: sudo -n setsid sh -c 'sleep 1; /usr/sbin/ethtool -s enP7s7 autoneg on speed 1000 duplex full' >/dev/null 2>&1 </dev/null & echo 'renegotiating'
+  [dry-run] spark-a218: sudo -n systemctl stop idle-eth-revert.timer idle-eth-revert.service >/dev/null 2>&1; sudo -n systemctl reset-failed idle-eth-revert.service >/dev/null 2>&1; sudo -n systemd-run --quiet --unit idle-eth-revert --on-active=150 /usr/sbin/ethtool -s enP7s7 autoneg on speed 10000 duplex full && echo 'revert-to-10G timer armed (150 s)'
+  [dry-run] spark-a218: sudo -n setsid sh -c 'sleep 1; /usr/sbin/ethtool -s enP7s7 autoneg on speed 1000 duplex full' >/dev/null 2>&1 </dev/null & echo 'renegotiating'
+[23:15:41] == dry run complete; nothing was changed

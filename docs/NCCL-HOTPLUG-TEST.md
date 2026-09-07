@@ -43,17 +43,24 @@ Verdicts, from rank 0's JSON lines (`results/nccl-hotplug-probe/<ts>/rank0.jsonl
 |---|---|
 | `"phase": "init", "plugin": "hotplug"` and NCCL INFO `NET/Plugin: Loaded net plugin` in the logs | NCCL 2.31.2 core accepted the v11 plugin (if it fell back to the builtin IB net the plugin was rejected: stop here) |
 | `"phase": "baseline", "correct": true, "allreduce_us": …` | plugin data path works on the CX-7 ring; compare `allreduce_us`/`allgather_us` with `results/nccl-multicomm/RESULTS.md` (n_comms=1, ~83 and ~105 µs): parity expected, same code lineage |
-| `spark-idle.sh --down` prints `PLUGIN_OK 1 process(es) suspended` per node before the adapters go off | suspend under a live NCCL communicator |
+| `spark-idle.sh --down` prints `PLUGIN_OK 1 process(es) prepared` for all four nodes, then `PLUGIN_OK 1 process(es) suspended` for all four, before the adapters go off | two-phase quiesce under a live NCCL communicator: every rank gated with nothing in flight, then torn down |
 | `spark-idle.sh --up` prints `PLUGIN_OK 1 process(es) active` after the ring verification | resume re-connected through the retained sockets on real hardware |
 | `"phase": "after-cycle-1", "correct": true` with unchanged µs | the communicator NCCL core holds is fully usable again; nothing above the plugin noticed |
 | `"phase": "done", "ok": true` and exit 0 | pass |
 
-If `--down` reports `busy`, the probe had a collective in flight: it should
-not (it idles at the barrier); investigate before anything else. If resume
-reports `error: devices did not come back`, check `/dev/infiniband` inside a
-container after a cycle (Codex/GLM concern: static device nodes with
-`--device`); the fallback is `-v /dev/infiniband:/dev/infiniband` plus a
-device-cgroup rule in the launcher.
+If `--down` reports `busy` at prepare, the probe had a collective in flight:
+it should not (it idles at the barrier); investigate before anything else.
+`--down` then aborts on every node (gates dropped, nothing torn down) and
+powers nothing off. A failure at commit or resume puts that process into the
+plugin's `failed` state, in which the data path errors out loudly instead of
+hanging: expect the probe (or vLLM) to die, and relaunch. If resume
+reports `error: devices did not come back`, check `/dev/infiniband` inside the
+container after the cycle. The probe runner and the `NCCL_HOTPLUG=1` lane
+already bind-mount the host directory (`-v /dev/infiniband:/dev/infiniband`)
+and allow the whole uverbs major in the device cgroup (`c 231:* rwm`) instead
+of `--device`, so udev's re-created nodes are visible whatever minor numbers
+the re-added adapters get (the kernel hands out the lowest free ones, 192-195
+today).
 
 ## 3. Probe B: same, without the adapter cycle (control, ≈3 min)
 
