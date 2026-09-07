@@ -16,3 +16,14 @@ Lane `dcp2-hotplug-1` (= production DCP=2 lane with `NCCL_HOTPLUG=1`).
 
 Files: `count100.jsonl` (every measurement), `watcher-idle1min-test.log`,
 `step5-down-1.log`, `step5-up-1.log`, `rollout-dcp2-hotplug-1.console.log`.
+
+## Final design deployed (2026-09-07 17:51 UTC, lane `dcp2-hotplug-2`)
+
+Plugin control on `127.0.0.1:5711` per node (no files), `spark-idle-watch`
+systemd service on spark-06c4 (IDLE_MIN=90, 38-line script). From the head
+node: `--down` with the model resident: all four prepared then suspended in
+27 s. A request sent while off: the service saw `wanted=1` on its next 10 s
+poll, `--up` took 19 s (adapters, ring verification, resume of 10 comms per
+rank), first token at 24.6 s, 200 tokens at 29.1 s. An earlier `--down` with
+a script bug backed out correctly: all four prepared, then all four dropped
+the gate on `resume`, nothing powered off.

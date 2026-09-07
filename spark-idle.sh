@@ -49,7 +49,8 @@ esac; shift; done
 [ -n "$CMD" ] || { echo "usage: $0 --down|--up|--status [--hosts a,b] [--restore-after SECONDS] [--dry-run]" >&2; exit 2; }
 
 say()   { echo "[$(date '+%H:%M:%S')] $*"; }
-sshq()  { if [ "$1" = localhost ]; then bash -c "$2"; else ssh -o BatchMode=yes -o ConnectTimeout=8 -o ServerAliveInterval=5 -o ServerAliveCountMax=2 "$SSH_USER@$1$SSH_SUFFIX" "$2"; fi; }
+# the head node runs its own commands locally (no ssh to self)
+sshq()  { if [ "$1" = localhost ] || [ "$1" = "$(hostname)" ]; then bash -c "$2"; else ssh -o BatchMode=yes -o ConnectTimeout=8 -o ServerAliveInterval=5 -o ServerAliveCountMax=2 "$SSH_USER@$1$SSH_SUFFIX" "$2"; fi; }
 reachable() { sshq "$1" true >/dev/null 2>&1; }
 run_node()  { if [ "$DRY_RUN" = 1 ]; then echo "  [dry-run] $1: $2"; return 0; fi; sshq "$1" "$2" 2>&1 | sed "s/^/  $1: /"; return "${PIPESTATUS[0]}"; }
 
@@ -94,7 +95,8 @@ plugin_cmd() {   # host verb expected-state(s, a|b case pattern) -> the verb's r
   if [ "$DRY_RUN" = 1 ]; then echo "  [dry-run] $h: $verb -> expect $want"; return 0; fi
   line=$(plugin_query "$h" "$verb") || { echo "  $h: PLUGIN_UNREACHABLE (127.0.0.1:$CTL_PORT on the node)"; return 1; }
   st=${line%% *}
-  case "$st" in $want) echo "  $h: PLUGIN_OK $line"; return 0 ;; *) echo "  $h: PLUGIN_FAIL $line"; return 1 ;; esac
+  local w; for w in ${want//|/ }; do [ "$st" = "$w" ] && { echo "  $h: PLUGIN_OK $line"; return 0; }; done
+  echo "  $h: PLUGIN_FAIL $line"; return 1
 }
 
 STATUS='
