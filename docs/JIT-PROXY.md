@@ -314,3 +314,9 @@ route A hooks in parallel; then one downtime window on the Sparks for the
 NCCL bench with `NCCL_NET_PLUGIN=hotplug`, an adapter cycle under it, and
 finally the serving stack. In no case promise a 12-second wake: that is the
 adapter, not the first token.
+
+Update 2026-09-07 (5f): done and measured. Route P is in service as the
+`dcp2-hotplug-1` lane, the operator is `spark-idle.sh` plus
+`spark-idle-watch.sh`, and no proxy is built or needed. Measured wake: 14 s
+for `--up` (adapters, ring verification, RDMA rebuild) plus the request's own
+first token.
