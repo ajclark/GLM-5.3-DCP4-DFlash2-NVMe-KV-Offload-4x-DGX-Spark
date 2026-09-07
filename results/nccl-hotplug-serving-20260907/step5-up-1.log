@@ -1,0 +1,30 @@
+[05:48:36] == up: CX-7 on for spark-06c4 spark-365c spark-ddbf spark-a218 (dry-run=0)
+[05:48:36] -- power up, rescan, wait for links
+  spark-06c4: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+  spark-ddbf: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+  spark-365c: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+  spark-a218: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+[05:48:44] -- ring pings and mstflint reload
+  spark-365c: enP2p1s0f0np0 192.168.102.1 -> 192.168.102.2 jumbo ping ok
+  spark-365c: enP2p1s0f1np1 192.168.100.2 -> 192.168.100.1 jumbo ping ok
+  spark-365c: mstflint_access reloaded
+  spark-ddbf: enP2p1s0f0np0 192.168.102.2 -> 192.168.102.1 jumbo ping ok
+  spark-ddbf: enP2p1s0f1np1 192.168.103.2 -> 192.168.103.1 jumbo ping ok
+  spark-ddbf: mstflint_access reloaded
+  spark-a218: enP2p1s0f0np0 192.168.104.1 -> 192.168.104.2 jumbo ping ok
+  spark-a218: enP2p1s0f1np1 192.168.103.1 -> 192.168.103.2 jumbo ping ok
+  spark-a218: mstflint_access reloaded
+  spark-06c4: enP2p1s0f0np0 192.168.104.2 -> 192.168.104.1 jumbo ping ok
+  spark-06c4: enP2p1s0f1np1 192.168.100.1 -> 192.168.100.2 jumbo ping ok
+  spark-06c4: mstflint_access reloaded
+[05:48:47] -- plugin resume on spark-06c4 spark-365c spark-ddbf spark-a218 (re-open devices, re-connect over the retained sockets)
+  spark-ddbf: PLUGIN_OK 1 process(es) active
+  spark-a218: PLUGIN_OK 1 process(es) active
+  spark-06c4: PLUGIN_OK 1 process(es) active
+  spark-365c: PLUGIN_OK 1 process(es) active
+[05:48:48] -- state
+spark-06c4  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=running
+spark-365c  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=running
+spark-ddbf  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=running
+spark-a218  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=running
+[05:48:50] == up: CX-7 on and ring verified on 4 node(s)

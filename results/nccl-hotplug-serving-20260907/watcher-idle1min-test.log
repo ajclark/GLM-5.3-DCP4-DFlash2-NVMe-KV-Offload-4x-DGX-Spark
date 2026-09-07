@@ -1,0 +1,70 @@
+[2026-09-07 05:49:55] hold: procs=4 active=4 suspended=0 other=0 min_idle=35s wanted=0 unreachable=0
+[2026-09-07 05:50:07] hold: procs=4 active=4 suspended=0 other=0 min_idle=47s wanted=0 unreachable=0
+[2026-09-07 05:50:19] hold: procs=4 active=4 suspended=0 other=0 min_idle=59s wanted=0 unreachable=0
+[2026-09-07 05:50:31] spin down: every process idle >= 1 min (procs=4 active=4 suspended=0 other=0 min_idle=71s wanted=0 unreachable=0)
+[05:50:32] == down: CX-7 off on spark-06c4 spark-365c spark-ddbf spark-a218 (restore-after=0s dry-run=0)
+[05:50:33] -- plugin prepare on spark-06c4 spark-365c spark-ddbf spark-a218 (gate the data path; refused if anything is in flight)
+  spark-06c4: PLUGIN_OK 1 process(es) prepared|suspended
+  spark-365c: PLUGIN_OK 1 process(es) prepared|suspended
+  spark-ddbf: PLUGIN_OK 1 process(es) prepared|suspended
+  spark-a218: PLUGIN_OK 1 process(es) prepared|suspended
+[05:50:34] -- plugin commit on spark-06c4 spark-365c spark-ddbf spark-a218 (tear the RDMA state down)
+  spark-ddbf: PLUGIN_OK 1 process(es) suspended
+  spark-365c: PLUGIN_OK 1 process(es) suspended
+  spark-a218: PLUGIN_OK 1 process(es) suspended
+  spark-06c4: PLUGIN_OK 1 process(es) suspended
+  spark-06c4: mstflint_access unloaded
+  spark-06c4: before: cx7=1 fns=4 ctr=running
+  spark-365c: mstflint_access unloaded
+  spark-365c: before: cx7=1 fns=4 ctr=running
+  spark-ddbf: mstflint_access unloaded
+  spark-ddbf: before: cx7=1 fns=4 ctr=running
+  spark-a218: mstflint_access unloaded
+  spark-a218: before: cx7=1 fns=4 ctr=running
+[05:50:36] -- powering the adapters down
+  spark-365c: CX7_OFF mgmt=10000M
+  spark-a218: CX7_OFF mgmt=10000M
+  spark-06c4: CX7_OFF mgmt=10000M
+  spark-ddbf: CX7_OFF mgmt=10000M
+[05:50:58] -- state
+spark-06c4  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=running
+spark-365c  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=running
+spark-ddbf  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=running
+spark-a218  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=running
+[05:51:00] == down: CX-7 off on 4 node(s); bring it back with: /home/napta2k/dgx-spark-idle-power/spark-idle.sh --up
+[2026-09-07 05:51:00] spark-idle.sh --down -> 0
+[2026-09-07 05:51:12] hold: procs=4 active=0 suspended=4 other=0 min_idle=-1s wanted=0 unreachable=0
+[2026-09-07 06:01:01] wake: a process asked for the network while suspended (procs=4 active=0 suspended=4 other=0 min_idle=-1s wanted=1 unreachable=0)
+[06:01:02] == up: CX-7 on for spark-06c4 spark-365c spark-ddbf spark-a218 (dry-run=0)
+[06:01:02] -- power up, rescan, wait for links
+  spark-06c4: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+  spark-a218: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+  spark-ddbf: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+  spark-365c: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+[06:01:10] -- ring pings and mstflint reload
+  spark-365c: enP2p1s0f0np0 192.168.102.1 -> 192.168.102.2 jumbo ping ok
+  spark-365c: enP2p1s0f1np1 192.168.100.2 -> 192.168.100.1 jumbo ping ok
+  spark-365c: mstflint_access reloaded
+  spark-a218: enP2p1s0f0np0 192.168.104.1 -> 192.168.104.2 jumbo ping ok
+  spark-a218: enP2p1s0f1np1 192.168.103.1 -> 192.168.103.2 jumbo ping ok
+  spark-a218: mstflint_access reloaded
+  spark-06c4: enP2p1s0f0np0 192.168.104.2 -> 192.168.104.1 jumbo ping ok
+  spark-06c4: enP2p1s0f1np1 192.168.100.1 -> 192.168.100.2 jumbo ping ok
+  spark-06c4: mstflint_access reloaded
+  spark-ddbf: enP2p1s0f0np0 192.168.102.2 -> 192.168.102.1 jumbo ping ok
+  spark-ddbf: enP2p1s0f1np1 192.168.103.2 -> 192.168.103.1 jumbo ping ok
+  spark-ddbf: mstflint_access reloaded
+[06:01:14] -- plugin resume on spark-06c4 spark-365c spark-ddbf spark-a218 (re-open devices, re-connect over the retained sockets)
+  spark-06c4: PLUGIN_OK 1 process(es) active
+  spark-365c: PLUGIN_OK 1 process(es) active
+  spark-a218: PLUGIN_OK 1 process(es) active
+  spark-ddbf: PLUGIN_OK 1 process(es) active
+[06:01:15] -- state
+spark-06c4  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=running
+spark-365c  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=running
+spark-ddbf  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=running
+spark-a218  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=running
+[06:01:16] == up: CX-7 on and ring verified on 4 node(s)
+[2026-09-07 06:01:16] spark-idle.sh --up -> 0
+[2026-09-07 06:01:28] hold: procs=4 active=4 suspended=0 other=0 min_idle=7s wanted=0 unreachable=0
+[2026-09-07 06:01:40] hold: procs=4 active=4 suspended=0 other=0 min_idle=19s wanted=0 unreachable=0
