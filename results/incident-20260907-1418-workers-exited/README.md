@@ -48,3 +48,15 @@ Two levels.
   fresh.
 - Not changed: memory headroom of the lane. Still the lever if the platform
   bug turns out to be pressure-driven.
+
+## Reproduction attempts (2026-09-07 evening)
+
+- The persisted Triton cache on spark-06c4 holds 7,383 binaries of `_fp8_mqa_logits_kernel`
+  (143 of the rowwise decode kernel): the amplifier, quantified.
+- `bench/repro/cuda_module_load_stress.py`: 60,000 module loads in one process, no failure.
+  Module count alone is not it.
+- `bench/repro/indexer_kernel_specialization_stress.py` (the real kernel, real
+  specializations) needs a node without the serving stack; scheduled for the next window.
+- First version of the fix (all strides runtime) cost 26% decode (181 vs 144 ms/cycle, output
+  byte-identical); narrowed to the per-request arguments in 487b91f, relaunched as
+  `dcp2-hotplug-5`.
