@@ -41,8 +41,10 @@ capped state, more cycles do not worsen it, and a reboot clears it.
 
 ## Open / next
 
-- Confirm cold boot restores full bandwidth: reboot one node, `ib_write_bw` before relaunch. Needs
-  a downtime window.
+- **Confirmed 2026-09-08**: after a full cold boot of all four nodes, `ib_write_bw -q 16 -s 1M` =
+  **111.9 Gb/s** on both ring links (throttled state was 12.7); `dmesg` has zero
+  `slot power capability was not advertised` lines at cold boot. Root cause and recovery both
+  proven. The serving stack was relaunched on the builtin NCCL backend, idle-power feature paused.
 - Candidate un-throttle without a full reboot, to add to `spark-idle.sh --up` (test in a window,
   serving down on that node): `mlxfwreset -d <bdf> reset` (PCI-level firmware reset, re-reads slot
   power); or a remove+rescan from the root complex that re-runs ACPI; or an mstconfig knob to

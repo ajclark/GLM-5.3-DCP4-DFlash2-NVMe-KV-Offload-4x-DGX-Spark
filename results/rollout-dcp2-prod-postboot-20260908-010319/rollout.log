@@ -1,0 +1,26 @@
+[01:03:19] rollout 'dcp2-prod-postboot' MAXLEN=180224 MAXBATCHED=2048 KVBYTES=6000000000 KVTIER=1 out=/home/napta2k/spark-cluster-mla-dcp/results/rollout-dcp2-prod-postboot-20260908-010319
+[01:03:19] SKIP_PREFLIGHT=1: not requiring a healthy stack (recovery)
+[01:03:19] production healthy; saving pre-rollout logs + memory baseline
+spark-06c4 avail=117798MiB swapfree=16383MiB pswpout=0
+spark-365c avail=117707MiB swapfree=16383MiB pswpout=0
+spark-ddbf avail=118380MiB swapfree=16383MiB pswpout=0
+spark-a218 avail=118356MiB swapfree=16383MiB pswpout=0
+[01:03:22] ring GID check (NCCL_IB_GID_INDEX=3 on both ring ports of every node)
+[01:03:26]   spark-06c4 staged + verified
+[01:03:27]   spark-365c staged + verified
+[01:03:28]   spark-ddbf staged + verified
+[01:03:28]   spark-a218 staged + verified
+[01:03:28] stopping production ranks
+[01:03:35]   flusher spark-06c4: STARTED 115G-avail
+[01:03:37]   flusher spark-365c: STARTED 115G-avail
+[01:03:38]   flusher spark-ddbf: STARTED 115G-avail
+[01:03:40]   flusher spark-a218: STARTED 115G-avail
+[01:03:40] launching DCP ranks (worker-first)
+[01:03:40] adapters on and ring verified before launch (idempotent)
+[01:03:46]   launching rank 3 on spark-a218
+140d42f93ed85304f28c0afd53ac2f07067c41ee8a46545337799065187c3867
+launched vllm_glm53big rank=3 host=192.168.1.31 nccl_hotplug=0 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+vllm_glm53big Up 3 seconds
+[01:03:53]   launching rank 2 on spark-ddbf
+6070b607883e90236424220db3a35268a1e9eb651089d9d388b778481d0c9f48
+launched vllm_glm53big rank=2 host=192.168.1.149 nccl_hotplug=0 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
