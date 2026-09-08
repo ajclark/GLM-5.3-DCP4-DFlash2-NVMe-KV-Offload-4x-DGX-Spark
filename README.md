@@ -5,12 +5,12 @@ the KV cache across the four ranks instead of four**, so the context window
 grows with the group instead of being replicated across it, while keeping
 DFlash2 speculative decoding. On top of that, a **multi-node NVMe KV tier**
 (a fixed-size slab ring buffer on each node's disk) makes long cold prefills
-durable across evictions and engine restarts.
+durable across evictions, engine restarts, and a full machine reboot.
 
 ## Highlights
 
 - **Decode context parallelism for GLM-5.3's sparse MLA, with speculative decoding kept.** One KV cache shared across the four Sparks instead of four copies: 4.00x the KV tokens at the same window (131k → 524k), a 262k window with 462k tokens, a 500k-token prompt served. DFlash2 (K=7) runs alongside it through a replicated drafter group; acceptance is unchanged and greedy output is byte-identical to the stock lane.
-- **NVMe-durable KV cache.** A multi-node slab tier on each node's disk: a 100k-token prefix reloads in 3-8 s instead of a 335 s recompute, and survives evictions and engine restarts. Fixed-size ring buffer, no janitor needed.
+- **NVMe-durable KV cache, across a reboot.** A multi-node slab tier on each node's disk: a 100k-token prefix reloads in ~2.5 s instead of a ~217 s recompute, and survives evictions, engine restarts, and a full cold reboot of all four nodes (measured: 9,640 blocks recovered from on-disk headers, 99.7% served). Each slot is self-describing (magic, content key, length, payload CRC) and sealed header-last, so a torn or reordered write is detected on read and never served; recovery is a header scan, gated on the run config, toggleable (`persist_across_reboot`, default on). Fixed-size ring buffer, no janitor needed.
 - **Idle power, in a sibling repo.** Switching the ConnectX-7 off with the cables attached takes four idle nodes from 202 W to 120 W: [dgx-spark-idle-power](https://github.com/ajclark/dgx-spark-idle-power).
 
 Deployed and serving on the author's cluster since 2026-09-04 (GLM-5.3
@@ -25,7 +25,7 @@ production DCP1 lane of the same image:
 | decode, count100 greedy (GPU clocks locked at 2000 MHz) | 56.5 tok/s, 139 ms/cycle | 50.5 tok/s, 155 ms/cycle (-11%) with candidate compaction; acceptance unchanged |
 | 250k-token prompt | n/a | 893 s |
 | 100k prefix, cold prefill | 335 s | 335 s |
-| 100k prefix after eviction or engine restart | 335 s (recompute) | **3-8 s from NVMe**, 99.4% of tokens served |
+| 100k prefix after eviction, engine restart, or **a full reboot** | 335 s (recompute) | **~2.5 s from NVMe**, 99.7% of tokens served |
 
 Decode by lane, single stream, greedy, thinking off, GPU clocks locked at
 2000 MHz, DFlash2 K=7 (`docs/DESIGN.md` §8; DCP=4 with candidate compaction):

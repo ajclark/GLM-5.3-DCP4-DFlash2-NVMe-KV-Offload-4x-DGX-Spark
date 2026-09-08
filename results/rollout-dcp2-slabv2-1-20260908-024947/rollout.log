@@ -1,0 +1,9 @@
+[02:49:47] rollout 'dcp2-slabv2-1' MAXLEN=180224 MAXBATCHED=2048 KVBYTES=6000000000 KVTIER=1 out=/home/napta2k/spark-cluster-mla-dcp/results/rollout-dcp2-slabv2-1-20260908-024947
+[02:49:47] SKIP_PREFLIGHT=1: not requiring a healthy stack (recovery)
+[02:49:47] production healthy; saving pre-rollout logs + memory baseline
+spark-06c4 avail=3153MiB swapfree=13670MiB pswpout=711789
+spark-365c avail=4526MiB swapfree=14164MiB pswpout=548784
+spark-ddbf avail=4911MiB swapfree=14183MiB pswpout=542183
+spark-a218 avail=5080MiB swapfree=14162MiB pswpout=544777
+[02:49:49] ring GID check (NCCL_IB_GID_INDEX=3 on both ring ports of every node)
+[02:49:54] overlay sha mismatch on spark-06c4
