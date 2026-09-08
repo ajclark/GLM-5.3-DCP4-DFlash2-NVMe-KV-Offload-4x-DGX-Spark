@@ -1,0 +1,12 @@
+== CONTROL: --down then --up a218 (NO trick), expect throttle
+  spark-a218: CX7_OFF mgmt=10000M
+spark-a218  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=
+[18:36:30] == down: CX-7 off on 1 node(s); bring it back with: ./spark-idle.sh --up
+  spark-a218: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
+[18:36:39] -- ring pings and mstflint reload
+spark-a218  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu9000 rdma_active=4 mgmt=10000M mstflint=loaded timer=none ctr=
+[18:36:42] == up: CX-7 on and ring verified on 1 node(s)
+== CONTROL measurement (expect ~13 Gb/s, pwr_status 0, 'not advertised' appears)
+CONTROL bw a218->ddbf:  1048576    80000            12.68              12.68  		   0.001512
+MPEIN 0000:01:00.0: pwr_status | 0x00000002;pci_power | 0x0000001b;
+dmesg after control re-add: not_advertised=2 insufficient=8

@@ -1,0 +1,32 @@
+[19:08:02] == stopping serving stack on all 4 nodes
+[19:08:17] == baseline (no cycle): 111.86 Gb/s
+[19:08:17] == BOOT-gpio probe: --down, drive EN high, poll gpio-102 for 4s
+  EN=658 high @ 1788894520.473178751
+  t=0.1 gpio102=hi
+[19:09:07] == CAUSALITY CONTROLS (must THROTTLE ~13):
+[19:09:23] spark-a218 unreachable; aborting
+[19:10:36] C1-no-prepower: bw= Gb/s  up_rc=1  not_advertised_delta=0
+[19:11:03] == up: CX-7 on for spark-a218 (dry-run=0)
+[19:11:03] -- power up, rescan, wait for links
+  spark-a218: WARN: legacy sysfs GPIO unavailable; pre-power skipped (throttle may occur)
+  spark-a218: Timeout, server spark-a218.local not responding.
+[19:11:18] -- state
+spark-a218  UNREACHABLE
+[19:11:26] == at least one node FAILED verification/resume; do not trust the serving stack until fixed
+[19:12:50] C2-prepower-zero-wait: bw= Gb/s  up_rc=1  not_advertised_delta=0
+[19:13:14] == up: CX-7 on for spark-a218 (dry-run=0)
+[19:13:14] -- power up, rescan, wait for links
+  spark-a218: WARN: legacy sysfs GPIO unavailable; pre-power skipped (throttle may occur)
+  spark-a218: Timeout, server spark-a218.local not responding.
+[19:13:29] -- state
+spark-a218  UNREACHABLE
+[19:13:37] == at least one node FAILED verification/resume; do not trust the serving stack until fixed
+[19:15:02] C3-prepower-1s-wait: bw= Gb/s  up_rc=1  not_advertised_delta=0
+[19:15:02] == THE FIX, 5 repeats (must be ~112 every time):
+[19:15:30] == up: CX-7 on for spark-a218 (dry-run=0)
+[19:15:30] -- power up, rescan, wait for links
+  spark-a218: WARN: legacy sysfs GPIO unavailable; pre-power skipped (throttle may occur)
+  spark-a218: Timeout, server spark-a218.local not responding.
+[19:15:44] -- state
+spark-a218  UNREACHABLE
+[19:15:52] == at least one node FAILED verification/resume; do not trust the serving stack until fixed

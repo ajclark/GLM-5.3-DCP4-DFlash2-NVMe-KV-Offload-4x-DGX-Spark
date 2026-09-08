@@ -1,0 +1,31 @@
+== TRICK on a218 (pre-power EN, wait 3s, then normal up). dmesg not_advertised before = 2
+-- 1. adapters down on a218
+  spark-a218: CX7_OFF mgmt=10000M
+[18:39:25] == down: CX-7 off on 1 node(s); bring it back with: ./spark-idle.sh --up
+-- 2. PRE-POWER: export EN gpio 658 high, watch for a stray plugin uevent, wait 3s
+  EN value now: 1  debug_state: 0
+  CX-7 functions present during pre-power (should be 0, driver has not re-added yet): 0
+  new dmesg during pre-power: [55140.971164] mlx5_core 0002:01:00.1: E-Switch: cleanup
+[55141.414192] cx7-pcie-hotplug MTKP0001:00: Cable removal
+-- 3. normal --up (debug_state=1 + rescan against the now-booted firmware)
+[18:39:51] == at least one node FAILED verification/resume; do not trust the serving stack until fixed
+-- 4. CLEANUP: unexport 658 (release our owner; EN stays high from the driver)
+ssh: connect to host spark-a218.local port 22: No route to host
+cx7 status: 1 functions=4
+ring ports: f0=up/200000 f1=up/200000
+rdma active: 4
+gpio658 still exported: no
+-- dmesg tail (bring-up):
+[    9.400532] mlx5_core 0000:01:00.1 rocep1s0f1: Port: 1 Link ACTIVE
+[   10.329449] Initializing XFRM netlink socket
+[   13.155172] r8127: enP7s7: link up
+== TRICK measurement (baseline 111.9, control throttled 12.7; not_advertised was 2 before trick)
+TRICK bw a218->ddbf:  1048576    80000            111.83             111.83 		   0.013331
+dmesg not_advertised now: 0  (2 = no new line = TRICK WORKED; 4 = throttled)
+last two mlx5_pcie_event lines:
+  mlx5_core 0002:01:00.0: mlx5_pcie_event:326:(pid 407): Detected insufficient power on the PCIe slot (27W).
+  mlx5_core 0002:01:00.1: mlx5_pcie_event:326:(pid 407): Detected insufficient power on the PCIe slot (27W).
+== confirm BOTH ports un-throttled + stability
+  trick f0 a218->06c4: 111.86 Gb/s
+  trick f1 a218->ddbf (repeat): 111.86 Gb/s
+== a218 health for serving: functions=4 rdma=4 ports=up/up

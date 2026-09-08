@@ -1,0 +1,11 @@
+=== BASELINE (clean cold-boot state, before anything) 2026-09-08 18:33:29
+-- ib_write_bw a218 f1 -> ddbf (103.x), 16 QP 1MB, Gb/s:
+---------------------------------------------------------------------------------------
+-- MPEIN pwr_status (2 = insufficient-but-fine, 0 = not-advertised/THROTTLED):
+
+-- dmesg counts this boot: not_advertised=0 insufficient=4
+-- MPEIN on 0002:01:00.0:
+-E- Failed to send access register: ME_ICMD_OPERATIONAL_ERROR
+-- MPEIN on 0000:01:00.0:
+pwr_status | 0x00000002
+pci_power | 0x0000001b
