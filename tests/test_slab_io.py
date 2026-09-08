@@ -17,7 +17,8 @@ SRC = open("stage/glm-dcp/multinode.py").read()
 tree = ast.parse(SRC)
 WANT = {"_round_up", "_atomic_write_json", "_drain_iov", "_crc", "SLAB_MAGIC", "SLAB_HEADER_BYTES",
         "SLAB_VERSION", "SLAB_META_VERSION", "_SLAB_HDR", "SLAB_META", "SLAB_EPOCH",
-        "DRAFTER_PER_TARGET", "slab_geometry", "SlabIO", "_slab_should_wipe", "_slab_persist_default"}
+        "DRAFTER_PER_TARGET", "slab_geometry", "SlabIO", "_slab_should_wipe", "_slab_persist_default",
+        "_slab_persist_value", "_dir_fingerprint", "_content_identity"}
 segs = []
 for node in tree.body:
     take = False
@@ -95,6 +96,42 @@ check("toggle default is ON", ns["_slab_persist_default"]() is True)
 _os.environ["SLAB_PERSIST_ACROSS_REBOOT"] = "0"; check("toggle env=0 -> OFF", ns["_slab_persist_default"]() is False)
 _os.environ["SLAB_PERSIST_ACROSS_REBOOT"] = "off"; check("toggle env=off -> OFF", ns["_slab_persist_default"]() is False)
 _os.environ.pop("SLAB_PERSIST_ACROSS_REBOOT", None)
+
+# --- review fixes: toggle coercion, read-epoch, epoch authority, widened gate, weight fingerprint ---
+PV = ns["_slab_persist_value"]
+check("persist coercion: 'false' -> OFF (bool('false') would be True)", PV("false") is False)
+check("persist coercion: '0'/'off'/'' -> OFF", PV("0") is False and PV("off") is False and PV("") is False)
+check("persist coercion: 'true'/'1'/True -> ON", PV("true") is True and PV("1") is True and PV(True) is True)
+with tempfile.TemporaryDirectory() as d:
+    sb=[_round_up(HDR+1000,4096), _round_up(HDR+400,4096)]; cnt=[8,8]
+    kE=make_key(b"\xEE"*32,0); dat=b"E"*1000
+    io=SlabIO(d,sb,cnt,epoch=5); io.write(kE,0,mv(dat),seq=1,epoch=5)
+    b=mv(dat); io.read(kE,0,b,epoch=5); check("read with matching epoch serves", bytes(b[0])==dat)
+    try: io.read(kE,0,mv(dat),epoch=6); check("read with a NEWER load epoch rejects the stale slot", False)
+    except OSError as e: check("read with a NEWER load epoch rejects the stale slot", "epoch" in str(e))
+    b=mv(dat); io.read(kE,0,b); check("read with no epoch given (legacy call) still serves", bytes(b[0])==dat)
+    # a store sealed under an OLDER epoch must not be re-labelled by a concurrent newer epoch (header takes epoch explicitly)
+    io.write(make_key(b"\xEF"*32,0),1,mv(dat),seq=2,epoch=3)
+    hdrs={slot:ep for slot,ep in ((s_, io.parse_header(os.pread(io.fds[0],HDR,io._off(0,s_)))[1]) for s_ in (0,1))}
+    check("each slot sealed with ITS OWN store epoch (5 and 3), self.epoch untouched", hdrs=={0:5,1:3} and io.epoch==5)
+    # epoch authority: with the epoch file gone, the next epoch must be ABOVE the max on disk
+    check("max_epoch() finds the highest header epoch on disk (5)", io.max_epoch()==5)
+    io.close()
+    e=SlabIO(os.path.join(d,"empty"),sb,cnt,epoch=0); check("max_epoch() is None on empty slabs", e.max_epoch() is None); e.close()
+    # weight fingerprint: stat-based, changes when a checkpoint is swapped in place
+    wd=os.path.join(d,"weights"); os.makedirs(wd); open(os.path.join(wd,"model.safetensors"),"wb").write(b"x"*100); open(os.path.join(wd,"config.json"),"w").write("{}")
+    FP=ns["_dir_fingerprint"]; f1=FP(wd)
+    open(os.path.join(wd,"model.safetensors"),"wb").write(b"y"*101)   # different size -> different weights
+    f2=FP(wd); check("weight fingerprint changes when a checkpoint is swapped in place", f1 and f2 and f1!=f2)
+    check("weight fingerprint is None for a non-directory (HF repo id)", FP("org/model-id") is None)
+# widened gate: content identity change wipes even with identical run_config
+W=ns["_slab_should_wipe"]; rc={"model":"glm"}; sb2,sc2,ev="sb","sc","v1"
+ident={"weights_target":"abc","dtype":"bf16"}
+good={"version":ns["SLAB_META_VERSION"],"slot_bytes":sb2,"slot_counts":sc2,"engine_version":ev,"run_config":rc,"boot_id":"A","content_identity":ident}
+check("gate: same everything incl content_identity -> KEEP", W(good,sb2,sc2,rc,ev,"B",True,ident) is False)
+check("gate: weights swapped in place (fingerprint differs) -> WIPE", W(good,sb2,sc2,rc,ev,"A",True,{**ident,"weights_target":"zzz"}) is True)
+check("gate: dtype change -> WIPE", W(good,sb2,sc2,rc,ev,"A",True,{**ident,"dtype":"fp8"}) is True)
+check("gate: old meta lacks content_identity (v2) -> WIPE (version bump handles it too)", W({**good,"version":2},sb2,sc2,rc,ev,"A",True,ident) is True)
 
 print(f"\n=== {'ALL PASS' if fails==0 else str(fails)+' FAILURE(S)'}")
 sys.exit(1 if fails else 0)

@@ -1186,7 +1186,7 @@ import zlib  # noqa: E402  (CRC32 for slab crash-safety)
 SLAB_MAGIC = b"GLMSLAB1"
 SLAB_HEADER_BYTES = 128
 SLAB_VERSION = 2   # v2 adds payload_crc + header_crc; v1 slabs (no CRC) are rejected on read/scan
-SLAB_META_VERSION = 2
+SLAB_META_VERSION = 3   # v3: the gate also compares content_identity (weights, dtype/quant/rope, overlay)
 try:
     from vllm.version import __version__ as _VLLM_VERSION   # gates the KV-block hash scheme (GLM review)
 except Exception:  # noqa: BLE001
@@ -1239,12 +1239,70 @@ def _atomic_write_json(path: str, obj) -> None:
         os.close(dfd)
 
 
+def _slab_persist_value(v) -> bool:
+    """Coerce a persist flag from extra_config (JSON may carry "false"/"0") or env. bool("false")
+    is True in Python, so strings get the accepted-values rule."""
+    if isinstance(v, str):
+        return v.strip().lower() not in ("0", "false", "no", "off", "")
+    return bool(v)
+
+
 def _slab_persist_default() -> bool:
     """Default for cross-reboot slab persistence: ON, overridable by env for ops."""
-    return os.environ.get("SLAB_PERSIST_ACROSS_REBOOT", "1").strip().lower() not in ("0", "false", "no", "off")
+    return _slab_persist_value(os.environ.get("SLAB_PERSIST_ACROSS_REBOOT", "1"))
 
 
-def _slab_should_wipe(old, slot_bytes, slot_counts, run_config, engine_version, boot_id, persist) -> bool:
+def _dir_fingerprint(path) -> str | None:
+    """Stat-based identity of a local weights directory: sha256 over the sorted (relative name,
+    size, mtime_ns) of its checkpoint/config files. No file reads. None if not a local directory
+    (an HF repo id) or empty. Detects a checkpoint swapped in place at the same path."""
+    if not path or not os.path.isdir(str(path)):
+        return None
+    import hashlib
+    h = hashlib.sha256(); n = 0
+    for root, _dirs, files in os.walk(str(path)):
+        for fn in sorted(files):
+            if not fn.endswith((".safetensors", ".json", ".bin", ".pt", ".pth", ".gguf")):
+                continue
+            fp = os.path.join(root, fn)
+            try:
+                st = os.stat(fp)
+            except OSError:
+                continue
+            rel = os.path.relpath(fp, str(path))
+            h.update(f"{rel}\0{st.st_size}\0{st.st_mtime_ns}\n".encode()); n += 1
+    return h.hexdigest() if n else None
+
+
+def _content_identity(vllm_config, draft, extra_config) -> dict:
+    """Everything that changes the KV BYTES a token-hash key maps to, beyond what run_config
+    already carries. The key is sha256(parent, tokens): it names the INPUT, not the output, so
+    a persisted slot is only trustworthy while all of this is unchanged. Any difference wipes."""
+    mc = getattr(vllm_config, "model_config", None); cc = getattr(vllm_config, "cache_config", None)
+    pc = getattr(vllm_config, "parallel_config", None); hf = getattr(mc, "hf_config", None)
+    def js(x):
+        try: return json.dumps(x, sort_keys=True, default=str)
+        except Exception: return str(x)  # noqa: BLE001
+    return {
+        "weights_target": _dir_fingerprint(getattr(mc, "model", None)),
+        "weights_draft": _dir_fingerprint(draft),
+        "dtype": str(getattr(mc, "dtype", None)),
+        "quantization": getattr(mc, "quantization", None),
+        "revision": getattr(mc, "revision", None),
+        "hf_overrides": js(getattr(mc, "hf_overrides", None)),
+        "rope_theta": getattr(hf, "rope_theta", None),
+        "rope_scaling": js(getattr(hf, "rope_scaling", None)),
+        "max_position_embeddings": getattr(hf, "max_position_embeddings", None),
+        "cache_dtype": str(getattr(cc, "cache_dtype", None)),
+        "cp_kv_cache_interleave_size": getattr(pc, "cp_kv_cache_interleave_size", None),
+        "prefix_caching_hash_algo": getattr(cc, "prefix_caching_hash_algo", None),
+        "pythonhashseed": os.environ.get("PYTHONHASHSEED"),
+        "slab_salt": (extra_config or {}).get("slab_salt"),   # overlay digest from the launcher
+    }
+
+
+def _slab_should_wipe(old, slot_bytes, slot_counts, run_config, engine_version, boot_id, persist,
+                      content_identity=None) -> bool:
     """Whether to start the rank's slabs empty. Wipe when they cannot mean the same thing:
     no/old meta, a different format version, changed geometry, a different engine build (KV-block
     hash scheme), or any run_config difference. When persist is False, also wipe on a new boot
@@ -1255,7 +1313,8 @@ def _slab_should_wipe(old, slot_bytes, slot_counts, run_config, engine_version, 
             or old.get("slot_bytes") != slot_bytes
             or old.get("slot_counts") != slot_counts
             or old.get("engine_version") != engine_version
-            or old.get("run_config") != run_config):
+            or old.get("run_config") != run_config
+            or old.get("content_identity") != content_identity):
         return True
     if not persist and old.get("boot_id") != boot_id:
         return True
@@ -1336,11 +1395,14 @@ class SlabIO:
         assert 0 <= slot < self.slot_counts[group], (group, slot)
         return slot * self.slot_bytes[group]
 
-    def header(self, key: OffloadKey, length: int, seq: int, payload_crc: int) -> bytes:
-        base = _SLAB_HDR.pack(SLAB_MAGIC, SLAB_VERSION, get_offload_group_idx(key), self.epoch,
-                              length, seq, bytes(key), payload_crc, 0)
-        return _SLAB_HDR.pack(SLAB_MAGIC, SLAB_VERSION, get_offload_group_idx(key), self.epoch,
-                              length, seq, bytes(key), payload_crc, _crc(base))
+    def header(self, key: OffloadKey, length: int, seq: int, payload_crc: int, epoch: int | None = None) -> bytes:
+        kb = bytes(key)
+        assert len(kb) == 36, len(kb)   # 32-byte hash + 4-byte group; "36s" would silently pad/truncate
+        ep = self.epoch if epoch is None else int(epoch)
+        base = _SLAB_HDR.pack(SLAB_MAGIC, SLAB_VERSION, get_offload_group_idx(key), ep,
+                              length, seq, kb, payload_crc, 0)
+        return _SLAB_HDR.pack(SLAB_MAGIC, SLAB_VERSION, get_offload_group_idx(key), ep,
+                              length, seq, kb, payload_crc, _crc(base))
 
     @staticmethod
     def parse_header(raw: bytes):
@@ -1379,17 +1441,21 @@ class SlabIO:
                 raise OSError(f"pwritev returned {n}")
             pos += n
             remaining = _drain_iov(remaining, n)
-        if epoch is not None:
-            self.epoch = epoch
-        self._pwrite_all(fd, self.header(key, length, seq, payload_crc), off)  # 3. header last, in full
+        # seal with the epoch this store was issued under; do not mutate self.epoch from the
+        # writer threads (a store from an older epoch must never be sealed as the newer one)
+        self._pwrite_all(fd, self.header(key, length, seq, payload_crc, epoch=epoch), off)  # 3. header last, in full
 
-    def read(self, key: OffloadKey, slot: int, views: list[memoryview]) -> None:
+    def read(self, key: OffloadKey, slot: int, views: list[memoryview], epoch: int | None = None) -> None:
         g = get_offload_group_idx(key)
         fd, off = self.fds[g], self._off(g, slot)
         hdr = self.parse_header(os.pread(fd, SLAB_HEADER_BYTES, off))
         expected = sum(len(v) for v in views)
         if hdr is None or hdr[4] != key or hdr[2] != expected:
             raise OSError(f"slot {slot} of group {g} does not hold the requested block")
+        if epoch is not None and hdr[1] != int(epoch):
+            # a complete, CRC-valid slot from a PREVIOUS epoch (e.g. this rank lost the post-reset
+            # rewrite to a power cut while rank 0 kept it): stale KV, never serve it
+            raise OSError(f"slot {slot} of group {g} holds epoch {hdr[1]}, load is epoch {epoch}")
         pos = off + SLAB_HEADER_BYTES
         remaining = [v.cast("B") for v in views]
         while remaining:
@@ -1426,6 +1492,22 @@ class SlabIO:
     def wipe(self) -> None:
         for fd in self.fds:
             os.ftruncate(fd, 0)
+            os.fsync(fd)   # the truncate must be durable before the new meta is published
+
+    def max_epoch(self) -> int | None:
+        """Highest epoch found in any valid header, None if the slabs are empty. Used when the
+        epoch file is missing or corrupt: the next epoch must be ABOVE everything on disk."""
+        best = None
+        for g in range(len(self.fds)):
+            fd, sb = self.fds[g], self.slot_bytes[g]
+            for slot in range(self.slot_counts[g]):
+                raw = os.pread(fd, SLAB_HEADER_BYTES, slot * sb)
+                if len(raw) < SLAB_HEADER_BYTES:
+                    break
+                hdr = self.parse_header(raw)
+                if hdr is not None and (best is None or hdr[1] > best):
+                    best = hdr[1]
+        return best
 
     def close(self) -> None:
         for fd in self.fds:
@@ -1477,15 +1559,28 @@ class SlabOffloadingManager(OffloadingManager):
             return False  # torn or unreadable meta: treat as not there yet
         self._rank0 = rank_dir
         epoch_path = os.path.join(rank_dir, SLAB_EPOCH)
+        epoch_known = False
         try:
-            self.epoch = int(pathlib_read(epoch_path)) if os.path.exists(epoch_path) else 0
+            if os.path.exists(epoch_path):
+                self.epoch = int(pathlib_read(epoch_path)); epoch_known = True
         except ValueError:
-            self.epoch = 0
+            epoch_known = False   # corrupt: decided below from the headers, never assumed 0
         if self._pending_reset:
             self._pending_reset = False
             self.epoch += 1
             _atomic_write_text(epoch_path, str(self.epoch))
         self.io = SlabIO(rank_dir, slot_bytes, self.counts, self.epoch)
+        if not epoch_known:
+            # No usable epoch file. If the slabs hold anything, every slot on disk belongs to an
+            # epoch we can no longer vouch for: start ABOVE the highest one (logical wipe) rather
+            # than at 0, which would resurrect never-overwritten epoch-0 slots. Then publish it so
+            # a later absence is an anomaly, not the normal state.
+            top = self.io.max_epoch()
+            self.epoch = 0 if top is None else top + 1
+            self.io.epoch = self.epoch
+            _atomic_write_text(epoch_path, str(self.epoch))
+            logger.warning("Slab store: epoch file missing/corrupt at %s; using epoch %d (max on disk %s)",
+                           epoch_path, self.epoch, top)
         self.index = [collections.OrderedDict() for _ in self.counts]
         self.free = [collections.deque() for _ in self.counts]
         used = 0
@@ -1716,7 +1811,7 @@ class SlabBounceController(BounceController):
             self.slab.sync(g, dslots)
 
     def _load_one(self, job: _DirectJob, key: OffloadKey, bounce_slot: int) -> None:
-        self.slab.read(key, job.slots[key], self.reader.block_views(key, bounce_slot))
+        self.slab.read(key, job.slots[key], self.reader.block_views(key, bounce_slot), epoch=job.epoch)
 
     def _enqueue_store_tasks(self, job: _DirectJob, wid: int, slots_keys: list[tuple[int, OffloadKey]]) -> None:
         self.files.pool.enqueue_store(wid, 1, [functools.partial(self._store_chunk, job, slots_keys)])
@@ -1765,6 +1860,9 @@ class MultiNodeSlabOffloadingSpec(OffloadingSpecBase):
         meta_path = os.path.join(rank_dir, SLAB_META)
         boot = _boot_id()
         run_config = fm.get_run_config()
+        spec_cfg = getattr(self.vllm_config, "speculative_config", None)
+        draft = getattr(spec_cfg, "model", None) if spec_cfg is not None else None
+        content_identity = _content_identity(self.vllm_config, draft, self.extra_config)
         try:
             old = json.load(open(meta_path)) if os.path.exists(meta_path) else None
         except (OSError, ValueError):
@@ -1776,19 +1874,20 @@ class MultiNodeSlabOffloadingSpec(OffloadingSpecBase):
         # old wipe-every-boot behaviour. Either way the slabs are wiped when they cannot mean the
         # same thing (format version, geometry, engine build, or run_config).
         persist = self.extra_config.get("persist_across_reboot")
-        if persist is None:
-            persist = _slab_persist_default()
-        persist = bool(persist)
+        persist = _slab_persist_default() if persist is None else _slab_persist_value(persist)
         wiped = False
-        if _slab_should_wipe(old, slot_bytes, counts, run_config, _VLLM_VERSION, boot, persist):
+        if _slab_should_wipe(old, slot_bytes, counts, run_config, _VLLM_VERSION, boot, persist, content_identity):
             io.wipe()
             wiped = old is not None
         _atomic_write_json(meta_path, {
             "version": SLAB_META_VERSION, "boot_id": boot, "slot_bytes": slot_bytes, "slot_counts": counts,
             "group_bytes": group_bytes, "disk_bytes_per_rank": self.disk_bytes_per_rank,
-            "engine_version": _VLLM_VERSION, "run_config": run_config})
+            "engine_version": _VLLM_VERSION, "run_config": run_config, "content_identity": content_identity})
         epoch_path = os.path.join(rank_dir, SLAB_EPOCH)
-        io.epoch = int(pathlib_read(epoch_path)) if os.path.exists(epoch_path) else 0
+        try:
+            io.epoch = int(pathlib_read(epoch_path)) if os.path.exists(epoch_path) else 0
+        except ValueError:
+            io.epoch = 0   # fallback only: every store/load carries the scheduler's epoch explicitly
         self.controller = SlabBounceController(
             kv_caches, io, n_bounce=self.n_bounce,
             n_read_threads=self.n_read_threads, n_write_threads=self.n_write_threads,

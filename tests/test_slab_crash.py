@@ -166,8 +166,14 @@ with tempfile.TemporaryDirectory() as base:
         t=truth.get(slot)
         if t and t[1] is not None and OffloadKey(bytes(k))==t[0]:
             if read_ok(io,k,slot,t[1]) is not True: corrupt+=1
+    # informational oracle (reviewer): count slots scan yields but read rejects, so a regression that
+    # makes every slot unreadable is visible rather than silently "safe"
+    yielded=list(io.scan(0,epoch=1)); rejected=0
+    for slot,seq,key in yielded:
+        t=truth.get(slot); k=OffloadKey(key)
+        if t and OffloadKey(bytes(k))==t[0] and t[1] is not None and read_ok(io,k,slot,t[1]) is None: rejected+=1
     io.close()
-    check(f"fuzz 400 writes + 30% bit-flips: zero wrong-bytes served (corrupt={corrupt})", corrupt==0)
+    check(f"fuzz 400 writes + 30% bit-flips: zero wrong-bytes served (corrupt={corrupt}); scan yielded {len(yielded)}, read rejected {rejected} of the clean ones", corrupt==0 and rejected==0)
 
     # 11. seq recovery across reboot: the max stored seq must be recoverable so the scheduler
     #     resumes ABOVE it (a post-reboot write can never carry a lower seq than a recovered slot;
