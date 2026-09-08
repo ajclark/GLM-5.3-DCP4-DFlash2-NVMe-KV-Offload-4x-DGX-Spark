@@ -14,13 +14,13 @@ KVTIER="${5:-1}"
 WS="$(cd "$(dirname "$0")" && pwd)"
 HOSTS=(spark-06c4 spark-365c spark-ddbf spark-a218)   # index == rank
 NAME=vllm_glm53big
-PROD=/home/napta2k/glm53big/launch-glm53big-dflash.sh       # untouched production launcher
-DCPL=/home/napta2k/glm53big/launch-glm53big-dcp.sh
+PROD=~/glm53big/launch-glm53big-dflash.sh       # untouched production launcher
+DCPL=~/glm53big/launch-glm53big-dcp.sh
 OUT="$WS/results/rollout-$LABEL-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$OUT"
 LOG="$OUT/rollout.log"
 say() { echo "[$(date '+%H:%M:%S')] $*" | tee -a "$LOG"; }
-sshq() { ssh -o BatchMode=yes -o ConnectTimeout=8 "napta2k@$1.local" "$2"; }
+sshq() { ssh -o BatchMode=yes -o ConnectTimeout=8 "${SSH_USER:-$USER}@$1.local" "$2"; }
 
 health() { curl -fsS -m 5 http://spark-06c4.local:8000/health >/dev/null 2>&1; }
 generate_ok() {
@@ -57,7 +57,7 @@ start_flushers() {
 launch_ranks() {  # $1 = launcher path, $2 = extra env
   for i in 3 2 1 0; do
     say "  launching rank $i on ${HOSTS[$i]}"
-    sshq "${HOSTS[$i]}" "cd /home/napta2k/glm53big && $2 $1 $i dflash" >> "$LOG" 2>&1 || { say "launch command failed on ${HOSTS[$i]}"; return 1; }
+    sshq "${HOSTS[$i]}" "cd ~/glm53big && $2 $1 $i dflash" >> "$LOG" 2>&1 || { say "launch command failed on ${HOSTS[$i]}"; return 1; }
     sleep 3
   done
 }
@@ -135,10 +135,10 @@ ring_gid_check || { say "ring GID table wrong on at least one node; refusing to 
 # 1. stage overlays + launcher (production launcher untouched)
 WANT_L=$(sha256sum "$WS/launch-glm53big-dcp.sh" | cut -d' ' -f1)
 for h in "${HOSTS[@]}"; do
-  ( rsync -a --delete "$WS/stage/glm-dcp/" "napta2k@$h.local:glm-dcp/" && \
-    rsync -a --delete "$WS/stage/glm-triton/" "napta2k@$h.local:glm-triton/" && \
-    rsync -a "$WS/stage/nccl-hotplug/" "napta2k@$h.local:nccl-hotplug/" && \
-    scp -q "$WS/launch-glm53big-dcp.sh" "napta2k@$h.local:$DCPL" && \
+  ( rsync -a --delete "$WS/stage/glm-dcp/" "${SSH_USER:-$USER}@$h.local:glm-dcp/" && \
+    rsync -a --delete "$WS/stage/glm-triton/" "${SSH_USER:-$USER}@$h.local:glm-triton/" && \
+    rsync -a "$WS/stage/nccl-hotplug/" "${SSH_USER:-$USER}@$h.local:nccl-hotplug/" && \
+    scp -q "$WS/launch-glm53big-dcp.sh" "${SSH_USER:-$USER}@$h.local:$DCPL" && \
     sshq "$h" "chmod +x $DCPL" ) &
 done; wait
 for h in "${HOSTS[@]}"; do

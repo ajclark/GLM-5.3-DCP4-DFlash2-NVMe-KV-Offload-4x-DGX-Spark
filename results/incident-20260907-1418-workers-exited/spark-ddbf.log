@@ -1,5 +1,5 @@
 spark-ddbf:227:227 [0] NCCL INFO NET/IB : Made virtual device [1] name=roceP2p1s0f1 speed=200000 ndevs=1
-spark-ddbf:227:227 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:192.168.1.149<0>
+spark-ddbf:227:227 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:10.99.1.149<0>
 spark-ddbf:227:227 [0] NCCL INFO NET/IB/hotplug: control endpoint on 127.0.0.1:5711 (status|prepare|commit|resume)
 spark-ddbf:227:227 [0] NCCL INFO Initialized NET plugin NCCL RDMA Plugin v11
 spark-ddbf:227:227 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
@@ -12,7 +12,7 @@ spark-ddbf:227:227 [0] NCCL INFO NET/IB: [2] roceP2p1s0f0:uverbs2:1/RoCE provide
 spark-ddbf:227:227 [0] NCCL INFO NET/IB: [3] roceP2p1s0f1:uverbs3:1/RoCE provider=Mlx5 speed=200000 context=0x2cfd17f0 pciPath=/sys/devices/pci0002:00/0002:00:00.0/0002:01:00.0 ar=0 oooRqSize=0
 spark-ddbf:227:227 [0] NCCL INFO NET/IB : Made virtual device [0] name=roceP2p1s0f0 speed=200000 ndevs=1 rail=-1 plane=-1
 spark-ddbf:227:227 [0] NCCL INFO NET/IB : Made virtual device [1] name=roceP2p1s0f1 speed=200000 ndevs=1 rail=-1 plane=-1
-spark-ddbf:227:227 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:192.168.1.149<0>
+spark-ddbf:227:227 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:10.99.1.149<0>
 spark-ddbf:227:227 [0] NCCL INFO RMA/Plugin: Assigned plugin RMA_IB_PROXY to comm
 spark-ddbf:227:227 [0] NCCL INFO GIN/Plugin: Could not find: libnccl-gin.so
 spark-ddbf:227:227 [0] NCCL INFO Using network NCCL RDMA Plugin v11
@@ -47,7 +47,7 @@ spark-ddbf:227:227 [0] NCCL INFO Tuning P2P operations with maxP2pPeers = 4
 spark-ddbf:227:227 [0] NCCL INFO PROFILER/Plugin: Could not find: libnccl-profiler.so
 spark-ddbf:227:227 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
 spark-ddbf:227:253 [0] NCCL INFO [Proxy Service] Device 0 CPU core 15
-spark-ddbf:227:253 [0] NCCL INFO proxy listening socket at 192.168.1.149<46007>
+spark-ddbf:227:253 [0] NCCL INFO proxy listening socket at 10.99.1.149<46007>
 spark-ddbf:227:254 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 7
 spark-ddbf:227:227 [0] NCCL INFO TUNER/Plugin: Could not find: libnccl-tuner.so
 spark-ddbf:227:227 [0] NCCL INFO threadThresholds 8/8/64 | 32/8/64 | 512 | 512
@@ -102,7 +102,7 @@ spark-ddbf:227:227 [0] NCCL INFO P2P Chunksize set to 262144
 spark-ddbf:227:227 [0] NCCL INFO Tuning P2P operations with maxP2pPeers = 2
 spark-ddbf:227:227 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
 spark-ddbf:227:264 [0] NCCL INFO [Proxy Service] Device 0 CPU core 18
-spark-ddbf:227:264 [0] NCCL INFO proxy listening socket at 192.168.1.149<51085>
+spark-ddbf:227:264 [0] NCCL INFO proxy listening socket at 10.99.1.149<51085>
 spark-ddbf:227:265 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 4
 spark-ddbf:227:227 [0] NCCL INFO threadThresholds 8/8/64 | 16/8/64 | 512 | 512
 spark-ddbf:227:227 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls channels, 1 p2p channels, 1 p2p channels per peer
@@ -199,7 +199,7 @@ spark-ddbf:227:227 [0] NCCL INFO P2P Chunksize set to 262144
 spark-ddbf:227:227 [0] NCCL INFO Tuning P2P operations with maxP2pPeers = 4
 spark-ddbf:227:227 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
 spark-ddbf:227:289 [0] NCCL INFO [Proxy Service] Device 0 CPU core 10
-spark-ddbf:227:289 [0] NCCL INFO proxy listening socket at 192.168.1.149<41597>
+spark-ddbf:227:289 [0] NCCL INFO proxy listening socket at 10.99.1.149<41597>
 spark-ddbf:227:290 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 18
 spark-ddbf:227:227 [0] NCCL INFO threadThresholds 8/8/64 | 32/8/64 | 512 | 512
 spark-ddbf:227:227 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls channels, 1 p2p channels, 1 p2p channels per peer
@@ -265,7 +265,7 @@ spark-ddbf:227:227 [0] NCCL INFO Tuning P2P operations with maxP2pPeers = 4
 spark-ddbf:227:227 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
 spark-ddbf:227:305 [0] NCCL INFO [Proxy Service] Device 0 CPU core 7
 spark-ddbf:227:306 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 14
-spark-ddbf:227:305 [0] NCCL INFO proxy listening socket at 192.168.1.149<40321>
+spark-ddbf:227:305 [0] NCCL INFO proxy listening socket at 10.99.1.149<40321>
 spark-ddbf:227:227 [0] NCCL INFO threadThresholds 8/8/64 | 32/8/64 | 512 | 512
 spark-ddbf:227:227 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls channels, 1 p2p channels, 1 p2p channels per peer
 spark-ddbf:227:227 [0] NCCL INFO symmetricSupport 0, cuMemEnable 1, globalGinSupport 0, cuMemGdrSupport 0, contiguousRanksPerHost 1, crossNicSupport 1
@@ -318,7 +318,7 @@ spark-ddbf:227:227 [0] NCCL INFO Tuning P2P operations with maxP2pPeers = 2
 spark-ddbf:227:227 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
 spark-ddbf:227:325 [0] NCCL INFO [Proxy Service] Device 0 CPU core 14
 spark-ddbf:227:326 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 2
-spark-ddbf:227:325 [0] NCCL INFO proxy listening socket at 192.168.1.149<51933>
+spark-ddbf:227:325 [0] NCCL INFO proxy listening socket at 10.99.1.149<51933>
 spark-ddbf:227:227 [0] NCCL INFO threadThresholds 8/8/64 | 16/8/64 | 512 | 512
 spark-ddbf:227:227 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls channels, 1 p2p channels, 1 p2p channels per peer
 spark-ddbf:227:227 [0] NCCL INFO symmetricSupport 0, cuMemEnable 1, globalGinSupport 0, cuMemGdrSupport 0, contiguousRanksPerHost 1, crossNicSupport 1

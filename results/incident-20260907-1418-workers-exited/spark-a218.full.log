@@ -27,10 +27,10 @@ INFO 09-07 17:41:58 [vllm.py:1029] Asynchronous scheduling is enabled.
 INFO 09-07 17:41:58 [kernel.py:274] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native'])
 WARNING 09-07 17:41:58 [vllm.py:1637] max_num_scheduled_tokens is set to 1976 based on the speculative decoding settings. This may lead to suboptimal performance. Consider increasing max_num_batched_tokens to accommodate the additional draft token slots, or decrease num_speculative_tokens or max_num_seqs.
 WARNING 09-07 17:41:58 [vllm.py:2127] Model Runner V2 does not yet support the thinking_token_budget request parameter. Set VLLM_USE_V2_MODEL_RUNNER=0 if this is required.
-INFO 09-07 17:42:00 [serve.py:212] Launching vLLM (v0.23.1rc1.dev190+gab6660699.d20260830) headless multiproc executor, with head node address 192.168.1.228:29541 for torch.distributed process group.
+INFO 09-07 17:42:00 [serve.py:212] Launching vLLM (v0.23.1rc1.dev190+gab6660699.d20260830) headless multiproc executor, with head node address 10.99.1.228:29541 for torch.distributed process group.
 WARNING 09-07 17:42:00 [multiproc_executor.py:1053] Reducing Torch parallelism from 20 threads to 1 to avoid unnecessary CPU contention. Set OMP_NUM_THREADS in the external environment to tune this value as needed.
 [glm52-sm12x-sparse] DeepGEMM bypass registered for SM12x
-(Worker pid=226) INFO 09-07 17:42:03 [parallel_state.py:1568] world_size=4 rank=3 local_rank=0 distributed_init_method=tcp://192.168.1.228:29541 backend=nccl
+(Worker pid=226) INFO 09-07 17:42:03 [parallel_state.py:1568] world_size=4 rank=3 local_rank=0 distributed_init_method=tcp://10.99.1.228:29541 backend=nccl
 spark-a218:226:226 [0] NCCL INFO ENV/Plugin: Could not find: libnccl-env.so
 spark-a218:226:226 [0] NCCL INFO cudaDriverVersion 13000
 spark-a218:226:226 [0] NCCL INFO NCCL_SOCKET_IFNAME set to enP7s7
@@ -44,7 +44,7 @@ spark-a218:226:226 [0] NCCL INFO P2P plugin v11 IBext_v11
 spark-a218:226:226 [0] NCCL INFO NCCL_SOCKET_IFNAME set to enP7s7
 spark-a218:226:226 [0] NCCL INFO NET/IB : Made virtual device [0] name=roceP2p1s0f0 speed=200000 ndevs=1
 spark-a218:226:226 [0] NCCL INFO NET/IB : Made virtual device [1] name=roceP2p1s0f1 speed=200000 ndevs=1
-spark-a218:226:226 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:192.168.1.31<0>
+spark-a218:226:226 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:10.99.1.31<0>
 spark-a218:226:226 [0] NCCL INFO NET/IB/hotplug: control endpoint on 127.0.0.1:5711 (status|prepare|commit|resume)
 spark-a218:226:226 [0] NCCL INFO Initialized NET plugin NCCL RDMA Plugin v11
 spark-a218:226:226 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
@@ -57,7 +57,7 @@ spark-a218:226:226 [0] NCCL INFO NET/IB: [2] roceP2p1s0f0:uverbs2:1/RoCE provide
 spark-a218:226:226 [0] NCCL INFO NET/IB: [3] roceP2p1s0f1:uverbs3:1/RoCE provider=Mlx5 speed=200000 context=0x3b629460 pciPath=/sys/devices/pci0002:00/0002:00:00.0/0002:01:00.0 ar=0 oooRqSize=0
 spark-a218:226:226 [0] NCCL INFO NET/IB : Made virtual device [0] name=roceP2p1s0f0 speed=200000 ndevs=1 rail=-1 plane=-1
 spark-a218:226:226 [0] NCCL INFO NET/IB : Made virtual device [1] name=roceP2p1s0f1 speed=200000 ndevs=1 rail=-1 plane=-1
-spark-a218:226:226 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:192.168.1.31<0>
+spark-a218:226:226 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:10.99.1.31<0>
 spark-a218:226:226 [0] NCCL INFO RMA/Plugin: Assigned plugin RMA_IB_PROXY to comm
 spark-a218:226:226 [0] NCCL INFO GIN/Plugin: Could not find: libnccl-gin.so
 spark-a218:226:226 [0] NCCL INFO Using network NCCL RDMA Plugin v11
@@ -93,7 +93,7 @@ spark-a218:226:226 [0] NCCL INFO PROFILER/Plugin: Could not find: libnccl-profil
 spark-a218:226:226 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
 spark-a218:226:253 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 7
 spark-a218:226:252 [0] NCCL INFO [Proxy Service] Device 0 CPU core 10
-spark-a218:226:252 [0] NCCL INFO proxy listening socket at 192.168.1.31<34049>
+spark-a218:226:252 [0] NCCL INFO proxy listening socket at 10.99.1.31<34049>
 spark-a218:226:226 [0] NCCL INFO TUNER/Plugin: Could not find: libnccl-tuner.so
 spark-a218:226:226 [0] NCCL INFO threadThresholds 8/8/64 | 32/8/64 | 512 | 512
 spark-a218:226:226 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls channels, 1 p2p channels, 1 p2p channels per peer
@@ -143,7 +143,7 @@ spark-a218:226:226 [0] NCCL INFO P2P Chunksize set to 262144
 spark-a218:226:226 [0] NCCL INFO Tuning P2P operations with maxP2pPeers = 2
 spark-a218:226:226 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
 spark-a218:226:262 [0] NCCL INFO [Proxy Service] Device 0 CPU core 17
-spark-a218:226:262 [0] NCCL INFO proxy listening socket at 192.168.1.31<58917>
+spark-a218:226:262 [0] NCCL INFO proxy listening socket at 10.99.1.31<58917>
 spark-a218:226:263 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 1
 spark-a218:226:226 [0] NCCL INFO threadThresholds 8/8/64 | 16/8/64 | 512 | 512
 spark-a218:226:226 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls channels, 1 p2p channels, 1 p2p channels per peer
@@ -239,7 +239,7 @@ spark-a218:226:287 [0] NCCL INFO [Proxy Servic(Worker pid=226) INFO 09-07 17:42:
 (Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:24 [monitor.py:53] torch.compile took 6.59 s in total
 (Worker_TP3_DCP1 pid=226) INFO 09-07 17:49:24 [monitor.py:81] Initial profiling/warmup run took 0.91 s
 e] Device 0 CPU core 17
-spark-a218:226:287 [0] NCCL INFO proxy listening socket at 192.168.1.31<48809>
+spark-a218:226:287 [0] NCCL INFO proxy listening socket at 10.99.1.31<48809>
 spark-a218:226:288 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 4
 spark-a218:226:226 [0] NCCL INFO threadThresholds 8/8/64 | 32/8/64 | 512 | 512
 spark-a218:226:226 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls channels, 1 p2p channels, 1 p2p channels per peer
@@ -305,7 +305,7 @@ spark-a218:226:226 [0] NCCL INFO Tuning P2P operations with maxP2pPeers = 4
 spark-a218:226:226 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
 spark-a218:226:304 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 7
 spark-a218:226:303 [0] NCCL INFO [Proxy Service] Device 0 CPU core 15
-spark-a218:226:303 [0] NCCL INFO proxy listening socket at 192.168.1.31<40637>
+spark-a218:226:303 [0] NCCL INFO proxy listening socket at 10.99.1.31<40637>
 spark-a218:226:226 [0] NCCL INFO threadThresholds 8/8/64 | 32/8/64 | 512 | 512
 spark-a218:226:226 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls channels, 1 p2p channels, 1 p2p channels per peer
 spark-a218:226:226 [0] NCCL INFO symmetricSupport 0, cuMemEnable 1, globalGinSupport 0, cuMemGdrSupport 0, contiguousRanksPerHost 1, crossNicSupport 1
@@ -358,7 +358,7 @@ spark-a218:226:226 [0] NCCL INFO 1 coll channels, 1 collnet channels, 0 nvls cha
 spark-a218:226:226 [0] NCCL INFO symmetricSupport 0, cuMemEnable 1, globalGinSupport 0, cuMemGdrSupport 0, contiguousRanksPerHost 1, crossNicSupport 1
 spark-a218:226:323 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 9
 spark-a218:226:322 [0] NCCL INFO [Proxy Service] Device 0 CPU core 10
-spark-a218:226:322 [0] NCCL INFO proxy listening socket at 192.168.1.31<46385>
+spark-a218:226:322 [0] NCCL INFO proxy listening socket at 10.99.1.31<46385>
 spark-a218:226:226 [0] NCCL INFO ncclCommInitRankConfig comm 0x81784180 rank 1 nranks 2 cudaDev 0 nvmlDev 0 busId f01000 commId 0x1f8fa8130b074353 - Init COMPLETE
 spark-a218:226:226 [0] NCCL INFO Init timings - ncclCommInitRankConfig: rank 1 nranks 2 total 0.01 (kernels 0.00, alloc 0.00, bootstrap 0.01, allgathers 0.00, topo 0.00, graphs 0.00, connections 0.00, rest 0.00)
 spark-a218:226:226 [0] NCCL INFO Symmetric VA size=124GB

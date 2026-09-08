@@ -45,18 +45,18 @@ ConnectionRefusedError: [Errno 111] Connection refused
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 362, in <module>
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 362, in <module>
     sys.exit(main())
              ~~~~^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 355, in main
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 355, in main
     phase_offload(a.base, a.out, a.label, a.offload_tokens)
     ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 283, in phase_offload
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 283, in phase_offload
     rows["cold"] = ask(prefix, "\n\nReply with the single word OK.")
                    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 273, in ask
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 273, in ask
     m0 = metrics(base)
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 38, in metrics
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 38, in metrics
     txt = urllib.request.urlopen(base + "/metrics", timeout=20).read().decode()
           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/lib/python3.14/urllib/request.py", line 187, in urlopen
@@ -90,7 +90,7 @@ urllib.error.URLError: <urlopen error [Errno 111] Connection refused>
      28 frame #0: c10::Error::Error(c10::SourceLocation, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) + 0xc8 (0xf49e9bda66e8 in /usr/local/lib
       4 INFO 09-04 23:42:59 [factory.py:62] Creating v1 connector with name: MultiNodeSlabConnector and engine_id: 5dd30973-3412-477a-b657-1f2747900a78
       4 INFO 09-04 23:42:59 [factory.py:61] Creating offloading spec with name: MultiNodeSlabOffloadingSpec
-      1 INFO:     192.168.1.41:53498 - "POST /v1/chat/completions HTTP/1.1" 500 Internal Server Error
+      1 INFO:     10.99.1.41:53498 - "POST /v1/chat/completions HTTP/1.1" 500 Internal Server Error
       1 INFO 09-04 23:44:00 [factory.py:62] Creating v1 connector with name: MultiNodeSlabConnector and engine_id: 5dd30973-3412-477a-b657-1f2747900a78
       1 INFO 09-04 23:44:00 [factory.py:61] Creating offloading spec with name: MultiNodeSlabOffloadingSpec
       1 INFO 09-04 23:35:52 [api_utils.py:273] non-default args: {'model_tag': '/models/glm-5.3', 'default_chat_template_kwargs': {'reasoning_effort': 'high'}, 'enable_auto_tool_

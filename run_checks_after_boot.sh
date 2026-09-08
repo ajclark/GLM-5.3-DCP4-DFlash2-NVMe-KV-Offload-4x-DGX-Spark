@@ -21,13 +21,13 @@ done
 [ -z "$mode" ] && { echo "[$(date '+%H:%M:%S')] timed out waiting for boot" > "$LOG"; exit 1; }
 if [ "$mode" = orphan ]; then
   echo "[$(date '+%H:%M:%S')] rollout script gone without a verdict; verifying the stack directly" > "$LOG"
-  ssh -o BatchMode=yes napta2k@spark-06c4.local 'docker inspect -f "{{.Config.Cmd}}" vllm_glm53big' | grep -q "decode-context-parallel-size" || { echo "not the DCP stack; stopping" >> "$LOG"; exit 1; }
+  ssh -o BatchMode=yes ${SSH_USER:-$USER}@spark-06c4.local 'docker inspect -f "{{.Config.Cmd}}" vllm_glm53big' | grep -q "decode-context-parallel-size" || { echo "not the DCP stack; stopping" >> "$LOG"; exit 1; }
   curl -fsS -m 300 http://spark-06c4.local:8000/v1/chat/completions -H 'Content-Type: application/json' \
     -d '{"model":"glm-5.3","messages":[{"role":"user","content":"Reply with the single word OK."}],"max_tokens":16,"temperature":0,"chat_template_kwargs":{"enable_thinking":false}}' \
     | python3 -c 'import sys,json; r=json.load(sys.stdin); c=r["choices"][0]["message"]["content"]; print("  content:",repr(c[:60])); sys.exit(0 if "OK" in c.upper() else 1)' >> "$LOG" 2>&1 \
     || { echo "[$(date '+%H:%M:%S')] generation FAILED on boot; leaving it for a human decision" >> "$LOG"; exit 1; }
-  for h in "${HOSTS[@]}"; do ssh -o BatchMode=yes "napta2k@$h.local" "pkill -f '[c]ache_flusher.sh' 2>/dev/null; true"; done
-  for h in "${HOSTS[@]}"; do ssh -o BatchMode=yes "napta2k@$h.local" "docker logs --tail 4000 vllm_glm53big 2>&1" > "$L/up-$h.log" 2>/dev/null & done; wait
+  for h in "${HOSTS[@]}"; do ssh -o BatchMode=yes "${SSH_USER:-$USER}@$h.local" "pkill -f '[c]ache_flusher.sh' 2>/dev/null; true"; done
+  for h in "${HOSTS[@]}"; do ssh -o BatchMode=yes "${SSH_USER:-$USER}@$h.local" "docker logs --tail 4000 vllm_glm53big 2>&1" > "$L/up-$h.log" 2>/dev/null & done; wait
   echo "[$(date '+%H:%M:%S')] boot verified by the follow-on script" >> "$LOG"
 fi
 ./post_boot_checks.sh "$LABEL" results/baseline-dcp1-prod "$LONGCTX" >> "$LOG" 2>&1

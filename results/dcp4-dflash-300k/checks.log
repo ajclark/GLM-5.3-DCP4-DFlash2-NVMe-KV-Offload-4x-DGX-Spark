@@ -45,7 +45,7 @@
   code      rep1 gen= 251 ttft=0.519s decode=33.96 tok/s acc/cycle=6.122 cycle=179.6ms sha=1a1a3e7b25b1706d
 == done
 baseline=results/baseline-dcp1-prod
-candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-300k
+candidate=~/spark-cluster-mla-dcp/results/dcp4-dflash-300k
 
 == determinism (greedy, thinking off)
   u512         base=c98ba48947d00b5a cand=1ea17c1d0a72c0b4 DIFFERS  tokens 128 vs 128
@@ -157,16 +157,16 @@ ConnectionRefusedError: [Errno 111] Connection refused
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 305, in <module>
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 305, in <module>
     m0 = metrics(base)
              ^^^^^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 300, in main
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 300, in main
     def phase_longctx(base, out, n_tokens):
             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 270, in phase_longctx
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 270, in phase_longctx
     Node-side file counts are collected by offload_checks.sh around this."""
          ^^^^^^^^^^^^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 38, in metrics
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 38, in metrics
     txt = urllib.request.urlopen(base + "/metrics", timeout=20).read().decode()
           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/lib/python3.14/urllib/request.py", line 187, in urlopen
@@ -194,4 +194,4 @@ urllib.error.URLError: <urlopen error [Errno 111] Connection refused>
       3 WARNING 09-04 17:10:19 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to
       3 WARNING 09-04 17:10:00 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
       3 INFO 09-04 17:09:16 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
-[17:26:16] == checks done; results in /home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-300k
+[17:26:16] == checks done; results in ~/spark-cluster-mla-dcp/results/dcp4-dflash-300k

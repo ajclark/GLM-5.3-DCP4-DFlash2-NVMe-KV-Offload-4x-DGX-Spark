@@ -1,4 +1,4 @@
-[05:48:52] saving logs of the current containers to /home/napta2k/spark-cluster-mla-dcp/results/restore-20260905-054852
+[05:48:52] saving logs of the current containers to ~/spark-cluster-mla-dcp/results/restore-20260905-054852
 [05:48:52] teardown
 [05:49:02]   flusher spark-06c4: STARTED 115G-avail
 [05:49:04]   flusher spark-365c: STARTED 115G-avail
@@ -6,19 +6,19 @@
 [05:49:07]   flusher spark-a218: STARTED 115G-avail
 [05:49:07]   launching production rank 3 on spark-a218
 99e0dfa699e570f1b460f1cea0fd3854b1ffedaacb9820ab0306fa4a9bc48dfa
-launched vllm_glm53big rank=3 host=192.168.1.31 spec=dflash tp4-over-10GbE
+launched vllm_glm53big rank=3 host=10.99.1.31 spec=dflash tp4-over-10GbE
 vllm_glm53big Up 3 seconds
 [05:49:14]   launching production rank 2 on spark-ddbf
 bcd6abbc4a55535a4465ef5d870f9f010c1b1cc908ef0029d705aabd81429f39
-launched vllm_glm53big rank=2 host=192.168.1.149 spec=dflash tp4-over-10GbE
+launched vllm_glm53big rank=2 host=10.99.1.149 spec=dflash tp4-over-10GbE
 vllm_glm53big Up 3 seconds
 [05:49:21]   launching production rank 1 on spark-365c
 75dccc601391b53415b88cf8eb9e1b70286f24d29dc55cf4f079e0e9c03b130a
-launched vllm_glm53big rank=1 host=192.168.1.88 spec=dflash tp4-over-10GbE
+launched vllm_glm53big rank=1 host=10.99.1.88 spec=dflash tp4-over-10GbE
 vllm_glm53big Up 3 seconds
 [05:49:28]   launching production rank 0 on spark-06c4
 c9e7cc24feb2604f3dacd5fcb5dca40217d924d7b6e4f56ccfc1966d6f1e79f8
-launched vllm_glm53big rank=0 host=192.168.1.228 spec=dflash tp4-over-10GbE
+launched vllm_glm53big rank=0 host=10.99.1.228 spec=dflash tp4-over-10GbE
 vllm_glm53big Up 3 seconds
 [05:58:34] HEALTHY after 539s
   content: 'OK'

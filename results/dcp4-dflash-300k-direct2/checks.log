@@ -45,7 +45,7 @@
   code      rep1 gen= 249 ttft=0.622s decode=33.99 tok/s acc/cycle=6.225 cycle=182.4ms sha=9eaa82769178e6ab
 == done
 baseline=results/baseline-dcp1-prod
-candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-300k-direct2
+candidate=~/spark-cluster-mla-dcp/results/dcp4-dflash-300k-direct2
 
 == determinism (greedy, thinking off)
   u512         base=c98ba48947d00b5a cand=99989c4bea24b8a3 DIFFERS  tokens 128 vs 128
@@ -95,4 +95,4 @@ candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-300k-direct2
       4 WARNING 09-04 22:04:16 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
       4 INFO 09-04 22:03:32 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
       1 INFO 09-04 21:55:24 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
-[22:10:16] == checks done; results in /home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-300k-direct2
+[22:10:16] == checks done; results in ~/spark-cluster-mla-dcp/results/dcp4-dflash-300k-direct2

@@ -45,7 +45,7 @@
   code      rep1 gen= 251 ttft=0.627s decode=34.71 tok/s acc/cycle=6.275 cycle=180.1ms sha=1a1a3e7b25b1706d
 == done
 baseline=results/baseline-dcp1-prod
-candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-512k-b4
+candidate=~/spark-cluster-mla-dcp/results/dcp4-dflash-512k-b4
 
 == determinism (greedy, thinking off)
   u512         base=c98ba48947d00b5a cand=ec848646e994632d DIFFERS  tokens 128 vs 128
@@ -185,4 +185,4 @@ candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-512k-b4
   spark-ddbf avail=2023MiB swapfree=14192MiB
   spark-a218 avail=1852MiB swapfree=14175MiB
 [16:59:29] log scan (final):
-[16:59:29] == checks done; results in /home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-512k-b4
+[16:59:29] == checks done; results in ~/spark-cluster-mla-dcp/results/dcp4-dflash-512k-b4

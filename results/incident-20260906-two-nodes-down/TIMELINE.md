@@ -15,7 +15,7 @@ driver 580.173.02, 06c4 and 365c run 1026 / 580.159.03.
 - **00:40:34 spark-a218 drops off**: 06c4 logs `enP2p1s0f0np0: Link down` (its link to a218).
 - **00:42:11 spark-ddbf drops off**: 365c logs `enP2p1s0f0np0: Link down` (its link to ddbf).
 - Wall power falls to ~100 W (two idle Sparks); UniFi shows both 10GbE ports offline;
-  no ping, no ARP for 192.168.1.31 / .149.
+  no ping, no ARP for 10.99.1.31 / .149.
 - 01:39 a pi request hangs: rank 0's EngineCore logs "No available shared memory
   broadcast block found in 60 seconds" every minute (workers on the dead nodes).
 - Survivors: no periodic job touches the adapter (mlnx firmware manager inactive, no

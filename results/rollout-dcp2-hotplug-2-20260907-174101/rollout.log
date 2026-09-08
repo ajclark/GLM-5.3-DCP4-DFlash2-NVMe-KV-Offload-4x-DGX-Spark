@@ -1,4 +1,4 @@
-[17:41:01] rollout 'dcp2-hotplug-2' MAXLEN=180224 MAXBATCHED=2048 KVBYTES=6000000000 KVTIER=1 out=/home/napta2k/spark-cluster-mla-dcp/results/rollout-dcp2-hotplug-2-20260907-174101
+[17:41:01] rollout 'dcp2-hotplug-2' MAXLEN=180224 MAXBATCHED=2048 KVBYTES=6000000000 KVTIER=1 out=~/spark-cluster-mla-dcp/results/rollout-dcp2-hotplug-2-20260907-174101
 [17:41:01] SKIP_PREFLIGHT=1: not requiring a healthy stack (recovery)
 [17:41:01] production healthy; saving pre-rollout logs + memory baseline
 spark-06c4 avail=1905MiB swapfree=13643MiB pswpout=1408787
@@ -19,19 +19,19 @@ spark-a218 avail=3918MiB swapfree=14181MiB pswpout=1070674
 [17:41:24] adapters on and ring verified before launch (idempotent)
 [17:41:30]   launching rank 3 on spark-a218
 7abfd4c7c565ddfa12525065f9de35915fd013f603486e185ae12cec5a8a925f
-launched vllm_glm53big rank=3 host=192.168.1.31 nccl_hotplug=1 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=3 host=10.99.1.31 nccl_hotplug=1 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [17:41:37]   launching rank 2 on spark-ddbf
 0b2ca3e990dda4fb951b5262784a432cc6b8bc4ba6734314aeff8e51dc7ec23b
-launched vllm_glm53big rank=2 host=192.168.1.149 nccl_hotplug=1 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=2 host=10.99.1.149 nccl_hotplug=1 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [17:41:44]   launching rank 1 on spark-365c
 0fce52f938307951663e99d90461f2b204737fc22fba58026d31c0c1ca51c81b
-launched vllm_glm53big rank=1 host=192.168.1.88 nccl_hotplug=1 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=1 host=10.99.1.88 nccl_hotplug=1 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [17:41:51]   launching rank 0 on spark-06c4
 107d553b03f2842c3a0b7e2acf27ea240b7ec087396115ee8d2e58fb03d89913
-launched vllm_glm53big rank=0 host=192.168.1.228 nccl_hotplug=1 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=0 host=10.99.1.228 nccl_hotplug=1 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [17:51:27] HEALTHY after 568s
   content: 'OK' tokens: 2
@@ -57,4 +57,4 @@ spark-a218 avail=5826MiB swapfree=14133MiB pswpout=1606190
       1 (Worker_TP0_DCP0 pid=232) WARNING 09-07 17:51:31 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
       1 (Worker_TP0_DCP0 pid=232) INFO 09-07 17:50:40 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
       1 (EngineCore pid=185) INFO 09-07 17:42:31 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(method='dflash', model='/models/dflash2-draft', num_spec_tokens=7), tokenizer='/models/glm-5.3', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=True, dtype=torch.bfloat16, max_seq_len=180224, download_dir=None, load_format=auto, tensor_parallel_size=4, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=2, dcp_comm_backend=ag_rs, disable_custom_all_reduce=True, quantization=compressed-tensors, quantization_config=None, enforce_eager=False, enable_return_routed_experts=False, kv_cache_dtype=fp8, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='auto', disable_any_whitespace=False, disable_additional_properties=False, reasoning_parser='glm45', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, kv_cache_metrics=False, kv_cache_metrics_sample=0.01, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False, jit_monitor_verbose=False), seed=0, served_model_name=glm-5.3, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'ir_enable_torch_wrap': True, 'splitting_ops': ['vllm::unified_attention_with_output', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::linear_attention', 'vllm::plamo2_mamba_mixer', 'vllm::qwen_gdn_attention_core', 'vllm::gdn_attention_core_xpu', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::kda_attention', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::deepseek_v4_attention', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'compile_sizes': [], 'compile_ranges_endpoints': [2048], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'size_asserts': False, 'alignment_asserts': False, 'scalar_asserts': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL: 2>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'enable_sp': False, 'fuse_gemm_comms': False, 'fuse_allreduce_rms': False, 'fuse_rope_kvcache_cat_mla': False, 'fuse_act_padding': False}, 'max_cudagraph_capture_size': 192, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native'], fused_add_rms_norm=['native']), enable_flashinfer_autotune=True, moe_backend='auto', linear_backend='auto')
-[17:51:33] rollout 'dcp2-hotplug-2' complete; results in /home/napta2k/spark-cluster-mla-dcp/results/rollout-dcp2-hotplug-2-20260907-174101
+[17:51:33] rollout 'dcp2-hotplug-2' complete; results in ~/spark-cluster-mla-dcp/results/rollout-dcp2-hotplug-2-20260907-174101

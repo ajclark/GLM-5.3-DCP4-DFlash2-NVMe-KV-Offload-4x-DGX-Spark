@@ -9,7 +9,7 @@ NODE_RANK="${1:?rank}"; VARIANT="${2:?variant}"
 IMAGE="vllm-glm52-b12x:dflash2-port2"
 NAME="nccl_multicomm_${VARIANT}"
 MASTER_ADDR="192.168.1.228"; MASTER_PORT="${NCCL_BENCH_MASTER_PORT:-29611}"
-BENCH_PATH="/home/napta2k/glm53big/nccl_multicomm.py"
+BENCH_PATH="$HOME/glm53big/nccl_multicomm.py"
 case "$NODE_RANK" in
   0) HOST_IP=192.168.1.228 ;; 1) HOST_IP=192.168.1.88 ;; 2) HOST_IP=192.168.1.149 ;; 3) HOST_IP=192.168.1.31 ;;
   *) echo "rank must be 0-3" >&2; exit 2 ;;

@@ -21,7 +21,7 @@ import torch
 from harness import OVERLAY, cdiv, extract, extract_methods, ref_local_seq_lens
 
 # The unmodified helper the localizer relies on, read from the image's tree.
-FORK = pathlib.Path("/home/napta2k/lmcache-mg/spark-src/vllm")
+FORK = pathlib.Path("~/lmcache-mg/spark-src/vllm")
 UTILS = extract(
     FORK / "v1/attention/backends/utils.py", ["get_dcp_local_seq_lens"]
 )

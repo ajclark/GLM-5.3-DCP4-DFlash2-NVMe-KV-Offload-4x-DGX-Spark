@@ -45,7 +45,7 @@ I’d rank implementation work 4 → 3 → 7 → 2, and spend tomorrow on 4+3 wh
 
   No mathematical dependency prevents queries overlapping the independent indexer. But the proposed schedule overstates available work:
 
-  - /home/napta2k/lmcache-mg/spark-src/vllm/model_executor/layers/mla.py:140 already computes fused Q/KV input projections before q_b; there is no subsequent independent
+  - ~/lmcache-mg/spark-src/vllm/model_executor/layers/mla.py:140 already computes fused Q/KV input projections before q_b; there is no subsequent independent
     kv_a_proj to hide.
 
   - Today the indexer finishes at line 170 before absorbed-query BMM at MLA:821 (overlay/vllm/model_executor/layers/attention/mla_attention.py:821). Move absorption earlier

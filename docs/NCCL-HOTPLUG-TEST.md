@@ -19,7 +19,7 @@ early with a clear verdict. All commands run on the sandbox from
 ## 1. Stack down
 
 ```
-for h in spark-06c4 spark-365c spark-ddbf spark-a218; do ssh napta2k@$h.local 'docker rm -f vllm_glm53big; pkill -f "[c]ache_flusher.sh"; true'; done
+for h in spark-06c4 spark-365c spark-ddbf spark-a218; do ssh user@$h.local 'docker rm -f vllm_glm53big; pkill -f "[c]ache_flusher.sh"; true'; done
 ```
 
 ## 2. Probe A: NCCL core + plugin + real adapter cycle (≈10 min)

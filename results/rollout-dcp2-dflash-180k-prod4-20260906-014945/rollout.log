@@ -1,4 +1,4 @@
-[01:49:45] rollout 'dcp2-dflash-180k-prod4' MAXLEN=180224 MAXBATCHED=2048 KVBYTES=6000000000 KVTIER=1 out=/home/napta2k/spark-cluster-mla-dcp/results/rollout-dcp2-dflash-180k-prod4-20260906-014945
+[01:49:45] rollout 'dcp2-dflash-180k-prod4' MAXLEN=180224 MAXBATCHED=2048 KVBYTES=6000000000 KVTIER=1 out=~/spark-cluster-mla-dcp/results/rollout-dcp2-dflash-180k-prod4-20260906-014945
 [01:49:45] SKIP_PREFLIGHT=1: not requiring a healthy stack (recovery)
 [01:49:45] production healthy; saving pre-rollout logs + memory baseline
 spark-06c4 avail=3559MiB swapfree=13534MiB pswpout=34257290
@@ -17,19 +17,19 @@ spark-a218 avail=118292MiB swapfree=16383MiB pswpout=0
 [01:50:06] launching DCP ranks (worker-first)
 [01:50:06]   launching rank 3 on spark-a218
 b94e73a3160c592f47ebf1777337544205f82bfcdf5c246049eabe5989ba1ea2
-launched vllm_glm53big rank=3 host=192.168.1.31 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=3 host=10.99.1.31 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [01:50:13]   launching rank 2 on spark-ddbf
 b47b4af28ce1684a8318a52a8dd6daa3b14e0ca27c95be7091bb769d43fb57e7
-launched vllm_glm53big rank=2 host=192.168.1.149 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=2 host=10.99.1.149 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [01:50:20]   launching rank 1 on spark-365c
 b56f5d9d95e33f386276d02033f594d4a34ff4182f3e0cc7707634a60f75ea8e
-launched vllm_glm53big rank=1 host=192.168.1.88 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=1 host=10.99.1.88 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [01:50:27]   launching rank 0 on spark-06c4
 05116e155354fa6f3da570119b4f92162f0f25c426bcb4758c73448f44695571
-launched vllm_glm53big rank=0 host=192.168.1.228 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=0 host=10.99.1.228 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [01:51:44] container on spark-06c4 is 'exited'
 [01:51:44] container on spark-365c is 'exited'
@@ -43,19 +43,19 @@ vllm_glm53big Up 3 seconds
 [01:51:57]   flusher spark-a218: STARTED 115G-avail
 [01:51:57]   launching rank 3 on spark-a218
 ac561dc815df831f1899a1c0cc0827c5342c24865013226e7934036a7c61fa33
-launched vllm_glm53big rank=3 host=192.168.1.31 spec=dflash tp4-over-10GbE
+launched vllm_glm53big rank=3 host=10.99.1.31 spec=dflash tp4-over-10GbE
 vllm_glm53big Up 3 seconds
 [01:52:04]   launching rank 2 on spark-ddbf
 9975f21b2553292fc68e57241634d2e34addc98e82efd0562c3855962127a2f3
-launched vllm_glm53big rank=2 host=192.168.1.149 spec=dflash tp4-over-10GbE
+launched vllm_glm53big rank=2 host=10.99.1.149 spec=dflash tp4-over-10GbE
 vllm_glm53big Up 3 seconds
 [01:52:11]   launching rank 1 on spark-365c
 d96951a7bf58eefd19817bf4fab24c7d9cc44cfd628a1525eb929b124576fa7f
-launched vllm_glm53big rank=1 host=192.168.1.88 spec=dflash tp4-over-10GbE
+launched vllm_glm53big rank=1 host=10.99.1.88 spec=dflash tp4-over-10GbE
 vllm_glm53big Up 3 seconds
 [01:52:18]   launching rank 0 on spark-06c4
 afec8c3a0d6c1a3fb4f7ac8e6046ddc7116aa4d9261d56a3b037b4b0f71e71bd
-launched vllm_glm53big rank=0 host=192.168.1.228 spec=dflash tp4-over-10GbE
+launched vllm_glm53big rank=0 host=10.99.1.228 spec=dflash tp4-over-10GbE
 vllm_glm53big Up 3 seconds
 [01:53:12] container on spark-06c4 is 'exited'
 [01:53:13] container on spark-365c is 'exited'
@@ -64,19 +64,19 @@ vllm_glm53big Up 3 seconds
 [01:53:14] !!! production restore did not verify; retrying once
 [01:53:25]   launching rank 3 on spark-a218
 884d2e68a94d98cba687e91e5452f716f7f72d777f57e1c89b54c95ea0f05d2d
-launched vllm_glm53big rank=3 host=192.168.1.31 spec=dflash tp4-over-10GbE
+launched vllm_glm53big rank=3 host=10.99.1.31 spec=dflash tp4-over-10GbE
 vllm_glm53big Up 3 seconds
 [01:53:32]   launching rank 2 on spark-ddbf
 5c06e741ed28bf917ac535b617750cf31163e59a58b63d2b23a98d547e8f9666
-launched vllm_glm53big rank=2 host=192.168.1.149 spec=dflash tp4-over-10GbE
+launched vllm_glm53big rank=2 host=10.99.1.149 spec=dflash tp4-over-10GbE
 vllm_glm53big Up 3 seconds
 [01:53:38]   launching rank 1 on spark-365c
 a0d2260dd36e94c9c0f431052c25572d09fa3a88824ab9ff072248588c4f0097
-launched vllm_glm53big rank=1 host=192.168.1.88 spec=dflash tp4-over-10GbE
+launched vllm_glm53big rank=1 host=10.99.1.88 spec=dflash tp4-over-10GbE
 vllm_glm53big Up 3 seconds
 [01:53:45]   launching rank 0 on spark-06c4
 6dd60d51fefce79a170353e9c6044aabc7bd8a8e2385648b1699e2b24c0e113f
-launched vllm_glm53big rank=0 host=192.168.1.228 spec=dflash tp4-over-10GbE
+launched vllm_glm53big rank=0 host=10.99.1.228 spec=dflash tp4-over-10GbE
 vllm_glm53big Up 3 seconds
 [01:54:40] container on spark-06c4 is 'exited'
 [01:54:40] container on spark-365c is 'exited'

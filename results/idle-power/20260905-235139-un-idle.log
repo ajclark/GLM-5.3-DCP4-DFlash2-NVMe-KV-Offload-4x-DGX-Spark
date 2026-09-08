@@ -1,4 +1,4 @@
-[23:51:39] == un-idle: journal=0 tier=none dry-run=1 (log /home/napta2k/spark-cluster-mla-dcp/results/idle-power/20260905-235139-un-idle.log)
+[23:51:39] == un-idle: journal=0 tier=none dry-run=1 (log ~/spark-cluster-mla-dcp/results/idle-power/20260905-235139-un-idle.log)
 [23:51:44] -- restoring the serving profile on every node
   [dry-run] spark-06c4: 
 for c in /sys/devices/system/cpu/cpu[0-9]*; do [ -e "$c/online" ] && [ "$(cat "$c/online")" = 0 ] && echo 1 | sudo -n tee "$c/online" >/dev/null; done

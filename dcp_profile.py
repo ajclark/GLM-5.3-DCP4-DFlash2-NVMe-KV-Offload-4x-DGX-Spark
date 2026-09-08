@@ -19,6 +19,7 @@ import glob
 import gzip
 import json
 import os
+SSH_USER = os.environ.get("SSH_USER") or os.environ.get("USER") or "user"
 import subprocess
 import sys
 import time
@@ -39,7 +40,7 @@ def post(base, path):
 
 
 def ssh(host, cmd):
-    return subprocess.run(["ssh", "-o", "BatchMode=yes", f"napta2k@{host}.local", cmd],
+    return subprocess.run(["ssh", "-o", "BatchMode=yes", f"{SSH_USER}@{host}.local", cmd],
                           capture_output=True, text=True, timeout=120).stdout.strip()
 
 
@@ -72,7 +73,7 @@ def take_trace(base, out, max_tokens):
         print(f"  {h}: {files.replace(chr(10), ' | ')}", flush=True)
         newest = files.split("\n")[0] if files else ""
         if newest:
-            subprocess.run(["scp", "-q", f"napta2k@{h}.local:{newest}",
+            subprocess.run(["scp", "-q", f"{SSH_USER}@{h}.local:{newest}",
                             os.path.join(out, f"{h}-{os.path.basename(newest)}")], check=False)
     return row
 

@@ -44,7 +44,7 @@
   code      rep1 gen= 230 ttft=0.61s decode=33.74 tok/s acc/cycle=6.053 cycle=178.6ms sha=9d9af84c3c5df9d9
 == done
 baseline=results/baseline-dcp1-prod
-candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-131k
+candidate=~/spark-cluster-mla-dcp/results/dcp4-dflash-131k
 
 == determinism (greedy, thinking off)
   u512         base=c98ba48947d00b5a cand=655bc7210eee0b3e DIFFERS  tokens 128 vs 128
@@ -88,7 +88,7 @@ candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-131k
       4 WARNING 09-04 05:34:21 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
       4 INFO 09-04 05:33:33 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
       1 INFO 09-04 05:25:46 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
-[05:42:58] == checks done; results in /home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-131k
+[05:42:58] == checks done; results in ~/spark-cluster-mla-dcp/results/dcp4-dflash-131k
 == dcp4-dflash-131k @ http://spark-06c4.local:8000 phase=concurrent
   gen-prose     46-> 350 tok ttft=0.47s decode=6.27 tok/s  '# Tensor Parallelism in Transformers: Splitting Attention He'
   pf-3k       2935->  95 tok ttft=10.107s decode=3.12 tok/s  'The text is a long, randomly generated sequence of single wo'

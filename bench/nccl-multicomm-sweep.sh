@@ -9,12 +9,12 @@ OUT="$WS/results/nccl-multicomm"; mkdir -p "$OUT"
 NS="${NCCL_BENCH_NS:-1,2,4,8}"
 HOSTS=(spark-06c4 spark-365c spark-ddbf spark-a218)
 say() { echo "[$(date '+%H:%M:%S')] $*" | tee -a "$OUT/sweep.log"; }
-sshq() { ssh -o BatchMode=yes -o ConnectTimeout=8 "napta2k@$1.local" "$2"; }
+sshq() { ssh -o BatchMode=yes -o ConnectTimeout=8 "${SSH_USER:-$USER}@$1.local" "$2"; }
 say "== NCCL multi-communicator sweep: ${VARIANTS[*]}"
 say "-- stopping the serving stack"
 for h in "${HOSTS[@]}"; do sshq "$h" "docker rm -f vllm_glm53big >/dev/null 2>&1; pkill -f '[c]ache_flusher.sh' 2>/dev/null; true" & done; wait
 sleep 5
-for h in "${HOSTS[@]}"; do scp -q "$WS/bench/nccl_multicomm.py" "napta2k@$h.local:glm53big/nccl_multicomm.py"; scp -q "$WS/bench/run-nccl-multicomm.sh" "napta2k@$h.local:glm53big/run-nccl-multicomm.sh"; sshq "$h" "chmod +x glm53big/run-nccl-multicomm.sh"; done
+for h in "${HOSTS[@]}"; do scp -q "$WS/bench/nccl_multicomm.py" "${SSH_USER:-$USER}@$h.local:glm53big/nccl_multicomm.py"; scp -q "$WS/bench/run-nccl-multicomm.sh" "${SSH_USER:-$USER}@$h.local:glm53big/run-nccl-multicomm.sh"; sshq "$h" "chmod +x glm53big/run-nccl-multicomm.sh"; done
 for v in "${VARIANTS[@]}"; do
   say "-- variant $v"
   for i in 3 2 1 0; do sshq "${HOSTS[$i]}" "cd glm53big && NCCL_BENCH_NS=$NS ./run-nccl-multicomm.sh $i $v" 2>&1 | tail -1 | tee -a "$OUT/sweep.log"; sleep 2; done

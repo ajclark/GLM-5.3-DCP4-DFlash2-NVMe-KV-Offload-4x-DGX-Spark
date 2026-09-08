@@ -13,7 +13,7 @@ CYCLES="${1:-1}"; HOLD_S="${HOLD_S:-30}"
 OUT="$WS/results/nccl-hotplug-probe/$(date +%Y%m%d-%H%M%S)"; mkdir -p "$OUT"
 HOSTS=(spark-06c4 spark-365c spark-ddbf spark-a218)
 say() { echo "[$(date '+%H:%M:%S')] $*" | tee -a "$OUT/driver.log"; }
-sshq() { ssh -o BatchMode=yes -o ConnectTimeout=8 "napta2k@$1.local" "$2"; }
+sshq() { ssh -o BatchMode=yes -o ConnectTimeout=8 "${SSH_USER:-$USER}@$1.local" "$2"; }
 for h in "${HOSTS[@]}"; do
   st=$(sshq "$h" "docker inspect -f '{{.State.Status}}' vllm_glm53big 2>/dev/null | grep . || echo none")   # a missing container prints an empty line
   [ "$st" = none ] || { say "$h: serving container is '$st'; take the stack down first (docker rm -f vllm_glm53big)"; exit 1; }
@@ -21,8 +21,8 @@ done
 say "== NCCL hot-plug probe: cycles=$CYCLES hold=${HOLD_S}s out=$OUT"
 say "-- staging"
 for h in "${HOSTS[@]}"; do
-  scp -q "$WS/bench/nccl_hotplug_probe.py" "$WS/bench/run-nccl-hotplug-probe.sh" "napta2k@$h.local:glm53big/" && \
-  rsync -aq "$WS/stage/nccl-hotplug/" "napta2k@$h.local:nccl-hotplug/" && \
+  scp -q "$WS/bench/nccl_hotplug_probe.py" "$WS/bench/run-nccl-hotplug-probe.sh" "${SSH_USER:-$USER}@$h.local:glm53big/" && \
+  rsync -aq "$WS/stage/nccl-hotplug/" "${SSH_USER:-$USER}@$h.local:nccl-hotplug/" && \
   sshq "$h" "chmod +x glm53big/run-nccl-hotplug-probe.sh; sha256sum nccl-hotplug/libnccl-net-hotplug.so | cut -c1-16" | sed "s/^/  $h plugin sha /" | tee -a "$OUT/driver.log"
 done
 say "-- launching probe containers"

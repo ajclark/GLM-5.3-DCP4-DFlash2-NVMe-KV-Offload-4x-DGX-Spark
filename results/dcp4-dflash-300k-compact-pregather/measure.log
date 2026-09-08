@@ -26,7 +26,7 @@ median over 13 passes: wall 150.1 ms, GPU busy 144.7 ms, idle 5.2 ms
   code      rep0 gen= 195 ttft=0.568s decode=40.25 tok/s acc/cycle=6.5 cycle=160.7ms sha=865121926b784024
 == done
 baseline=results/dcp4-dflash-300k-compact
-candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-300k-compact-pregather
+candidate=~/spark-cluster-mla-dcp/results/dcp4-dflash-300k-compact-pregather
 
 == bench (per prompt, mean over reps)
   prompt              decode tok/s          acc/cycle           cycle ms           ttft s

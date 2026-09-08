@@ -26,7 +26,7 @@ spark-a218:1:1 [0] NCCL INFO P2P plugin v11 IBext_v11
 spark-a218:1:1 [0] NCCL INFO NCCL_SOCKET_IFNAME set to enP7s7
 spark-a218:1:1 [0] NCCL INFO NET/IB : Made virtual device [0] name=roceP2p1s0f0 speed=200000 ndevs=1
 spark-a218:1:1 [0] NCCL INFO NET/IB : Made virtual device [1] name=roceP2p1s0f1 speed=200000 ndevs=1
-spark-a218:1:1 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:192.168.1.31<0>
+spark-a218:1:1 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:10.99.1.31<0>
 spark-a218:1:1 [0] NCCL INFO NET/IB/hotplug: control thread watching /var/tmp/nccl-hotplug/cmd
 spark-a218:1:1 [0] NCCL INFO Initialized NET plugin NCCL RDMA Plugin v11
 spark-a218:1:1 [0] NCCL INFO NET/IB : GPU Direct RDMA (DMABUF) enabled for HCA 0 'roceP2p1s0f0
@@ -39,7 +39,7 @@ spark-a218:1:1 [0] NCCL INFO NET/IB: [2] roceP2p1s0f0:uverbs2:1/RoCE provider=Ml
 spark-a218:1:1 [0] NCCL INFO NET/IB: [3] roceP2p1s0f1:uverbs3:1/RoCE provider=Mlx5 speed=200000 context=0x303beae0 pciPath=/sys/devices/pci0002:00/0002:00:00.0/0002:01:00.0 ar=0 oooRqSize=0
 spark-a218:1:1 [0] NCCL INFO NET/IB : Made virtual device [0] name=roceP2p1s0f0 speed=200000 ndevs=1 rail=-1 plane=-1
 spark-a218:1:1 [0] NCCL INFO NET/IB : Made virtual device [1] name=roceP2p1s0f1 speed=200000 ndevs=1 rail=-1 plane=-1
-spark-a218:1:1 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:192.168.1.31<0>
+spark-a218:1:1 [0] NCCL INFO NET/IB : Using [0]roceP2p1s0f0:1/RoCE [1]roceP2p1s0f1:1/RoCE [RO]; OOB enP7s7:10.99.1.31<0>
 spark-a218:1:1 [0] NCCL INFO RMA/Plugin: Assigned plugin RMA_IB_PROXY to comm
 spark-a218:1:1 [0] NCCL INFO GIN/Plugin: Could not find: libnccl-gin.so
 spark-a218:1:1 [0] NCCL INFO Using network NCCL RDMA Plugin v11
@@ -74,7 +74,7 @@ spark-a218:1:1 [0] NCCL INFO Tuning P2P operations with maxP2pPeers = 4
 spark-a218:1:1 [0] NCCL INFO PROFILER/Plugin: Could not find: libnccl-profiler.so
 spark-a218:1:1 [0] NCCL INFO Check P2P Type isAllDirectP2p 1 directMode 0 isAllCudaP2p 1
 spark-a218:1:110 [0] NCCL INFO [Proxy Service] Device 0 CPU core 18
-spark-a218:1:110 [0] NCCL INFO proxy listening socket at 192.168.1.31<50197>
+spark-a218:1:110 [0] NCCL INFO proxy listening socket at 10.99.1.31<50197>
 spark-a218:1:111 [0] NCCL INFO [Proxy Service UDS] Device 0 CPU core 2
 spark-a218:1:1 [0] NCCL INFO TUNER/Plugin: Could not find: libnccl-tuner.so
 spark-a218:1:1 [0] NCCL INFO threadThresholds 8/8/64 | 32/8/64 | 512 | 512

@@ -18,15 +18,15 @@
   warmup  1400 words -> 1466 tok, 5.1s: 'OK'
   warmup  2800 words -> 2949 tok, 9.8s: 'OK'
 Traceback (most recent call last):
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 305, in <module>
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 305, in <module>
     sys.exit(main())
              ~~~~^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 292, in main
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 292, in main
     phase_warmup(a.base, a.out)
     ~~~~~~~~~~~~^^^^^^^^^^^^^^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 136, in phase_warmup
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 136, in phase_warmup
     r = chat(base, [{"role": "user", "content": prompt}], 24, timeout=1200)
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 71, in chat
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 71, in chat
     with urllib.request.urlopen(req, timeout=timeout) as r:
          ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/lib/python3.14/urllib/request.py", line 187, in urlopen
@@ -97,15 +97,15 @@ ConnectionRefusedError: [Errno 111] Connection refused
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 305, in <module>
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 305, in <module>
     sys.exit(main())
              ~~~~^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 294, in main
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 294, in main
     phase_determinism(a.base, a.out, a.label)
     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 163, in phase_determinism
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 163, in phase_determinism
     r = chat(base, msgs, 128, timeout=900)
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 71, in chat
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 71, in chat
     with urllib.request.urlopen(req, timeout=timeout) as r:
          ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/lib/python3.14/urllib/request.py", line 187, in urlopen
@@ -162,15 +162,15 @@ ConnectionRefusedError: [Errno 111] Connection refused
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 305, in <module>
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 305, in <module>
     sys.exit(main())
              ~~~~^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 296, in main
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 296, in main
     phase_bench(a.base, a.out, a.label, reps=a.reps)
     ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 183, in phase_bench
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 183, in phase_bench
     m0 = metrics(base)
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 38, in metrics
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 38, in metrics
     txt = urllib.request.urlopen(base + "/metrics", timeout=20).read().decode()
           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/lib/python3.14/urllib/request.py", line 187, in urlopen
@@ -190,7 +190,7 @@ Traceback (most recent call last):
     raise URLError(err)
 urllib.error.URLError: <urlopen error [Errno 111] Connection refused>
 baseline=results/baseline-dcp1-prod
-candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-512k
+candidate=~/spark-cluster-mla-dcp/results/dcp4-dflash-512k
 
 [15:15:42] -- concurrent (mixed decode+prefill batches)
 == dcp4-dflash-512k @ http://spark-06c4.local:8000 phase=concurrent
@@ -230,15 +230,15 @@ ConnectionRefusedError: [Errno 111] Connection refused
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 305, in <module>
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 305, in <module>
     sys.exit(main())
              ~~~~^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 298, in main
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 298, in main
     phase_concurrent(a.base, a.out, a.label)
     ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 231, in phase_concurrent
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 231, in phase_concurrent
     m0 = metrics(base)
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 38, in metrics
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 38, in metrics
     txt = urllib.request.urlopen(base + "/metrics", timeout=20).read().decode()
           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/lib/python3.14/urllib/request.py", line 187, in urlopen
@@ -304,15 +304,15 @@ ConnectionRefusedError: [Errno 111] Connection refused
 During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 305, in <module>
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 305, in <module>
     sys.exit(main())
              ~~~~^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 300, in main
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 300, in main
     phase_longctx(a.base, a.out, a.longctx_tokens)
     ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 268, in phase_longctx
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 268, in phase_longctx
     m0 = metrics(base)
-  File "/home/napta2k/spark-cluster-mla-dcp/dcp_probe.py", line 38, in metrics
+  File "~/spark-cluster-mla-dcp/dcp_probe.py", line 38, in metrics
     txt = urllib.request.urlopen(base + "/metrics", timeout=20).read().decode()
           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "/usr/lib/python3.14/urllib/request.py", line 187, in urlopen
@@ -336,5 +336,5 @@ urllib.error.URLError: <urlopen error [Errno 111] Connection refused>
   spark-ddbf avail=118312MiB swapfree=16281MiB
   spark-a218 avail=118311MiB swapfree=16271MiB
 [15:15:46] log scan (final):
-[15:15:47] == checks done; results in /home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-512k
+[15:15:47] == checks done; results in ~/spark-cluster-mla-dcp/results/dcp4-dflash-512k
 [15:15:47] checks exit=0

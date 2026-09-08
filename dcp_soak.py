@@ -9,6 +9,7 @@ more than 512 MiB between samples.
 Usage: dcp_soak.py --base URL --label L --out DIR [--minutes 90] [--tokens 120000]
 """
 import argparse, json, os, subprocess, time
+SSH_USER = os.environ.get("SSH_USER") or os.environ.get("USER") or "user"
 import dcp_probe as P
 
 HOSTS = ["spark-06c4", "spark-365c", "spark-ddbf", "spark-a218"]
@@ -16,7 +17,7 @@ HOSTS = ["spark-06c4", "spark-365c", "spark-ddbf", "spark-a218"]
 
 def node_mem(h):
     try:
-        out = subprocess.run(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=8", f"napta2k@{h}.local",
+        out = subprocess.run(["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=8", f"{SSH_USER}@{h}.local",
                               "awk '/MemAvailable/{printf \"%d \", $2/1024}' /proc/meminfo; awk '/^pswpout/{print $2}' /proc/vmstat"],
                              capture_output=True, text=True, timeout=20).stdout.split()
         return int(out[0]), int(out[1])

@@ -6,11 +6,11 @@
 set -uo pipefail
 HOSTS=(spark-06c4 spark-365c spark-ddbf spark-a218)   # index == rank
 NAME=vllm_glm53big
-PROD=/home/napta2k/glm53big/launch-glm53big-dflash.sh
+PROD=~/glm53big/launch-glm53big-dflash.sh
 WS="$(cd "$(dirname "$0")" && pwd)"
 OUT="$WS/results/restore-$(date +%Y%m%d-%H%M%S)"; mkdir -p "$OUT"; LOG="$OUT/restore.log"
 say() { echo "[$(date '+%H:%M:%S')] $*" | tee -a "$LOG"; }
-sshq() { ssh -o BatchMode=yes -o ConnectTimeout=8 "napta2k@$1.local" "$2"; }
+sshq() { ssh -o BatchMode=yes -o ConnectTimeout=8 "${SSH_USER:-$USER}@$1.local" "$2"; }
 health() { curl -fsS -m 5 http://spark-06c4.local:8000/health >/dev/null 2>&1; }
 generate_ok() {
   curl -fsS -m 300 http://spark-06c4.local:8000/v1/chat/completions -H 'Content-Type: application/json' \
@@ -24,6 +24,6 @@ for h in "${HOSTS[@]}"; do sshq "$h" "docker logs --tail 4000 $NAME 2>&1" > "$OU
 say "teardown"
 for h in "${HOSTS[@]}"; do sshq "$h" "docker rm -f $NAME >/dev/null 2>&1; pkill -f '[c]ache_flusher.sh' 2>/dev/null; true" & done; wait; sleep 5
 for h in "${HOSTS[@]}"; do r=$(sshq "$h" '$HOME/glm53big/start-flusher.sh' 2>&1 | tail -1); say "  flusher $h: $r"; done
-for i in 3 2 1 0; do say "  launching production rank $i on ${HOSTS[$i]}"; sshq "${HOSTS[$i]}" "cd /home/napta2k/glm53big && $PROD $i dflash" >> "$LOG" 2>&1 || say "launch command failed on ${HOSTS[$i]}"; sleep 3; done
-if wait_healthy 2400 && generate_ok | tee -a "$LOG"; then say "production restored and verified"; else say "!!! production restore did not verify; retrying once"; for h in "${HOSTS[@]}"; do sshq "$h" "docker rm -f $NAME >/dev/null 2>&1; true" & done; wait; sleep 10; for i in 3 2 1 0; do sshq "${HOSTS[$i]}" "cd /home/napta2k/glm53big && $PROD $i dflash" >> "$LOG" 2>&1; sleep 3; done; wait_healthy 2400 && generate_ok | tee -a "$LOG" && say "production restored on retry" || say "!!! PRODUCTION RESTORE FAILED - needs a human"; fi
+for i in 3 2 1 0; do say "  launching production rank $i on ${HOSTS[$i]}"; sshq "${HOSTS[$i]}" "cd ~/glm53big && $PROD $i dflash" >> "$LOG" 2>&1 || say "launch command failed on ${HOSTS[$i]}"; sleep 3; done
+if wait_healthy 2400 && generate_ok | tee -a "$LOG"; then say "production restored and verified"; else say "!!! production restore did not verify; retrying once"; for h in "${HOSTS[@]}"; do sshq "$h" "docker rm -f $NAME >/dev/null 2>&1; true" & done; wait; sleep 10; for i in 3 2 1 0; do sshq "${HOSTS[$i]}" "cd ~/glm53big && $PROD $i dflash" >> "$LOG" 2>&1; sleep 3; done; wait_healthy 2400 && generate_ok | tee -a "$LOG" && say "production restored on retry" || say "!!! PRODUCTION RESTORE FAILED - needs a human"; fi
 for h in "${HOSTS[@]}"; do sshq "$h" "pkill -f '[c]ache_flusher.sh' 2>/dev/null; true"; done

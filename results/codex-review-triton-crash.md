@@ -19,44 +19,44 @@
 ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 • I found several correctness defects beyond the passing harness. This was a read-only review of nc46c29e against NCCL’s v2.31.2-1 sources; I did not rerun hardware
   tests.
-  1. P1 — Shared verbs contexts can cause double-close and an uninterruptible async thread. /home/napta2k/nccl-net-hotplug/plugin/src/p2p_plugin.c:667,
-     /home/napta2k/nccl-net-hotplug/plugin/src/hotplug.inc.c:139. Initialization shares one context across its ports and Data Direct aliases, but creates a thread per
+  1. P1 — Shared verbs contexts can cause double-close and an uninterruptible async thread. ~/nccl-net-hotplug/plugin/src/p2p_plugin.c:667,
+     ~/nccl-net-hotplug/plugin/src/hotplug.inc.c:139. Initialization shares one context across its ports and Data Direct aliases, but creates a thread per
      entry; suspend closes each entry separately. Two threads polling the same async fd can both wake, then one blocks inside ibv_get_async_event after the other
      consumes the event. Its eventfd cannot interrupt that read. Use one context owner, event reader, and close per physical context; handle nonblocking EAGAIN.
      MERGE_NICS=0 alone does not eliminate context aliasing. Polling public async_fd is supported. Verbs documentation
      (https://github.com/linux-rdma/rdma-core/blob/master/libibverbs/man/ibv_get_async_event.3)
-  2. P1 — Local quiescence does not establish distributed quiescence. /home/napta2k/nccl-net-hotplug/plugin/src/hotplug.inc.c:125. A sender can have no requests while
+  2. P1 — Local quiescence does not establish distributed quiescence. ~/nccl-net-hotplug/plugin/src/hotplug.inc.c:125. A sender can have no requests while
      its peer has posted—or is about to post—an unmatched receive. Suspending that sender destroys the destination of the peer’s CTS; the peer then reports busy or
      encounters a transport error. Waiting for every rank’s suspend acknowledgment happens too late. Require application admission stopped and work drained across ranks,
      followed by a coordinated prepare/commit barrier before destroying anything.
-  3. P1 — Failed resume is not safely retryable. /home/napta2k/nccl-net-hotplug/plugin/src/hotplug.inc.c:189, /home/napta2k/nccl-net-hotplug/plugin/src/
+  3. P1 — Failed resume is not safely retryable. ~/nccl-net-hotplug/plugin/src/hotplug.inc.c:189, ~/nccl-net-hotplug/plugin/src/
      hotplug.inc.c:448. A second attempt overwrites contexts, thread handles, CQs, QPs and MRs without releasing the previous attempt’s objects. Discarding ctxs also
      loses TCP offsets and protocol state: unread metadata or a ready flag can become the next attempt’s metadata. Some peers may already be active. Preserve resumable
      state or implement coordinated rollback with protocol generations; otherwise enter an explicit terminal failure state. Suspend also needs fail-closed handling:
      device-close failures are swallowed, and repeated suspend returns success after partial teardown.
-  4. P1 — Connect/accept and registration remain unsafe during suspension. /home/napta2k/nccl-net-hotplug/plugin/src/ib_plugin.c:1159, /home/napta2k/nccl-net-hotplug/
-     plugin/src/ib_plugin.c:1469, /home/napta2k/nccl-net-hotplug/plugin/src/ib_plugin.c:1586. Connections enter the registry only after handshake completion, although
+  4. P1 — Connect/accept and registration remain unsafe during suspension. ~/nccl-net-hotplug/plugin/src/ib_plugin.c:1159, ~/nccl-net-hotplug/
+     plugin/src/ib_plugin.c:1469, ~/nccl-net-hotplug/plugin/src/ib_plugin.c:1586. Connections enter the registry only after handshake completion, although
      intermediate stages already own RDMA objects. The rwlock protects individual calls, not intervals between calls. Suspend can therefore close their context
      underneath them. Subsequent connect/accept/regMr calls also lack a suspended gate. Track pending connections and refuse suspension while any exist; return NULL
      comms while suspended. Registration can create a tracked logical handle and defer verbs registration until resume.
-  5. P1 when DMA-BUF is used — Saved descriptors are already closed. /home/napta2k/nccl-net-hotplug/plugin/src/ib_plugin.c:1585,
-     /home/napta2k/nccl-net-hotplug/plugin/src/hotplug.inc.c:231. NCCL closes the supplied DMA-BUF fd immediately after registration. Retaining its integer gives resume
+  5. P1 when DMA-BUF is used — Saved descriptors are already closed. ~/nccl-net-hotplug/plugin/src/ib_plugin.c:1585,
+     ~/nccl-net-hotplug/plugin/src/hotplug.inc.c:231. NCCL closes the supplied DMA-BUF fd immediately after registration. Retaining its integer gives resume
      an invalid or reused descriptor. Duplicate it with F_DUPFD_CLOEXEC, retain that duplicate through suspension, and close it on deregistration and failure cleanup.
      NCCL registration paths (https://github.com/NVIDIA/nccl/blob/v2.31.2-1/src/transport/net.cc#L1008)
-  6. P1 when flushing is required — iflush has a suspension race. /home/napta2k/nccl-net-hotplug/plugin/src/ib_plugin.c:1971. Contrary to the request’s description, this
+  6. P1 when flushing is required — iflush has a suspension race. ~/nccl-net-hotplug/plugin/src/ib_plugin.c:1971. Contrary to the request’s description, this
      implementation has no suspended gate. Suspend can intervene between receive test(done=1) and iflush, leaving NULL MRs/QPs. Adding a NULL-request gate would
      incorrectly declare flushing complete: NCCL does not retry iflush. Support a deferred flush request, or guarantee required flushing before receive completion
      permits suspension. With core GDR disabled this path is avoided; plugin flushEnabled itself depends on detected capabilities. NCCL flush progression
      (https://github.com/NVIDIA/nccl/blob/v2.31.2-1/src/transport/net.cc#L1663)
-  7. P1 — Finalization leaves threads executing plugin code. /home/napta2k/nccl-net-hotplug/plugin/src/ib_plugin.c:710,
-     /home/napta2k/nccl-net-hotplug/plugin/src/hotplug.inc.c:523. Finalization only decrements a reference count; neither async workers nor the detached control thread
+  7. P1 — Finalization leaves threads executing plugin code. ~/nccl-net-hotplug/plugin/src/ib_plugin.c:710,
+     ~/nccl-net-hotplug/plugin/src/hotplug.inc.c:523. Finalization only decrements a reference count; neither async workers nor the detached control thread
      stop. NCCL can unload the library after its last communicator, causing execution of unmapped code. Stop/join workers and release device resources before
      finalization returns at the last reference. The ordinary serialized stop path does not double-join. NCCL unload path
      (https://github.com/NVIDIA/nccl/blob/v2.31.2-1/src/plugin/net.cc#L308)
-  8. P2 — Heterogeneous rails expose protocol defects. /home/napta2k/nccl-net-hotplug/plugin/src/hotplug.inc.c:346 omits the receiver-side MTU minimum; apply
-     min(local,remote) on both endpoints. Separately, inherited /home/napta2k/nccl-net-hotplug/plugin/src/ib_plugin.c:1736 indexes remote sizes-FIFO keys using local
+  8. P2 — Heterogeneous rails expose protocol defects. ~/nccl-net-hotplug/plugin/src/hotplug.inc.c:346 omits the receiver-side MTU minimum; apply
+     min(local,remote) on both endpoints. Separately, inherited ~/nccl-net-hotplug/plugin/src/ib_plugin.c:1736 indexes remote sizes-FIFO keys using local
      devIndex; use qp->remDevIdx. Unequal merged-device counts can otherwise break grouped receives.
-  9. P2 — Reopen assumes device identity and capabilities survive unchanged. /home/napta2k/nccl-net-hotplug/plugin/src/hotplug.inc.c:171. Synthetic _dma names cannot
+  9. P2 — Reopen assumes device identity and capabilities survive unchanged. ~/nccl-net-hotplug/plugin/src/hotplug.inc.c:171. Synthetic _dma names cannot
      match real verbs device names. Store physical identity separately and validate GUID/PCI identity, provider, link layer and required capabilities. Speed/width may
      renegotiate, affecting tuning. Preserve existing vProps numbering because NCCL retains topology; reject incompatible changes instead of silently rebuilding
      membership.
@@ -93,13 +93,13 @@
   When done, end your reply with the words "codex done".
 • I’ll check the current control code and vLLM’s request metrics, then recommend the smallest design with a reliable wake signal.
 • Searching the web
-• Ran rg -n 'hpState|prepare|commit|wanted|idle|Ctl|Control|Resume|LOCK' src/hotplug.inc.c && rg -n 'vllm.*(version|image)|VLLM_IMAGE|vllm/vllm' /home/napta2k/
-  │ spark-cluster-mla-dcp/*.sh /home/napta2k/spark-cluster-mla-dcp/*.md
+• Ran rg -n 'hpState|prepare|commit|wanted|idle|Ctl|Control|Resume|LOCK' src/hotplug.inc.c && rg -n 'vllm.*(version|image)|VLLM_IMAGE|vllm/vllm' ~/
+  │ spark-cluster-mla-dcp/*.sh ~/spark-cluster-mla-dcp/*.md
   └ 9: *   prepare: refuse (busy) if any request or connection handshake is in
     13: *            of the job reports prepared, nothing is in flight anywhere and
     … +104 lines (ctrl + t to view transcript)
-    /home/napta2k/spark-cluster-mla-dcp/README.md:93:| `baseline/vllm/…` | sixteen files exactly as the running image has them |
-    /home/napta2k/spark-cluster-mla-dcp/README.md:116:`~/lmcache-mg/spark-src/vllm` (the image's vLLM at commit ab666069); point
+    ~/spark-cluster-mla-dcp/README.md:93:| `baseline/vllm/…` | sixteen files exactly as the running image has them |
+    ~/spark-cluster-mla-dcp/README.md:116:`~/lmcache-mg/spark-src/vllm` (the image's vLLM at commit ab666069); point
 • Searched the web for site.docs.vllm.ai metrics http_requests_in_progress API server prometheus middleware ...
 • Searching the web
 • Explored

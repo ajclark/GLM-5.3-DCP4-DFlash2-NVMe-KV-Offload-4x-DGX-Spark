@@ -31,7 +31,7 @@ spark-06c4  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_
 spark-365c  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=running
 spark-ddbf  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=running
 spark-a218  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_active=0 mgmt=10000M mstflint=unloaded timer=none ctr=running
-[05:51:00] == down: CX-7 off on 4 node(s); bring it back with: /home/napta2k/dgx-spark-idle-power/spark-idle.sh --up
+[05:51:00] == down: CX-7 off on 4 node(s); bring it back with: ~/dgx-spark-idle-power/spark-idle.sh --up
 [2026-09-07 05:51:00] spark-idle.sh --down -> 0
 [2026-09-07 05:51:12] hold: procs=4 active=0 suspended=4 other=0 min_idle=-1s wanted=0 unreachable=0
 [2026-09-07 06:01:01] wake: a process asked for the network while suspended (procs=4 active=0 suspended=4 other=0 min_idle=-1s wanted=1 unreachable=0)
@@ -42,17 +42,17 @@ spark-a218  cx7=0 hotplug_enabled=1 fns=0 ring=absent/-/mtu- absent/-/mtu- rdma_
   spark-ddbf: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
   spark-365c: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
 [06:01:10] -- ring pings and mstflint reload
-  spark-365c: enP2p1s0f0np0 192.168.102.1 -> 192.168.102.2 jumbo ping ok
-  spark-365c: enP2p1s0f1np1 192.168.100.2 -> 192.168.100.1 jumbo ping ok
+  spark-365c: enP2p1s0f0np0 10.99.102.1 -> 10.99.102.2 jumbo ping ok
+  spark-365c: enP2p1s0f1np1 10.99.100.2 -> 10.99.100.1 jumbo ping ok
   spark-365c: mstflint_access reloaded
-  spark-a218: enP2p1s0f0np0 192.168.104.1 -> 192.168.104.2 jumbo ping ok
-  spark-a218: enP2p1s0f1np1 192.168.103.1 -> 192.168.103.2 jumbo ping ok
+  spark-a218: enP2p1s0f0np0 10.99.104.1 -> 10.99.104.2 jumbo ping ok
+  spark-a218: enP2p1s0f1np1 10.99.103.1 -> 10.99.103.2 jumbo ping ok
   spark-a218: mstflint_access reloaded
-  spark-06c4: enP2p1s0f0np0 192.168.104.2 -> 192.168.104.1 jumbo ping ok
-  spark-06c4: enP2p1s0f1np1 192.168.100.1 -> 192.168.100.2 jumbo ping ok
+  spark-06c4: enP2p1s0f0np0 10.99.104.2 -> 10.99.104.1 jumbo ping ok
+  spark-06c4: enP2p1s0f1np1 10.99.100.1 -> 10.99.100.2 jumbo ping ok
   spark-06c4: mstflint_access reloaded
-  spark-ddbf: enP2p1s0f0np0 192.168.102.2 -> 192.168.102.1 jumbo ping ok
-  spark-ddbf: enP2p1s0f1np1 192.168.103.2 -> 192.168.103.1 jumbo ping ok
+  spark-ddbf: enP2p1s0f0np0 10.99.102.2 -> 10.99.102.1 jumbo ping ok
+  spark-ddbf: enP2p1s0f1np1 10.99.103.2 -> 10.99.103.1 jumbo ping ok
   spark-ddbf: mstflint_access reloaded
 [06:01:14] -- plugin resume on spark-06c4 spark-365c spark-ddbf spark-a218 (re-open devices, re-connect over the retained sockets)
   spark-06c4: PLUGIN_OK 1 process(es) active

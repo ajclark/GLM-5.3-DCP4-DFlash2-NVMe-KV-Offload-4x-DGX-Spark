@@ -1,17 +1,17 @@
-[05:13:16] == NCCL hot-plug probe: cycles=2 hold=30s out=/home/napta2k/spark-cluster-mla-dcp/results/nccl-hotplug-probe/20260907-051315
+[05:13:16] == NCCL hot-plug probe: cycles=2 hold=30s out=~/spark-cluster-mla-dcp/results/nccl-hotplug-probe/20260907-051315
 [05:13:16] -- staging
   spark-06c4 plugin sha dafff1fb9a01540a
   spark-365c plugin sha dafff1fb9a01540a
   spark-ddbf plugin sha dafff1fb9a01540a
   spark-a218 plugin sha dafff1fb9a01540a
 [05:13:20] -- launching probe containers
-nccl_hotplug_probe launched rank=3 cycles=2 plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
-nccl_hotplug_probe launched rank=2 cycles=2 plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
-nccl_hotplug_probe launched rank=1 cycles=2 plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
-nccl_hotplug_probe launched rank=0 cycles=2 plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+nccl_hotplug_probe launched rank=3 cycles=2 plugin=~/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+nccl_hotplug_probe launched rank=2 cycles=2 plugin=~/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+nccl_hotplug_probe launched rank=1 cycles=2 plugin=~/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+nccl_hotplug_probe launched rank=0 cycles=2 plugin=~/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
 [05:13:31] -- waiting for the baseline and ready-for-cycle
 [05:16:50] probe did not reach ready-for-cycle
-[2026-09-07 05:16:47] spark-06c4:1:62 [0] ibvwrap.c:262 NCCL WARN Call to ibv_modify_qp failed with 110 Connection timed out, on dev roceP2p1s0f1:1, curr state INIT, next state RTR, local GID index 3, local GID ::ffff:192.168.100.1, remote GID ::ffff:192.168.103.1
+[2026-09-07 05:16:47] spark-06c4:1:62 [0] ibvwrap.c:262 NCCL WARN Call to ibv_modify_qp failed with 110 Connection timed out, on dev roceP2p1s0f1:1, curr state INIT, next state RTR, local GID index 3, local GID ::ffff:10.99.100.1, remote GID ::ffff:10.99.103.1
 spark-06c4:1:62 [0] NCCL INFO transport/net.cc:1095 (recvProxyConnect) -> 2
 spark-06c4:1:1 [0] NCCL INFO transport/net.cc:591 (recvConnect) -> 2
 spark-06c4:1:1 [0] NCCL INFO transport.cc:270 (ncclTransportP2pSetup) -> 2

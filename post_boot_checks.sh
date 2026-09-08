@@ -9,7 +9,7 @@ HOSTS=(spark-06c4 spark-365c spark-ddbf spark-a218)
 OUT="$WS/results/$LABEL"; mkdir -p "$OUT"
 URL=http://spark-06c4.local:8000
 say() { echo "[$(date '+%H:%M:%S')] $*" | tee -a "$OUT/checks.log"; }
-sshq() { ssh -o BatchMode=yes -o ConnectTimeout=8 "napta2k@$1.local" "$2"; }
+sshq() { ssh -o BatchMode=yes -o ConnectTimeout=8 "${SSH_USER:-$USER}@$1.local" "$2"; }
 scan_logs() {  # $1 = tag
   for h in "${HOSTS[@]}"; do sshq "$h" "docker logs --since 30m vllm_glm53big 2>&1" > "$OUT/$1-$h.log" 2>/dev/null & done; wait
   say "log scan ($1):"

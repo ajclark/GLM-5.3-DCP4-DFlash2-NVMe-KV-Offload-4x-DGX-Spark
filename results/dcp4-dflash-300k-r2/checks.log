@@ -45,7 +45,7 @@
   code      rep1 gen= 225 ttft=0.517s decode=36.75 tok/s acc/cycle=6.429 cycle=174.1ms sha=4624bd9be987c0d2
 == done
 baseline=results/baseline-dcp1-prod
-candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-300k-r2
+candidate=~/spark-cluster-mla-dcp/results/dcp4-dflash-300k-r2
 
 == determinism (greedy, thinking off)
   u512         base=c98ba48947d00b5a cand=a3a98e4b79fe2fa5 DIFFERS  tokens 128 vs 128
@@ -151,4 +151,4 @@ candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-300k-r2
       4 WARNING 09-04 17:36:29 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to
       4 WARNING 09-04 17:36:15 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
       4 INFO 09-04 17:35:45 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
-[17:59:52] == checks done; results in /home/napta2k/spark-cluster-mla-dcp/results/dcp4-dflash-300k-r2
+[17:59:52] == checks done; results in ~/spark-cluster-mla-dcp/results/dcp4-dflash-300k-r2

@@ -1,14 +1,14 @@
-[05:29:02] == NCCL hot-plug probe: cycles=2 hold=30s out=/home/napta2k/spark-cluster-mla-dcp/results/nccl-hotplug-probe/20260907-052859
+[05:29:02] == NCCL hot-plug probe: cycles=2 hold=30s out=~/spark-cluster-mla-dcp/results/nccl-hotplug-probe/20260907-052859
 [05:29:02] -- staging
   spark-06c4 plugin sha d890fb4d82daba44
   spark-365c plugin sha d890fb4d82daba44
   spark-ddbf plugin sha d890fb4d82daba44
   spark-a218 plugin sha d890fb4d82daba44
 [05:29:06] -- launching probe containers
-nccl_hotplug_probe launched rank=3 cycles=2 plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
-nccl_hotplug_probe launched rank=2 cycles=2 plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
-nccl_hotplug_probe launched rank=1 cycles=2 plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
-nccl_hotplug_probe launched rank=0 cycles=2 plugin=/home/napta2k/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+nccl_hotplug_probe launched rank=3 cycles=2 plugin=~/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+nccl_hotplug_probe launched rank=2 cycles=2 plugin=~/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+nccl_hotplug_probe launched rank=1 cycles=2 plugin=~/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
+nccl_hotplug_probe launched rank=0 cycles=2 plugin=~/nccl-hotplug/libnccl-net-hotplug.so ctl=/var/tmp/nccl-hotplug
 [05:29:17] -- waiting for the baseline and ready-for-cycle
 {"phase": "init", "nccl": "2.31.2", "torch": "2.11.0+cu130", "world": 4, "plugin": "hotplug", "ctl": "/var/tmp/nccl-hotplug"}
 {"phase": "plugin", "status_gen": 0, "status_state": "active"}
@@ -61,17 +61,17 @@ none
   spark-365c: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
   spark-06c4: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
 [05:30:36] -- ring pings and mstflint reload
-  spark-ddbf: enP2p1s0f0np0 192.168.102.2 -> 192.168.102.1 jumbo ping ok
-  spark-ddbf: enP2p1s0f1np1 192.168.103.2 -> 192.168.103.1 jumbo ping ok
+  spark-ddbf: enP2p1s0f0np0 10.99.102.2 -> 10.99.102.1 jumbo ping ok
+  spark-ddbf: enP2p1s0f1np1 10.99.103.2 -> 10.99.103.1 jumbo ping ok
   spark-ddbf: mstflint_access reloaded
-  spark-365c: enP2p1s0f0np0 192.168.102.1 -> 192.168.102.2 jumbo ping ok
-  spark-365c: enP2p1s0f1np1 192.168.100.2 -> 192.168.100.1 jumbo ping ok
+  spark-365c: enP2p1s0f0np0 10.99.102.1 -> 10.99.102.2 jumbo ping ok
+  spark-365c: enP2p1s0f1np1 10.99.100.2 -> 10.99.100.1 jumbo ping ok
   spark-365c: mstflint_access reloaded
-  spark-06c4: enP2p1s0f0np0 192.168.104.2 -> 192.168.104.1 jumbo ping ok
-  spark-06c4: enP2p1s0f1np1 192.168.100.1 -> 192.168.100.2 jumbo ping ok
+  spark-06c4: enP2p1s0f0np0 10.99.104.2 -> 10.99.104.1 jumbo ping ok
+  spark-06c4: enP2p1s0f1np1 10.99.100.1 -> 10.99.100.2 jumbo ping ok
   spark-06c4: mstflint_access reloaded
-  spark-a218: enP2p1s0f0np0 192.168.104.1 -> 192.168.104.2 jumbo ping ok
-  spark-a218: enP2p1s0f1np1 192.168.103.1 -> 192.168.103.2 jumbo ping ok
+  spark-a218: enP2p1s0f0np0 10.99.104.1 -> 10.99.104.2 jumbo ping ok
+  spark-a218: enP2p1s0f1np1 10.99.103.1 -> 10.99.103.2 jumbo ping ok
   spark-a218: mstflint_access reloaded
 [05:30:40] -- plugin resume on spark-06c4 spark-365c spark-ddbf spark-a218 (re-open devices, re-connect over the retained sockets)
   spark-ddbf: PLUGIN_OK 1 process(es) active
@@ -136,17 +136,17 @@ none
   spark-a218: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
   spark-ddbf: CX7_ON fns=4 ring=200G/200G rdma=4 ACTIVE
 [05:31:56] -- ring pings and mstflint reload
-  spark-ddbf: enP2p1s0f0np0 192.168.102.2 -> 192.168.102.1 jumbo ping ok
-  spark-ddbf: enP2p1s0f1np1 192.168.103.2 -> 192.168.103.1 jumbo ping ok
+  spark-ddbf: enP2p1s0f0np0 10.99.102.2 -> 10.99.102.1 jumbo ping ok
+  spark-ddbf: enP2p1s0f1np1 10.99.103.2 -> 10.99.103.1 jumbo ping ok
   spark-ddbf: mstflint_access reloaded
-  spark-a218: enP2p1s0f0np0 192.168.104.1 -> 192.168.104.2 jumbo ping ok
-  spark-a218: enP2p1s0f1np1 192.168.103.1 -> 192.168.103.2 jumbo ping ok
+  spark-a218: enP2p1s0f0np0 10.99.104.1 -> 10.99.104.2 jumbo ping ok
+  spark-a218: enP2p1s0f1np1 10.99.103.1 -> 10.99.103.2 jumbo ping ok
   spark-a218: mstflint_access reloaded
-  spark-365c: enP2p1s0f0np0 192.168.102.1 -> 192.168.102.2 jumbo ping ok
-  spark-365c: enP2p1s0f1np1 192.168.100.2 -> 192.168.100.1 jumbo ping ok
+  spark-365c: enP2p1s0f0np0 10.99.102.1 -> 10.99.102.2 jumbo ping ok
+  spark-365c: enP2p1s0f1np1 10.99.100.2 -> 10.99.100.1 jumbo ping ok
   spark-365c: mstflint_access reloaded
-  spark-06c4: enP2p1s0f0np0 192.168.104.2 -> 192.168.104.1 jumbo ping ok
-  spark-06c4: enP2p1s0f1np1 192.168.100.1 -> 192.168.100.2 jumbo ping ok
+  spark-06c4: enP2p1s0f0np0 10.99.104.2 -> 10.99.104.1 jumbo ping ok
+  spark-06c4: enP2p1s0f1np1 10.99.100.1 -> 10.99.100.2 jumbo ping ok
   spark-06c4: mstflint_access reloaded
 [05:31:59] -- plugin resume on spark-06c4 spark-365c spark-ddbf spark-a218 (re-open devices, re-connect over the retained sockets)
   spark-365c: PLUGIN_OK 1 process(es) active
@@ -164,4 +164,4 @@ spark-a218  cx7=1 hotplug_enabled=1 fns=4 ring=up/200000/mtu9000 up/200000/mtu90
 none
 [05:32:02] == up: CX-7 on and ring verified on 4 node(s)
 [05:32:02] -- waiting for the probe to finish
-[05:32:04] == probe exit code on rank 0: 0 (PASS); logs in /home/napta2k/spark-cluster-mla-dcp/results/nccl-hotplug-probe/20260907-052859
+[05:32:04] == probe exit code on rank 0: 0 (PASS); logs in ~/spark-cluster-mla-dcp/results/nccl-hotplug-probe/20260907-052859

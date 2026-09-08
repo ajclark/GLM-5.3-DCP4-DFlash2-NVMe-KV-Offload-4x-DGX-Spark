@@ -1,4 +1,4 @@
-[01:56:39] rollout 'dcp2-dflash-180k-prod5' MAXLEN=180224 MAXBATCHED=2048 KVBYTES=6000000000 KVTIER=1 out=/home/napta2k/spark-cluster-mla-dcp/results/rollout-dcp2-dflash-180k-prod5-20260906-015639
+[01:56:39] rollout 'dcp2-dflash-180k-prod5' MAXLEN=180224 MAXBATCHED=2048 KVBYTES=6000000000 KVTIER=1 out=~/spark-cluster-mla-dcp/results/rollout-dcp2-dflash-180k-prod5-20260906-015639
 [01:56:39] SKIP_PREFLIGHT=1: not requiring a healthy stack (recovery)
 [01:56:39] production healthy; saving pre-rollout logs + memory baseline
 spark-06c4 avail=117439MiB swapfree=16181MiB pswpout=34257290
@@ -17,18 +17,18 @@ spark-a218 avail=117804MiB swapfree=16383MiB pswpout=0
 [01:56:57] launching DCP ranks (worker-first)
 [01:56:57]   launching rank 3 on spark-a218
 617b52e8f91dd5c2a68b4fe6f9c2a00d9819da0af740f650ddc01123b7f16b49
-launched vllm_glm53big rank=3 host=192.168.1.31 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=3 host=10.99.1.31 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [01:57:04]   launching rank 2 on spark-ddbf
 0f508a5607935bc61b56bde75cdf049a38a5aca2c405f0b6922f7e7b9a31809e
-launched vllm_glm53big rank=2 host=192.168.1.149 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=2 host=10.99.1.149 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [01:57:11]   launching rank 1 on spark-365c
 ebbffea951813aa0d2266a0cc1963326dcfbba24643474524f3fcb4206188f20
-launched vllm_glm53big rank=1 host=192.168.1.88 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=1 host=10.99.1.88 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [01:57:18]   launching rank 0 on spark-06c4
 cf3fedf1fc63d095196be877bf8cd8512c54ad85f999bedabc692e827bb06152
-launched vllm_glm53big rank=0 host=192.168.1.228 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=0 host=10.99.1.228 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [02:06:31] HEALTHY after 545s

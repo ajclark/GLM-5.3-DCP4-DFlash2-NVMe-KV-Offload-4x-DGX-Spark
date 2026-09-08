@@ -1,9 +1,9 @@
-[23:15:38] == enter idle mode: tier=deep ring-down=1 eth-1g=1 suspend=0 dry-run=1 (log /home/napta2k/spark-cluster-mla-dcp/results/idle-power/20260905-231538-enter-low-power-idle-mode.log)
+[23:15:38] == enter idle mode: tier=deep ring-down=1 eth-1g=1 suspend=0 dry-run=1 (log ~/spark-cluster-mla-dcp/results/idle-power/20260905-231538-enter-low-power-idle-mode.log)
 [23:15:39] -- baseline
-[23:15:40]   spark-06c4 gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=192.168.104.2/24/192.168.100.1/24 mtu=9000/9000 radios_blocked=1/2 gpu_W/MHz/pm=7.88/1995/Enabled ctr=running availG=2.9
-[23:15:40]   spark-365c gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=192.168.102.1/24/192.168.100.2/24 mtu=9000/9000 radios_blocked=0/2 gpu_W/MHz/pm=8.67/1995/Enabled ctr=running availG=4.0
-[23:15:41]   spark-ddbf gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=192.168.102.2/24/192.168.103.2/24 mtu=9000/9000 radios_blocked=0/2 gpu_W/MHz/pm=8.45/1995/Enabled ctr=running availG=4.8
-[23:15:41]   spark-a218 gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=192.168.104.1/24/192.168.103.1/24 mtu=9000/9000 radios_blocked=0/2 gpu_W/MHz/pm=7.14/1976/Enabled ctr=running availG=4.7
+[23:15:40]   spark-06c4 gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=10.99.104.2/24/10.99.100.1/24 mtu=9000/9000 radios_blocked=1/2 gpu_W/MHz/pm=7.88/1995/Enabled ctr=running availG=2.9
+[23:15:40]   spark-365c gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=10.99.102.1/24/10.99.100.2/24 mtu=9000/9000 radios_blocked=0/2 gpu_W/MHz/pm=8.67/1995/Enabled ctr=running availG=4.0
+[23:15:41]   spark-ddbf gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=10.99.102.2/24/10.99.103.2/24 mtu=9000/9000 radios_blocked=0/2 gpu_W/MHz/pm=8.45/1995/Enabled ctr=running availG=4.8
+[23:15:41]   spark-a218 gov=performance mhz=2808 online=0-19 eth=10000M ring=up/up rdma=ACTIVE/ACTIVE ringip=10.99.104.1/24/10.99.103.1/24 mtu=9000/9000 radios_blocked=0/2 gpu_W/MHz/pm=7.14/1976/Enabled ctr=running availG=4.7
 [23:15:41] -- taking the serving stack down
   [dry-run] spark-365c: docker rm -f vllm_glm53big >/dev/null 2>&1; pkill -f '[c]ache_flusher.sh' 2>/dev/null; echo 'container removed, flusher stopped'
   [dry-run] spark-06c4: docker rm -f vllm_glm53big >/dev/null 2>&1; pkill -f '[c]ache_flusher.sh' 2>/dev/null; echo 'container removed, flusher stopped'

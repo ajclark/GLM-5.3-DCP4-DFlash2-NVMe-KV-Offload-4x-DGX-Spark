@@ -46,12 +46,12 @@ Prompt: the human's idea (no request for 90 min -> CX-7 off with the serving sta
 
   Add authenticated suspend_network/resume_network orchestration through the API’s engine client, EngineCore, and worker collective_rpc.
 
-  Reuse pause_scheduler(mode="wait", clear_cache=False) or /sleep?level=0&mode=wait: /home/napta2k/lmcache-mg/spark-src/vllm/v1/engine/core.py:761 explicitly
+  Reuse pause_scheduler(mode="wait", clear_cache=False) or /sleep?level=0&mode=wait: ~/lmcache-mg/spark-src/vllm/v1/engine/core.py:761 explicitly
   makes level zero scheduling-only. Never use default sleep level one: it offloads weights and discards KV.
 
   Drain scheduler/output activity and slab/bounce transfers before worker teardown. Keep scheduling paused until all workers pass recovery.
 
-  Serialize control RPCs during rebuilding. Workers cannot consume another RPC while blocked rebuilding; /home/napta2k/lmcache-mg/spark-src/vllm/v1/executor/
+  Serialize control RPCs during rebuilding. Workers cannot consume another RPC while blocked rebuilding; ~/lmcache-mg/spark-src/vllm/v1/executor/
   multiproc_executor.py:374 enqueues without passing the response timeout. That timeout does not cancel stuck GPU work. Preserve the message queues; do not
   treat the broadcast warning as evidence they need rebuilding.
 
@@ -66,10 +66,10 @@ Prompt: the human's idea (no request for 90 min -> CX-7 off with the serving sta
 
   4. Complete transport cleanup; acknowledge all four ranks before power-off.
 
-  The current PyNccl destroy:148 (/home/napta2k/lmcache-mg/spark-src/vllm/distributed/device_communicators/pynccl.py:148) starts a daemon abort thread and
+  The current PyNccl destroy:148 (~/lmcache-mg/spark-src/vllm/distributed/device_communicators/pynccl.py:148) starts a daemon abort thread and
   waits only five seconds. Its return is not a teardown-complete acknowledgement.
 
-  Do not call generic group/environment destruction: /home/napta2k/lmcache-mg/spark-src/vllm/distributed/parallel_state.py:1170 also destroys Gloo and drops
+  Do not call generic group/environment destruction: ~/lmcache-mg/spark-src/vllm/distributed/parallel_state.py:1170 also destroys Gloo and drops
   broadcaster state. For fixed membership, establish a persistent Gloo default/control world and explicitly NCCL-backed device groups at startup; retain
   store ownership.
 
@@ -84,11 +84,11 @@ Prompt: the human's idea (no request for 90 min -> CX-7 off with the serving sta
   Elastic EP is a template, not a drop-in:
 
   - _replace_active_groups() replaces DP/EP/world/EPLB—not TP/DCP.
-  - _release_cuda_graphs():331 (/home/napta2k/lmcache-mg/spark-src/vllm/distributed/elastic_ep/elastic_execute.py:331) resets compilation and handles the
+  - _release_cuda_graphs():331 (~/lmcache-mg/spark-src/vllm/distributed/elastic_ep/elastic_execute.py:331) resets compilation and handles the
     target wrapper.
 
   - Reuse the block-table save/clear/restore pattern at :498, adding try/finally and drafter coverage.
-  - Full warmup also autotunes and resets RNG: /home/napta2k/lmcache-mg/spark-src/vllm/v1/worker/gpu_worker.py:674. Preserve RNG and ensure dummy runs cannot
+  - Full warmup also autotunes and resets RNG: ~/lmcache-mg/spark-src/vllm/v1/worker/gpu_worker.py:674. Preserve RNG and ensure dummy runs cannot
     overwrite resident KV.
 
   Keep weights, KV allocation, slab index and cache epoch unchanged. Validate retained-prefix hits and generation afterward. The documented 40–60-second wake

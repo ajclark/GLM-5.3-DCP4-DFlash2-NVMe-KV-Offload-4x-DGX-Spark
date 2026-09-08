@@ -76,7 +76,7 @@
 
   No mathematical dependency prevents queries overlapping the independent indexer. But the proposed schedule overstates available work:
 
-  - /home/napta2k/lmcache-mg/spark-src/vllm/model_executor/layers/mla.py:140 already computes fused Q/KV input projections before q_b; there is no subsequent independent
+  - ~/lmcache-mg/spark-src/vllm/model_executor/layers/mla.py:140 already computes fused Q/KV input projections before q_b; there is no subsequent independent
     kv_a_proj to hide.
 
   - Today the indexer finishes at line 170 before absorbed-query BMM at MLA:821 (overlay/vllm/model_executor/layers/attention/mla_attention.py:821). Move absorption earlier
@@ -109,7 +109,7 @@
   the compaction explanation, leaving that rationale incomplete.
 
 
-› Design question from the Claude session in the sibling pane (the human asked us to bounce this). Repo /home/napta2k/spark-cluster-mla-dcp; read docs/BOOT-TIME.md first (a
+› Design question from the Claude session in the sibling pane (the human asked us to bounce this). Repo ~/spark-cluster-mla-dcp; read docs/BOOT-TIME.md first (a
   measured anatomy of our 505 s serving-stack boot with ranked options). Do not modify files; answer in the pane, ~700 words.
 
   The human's challenge: nothing changes between restarts of this stack (same weights, same TP4/DCP layout, same kernels, same shapes), so why does every boot re-read 380 GB
@@ -118,7 +118,7 @@
   flags.
 
   Platform facts: 4x DGX Spark GB10, aarch64, 121 GB unified LPDDR5x per node shared by CPU and GPU (no separate VRAM; cudaMalloc and host RAM draw from the same pool), NVMe
-  reads 10 GB/s with O_DIRECT, 20 cores, Docker 29 with default seccomp (io_uring blocked), CUDA 13, no GDS (nvidia_fs not loaded). vLLM 0.23.1 fork at /home/napta2k/
+  reads 10 GB/s with O_DIRECT, 20 cores, Docker 29 with default seccomp (io_uring blocked), CUDA 13, no GDS (nvidia_fs not loaded). vLLM 0.23.1 fork at ~/
   lmcache-mg/spark-src/vllm (read only). Each rank holds ~95 GB of post-processed weights (marlin int4 repacked MoE, MLA W_UK/W_UV dequantized to bf16). The engine runs in a
   container that is docker rm'd and recreated on every restart; anything inside the container filesystem dies with it, but bind-mounted NVMe paths and host tmpfs persist.
 
@@ -157,9 +157,9 @@
 
 • Searched the web for https://docs.nvidia.com/cuda/cuda-for-tegra-appnote/index.html
 
-• Ran nl -ba /home/napta2k/lmcache-mg/spark-src/vllm/model_executor/model_loader/base_loader.py | sed -n '35,92p'
-  │ nl -ba /home/napta2k/lmcache-mg/spark-src/vllm/model_executor/model_loader/sharded_state_loader.py | sed -n '1,210p'
-  │ nl -ba /home/napta2k/lmcache-mg/spark-src/vllm/model_executor/warmup/kernel_warmup.py | sed -n '55,165p'
+• Ran nl -ba ~/lmcache-mg/spark-src/vllm/model_executor/model_loader/base_loader.py | sed -n '35,92p'
+  │ nl -ba ~/lmcache-mg/spark-src/vllm/model_executor/model_loader/sharded_state_loader.py | sed -n '1,210p'
+  │ nl -ba ~/lmcache-mg/spark-src/vllm/model_executor/warmup/kernel_warmup.py | sed -n '55,165p'
   │ … +2 lines
   └     35
         36        @abstractmethod
@@ -182,8 +182,8 @@
 • Searched the web for site:nvidia.com "GB10" "cudaHostRegister" ...
 
 • Ran if [ -r /proc/driver/nvidia/version ]; then sed -n '1,6p' /proc/driver/nvidia/version; fi
-  │ nl -ba /home/napta2k/lmcache-mg/spark-src/vllm/v1/worker/gpu_worker.py | sed -n '300,320p;372,410p'
-  │ rg -n 'def request_memory' /home/napta2k/lmcache-mg/spark-src/vllm/v1/worker/utils.py
+  │ nl -ba ~/lmcache-mg/spark-src/vllm/v1/worker/gpu_worker.py | sed -n '300,320p;372,410p'
+  │ rg -n 'def request_memory' ~/lmcache-mg/spark-src/vllm/v1/worker/utils.py
   │ … +3 lines
   └    300                )
        301
@@ -195,15 +195,15 @@
 
 • Searched the web for site:docs.nvidia.com/cuda "checkpoint" "Linux" "aarch64" ...
 
-• Ran nl -ba /home/napta2k/lmcache-mg/spark-src/vllm/v1/worker/utils.py | sed -n '405,449p'
-  │ rg --files /home/napta2k/lmcache-mg/spark-src -g '*autotun*'
-  │ rg -n 'cache_results|TRITON_CACHE_DIR' /home/napta2k/lmcache-mg/spark-src/vllm/model_executor/layers/attention /home/napta2k/lmcache-mg/spark-src/vllm/v1/attention | head
+• Ran nl -ba ~/lmcache-mg/spark-src/vllm/v1/worker/utils.py | sed -n '405,449p'
+  │ rg --files ~/lmcache-mg/spark-src -g '*autotun*'
+  │ rg -n 'cache_results|TRITON_CACHE_DIR' ~/lmcache-mg/spark-src/vllm/model_executor/layers/attention ~/lmcache-mg/spark-src/vllm/v1/attention | head
   │ … +2 lines
   └    405    def request_memory(init_snapshot: MemorySnapshot, cache_config: CacheConfig) -> int:
        406        """
     … +43 lines (ctrl + t to view transcript)
-    /home/napta2k/spark-cluster-experiments/CLAUDE-HANDOVER.md:63:- `06c4` and `365c`: driver `580.159.03`, kernel suffix `1026`.
-    /home/napta2k/spark-cluster-experiments/CLAUDE-HANDOVER.md:64:- `ddbf` and `a218`: driver `580.173.02`, kernel suffix `1031`.
+    ~/spark-cluster-experiments/CLAUDE-HANDOVER.md:63:- `06c4` and `365c`: driver `580.159.03`, kernel suffix `1026`.
+    ~/spark-cluster-experiments/CLAUDE-HANDOVER.md:64:- `ddbf` and `a218`: driver `580.173.02`, kernel suffix `1031`.
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -240,7 +240,7 @@
   followed by .cuda() defeats this.
 
   PyTorch can wrap externally owned CUDA-addressable storage, with an appropriate lifetime/deleter. vLLM needs a custom initialization path: skip destructive repacking,
-  reconstruct aliases/attributes, and account for memory outside its allocator. Today’s startup admission check (/home/napta2k/lmcache-mg/spark-src/vllm/v1/worker/
+  reconstruct aliases/attributes, and account for memory outside its allocator. Today’s startup admission check (~/lmcache-mg/spark-src/vllm/v1/worker/
   utils.py:405) would reject the already-resident weights at utilization 0.91.
 
   Decisive experiment: sequential 256-MiB/1-GiB/4-GiB registered mappings versus cudaMalloc, measuring registration separately from page population, streaming bandwidth, an
@@ -264,7 +264,7 @@
   tensor metadata. Key it by weights, fork/kernel build, quantization backend, architecture and parallel layout.
 
   Avoid “PWAL on empty weights”: postprocessing performs real transformations and parameter replacement. Separate metadata construction from transformation, then load final
-  storage directly. The default loader (/home/napta2k/lmcache-mg/spark-src/vllm/model_executor/model_loader/base_loader.py:80) otherwise reruns postprocessing.
+  storage directly. The default loader (~/lmcache-mg/spark-src/vllm/model_executor/model_loader/base_loader.py:80) otherwise reruns postprocessing.
 
   Without GDS, O_DIRECT normally needs bounded registered host staging, then copying into device allocations; it cannot simply read into cudaMalloc memory. On UMA this adds
   traffic, not a second model-sized copy.
@@ -274,11 +274,11 @@
 
   ### Compilation, tuning and literal process snapshots
 
-  Persist AOT/Inductor artifacts; the fork loads them before retracing (/home/napta2k/lmcache-mg/spark-src/vllm/compilation/decorators.py:565). Persist Triton binaries and,
+  Persist AOT/Inductor artifacts; the fork loads them before retracing (~/lmcache-mg/spark-src/vllm/compilation/decorators.py:565). Persist Triton binaries and,
   where supported, autotune results: Triton exposes cache_results (https://triton-lang.org/main/python-api/generated/triton.autotune.html). Validate with two fresh processes
   and unchanged manifests.
 
-  BOOT-TIME.md understates FlashInfer risk: its persistent cache is disabled for known key collisions (/home/napta2k/lmcache-mg/spark-src/vllm/model_executor/warmup/
+  BOOT-TIME.md understates FlashInfer risk: its persistent cache is disabled for known key collisions (~/lmcache-mg/spark-src/vllm/model_executor/warmup/
   kernel_warmup.py:115), potentially selecting invalid tactics. Don’t merely flip that constant.
 
   Graphs, loaded module/function handles, streams/events, library workspaces and NCCL/RDMA connections remain process-bound.
@@ -461,7 +461,7 @@
   versus powering down the NIC so far that it needs a physical event to wake.
 
 • Ran pwd
-  └ /home/napta2k/spark-cluster-mla-dcp
+  └ ~/spark-cluster-mla-dcp
 
 • Explored
   └ List .
@@ -489,14 +489,14 @@
 • There’s a promising answer already in NVIDIA’s package: a hotplug-handler script with explicit removal and plug-in actions. A Spark owner reports toggling the full 18 W
   with cables connected. I’m checking your installed version and the recovery caveats; a custom driver may not be necessary.
 
-• Ran ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=8 napta2k@spark-06c4.local 'dpkg-query -W dgx-spark-mlnx-hotplug; nl -ba /opt/nvidia/
+• Ran ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=8 user@spark-06c4.local 'dpkg-query -W dgx-spark-mlnx-hotplug; nl -ba /opt/nvidia/
   │ dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh; cat /lib/udev/rules.d/90-mtk-hotplug.rules; ls -l /sys/devices/platform/MTKP0001:00/pcie_hotplug/; lsmod | grep -E
   │ "mstflint|mtk_pcie|mlx5"'
   └ Bad owner or permissions on /etc/ssh/ssh_config.d/20-systemd-ssh-proxy.conf
 
 ✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
 
-• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'dpkg-query -W
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 user@10.99.1.228 'dpkg-query -W
   │ dgx-spark-mlnx-hotplug; nl -ba /opt/nvidia/dgx-spark-mlnx-hotplug/mtk-hotplug-handler.sh; cat /lib/udev/rules.d/90-mtk-hotplug.rules; ls -l /sys/devices/platform/
   │ MTKP0001:00/pcie_hotplug/; lsmod | grep -E "mstflint|mtk_pcie|mlx5"'
   └ dgx-spark-mlnx-hotplug    26.01-1
@@ -507,7 +507,7 @@
 
 ✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
 
-• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'uname -r; ls -l /etc/nvidia/
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 user@10.99.1.228 'uname -r; ls -l /etc/nvidia/
   │ cx7-hotplug-enabled; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state /sys/devices/platform/MTKP0001:00/pcie_hotplug/hotplug_enabled; lspci -D -s 0000::;
   │ lspci -D -s 0002::; readlink -f /sys/class/net/enP7s7/device; modinfo -F version mstflint_access'
   └ 6.17.0-1026-nvidia
@@ -594,16 +594,16 @@
     Read restore_production.sh
 
 • Ran pgrep -af 'rollout_dcp.sh|restore_production.sh|deploy_kvtier.sh|deploy_slab|enter-low-power-idle-mode.sh|un-idle.sh'
-  └ 1 codex-linux-sandbox --sandbox-policy-cwd /home/napta2k/spark-cluster-mla-dcp --command-cwd /home/napta2k/spark-cluster-mla-dcp --permission-profile
+  └ 1 codex-linux-sandbox --sandbox-policy-cwd ~/spark-cluster-mla-dcp --command-cwd ~/spark-cluster-mla-dcp --permission-profile
     {"type":"managed","file_system":{"type":"restricted","entries":[{"path":{"type":"special","value":{"kind":"root"}},"access":"read"},{"path":{"type":"path","path":"/home/
     … +110 lines (ctrl + t to view transcript)
-    releases/0.153.3-x86_64-unknown-linux-musl/codex-path':"$PATH"; else export PATH='/home/napta2k/.codex/packages/standalone/releases/0.153.3-x86_64-unknown-linux-musl/
+    releases/0.153.3-x86_64-unknown-linux-musl/codex-path':"$PATH"; else export PATH='~/.codex/packages/standalone/releases/0.153.3-x86_64-unknown-linux-musl/
     codex-path'; fi  exec '/bin/bash' -c 'pgrep -af '"'"'rollout_dcp.sh|restore_production.sh|deploy_kvtier.sh|deploy_slab|enter-low-power-idle-mode.sh|un-idle.sh'"'"''
 
-✔ You approved codex to run for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.8... this time
+✔ You approved codex to run for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.8... this time
 
-• Ran for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do ssh -F /dev/null -o
-  │ BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -Is; docker ps --format
+• Ran for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.88 spark-ddbf.local@10.99.1.149 spark-a218.local@10.99.1.31; do ssh -F /dev/null -o
+  │ BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "user@${cx7_target#*@}" 'hostname; date -Is; docker ps --format
   │ "{{.ID}} {{.Names}} {{.Status}}"; docker inspect -f "ID={{.Id}} image={{.Image}} status={{.State.Status}} restart={{.HostConfig.RestartPolicy.Name}}" vllm_glm53big; ip
   │ … +3 lines
   └ spark-06c4
@@ -618,7 +618,7 @@
 
 ✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
 
-• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'curl -fsS --max-time 5
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 user@10.99.1.228 'curl -fsS --max-time 5
   │ http://127.0.0.1:8000/metrics | grep -E "^vllm:num_requests_(running|waiting)"; docker inspect -f "auto_remove={{.HostConfig.AutoRemove}} path={{.Path}} args={{json
   │ .Args}}" vllm_glm53big; sudo -n fuser /dev/*_mstconf 2>/dev/null; ps -eo pid,comm,args | awk '\''$2 !~ /^(bash|sh|sshd|awk|grep)$/ && $0 ~
   │ … +1 lines
@@ -626,7 +626,7 @@
     vllm:num_requests_waiting{engine="0",model_name="glm-5.3"} 0.0
     … +13 lines (ctrl + t to view transcript)
     \"n_write_threads\":8}}","--distributed-executor-backend","mp","--compilation-config","{\"cudagraph_mode\":
-    \"FULL\"}","--nnodes","4","--node-rank","0","--master-addr","192.168.1.228","--master-port","29541"]
+    \"FULL\"}","--nnodes","4","--node-rank","0","--master-addr","10.99.1.228","--master-port","29541"]
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -637,8 +637,8 @@
 ✔ You approved codex to run cx7_stop_pids=() ... this time
 
 • Ran cx7_stop_pids=()
-  │ for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
-  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -e; hostname; test
+  │ for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.88 spark-ddbf.local@10.99.1.149 spark-a218.local@10.99.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "user@${cx7_target#*@}" 'set -e; hostname; test
   │ … +9 lines
   └ spark-a218
     spark-365c
@@ -648,7 +648,7 @@
 
 ✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
 
-• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; systemctl cat
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 user@10.99.1.228 'hostname; systemctl cat
   │ nvidia-spark-mlnx-firmware-manager.service; rg -n "mstflint|firmware-manager|mtk-hotplug|cx7" /lib/udev/rules.d /etc/udev/rules.d /opt/nvidia/dgx-spark-mlnx-hotplug; ip
   │ -br addr show enP2p1s0f0np0; ip -br addr show enP2p1s0f1np1; ip -d link show enP2p1s0f0np0; ip -d link show enP2p1s0f1np1; ls -l /dev/infiniband; nvidia-smi
   │ … +1 lines
@@ -671,7 +671,7 @@
 
 ✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
 
-• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'set -e
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 user@10.99.1.228 'set -e
   │ hostname
   │ date -u -Is
   │ … +13 lines
@@ -689,7 +689,7 @@
 
 ✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
 
-• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'set -euo pipefail
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 user@10.99.1.228 'set -euo pipefail
   │ hostname
   │ test "$(docker inspect -f "{{.State.Running}}" vllm_glm53big)" = false
   │ … +23 lines
@@ -707,7 +707,7 @@
 
 ✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
 
-• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is; cat /
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 user@10.99.1.228 'hostname; date -u -Is; cat /
   │ sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; cat /sys/class/net/enP7s7/carrier /sys/class/net/enP7s7/speed; sudo -n journalctl -k --since "2026-09-05
   │ 16:19:25" --no-pager | tail -n 45; systemctl list-timers cx7-canary-restore.timer --no-pager'
   └ spark-06c4
@@ -733,7 +733,7 @@
 
 ✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
 
-• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is; cat /
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 user@10.99.1.228 'hostname; date -u -Is; cat /
   │ sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; lspci -D -d 15b3:1021; systemctl list-timers --all cx7-canary-restore.timer --no-pager; systemctl show
   │ cx7-canary-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; ip -br addr show; rdma link show; test ! -d /sys/module/mstflint_access && printf
   │ … +1 lines
@@ -754,7 +754,7 @@
 
 ✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
 
-• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is;
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 user@10.99.1.228 'hostname; date -u -Is;
   │ systemctl show cx7-canary-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; lspci
   │ -D -d 15b3:1021; ip -br addr show; rdma link show; sudo -n journalctl -u cx7-canary-restore.service --since "2026-09-05 16:22:20" --no-pager; true'
   └ spark-06c4
@@ -770,7 +770,7 @@
 
 ✔ You approved codex to run ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlia... this time
 
-• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 napta2k@192.168.1.228 'hostname; date -u -Is;
+• Ran ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias=spark-06c4.local -o ConnectTimeout=8 user@10.99.1.228 'hostname; date -u -Is;
   │ systemctl show cx7-canary-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; lspci -D -d 15b3:1021; ip -br addr show enP2p1s0f0np0; ip -br addr
   │ show enP2p1s0f1np1; cat /sys/class/net/enP2p1s0f0np0/speed /sys/class/net/enP2p1s0f1np1/speed; rdma link show; sudo -n journalctl -k --since "2026-09-05 16:22:30"
   │ … +1 lines
@@ -799,10 +799,10 @@
   untouched.
 
 
-✔ You approved codex to run for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.8... this time
+✔ You approved codex to run for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.8... this time
 
-• Ran for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
-  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+• Ran for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.88 spark-ddbf.local@10.99.1.149 spark-a218.local@10.99.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "user@${cx7_target#*@}" 'set -euo pipefail
   │ hostname
   │ … +23 lines
   └ spark-06c4
@@ -815,8 +815,8 @@
 ✔ You approved codex to run cx7_power_pids=() ... this time
 
 • Running cx7_power_pids=()
-  │ for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
-  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+  │ for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.88 spark-ddbf.local@10.99.1.149 spark-a218.local@10.99.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "user@${cx7_target#*@}" 'set -euo pipefail
   │ … +32 lines
   └ Running timer as unit: cx7-all-restore.timer
     Will run service as unit: cx7-all-restore.service
@@ -830,8 +830,8 @@
   intact but stopped.
 
 • Ran cx7_power_pids=()
-  │ for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
-  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+  │ for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.88 spark-ddbf.local@10.99.1.149 spark-a218.local@10.99.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "user@${cx7_target#*@}" 'set -euo pipefail
   │ … +32 lines
   └ Running timer as unit: cx7-all-restore.timer
     Will run service as unit: cx7-all-restore.service
@@ -867,10 +867,10 @@
 • That’s 82 W saved across the cluster—about 41%, or 20.5 W per node on average. That’s much closer to the expected CX7 saving. I’ll let the timers restore all four, then
   verify the ring and compare the power rise.
 
-✔ You approved codex to run for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.8... this time
+✔ You approved codex to run for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.8... this time
 
-• Ran for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do ssh -F /dev/null -o
-  │ BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -u -Is; printf "CX7
+• Ran for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.88 spark-ddbf.local@10.99.1.149 spark-a218.local@10.99.1.31; do ssh -F /dev/null -o
+  │ BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "user@${cx7_target#*@}" 'hostname; date -u -Is; printf "CX7
   │ state="; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/debug_state; printf "management speed="; cat /sys/class/net/enP7s7/speed; systemctl show
   │ … +2 lines
   └ spark-06c4
@@ -888,10 +888,10 @@
   └ List bench
     Read run-nccl-multicomm.sh
 
-✔ You approved codex to run for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.8... this time
+✔ You approved codex to run for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.8... this time
 
-• Ran for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
-  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -u -Is;
+• Ran for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.88 spark-ddbf.local@10.99.1.149 spark-a218.local@10.99.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "user@${cx7_target#*@}" 'hostname; date -u -Is;
   │ systemctl show cx7-all-restore.service -p ActiveState -p SubState -p Result -p ExecMainStatus; printf "CX7 state="; cat /sys/devices/platform/MTKP0001:00/pcie_hotplug/
   │ … +3 lines
   └ spark-06c4
@@ -919,26 +919,26 @@
   started.
 
 
-✔ You approved codex to run for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.8... this time
+✔ You approved codex to run for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.8... this time
 
-• Running for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
-  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+• Running for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.88 spark-ddbf.local@10.99.1.149 spark-a218.local@10.99.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "user@${cx7_target#*@}" 'set -euo pipefail
   │ cx7_host=$(hostname)
   │ … +27 lines
   └ spark-06c4 final recovery verification
-    PING 192.168.104.1 (192.168.104.1) from 192.168.104.2 enP2p1s0f0np0: 8972(9000) bytes of data.
-    8980 bytes from 192.168.104.1: icmp_seq=1 ttl=64 time=1.12 ms
+    PING 10.99.104.1 (10.99.104.1) from 10.99.104.2 enP2p1s0f0np0: 8972(9000) bytes of data.
+    8980 bytes from 10.99.104.1: icmp_seq=1 ttl=64 time=1.12 ms
 
 
 › document everything
 
 
-• Ran for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
-  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+• Ran for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.88 spark-ddbf.local@10.99.1.149 spark-a218.local@10.99.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "user@${cx7_target#*@}" 'set -euo pipefail
   │ cx7_host=$(hostname)
   │ … +27 lines
   └ spark-06c4 final recovery verification
-    PING 192.168.104.1 (192.168.104.1) from 192.168.104.2 enP2p1s0f0np0: 8972(9000) bytes of data.
+    PING 10.99.104.1 (10.99.104.1) from 10.99.104.2 enP2p1s0f0np0: 8972(9000) bytes of data.
     … +12 lines (ctrl + t to view transcript)
     rtt min/avg/max/mdev = 1.327/1.519/1.711/0.192 ms
     Failed to stop cx7-all-restore.timer: Unit cx7-all-restore.timer not loaded.
@@ -955,22 +955,22 @@
   └ ?? results/idle-power/
 
 
-✔ You approved codex to run for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.8... this time
+✔ You approved codex to run for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.8... this time
 
-• Ran for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do
-  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'set -euo pipefail
+• Ran for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.88 spark-ddbf.local@10.99.1.149 spark-a218.local@10.99.1.31; do
+  │   ssh -F /dev/null -o BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "user@${cx7_target#*@}" 'set -euo pipefail
   │ cx7_host=$(hostname)
   │ … +33 lines
   └ spark-06c4 final recovery verification
-    PING 192.168.104.1 (192.168.104.1) from 192.168.104.2 enP2p1s0f0np0: 8972(9000) bytes of data.
+    PING 10.99.104.1 (10.99.104.1) from 10.99.104.2 enP2p1s0f0np0: 8972(9000) bytes of data.
     … +80 lines (ctrl + t to view transcript)
     spark-a218 RESTORED_200G_MTU9000_PINGS_OK_MST_RELOADED
     2026-09-05T23:32:12+00:00
 
-✔ You approved codex to run for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.8... this time
+✔ You approved codex to run for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.8... this time
 
-• Ran for cx7_target in spark-06c4.local@192.168.1.228 spark-365c.local@192.168.1.88 spark-ddbf.local@192.168.1.149 spark-a218.local@192.168.1.31; do ssh -F /dev/null -o
-  │ BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "napta2k@${cx7_target#*@}" 'hostname; date -u -Is; sudo -n journalctl
+• Ran for cx7_target in spark-06c4.local@10.99.1.228 spark-365c.local@10.99.1.88 spark-ddbf.local@10.99.1.149 spark-a218.local@10.99.1.31; do ssh -F /dev/null -o
+  │ BatchMode=yes -o StrictHostKeyChecking=yes -o HostKeyAlias="${cx7_target%@*}" -o ConnectTimeout=8 "user@${cx7_target#*@}" 'hostname; date -u -Is; sudo -n journalctl
   │ -u cx7-all-restore.service -u cx7-canary-restore.service --since "2026-09-05 16:19:00" --no-pager -o short-iso-precise; sudo -n journalctl -k --since "2026-09-05
   │ … +3 lines
   └ spark-06c4

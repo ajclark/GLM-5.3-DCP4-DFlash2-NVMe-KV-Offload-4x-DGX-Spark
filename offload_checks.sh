@@ -7,7 +7,7 @@ LABEL="${1:?label}"; TOK="${2:-100000}"
 WS="$(cd "$(dirname "$0")" && pwd)"; OUT="$WS/results/$LABEL"; mkdir -p "$OUT"
 HOSTS=(spark-06c4 spark-365c spark-ddbf spark-a218); URL=http://spark-06c4.local:8000
 say() { echo "[$(date '+%H:%M:%S')] $*" | tee -a "$OUT/offload.log"; }
-sshq() { ssh -o BatchMode=yes -o ConnectTimeout=8 "napta2k@$1.local" "$2"; }
+sshq() { ssh -o BatchMode=yes -o ConnectTimeout=8 "${SSH_USER:-$USER}@$1.local" "$2"; }
 files() { for h in "${HOSTS[@]}"; do printf "  %s " "$h"; sshq "$h" 'd=$(ls -d /var/tmp/kvcache/*_r* 2>/dev/null | head -1); [ -n "$d" ] && { printf "%s files=%s " "$(basename $d)" "$(find $d -name "*.bin" | wc -l)"; du -sh $d | cut -f1; } || echo "no tier dir"'; done | tee -a "$OUT/offload.log"; }
 mem() { for h in "${HOSTS[@]}"; do printf "  %s " "$h"; sshq "$h" 'awk "/MemAvailable/{a=\$2}/SwapFree/{s=\$2}END{printf \"avail=%dMiB swapfree=%dMiB\\n\", a/1024, s/1024}" /proc/meminfo'; done | tee -a "$OUT/offload.log"; }
 say "== offload checks for $LABEL ($TOK tokens)"; files; mem

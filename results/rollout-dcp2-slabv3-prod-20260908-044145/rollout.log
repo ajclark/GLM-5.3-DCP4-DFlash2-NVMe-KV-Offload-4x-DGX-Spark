@@ -1,4 +1,4 @@
-[04:41:45] rollout 'dcp2-slabv3-prod' MAXLEN=180224 MAXBATCHED=2048 KVBYTES=6000000000 KVTIER=1 out=/home/napta2k/spark-cluster-mla-dcp/results/rollout-dcp2-slabv3-prod-20260908-044145
+[04:41:45] rollout 'dcp2-slabv3-prod' MAXLEN=180224 MAXBATCHED=2048 KVBYTES=6000000000 KVTIER=1 out=~/spark-cluster-mla-dcp/results/rollout-dcp2-slabv3-prod-20260908-044145
 [04:41:45] SKIP_PREFLIGHT=1: not requiring a healthy stack (recovery)
 [04:41:45] production healthy; saving pre-rollout logs + memory baseline
 spark-06c4 avail=3782MiB swapfree=13664MiB pswpout=1402506
@@ -19,19 +19,19 @@ spark-a218 avail=5745MiB swapfree=14183MiB pswpout=1061198
 [04:42:08] adapters on and ring verified before launch (idempotent)
 [04:42:14]   launching rank 3 on spark-a218
 3f1261604cc91a640963362ef0fb7ca26edf766451e7a9dcad2b0ac73f32d424
-launched vllm_glm53big rank=3 host=192.168.1.31 nccl_hotplug=0 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=3 host=10.99.1.31 nccl_hotplug=0 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [04:42:22]   launching rank 2 on spark-ddbf
 013e273d8fb58d0054c5716c3eb5fd53f0af3b0c0c0a3cbe70240cfa15d0b469
-launched vllm_glm53big rank=2 host=192.168.1.149 nccl_hotplug=0 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=2 host=10.99.1.149 nccl_hotplug=0 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [04:42:29]   launching rank 1 on spark-365c
 bf17dd089dd14ad26238d435a4536fe8efaa0f9e405a8125c1bf85297b0176d8
-launched vllm_glm53big rank=1 host=192.168.1.88 nccl_hotplug=0 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=1 host=10.99.1.88 nccl_hotplug=0 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [04:42:36]   launching rank 0 on spark-06c4
 154d1de50902247a4ca44115b20e72af276409aed4714b91e5d1716e5281bea3
-launched vllm_glm53big rank=0 host=192.168.1.228 nccl_hotplug=0 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
+launched vllm_glm53big rank=0 host=10.99.1.228 nccl_hotplug=0 spec=dflash k=7 tp4 dcp2 maxlen=180224 maxseqs=12 kvtier=1/slab image=vllm-glm52-b12x:dflash2-port2
 vllm_glm53big Up 3 seconds
 [04:51:25] HEALTHY after 522s
   content: 'OK' tokens: 2
@@ -68,4 +68,4 @@ spark-a218 avail=5149MiB swapfree=14160MiB pswpout=1581201
       1 (Worker_TP1_DCP1 pid=178) WARNING 09-08 04:51:28 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
       1 (Worker_TP1_DCP1 pid=178) INFO 09-08 04:50:42 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
       1 (Worker_TP0_DCP0 pid=231) WARNING 09-08 04:51:52 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to cover this shape/config.
-[04:52:02] rollout 'dcp2-slabv3-prod' complete; results in /home/napta2k/spark-cluster-mla-dcp/results/rollout-dcp2-slabv3-prod-20260908-044145
+[04:52:02] rollout 'dcp2-slabv3-prod' complete; results in ~/spark-cluster-mla-dcp/results/rollout-dcp2-slabv3-prod-20260908-044145
