@@ -137,7 +137,7 @@ def summarize(root, trace_root=None, power=None):
                             'trips':[r['reason'] for r in rows if r.get('reason')]}
     return {'screening_only':True,'cases':dict(by_case),'paired':paired_groups(runs),'graphs':sorted(graphs),'memory':memory,
             'wall_energy_measured':False,
-            'note':'Short synthetic prompts and few repeats are a screen, not a promotion gate. Greedy baseline is not bitwise deterministic.'}
+            'note':'Screening precision depends on independent prompt coverage and repeat counts; this is not a promotion gate. Greedy output identity is not assumed.'}
 
 
 def main():
