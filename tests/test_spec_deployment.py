@@ -143,3 +143,20 @@ def test_trace_control_keeps_policy_and_allocation_identical(tmp_path,monkeypatc
     assert env['GLM_SPEC_TRACE']==('' if trace_off else '/kvcache/spec-trace.jsonl')
     assert env['GLM_SPEC_POLICY']=='shadow'
     assert env['KVBYTES']=='6000000000' and env['MAXLEN']=='180224'
+
+
+def test_prepared_server_calibration_enables_hints_with_unchanged_capacity(tmp_path,monkeypatch):
+    setup(tmp_path)
+    (tmp_path/'kvcache').mkdir()
+    for name in ('boot-costs.json','hint-priors.json'):
+        (tmp_path/'kvcache'/name).write_text('{}')
+    monkeypatch.setattr(N,'inspect',lambda name=N.NAME:
+                        {'State':{'Running':False}} if name=='old-id' else None)
+    calls=[]
+    monkeypatch.setattr(N.subprocess,'run',lambda *args,**kw:calls.append(kw) or NS(returncode=0))
+    N.launch(tmp_path,'label',0)
+    env=calls[0]['env']
+    assert env['GLM_SPEC_POLICY']=='adaptive'
+    assert env['GLM_SPEC_COSTS']=='/kvcache/boot-costs.json'
+    assert env['GLM_SPEC_HINT_PRIORS']=='/kvcache/hint-priors.json'
+    assert (env['KVBYTES'],env['MAXLEN'],env['MAXSEQS'])==('6000000000','180224','12')

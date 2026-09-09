@@ -83,7 +83,7 @@ def package():
     return buf.getvalue()
 
 
-def prepare(label, out, reuse_cache_from=None, trace_off=False):
+def prepare(label, out, reuse_cache_from=None, trace_off=False, costs=None, hint_priors=None):
     data = package()
     def node(host):
         dest = 'glm-spec/'+label
@@ -92,6 +92,14 @@ def prepare(label, out, reuse_cache_from=None, trace_off=False):
         return json.loads(rpc(host,label,'prepare'))
     result = parallel(node)
     (out/'prepared.json').write_text(json.dumps(result,indent=2)+'\n')
+    for source, name in ((costs, 'boot-costs.json'), (hint_priors, 'hint-priors.json')):
+        if source:
+            raw = source.read_bytes()
+            json.loads(raw)
+            if len(raw) > 16384:
+                raise ValueError('boot calibration exceeds 16 KiB')
+            parallel(lambda host:ssh(host, shlex.join(['tee', f'glm-spec/{label}/kvcache/{name}']), raw))
+            (out/name).write_bytes(raw)
     if trace_off:
         parallel(lambda host:ssh(host,shlex.join(['touch',f'glm-spec/{label}/trace-disabled'])))
         (out/'trace-disabled').touch()
@@ -280,6 +288,8 @@ def main():
     ap.add_argument('--screen-repeats',type=int,choices=(0,1,2),default=2,help='Fixed-cap calibration repeats; zero is for durability-only checks after a validated deployment')
     ap.add_argument('--reuse-cache-from',help='Prepare a durability check using a stopped experiment with identical source, kernels, image, and lane')
     ap.add_argument('--trace-off',action='store_true',help='Prepare the identical policy with telemetry disabled for overhead controls')
+    ap.add_argument('--costs',type=Path,help='Prepare server-owned cycle costs; enables adaptive policy for ordinary clients')
+    ap.add_argument('--hint-priors',type=Path,help='Prepare server-owned weak workload priors; requires --costs')
     args = ap.parse_args()
     if not re.fullmatch(r'[a-z0-9-]{1,48}',args.label):
         ap.error('invalid label')
@@ -289,10 +299,16 @@ def main():
         ap.error('cache reuse requires prepare and a valid source experiment label')
     if args.trace_off and args.action!='prepare':
         ap.error('trace-off is a prepare option')
+    if (args.costs or args.hint_priors) and args.action!='prepare':
+        ap.error('boot calibration is a prepare option')
+    if args.hint_priors and not args.costs:
+        ap.error('hint priors require measured boot costs')
+    if args.reuse_cache_from and (args.costs or args.hint_priors):
+        ap.error('a durability-only boot must preserve its previous calibration files')
     out = ROOT/'results/adaptive-spec'/args.label
     if args.action == 'prepare':
         out.mkdir(exist_ok=False)
-        prepare(args.label,out,args.reuse_cache_from,args.trace_off)
+        prepare(args.label,out,args.reuse_cache_from,args.trace_off,args.costs,args.hint_priors)
     elif args.action == 'run':
         if not (out/'prepared.json').exists():
             ap.error('prepare this label first')

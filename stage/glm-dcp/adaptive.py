@@ -20,7 +20,7 @@ import weakref
 from dataclasses import dataclass, field
 
 CAPS = (1, 3, 5, 7)
-VERSION = 4
+VERSION = 5
 PRIOR_STRENGTH = 2.0
 
 
@@ -30,6 +30,42 @@ def validated_prior(values) -> tuple[float, ...] | None:
     )):
         return tuple(float(v) for v in values)
     return None
+
+
+@dataclass(frozen=True)
+class HintPriors:
+    """Server-owned weak priors; client labels never supply probabilities."""
+    bounds: tuple[int, int]
+    domains: dict[str, tuple[float, ...]]
+
+    @classmethod
+    def parse(cls, data, signature):
+        try:
+            bounds = data['context_range']
+            raw = data['domains']
+            if (data['config'] != signature or data.get('prior_strength') != PRIOR_STRENGTH
+                    or not isinstance(bounds, list) or len(bounds) != 2
+                    or any(type(x) is not int for x in bounds)
+                    or not 0 <= bounds[0] < bounds[1] <= signature['max_model_len']
+                    or not isinstance(raw, dict) or set(raw) != {'code', 'prose'}):
+                raise ValueError
+            domains = {name: validated_prior(values) for name, values in raw.items()}
+            if any(values is None for values in domains.values()):
+                raise ValueError
+            return cls(tuple(bounds), domains)
+        except (KeyError, TypeError, ValueError):
+            raise ValueError('Invalid server workload prior table') from None
+
+    def select(self, xargs, context):
+        if (not self.bounds[0] <= context < self.bounds[1]
+                or xargs.get('spec_use_hints', True) is not True
+                or xargs.get('spec_hint_strength') != 'weak'
+                or xargs.get('spec_phase') != 'user_turn'):
+            return None, None
+        workload = xargs.get('spec_workload')
+        domain = ('code' if workload in ('code_generate', 'code_edit', 'code_review')
+                  else 'prose' if workload == 'prose' else None)
+        return (self.domains[domain], domain) if domain else (None, None)
 
 
 @dataclass(frozen=True)
@@ -134,11 +170,11 @@ class PrefixStats:
                 self.successes[j] += int(j < accepted)
         self.observations += 1
 
-    def expected(self, k: int) -> float:
+    def expected(self, k: int, allow_prior_only: bool = False) -> float:
         survival = 1.0
         total = 1.0
         for j in range(k):
-            if j == 0 and self.trials[j] < 2:
+            if j == 0 and self.trials[j] < 2 and not (allow_prior_only and self.prior is not None):
                 return float("nan")
             # With inadequate tail evidence use its optimistic bound. This
             # favors full verification/exploration, not premature shortening.
@@ -152,11 +188,13 @@ class PrefixStats:
             total += survival
         return total
 
-    def choose(self, costs: dict[int, float], scheduled_steps: int) -> tuple[int, bool]:
+    def choose(self, costs: dict[int, float], scheduled_steps: int,
+               cold_start: bool = False) -> tuple[int, bool]:
         probe = scheduled_steps % 16 == 0
-        if self.observations < 8 or probe or set(costs) != set(CAPS):
+        minimum = 0 if cold_start and self.prior is not None else 8
+        if self.observations < minimum or probe or set(costs) != set(CAPS):
             return 7, probe
-        rates = {k: self.expected(k) / costs[k] for k in CAPS}
+        rates = {k: self.expected(k, allow_prior_only=cold_start) / costs[k] for k in CAPS}
         if not all(math.isfinite(r) and r > 0 for r in rates.values()):
             return 7, probe
         best = max(CAPS, key=lambda k: (rates[k], k))
@@ -227,6 +265,7 @@ class VerificationPolicy:
         self.costs = {}
         self.prior = None
         self.curve = None
+        self.hint_priors = None
         self.cost_context = (0, 0)
         self.lane = (
             f"tp{config.parallel_config.tensor_parallel_size}"
@@ -284,12 +323,20 @@ class VerificationPolicy:
                 math.isfinite(v) and v > 0 for v in self.costs.values()
             ):
                 raise ValueError("Invalid speculation cycle cost table")
+        path = os.environ.get("GLM_SPEC_HINT_PRIORS", "")
+        if path:
+            with open(path) as f:
+                raw = f.read(16385)
+            if len(raw) > 16384:
+                raise ValueError('Server workload prior table exceeds 16 KiB')
+            self.hint_priors = HintPriors.parse(json.loads(raw), self.signature)
         path = os.environ.get("GLM_SPEC_TRACE", "")
         if path:
             self.sink = JsonlSink(path)
             self.sink.emit({"event": "policy_start", "version": VERSION,
                             "mode": self.mode, "fixed": self.fixed,
                             "costs_ms": self.costs, "acceptance_prior": self.prior,
+                            "workload_hints_enabled": self.hint_priors is not None,
                             "time": time.time()})
 
     def begin(self) -> None:
@@ -341,6 +388,14 @@ class VerificationPolicy:
         # Per-request controls let one experimental boot compare all cap sizes.
         if xargs.get("spec_policy") in ("off", "shadow", "fixed", "adaptive"):
             mode = xargs["spec_policy"]
+        hint_domain = None
+        if (ok and mode == 'adaptive' and costs and self.hint_priors is not None
+                and state['stats'].observations < 8):
+            # Labels only shorten the initial warm-up. Once actual feedback
+            # is sufficient, return to the ordinary inference-only controller.
+            hint_prior, hint_domain = self.hint_priors.select(xargs, context)
+            if hint_prior is not None:
+                prior = hint_prior
         state['stats'].prior = prior
         if ok:
             state["scheduled"] += 1
@@ -348,13 +403,15 @@ class VerificationPolicy:
                 value = xargs.get("spec_verify_cap", self.fixed)
                 cap = value if type(value) is int and value in CAPS else 7
             elif mode == "adaptive":
-                cap, probe = state["stats"].choose(costs, state["scheduled"])
+                cap, probe = state["stats"].choose(
+                    costs, state["scheduled"], cold_start=hint_domain is not None)
         self.chosen[request.request_id] = {
             "request": weakref.ref(request), "step": step, "cap": cap,
             "eligible": ok, "mode": mode, "probe": probe,
             "observations": state["stats"].observations,
             "costs_ms": costs,
             "acceptance_prior": prior,
+            "hint_domain": hint_domain,
             "label": str(xargs.get("spec_label", ""))[:96],
         }
         return cap

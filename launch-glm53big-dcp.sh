@@ -288,6 +288,7 @@ run_docker run -d --name "$NAME" \
   -e "GLM_SPEC_VERIFY_CAP=${GLM_SPEC_VERIFY_CAP:-7}" \
   -e "GLM_SPEC_TRACE=${GLM_SPEC_TRACE:-}" \
   -e "GLM_SPEC_COSTS=${GLM_SPEC_COSTS:-}" \
+  -e "GLM_SPEC_HINT_PRIORS=${GLM_SPEC_HINT_PRIORS:-}" \
   --label "glm.spec.experiment=${GLM_SPEC_EXPERIMENT:-}" \
   "${KVTIER_ENV[@]}" \
   -e GLM52_BIND_HOST_TRITON=1 \
