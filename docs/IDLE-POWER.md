@@ -6,6 +6,10 @@ Codex second opinion (`results/codex-review-idle-power.md`). No lever was
 exercised on the cluster while writing this; every wattage below is an
 estimate until a wattmeter is on the plugs (section 5).
 
+**September 9 update:** section 7 adds guarded measurements with the model
+resident. They supersede the initial GPU-clock estimates, while keeping
+NVIDIA device power separate from whole-node or wall power.
+
 ## 1. What a Spark exposes at idle (measured)
 
 | item | state on all four nodes | control |
@@ -105,3 +109,46 @@ and the acpitz/mlx5/nvme temperatures.
   `docs/BOOT-TIME.md`.
 - Wi-Fi and Bluetooth can be disabled in UEFI since the January 2026 DGX OS
   release if the radios are never used.
+
+## 7. Resident-model clock and governor screen, 2026-09-09
+
+The repaired GLM-5.3/DFlash2 stack (`8f684a4`, TP4/DCP2, 180224 context,
+12 sequences, 6 GB KV pool per rank) remained loaded throughout. Each treatment
+was bracketed by the original 2000 MHz lock, with all-node memory observation
+and independent clock/governor rollback watchdogs. NVIDIA power was sampled
+every two seconds; integration required all four devices and gaps no larger
+than five seconds. No additional CUDA context or model allocation was made.
+
+| Idle treatment | Four-device mean W | Neighboring baseline W | Observed GPU MHz |
+|---|---:|---:|---:|
+| CPU `schedutil`, retain 2000 MHz GPU lock | 32.42 | 32.84 / 32.27 | 1976–1995 |
+| Release GPU lock, CPU `schedutil` | **47.08** | 32.27 / 32.19 | 2405–2411 |
+| GPU lock 600 MHz, original CPU governors | **22.14** | 32.01 / 31.90 | 585–604 |
+| GPU lock 300 MHz, original CPU governors | **21.56** | 31.90 / 31.81 | 305 |
+
+Sources: [governor/automatic-clock report](../results/adaptive-next/cache-width-r1/power-idle/power-profile-report.json)
+and [explicit idle-clock report](../results/adaptive-next/cache-width-r1/power-idle-low/power-profile-report.json).
+The first screen used 120-second windows, the second 90 seconds; both excluded
+the first 20 seconds after applying each profile. Temperatures and CPU frequency/
+idle-state counters are retained. These are short device-power screens, not
+the recommended repeated ten-minute wall-meter qualification above.
+
+Automatic GPU clock mode increased idle power on this resident stack. Explicit
+600 MHz saved about 9.8 W across the four devices; lowering further to 300 MHz
+saved only about another 0.5 W after allowing for the neighboring baselines.
+CPU `schedutil` lowered median reported frequency from 3354 MHz to approximately
+1378 MHz, but no CPU/package energy sensor was available. Its CPU watt saving
+and combined whole-node effect remain unmeasured.
+
+All original GPU locks and individual CPU governors were restored. A
+[post-transition generation check](../results/adaptive-next/cache-width-r1/post-idle-wake/report.json)
+then returned the correct 1–30 sequence without a model reload. That check
+followed the final 90-second baseline window: it verifies retained model state,
+not immediate wake latency. No permanent idle-clock automation was installed.
+
+The next implementation candidate is an explicit low idle lock controlled by
+authoritative server quiescence, with restoration before work and a timeout
+that restores the serving clocks if its controller fails. Pi lifecycle signals
+could provide advance notice of incoming work, but one client's idle state does
+not establish that the shared server is idle. Transition latency and repeated
+idle/wake cycles are separate qualification gates.
