@@ -5,6 +5,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import re
 import statistics
 
 from analyze_adaptive_spec import device_energy
@@ -13,9 +14,18 @@ from analyze_adaptive_spec import device_energy
 def prompt_digest(row):
     prompts = [c['data']['prompt_token_ids'] for c in row['chunks']
                if c['data'].get('prompt_token_ids')]
+    if not prompts and row.get('private_prompt_ids_removed') is True:
+        digest = row.get('prompt_token_sha256')
+        if isinstance(digest, str) and re.fullmatch('[0-9a-f]{64}', digest):
+            # Publication retains the hash verified against original private
+            # tokens. Its original/published file hashes live in provenance.
+            return digest
     if not prompts or any(p != prompts[0] for p in prompts):
         raise ValueError('missing or inconsistent prompt token IDs')
-    return hashlib.sha256(json.dumps(prompts[0]).encode()).hexdigest()
+    digest = hashlib.sha256(json.dumps(prompts[0]).encode()).hexdigest()
+    if row.get('prompt_token_sha256', digest) != digest:
+        raise ValueError('saved prompt digest differs from actual prompt token IDs')
+    return digest
 
 
 def summarize(runs, events=(), samples=None):

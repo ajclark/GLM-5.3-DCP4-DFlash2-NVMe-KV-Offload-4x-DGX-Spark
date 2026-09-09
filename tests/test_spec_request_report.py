@@ -6,7 +6,7 @@ import sys
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'bench'))
-from spec_request_report import summarize
+from spec_request_report import prompt_digest, summarize
 
 
 def pair(case='code_a', repeat=0, ratio=2):
@@ -42,3 +42,23 @@ def test_missing_duplicate_and_unmatched_controls_are_not_silently_paired():
     rows[1]['message_sha256'] = 'changed-system-context'
     with pytest.raises(ValueError, match='different prompts'):
         summarize(rows)
+
+
+def test_explicit_private_token_redaction_preserves_the_verified_comparison():
+    rows = pair()
+    expected = summarize(rows)
+    for row in rows:
+        row['prompt_token_sha256'] = prompt_digest(row)
+        row['private_prompt_ids_removed'] = True
+        del row['chunks'][0]['data']['prompt_token_ids']
+    assert summarize(rows) == expected
+    del rows[0]['private_prompt_ids_removed']
+    with pytest.raises(ValueError, match='missing'):
+        summarize(rows)
+
+
+def test_a_saved_digest_cannot_override_actual_token_evidence():
+    row = pair()[0]
+    row['prompt_token_sha256'] = '0' * 64
+    with pytest.raises(ValueError, match='differs'):
+        prompt_digest(row)
