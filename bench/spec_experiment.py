@@ -55,7 +55,17 @@ def rpc(host, label, action, rank=None):
     return ssh(host, shlex.join(args))
 
 
-def package():
+def experiment_launcher(data, no_marlin_atomic_add=False):
+    """One isolated numerical control; the normal launcher stays unchanged."""
+    if not no_marlin_atomic_add:
+        return data
+    marker = b'-e VLLM_MARLIN_USE_ATOMIC_ADD=1 '
+    if data.count(marker) != 1:
+        raise ValueError('expected exactly one explicit Marlin atomic setting')
+    return data.replace(marker, b'-e VLLM_MARLIN_USE_ATOMIC_ADD=0 ')
+
+
+def package(no_marlin_atomic_add=False):
     files = {
         'spec_node.py':ROOT/'bench/spec_node.py', 'spec_memory.py':ROOT/'bench/spec_memory.py',
         'launch.sh':ROOT/'launch-glm53big-dcp.sh',
@@ -76,7 +86,14 @@ def package():
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf,mode='w') as tar:
         for name,path in files.items():
-            tar.add(path,arcname=name)
+            if name == 'launch.sh':
+                launch = experiment_launcher(path.read_bytes(), no_marlin_atomic_add)
+                info = tarfile.TarInfo(name)
+                info.size = len(launch)
+                info.mode = 0o755
+                tar.addfile(info, io.BytesIO(launch))
+            else:
+                tar.add(path,arcname=name)
         data = json.dumps(manifest).encode()
         info = tarfile.TarInfo('expected-runtime.json')
         info.size = len(data)
@@ -84,8 +101,13 @@ def package():
     return buf.getvalue()
 
 
-def prepare(label, out, reuse_cache_from=None, trace_off=False, costs=None, hint_priors=None, confidence_trace=False):
-    data = package()
+def prepare(label, out, reuse_cache_from=None, trace_off=False, costs=None, hint_priors=None, confidence_trace=False, no_marlin_atomic_add=False):
+    if no_marlin_atomic_add and reuse_cache_from:
+        raise ValueError('the atomic control needs a fresh isolated cache')
+    data = package(no_marlin_atomic_add)
+    (out/'experiment-options.json').write_text(json.dumps({'marlin_atomic_add': not no_marlin_atomic_add,
+        'confidence_trace': confidence_trace, 'package_sha256': hashlib.sha256(data).hexdigest(),
+        'note': 'Atomic=0 modifies only the isolated launch copy; never reuse its persisted KV across settings.'}, indent=2)+'\n')
     def node(host):
         dest = 'glm-spec/'+label
         # Refuse reuse, preserving all prior rollback material.
@@ -295,6 +317,7 @@ def main():
     ap.add_argument('--costs',type=Path,help='Prepare server-owned cycle costs; enables adaptive policy for ordinary clients')
     ap.add_argument('--hint-priors',type=Path,help='Prepare server-owned weak workload priors; requires --costs')
     ap.add_argument('--confidence-trace',action='store_true',help='Prepare bounded previous-proposal confidence diagnostics; policy unchanged')
+    ap.add_argument('--no-marlin-atomic-add',action='store_true',help='Prepare an isolated atomic=0 numerical control with a fresh cache')
     args = ap.parse_args()
     if not re.fullmatch(r'[a-z0-9-]{1,48}',args.label):
         ap.error('invalid label')
@@ -306,6 +329,8 @@ def main():
         ap.error('trace-off is a prepare option')
     if args.confidence_trace and (args.action!='prepare' or args.trace_off or args.reuse_cache_from):
         ap.error('confidence collection requires a fresh prepare with telemetry enabled')
+    if args.no_marlin_atomic_add and (args.action!='prepare' or args.reuse_cache_from):
+        ap.error('the atomic control requires a fresh prepare/cache')
     if (args.costs or args.hint_priors) and args.action!='prepare':
         ap.error('boot calibration is a prepare option')
     if args.hint_priors and not args.costs:
@@ -315,7 +340,7 @@ def main():
     out = ROOT/'results/adaptive-spec'/args.label
     if args.action == 'prepare':
         out.mkdir(exist_ok=False)
-        prepare(args.label,out,args.reuse_cache_from,args.trace_off,args.costs,args.hint_priors,args.confidence_trace)
+        prepare(args.label,out,args.reuse_cache_from,args.trace_off,args.costs,args.hint_priors,args.confidence_trace,args.no_marlin_atomic_add)
     elif args.action == 'run':
         if not (out/'prepared.json').exists():
             ap.error('prepare this label first')

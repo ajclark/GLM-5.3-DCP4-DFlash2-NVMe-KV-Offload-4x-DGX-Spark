@@ -179,3 +179,22 @@ def test_confidence_diagnostics_are_explicit_and_do_not_change_policy(tmp_path,m
     assert env['GLM_SPEC_CONFIDENCE_TRACE']=='1'
     assert env['GLM_SPEC_POLICY']=='shadow'
     assert (env['KVBYTES'],env['MAXLEN'],env['MAXSEQS'])==('6000000000','180224','12')
+
+
+def test_atomic_control_changes_only_the_explicit_isolated_environment_setting():
+    from spec_experiment import experiment_launcher
+    original = (ROOT/'launch-glm53big-dcp.sh').read_bytes()
+    assert experiment_launcher(original) is original
+    modified = experiment_launcher(original, True)
+    assert modified.replace(b'VLLM_MARLIN_USE_ATOMIC_ADD=0', b'VLLM_MARLIN_USE_ATOMIC_ADD=1') == original
+    assert len(modified) == len(original)
+    with pytest.raises(ValueError, match='exactly one'):
+        experiment_launcher(b'no explicit setting', True)
+    with pytest.raises(ValueError, match='exactly one'):
+        experiment_launcher(original + original, True)
+
+
+def test_atomic_control_refuses_persisted_cache_reuse_before_packaging(tmp_path):
+    from spec_experiment import prepare
+    with pytest.raises(ValueError, match='fresh isolated cache'):
+        prepare('control', tmp_path, reuse_cache_from='old', no_marlin_atomic_add=True)
