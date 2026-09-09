@@ -16,8 +16,9 @@ def main():
     ap.add_argument('--out', type=Path, required=True)
     ap.add_argument('--base', default='http://spark-06c4.local:8000')
     ap.add_argument('--variants', default='fixed7,fixed3,adaptive')
-    ap.add_argument('--repeats', type=int, choices=(1, 2, 3), default=1)
+    ap.add_argument('--repeats', type=int, choices=range(1, 7), default=1)
     ap.add_argument('--logprobs', action='store_true', help='Diagnostic top-two token probabilities; changes measurement overhead')
+    ap.add_argument('--confidence-trace', action='store_true', help='Explicitly include the separately enabled confidence collector')
     args = ap.parse_args()
     corpus = json.loads(args.corpus.read_text())
     reference = next(iter(corpus.values()))
@@ -31,8 +32,10 @@ def main():
         modes = [allowed[name] for name in args.variants.split(',')]
     except KeyError:
         ap.error('unknown verification variant')
-    if len(modes) > 5 or any(m == 'adaptive' for m, _ in modes) and costs is None:
-        ap.error('at most five variants; adaptive needs costs')
+    if (len(modes) > 5 or len(set(modes)) != len(modes)
+            or len(modes) * args.repeats > 15
+            or any(m == 'adaptive' for m, _ in modes) and costs is None):
+        ap.error('unique variants, at most fifteen total requests; adaptive needs costs')
     args.out.mkdir(parents=True, exist_ok=False)
     (args.out / 'declaration.json').write_text(json.dumps(vars(args), default=str, indent=2) + '\n')
     guard = MemoryGuard(args.out / 'memory.jsonl').start()
@@ -56,6 +59,7 @@ def main():
             label = f'{args.out.name}-r{repeat}-{mode}-k{cap}'
             body = request_body(prompt, cap, label, 768)
             body['vllm_xargs']['spec_policy'] = mode
+            body['vllm_xargs'].update(spec_use_hints=False, spec_confidence_trace=args.confidence_trace)
             if args.logprobs:
                 body.update(logprobs=True, top_logprobs=2)
             if costs:
