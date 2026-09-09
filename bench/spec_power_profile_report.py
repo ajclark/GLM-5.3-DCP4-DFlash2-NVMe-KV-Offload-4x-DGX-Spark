@@ -78,9 +78,13 @@ def main():
         end = row['started_at'] + max(c['seconds'] for c in row['chunks'])
         request_energy = integrate(samples, row['started_at'], end)
         rows.append({**{k: row[k] for k in ('label', 'profile', 'profile_index', 'case', 'decode_tps', 'ttft', 'token_sha256')},
+                     'policy': row.get('policy', 'fixed'),
                      'decode_device_j_per_token': device_energy(row, samples),
                      'request_device_j_per_token': request_energy / len(row['token_ids']) if request_energy is not None else None})
     comparisons = bracketed(rows)
+    policies = sorted({r['policy'] for r in rows})
+    if len(policies) > 1:
+        raise ValueError('one declared policy per clock screen required')
     summaries = {}
     for profile in sorted({r['profile'] for r in comparisons}):
         group = [r for r in comparisons if r['profile'] == profile and 'excluded' not in r]
@@ -105,7 +109,8 @@ def main():
                      'cpu_proxies': cpu_window(heartbeats, window), 'device_proxies': device_proxies})
     result = {'sensor': 'NVIDIA-reported power summed across four devices; CPU counters are separate proxies, not watts.',
               'screening_only': True, 'whole_node_or_wall_power_measured': False,
-              'method': 'Treatment divided by geometric mean of nearest same-prompt baseline before and after; fixed cap7, complete request energy includes prefill.',
+              'policies': policies,
+              'method': 'Treatment divided by geometric mean of nearest same-prompt baseline before and after; one declared policy across profiles, complete request energy includes prefill.',
               'limitations': 'Small development screen, no confidence interval or promotion claim. Sampling needs all four devices with bracketing coverage and gaps <=5s. Output hashes retained to expose changing work.',
               'profiles': summaries, 'requests': rows, 'comparisons': comparisons, 'idle_windows': idle}
     (args.directory / 'power-profile-report.json').write_text(json.dumps(result, indent=2) + '\n')

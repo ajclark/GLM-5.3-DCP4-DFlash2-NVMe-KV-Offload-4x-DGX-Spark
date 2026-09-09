@@ -13,7 +13,7 @@ import threading
 import time
 from types import SimpleNamespace
 
-from adaptive_spec import generate, idle_check, request_body
+from adaptive_spec import add_costs, generate, idle_check, request_body
 from spec_experiment import BASE, HOSTS, parallel, ssh
 from spec_memory import MemoryGuard
 from spec_power_node import IDLE_ONLY_PROFILES, PROFILES
@@ -31,6 +31,8 @@ def main():
     ap.add_argument('--idle-seconds', type=int, default=60)
     ap.add_argument('--idle-only', action='store_true')
     ap.add_argument('--tokens', type=int, default=256)
+    ap.add_argument('--policy', choices=('fixed', 'adaptive'), default='fixed')
+    ap.add_argument('--costs', type=Path, help='Explicit frozen controller costs for an adaptive clock screen')
     args = ap.parse_args()
     profiles = args.profiles.split(',')
     corpus = json.loads(args.corpus.read_text())
@@ -39,6 +41,9 @@ def main():
         ap.error('unknown profile or corpus case')
     if not args.idle_only and IDLE_ONLY_PROFILES.intersection(profiles):
         ap.error('idle clock profiles require --idle-only; restore before active work')
+    if args.policy == 'adaptive' and (args.costs is None or args.idle_only):
+        ap.error('adaptive clock screen requires explicit costs and active work')
+    costs = json.loads(args.costs.read_text()) if args.costs else None
     if not 30 <= args.idle_seconds <= 180 or not 64 <= args.tokens <= 512:
         ap.error('idle seconds must be 30..180, tokens 64..512')
     if (len(profiles) > 12 or len(cases) > 6
@@ -114,9 +119,14 @@ def main():
                 idle_check(BASE)
                 guard.preflight(seconds=4)
                 label = f'{args.out.name}-{index}-{profile}-{case}'
-                result = generate(BASE, request_body(corpus[case], 7, label, args.tokens), request_guard)
+                body = request_body(corpus[case], 7, label, args.tokens)
+                body['vllm_xargs'].update(spec_policy=args.policy, spec_use_hints=False,
+                                         spec_confidence_trace=False)
+                if costs is not None:
+                    add_costs(body, costs)
+                result = generate(BASE, body, request_guard)
                 check()
-                result.update(label=label, profile=profile, profile_index=index, case=case, cap=7, repeat=index, policy='fixed')
+                result.update(label=label, profile=profile, profile_index=index, case=case, cap=7, repeat=index, policy=args.policy)
                 (args.out / (label + '.json')).write_text(json.dumps(result, indent=2) + '\n')
                 print(json.dumps({k: result[k] for k in ('label', 'ttft', 'decode_tps', 'token_sha256')}), flush=True)
     finally:
