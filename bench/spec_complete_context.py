@@ -9,6 +9,19 @@ from spec_code_check import PROMPT, check
 from spec_memory import MemoryGuard
 
 
+def cache_metrics(base):
+    """Record actual cache/preemption counters, without inventing a hit rate."""
+    with urllib.request.urlopen(base + '/metrics', timeout=5) as response:
+        lines = response.read().decode().splitlines()
+    selected = {}
+    for line in lines:
+        name = line.split('{', 1)[0].split(' ', 1)[0]
+        if name.startswith('vllm:') and ('prefix_cache' in name or 'preempt' in name):
+            key, value = line.rsplit(' ', 1)
+            selected[key] = float(value)
+    return selected
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--corpus', type=Path, required=True)
@@ -65,9 +78,14 @@ def main():
             if costs:
                 add_costs(body, costs)
             (args.out / (label + '-request.json')).write_text(json.dumps(body) + '\n')
+            cache_before = cache_metrics(args.base)
             result = generate(args.base, body, guard, deadline_seconds=900)
+            cache_after = cache_metrics(args.base)
             path = args.out / (label + '.json')
             result.update(label=label, policy=mode, cap=cap, prompt_tokens=tokens)
+            result.update(cache_metrics_before=cache_before, cache_metrics_after=cache_after,
+                          cache_metric_delta={key: cache_after[key] - value
+                                              for key, value in cache_before.items() if key in cache_after})
             path.write_text(json.dumps(result, indent=2) + '\n')
             try:
                 result['functional_check'] = check(result['text'])
