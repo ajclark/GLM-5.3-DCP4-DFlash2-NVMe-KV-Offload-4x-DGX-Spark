@@ -72,3 +72,24 @@ Repaired-runtime short calibration, frozen hint/control comparisons and real
 Pi payload replay are required before claiming benefit or enabling the
 extension globally. The historical 100k/170k priors are excluded following
 the replicated-cache table defect.
+
+The subsequent V5 experiment ran two more **actual Pi/herdr** requests against
+the repaired server. Both finished naturally with HTTP 200: 262 output tokens
+for four Python functions, all functional checks passing, and 174 output
+tokens for a complete harbor-rain scene. Server traces identify the requested
+domains during the bounded warm-up. The code request used K7 throughout;
+the prose request used 85 K3 and five K7 verification rows. All 125 collected
+confidence packets across these two requests passed identity validation.
+See the [live Pi report](../../results/adaptive-next/pi-hints-r1/live-pi-report.json).
+These two requests demonstrate integration, not a paired speedup.
+
+The first explicit on/off HTTP replay exposed a separate API-boundary error:
+the live `vllm_xargs` schema normalizes JSON booleans into integer 0/1, while
+the new switches initially checked Python `is True`. Explicit true controls
+therefore stayed disabled. Both affected comparisons are retained and marked
+invalid; no overhead or hint-effect claim may use them. The actual Pi requests
+above omitted the switches and used their valid defaults, so their activation
+evidence remains valid. Commit `f71eac0` accepts exactly boolean true or integer
+one, tests the captured OpenAPI boundary, and makes the paired reporter require
+server traces proving each requested treatment activated. Corrected replay
+results must come from fresh experiment directories.

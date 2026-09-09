@@ -250,3 +250,41 @@ Captured source identifiers used for this audit (SHA-256):
 | Loaded draft config | `1261b2f5a3a62be348fb7abdc15a2b00c1b456ce0930a6e8b97e15c5573d063f` |
 | Captured qwen3_dflash.py | `f92925e47c09e032fcd15bd8d2b8cb4c9e6947fd279a8797b54f6351d93fa159` |
 | Captured qwen3_dflash2.py | `c141daa4b2059c0098224ac36471c2197b7052c100bef0a4dbc2ca79b627053f` |
+
+## Subsequent repaired-runtime Spark validation
+
+The parent experiment implemented the repair in `8f684a4` and validated it on
+all four Sparks. Each rank logs target CP2/1408 columns and draft CP1/2816
+columns. The added table metadata is 132 KiB per rank. The 6 GB/rank KV pool,
+198551-token reported capacity and 180224-token model limit are unchanged.
+This addresses the metadata allocation, without adding a second model.
+
+Fixed-K7 probes at 89055 and 92056 prompt tokens emitted identical 60-token
+outputs, retained the marker and counted correctly. They accepted 56 of 70
+drafted tokens across ten cycles in each request, at 42.77 and 43.00 tok/s.
+See the [boundary report](../../results/adaptive-next/cache-width-r1/boundary-report.json).
+These are bounded diagnostic outputs, not a workload benchmark.
+
+New full-cycle calibration measures caps 1/3/5/7 at short, 100k and 170k
+contexts with real FULL graph dispatch. The
+[repaired curve](../../results/adaptive-next/cache-width-r1/costs-repaired-curve.json)
+contains actual points near 221, 100289 and 170166 tokens; intermediate
+contexts are interpolation, not separately measured experiments. Historical
+long-context priors and their apparent 35–42% adaptive gains remain excluded
+because their baseline was affected by the sizing defect.
+
+Two-repeat repaired-runtime comparisons use one coding and one prose prompt
+per context, 256 output tokens per request:
+
+| Context | Coding fixed7 → adaptive tok/s | Paired coding ratio | Prose fixed7 → adaptive tok/s | Paired prose ratio |
+|---|---:|---:|---:|---:|
+| 100k | 16.76 → 17.53 | 1.0459 | 16.92 → 18.62 | 1.1005 |
+| 170k | 16.90 → 17.56 | 1.0413 | 16.26 → 17.94 | 1.1016 |
+
+These are exploratory screens: one prompt per domain/context cannot provide
+an independent prompt-level interval. Complete-function checks also uncovered
+a target-output repeatability problem under both fixed K7 and requests
+labelled adaptive that actually stayed at K7. The
+[repeatability diagnostic](REPEATABILITY-DIAGNOSTIC.md) retains the functional
+failures and target logprob evidence. Better addressability and recovered
+acceptance do not constitute a clean end-to-end quality promotion.
