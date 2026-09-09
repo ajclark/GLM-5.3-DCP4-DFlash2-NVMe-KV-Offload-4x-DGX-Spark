@@ -127,7 +127,7 @@ DCP_FILES=(flashmla_sparse.py sparse_attn_indexer.py sparse_utils.py indexer.py
   block_table.py gpu_input_batch.py gpu_model_runner.py cp_utils.py
   flash_attn.py
   scheduler.py b12x_sparse_helpers.py adaptive.py model_runner.py cudagraph_utils.py
-  v2_block_table.py)
+  v2_block_table.py v2_async_utils.py v1_outputs.py confidence_trace.py)
 for f in "${DCP_FILES[@]}"; do
   [ -f "$DCP_DIR/$f" ] || { echo "DCP overlay missing: $DCP_DIR/$f" >&2; exit 4; }
 done
@@ -270,6 +270,9 @@ run_docker run -d --name "$NAME" \
   -v "$DCP_DIR/adaptive.py:$VLLM/v1/spec_decode/adaptive.py:ro" \
   -v "$DCP_DIR/model_runner.py:$VLLM/v1/worker/gpu/model_runner.py:ro" \
   -v "$DCP_DIR/v2_block_table.py:$VLLM/v1/worker/gpu/block_table.py:ro" \
+  -v "$DCP_DIR/v2_async_utils.py:$VLLM/v1/worker/gpu/async_utils.py:ro" \
+  -v "$DCP_DIR/v1_outputs.py:$VLLM/v1/outputs.py:ro" \
+  -v "$DCP_DIR/confidence_trace.py:$VLLM/v1/spec_decode/confidence_trace.py:ro" \
   -v "$DCP_DIR/cudagraph_utils.py:$VLLM/v1/worker/gpu/cudagraph_utils.py:ro" \
   "${KVTIER_MOUNTS[@]}" \
   "${DRAFT_MOUNT[@]}" \
@@ -289,6 +292,7 @@ run_docker run -d --name "$NAME" \
   -e "GLM_SPEC_TRACE=${GLM_SPEC_TRACE:-}" \
   -e "GLM_SPEC_COSTS=${GLM_SPEC_COSTS:-}" \
   -e "GLM_SPEC_HINT_PRIORS=${GLM_SPEC_HINT_PRIORS:-}" \
+  -e "GLM_SPEC_CONFIDENCE_TRACE=${GLM_SPEC_CONFIDENCE_TRACE:-0}" \
   --label "glm.spec.experiment=${GLM_SPEC_EXPERIMENT:-}" \
   "${KVTIER_ENV[@]}" \
   -e GLM52_BIND_HOST_TRITON=1 \

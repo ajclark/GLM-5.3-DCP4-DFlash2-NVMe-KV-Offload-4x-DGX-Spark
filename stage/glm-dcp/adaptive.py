@@ -337,12 +337,14 @@ class VerificationPolicy:
                             "mode": self.mode, "fixed": self.fixed,
                             "costs_ms": self.costs, "acceptance_prior": self.prior,
                             "workload_hints_enabled": self.hint_priors is not None,
+                            "confidence_trace_enabled": os.environ.get("GLM_SPEC_CONFIDENCE_TRACE") == "1",
                             "time": time.time()})
 
     def begin(self) -> None:
         self.chosen.clear()
 
     def select(self, request, c1: bool, step: int) -> int:
+        decision_ns = time.monotonic_ns()
         ok = eligible(request, c1)
         mode = self.mode
         cap, probe = 7, False
@@ -413,6 +415,7 @@ class VerificationPolicy:
             "acceptance_prior": prior,
             "hint_domain": hint_domain,
             "label": str(xargs.get("spec_label", ""))[:96],
+            "decision_ns": decision_ns,
         }
         return cap
 
@@ -431,6 +434,7 @@ class VerificationPolicy:
             self.pending[id(output)] = rows
 
     def complete(self, output, runner_output, requests) -> None:
+        receipt_ns = time.monotonic_ns()
         rows = self.pending.pop(id(output), {})
         kv_output = getattr(runner_output, "kv_connector_output", None)
         if kv_output and getattr(kv_output, "invalid_block_ids", None):
@@ -468,6 +472,15 @@ class VerificationPolicy:
             previous = state.get("completed_at")
             state["completed_at"] = now
             if self.sink:
+                confidence = (getattr(runner_output, "spec_confidence", None) or {}).get(rid)
+                if confidence is not None:
+                    confidence = dict(confidence)
+                    if (confidence.get("valid") and
+                            (confidence.get("verified_k") != k or
+                             tokens[:accepted] != confidence.get("draft_tokens", [])[:accepted])):
+                        confidence.update(valid=False, invalid_reason="acceptance_join_mismatch")
+                        confidence.pop("realized_scores", None)
+                    confidence["learnable"] = bool(valid and confidence.get("valid"))
                 self.sink.emit({
                     "event": "verify", "version": VERSION,
                     "request": hashlib.sha256(rid.encode()).hexdigest()[:16],
@@ -477,4 +490,6 @@ class VerificationPolicy:
                     "learned": valid, "cycle_ms": (now - previous) * 1000 if previous else None,
                     "latency_ms": (now - row["scheduled_at"]) * 1000,
                     "dropped": self.sink.dropped, "writer_error": self.sink.error,
+                    "receipt_ns": receipt_ns,
+                    **({"confidence": confidence} if confidence is not None else {}),
                 })

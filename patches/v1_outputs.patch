@@ -1,0 +1,13 @@
+--- a/vllm/v1/outputs.py
++++ b/vllm/v1/outputs.py
+@@ -280,6 +280,10 @@
+     # ``None`` when ``enable_return_routed_experts`` is off.
+     routed_experts: RoutedExpertsLists | None = None
+ 
++    # Opt-in DFlash2 confidence diagnostics, keyed by internal request ID.
++    # CPU values only; populated after the existing AsyncOutput copy event.
++    spec_confidence: dict[str, dict] | None = None
++
+     @staticmethod
+     def with_kv_conn_output_only(
+         kv_connector_output: KVConnectorOutput | None,

@@ -1,6 +1,14 @@
 --- a/vllm/v1/worker/gpu/model_runner.py
 +++ b/vllm/v1/worker/gpu/model_runner.py
-@@ -49,7 +49,11 @@
+@@ -33,6 +33,7 @@
+ from vllm.distributed.parallel_state import (
+     get_dcp_group,
+     get_pp_group,
++    get_tp_group,
+     prepare_communication_buffer_for_model,
+ )
+ from vllm.forward_context import BatchDescriptor, set_forward_context
+@@ -49,7 +50,11 @@
  from vllm.utils.platform_utils import is_pin_memory_available
  from vllm.utils.torch_utils import STR_DTYPE_TO_TORCH_DTYPE
  from vllm.v1.core.sched.output import GrammarOutput, SchedulerOutput
@@ -13,23 +21,28 @@
  from vllm.v1.outputs import DraftTokenIds, ModelRunnerOutput
  from vllm.v1.worker.cp_utils import check_attention_cp_compatibility
  from vllm.v1.worker.gpu.async_utils import AsyncOutput, AsyncPoolingOutput
-@@ -103,6 +107,7 @@
+@@ -103,6 +108,8 @@
  from vllm.v1.worker.gpu.sample.sampler import Sampler
  from vllm.v1.worker.gpu.shutdown import free_before_shutdown
  from vllm.v1.worker.gpu.spec_decode import init_speculator
 +from vllm.v1.spec_decode.adaptive import policy_mode
++from vllm.v1.spec_decode.confidence_trace import ConfidenceCollector, enabled as confidence_enabled
  from vllm.v1.worker.gpu.spec_decode.eagle.eagle3_utils import (
      set_eagle3_aux_hidden_state_layers,
  )
-@@ -187,6 +192,7 @@
+@@ -187,6 +194,11 @@
  
          # Speculative decoding.
          self.speculator = None
++        self._spec_confidence = (
++            ConfidenceCollector() if confidence_enabled(vllm_config, get_tp_group().rank_in_group)
++            else None
++        )
 +        self._spec_graph_observed = set() if policy_mode() != "off" else None
          self.use_aux_hidden_state_outputs = False
          self.num_speculative_steps = vllm_config.num_speculative_tokens
          if self.speculative_config is not None:
-@@ -417,15 +423,18 @@
+@@ -417,15 +429,18 @@
              )
  
          block_sizes = []
@@ -52,7 +65,7 @@
              )
              # Align to a multiple of (128 / block_size) as required by some attention
              # backends such as TRTLLM (#39324)
-@@ -452,7 +461,15 @@
+@@ -452,7 +467,15 @@
              cp_size=self.dcp_size,
              cp_rank=self.dcp_rank,
              cp_interleave=self.cp_interleave,
@@ -69,7 +82,25 @@
          initialize_mamba_ssu_backend(
              self.vllm_config.mamba_config, self.kv_cache_config
          )
-@@ -1156,6 +1173,14 @@
+@@ -732,6 +755,8 @@
+         return cuda_graph_size
+ 
+     def _remove_request(self, req_id: str) -> bool:
++        if self._spec_confidence is not None:
++            self._spec_confidence.remove(req_id)
+         # Call model_state.remove_request *before* req_states.remove_request
+         # so the model_state can still look up the slot index.
+         self.model_state.remove_request(req_id)
+@@ -781,6 +806,8 @@
+ 
+             prompt_len = len(new_req_data.prompt_token_ids)
+             sampling_params = new_req_data.sampling_params
++            if self._spec_confidence is not None:
++                self._spec_confidence.add(new_req_data)
+             self.req_states.add_request(
+                 req_id=req_id,
+                 prompt_len=prompt_len,
+@@ -1156,6 +1183,14 @@
              empty_output = self.kv_connector.no_forward(scheduler_output)
              return empty_output
  
@@ -84,3 +115,28 @@
          if not dummy_run:
              # Common case.
              # Prepare all the inputs and copy to the input buffers.
+@@ -1391,12 +1426,15 @@
+             prompt_logprobs_dict=prompt_logprobs_dict,  # type: ignore[arg-type]
+         )
+         # Start async output copy here so that it can overlap with speculator proposal.
++        confidence_packet = (self._spec_confidence.capture(input_batch, self.speculator)
++                             if self._spec_confidence is not None else None)
+         async_output = AsyncOutput(
+             model_runner_output=model_runner_output,
+             sampler_output=sampler_output,
+             num_sampled_tokens=num_sampled,
+             main_stream=self.main_stream,
+             copy_stream=self.output_copy_stream,
++            confidence_packet=confidence_packet,
+         )
+ 
+         mm_inputs: tuple[list[torch.Tensor], torch.Tensor] | None = None
+@@ -1452,6 +1490,8 @@
+                 mm_inputs=mm_inputs,
+             )
+             self.req_states.draft_tokens[input_batch.idx_mapping] = draft_tokens
++            if self._spec_confidence is not None:
++                self._spec_confidence.proposed(input_batch)
+ 
+         if self.num_speculative_steps > 0:
+             # Spec-decode and diffusion LLMs both use draft tokens but the latter does

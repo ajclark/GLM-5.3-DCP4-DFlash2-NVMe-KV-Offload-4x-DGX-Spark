@@ -60,7 +60,8 @@ def package():
         'spec_node.py':ROOT/'bench/spec_node.py', 'spec_memory.py':ROOT/'bench/spec_memory.py',
         'launch.sh':ROOT/'launch-glm53big-dcp.sh',
     }
-    for name in ('scheduler.py','adaptive.py','model_runner.py','cudagraph_utils.py','v2_block_table.py'):
+    for name in ('scheduler.py','adaptive.py','model_runner.py','cudagraph_utils.py','v2_block_table.py',
+                 'v2_async_utils.py','v1_outputs.py','confidence_trace.py'):
         files['changes/'+name] = ROOT/'stage/glm-dcp'/name
     full_manifest = json.loads((ROOT/'results/adaptive-spec/inventory/python-sha256.json').read_text())
     relevant = ['v1/core/sched/scheduler.py','v1/core/sched/async_scheduler.py',
@@ -70,8 +71,8 @@ def package():
     relevant += [p for p in full_manifest if p.startswith('v1/worker/gpu/spec_decode/')]
     manifest = {p:full_manifest[p] for p in relevant}
     # Added after the original inventory; keep that historical manifest frozen.
-    rel = 'v1/worker/gpu/block_table.py'
-    manifest[rel] = hashlib.sha256((ROOT/'baseline/vllm'/rel).read_bytes()).hexdigest()
+    for rel in ('v1/worker/gpu/block_table.py','v1/worker/gpu/async_utils.py','v1/outputs.py'):
+        manifest[rel] = hashlib.sha256((ROOT/'baseline/vllm'/rel).read_bytes()).hexdigest()
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf,mode='w') as tar:
         for name,path in files.items():
@@ -83,7 +84,7 @@ def package():
     return buf.getvalue()
 
 
-def prepare(label, out, reuse_cache_from=None, trace_off=False, costs=None, hint_priors=None):
+def prepare(label, out, reuse_cache_from=None, trace_off=False, costs=None, hint_priors=None, confidence_trace=False):
     data = package()
     def node(host):
         dest = 'glm-spec/'+label
@@ -103,6 +104,9 @@ def prepare(label, out, reuse_cache_from=None, trace_off=False, costs=None, hint
     if trace_off:
         parallel(lambda host:ssh(host,shlex.join(['touch',f'glm-spec/{label}/trace-disabled'])))
         (out/'trace-disabled').touch()
+    if confidence_trace:
+        parallel(lambda host:ssh(host,shlex.join(['touch',f'glm-spec/{label}/confidence-trace-enabled'])))
+        (out/'confidence-trace-enabled').touch()
     if reuse_cache_from:
         reused = parallel(lambda host:ssh(host,shlex.join(['python3',f'glm-spec/{label}/spec_node.py',
             'reuse-cache',label,'--source-label',reuse_cache_from])))
@@ -290,6 +294,7 @@ def main():
     ap.add_argument('--trace-off',action='store_true',help='Prepare the identical policy with telemetry disabled for overhead controls')
     ap.add_argument('--costs',type=Path,help='Prepare server-owned cycle costs; enables adaptive policy for ordinary clients')
     ap.add_argument('--hint-priors',type=Path,help='Prepare server-owned weak workload priors; requires --costs')
+    ap.add_argument('--confidence-trace',action='store_true',help='Prepare bounded previous-proposal confidence diagnostics; policy unchanged')
     args = ap.parse_args()
     if not re.fullmatch(r'[a-z0-9-]{1,48}',args.label):
         ap.error('invalid label')
@@ -299,6 +304,8 @@ def main():
         ap.error('cache reuse requires prepare and a valid source experiment label')
     if args.trace_off and args.action!='prepare':
         ap.error('trace-off is a prepare option')
+    if args.confidence_trace and (args.action!='prepare' or args.trace_off or args.reuse_cache_from):
+        ap.error('confidence collection requires a fresh prepare with telemetry enabled')
     if (args.costs or args.hint_priors) and args.action!='prepare':
         ap.error('boot calibration is a prepare option')
     if args.hint_priors and not args.costs:
@@ -308,7 +315,7 @@ def main():
     out = ROOT/'results/adaptive-spec'/args.label
     if args.action == 'prepare':
         out.mkdir(exist_ok=False)
-        prepare(args.label,out,args.reuse_cache_from,args.trace_off,args.costs,args.hint_priors)
+        prepare(args.label,out,args.reuse_cache_from,args.trace_off,args.costs,args.hint_priors,args.confidence_trace)
     elif args.action == 'run':
         if not (out/'prepared.json').exists():
             ap.error('prepare this label first')

@@ -61,6 +61,10 @@ def test_stage_matches_changes_and_checksums():
         assert (ROOT/'overlay/vllm'/rel).read_bytes() == (ROOT/'stage/glm-dcp'/Path(rel).name).read_bytes()
     assert (ROOT/'overlay/vllm/v1/worker/gpu/block_table.py').read_bytes() == (
         ROOT/'stage/glm-dcp/v2_block_table.py').read_bytes()
+    for rel, name in (('v1/worker/gpu/async_utils.py', 'v2_async_utils.py'),
+                      ('v1/outputs.py', 'v1_outputs.py'),
+                      ('v1/spec_decode/confidence_trace.py', 'confidence_trace.py')):
+        assert (ROOT/'overlay/vllm'/rel).read_bytes() == (ROOT/'stage/glm-dcp'/name).read_bytes()
     for line in (ROOT/'stage/SHA256SUMS').read_text().splitlines():
         digest,name = line.split(maxsplit=1)
         assert '__pycache__' not in name
@@ -142,6 +146,7 @@ def test_trace_control_keeps_policy_and_allocation_identical(tmp_path,monkeypatc
     env=calls[0]['env']
     assert env['GLM_SPEC_TRACE']==('' if trace_off else '/kvcache/spec-trace.jsonl')
     assert env['GLM_SPEC_POLICY']=='shadow'
+    assert env['GLM_SPEC_CONFIDENCE_TRACE']=='0'
     assert env['KVBYTES']=='6000000000' and env['MAXLEN']=='180224'
 
 
@@ -159,4 +164,18 @@ def test_prepared_server_calibration_enables_hints_with_unchanged_capacity(tmp_p
     assert env['GLM_SPEC_POLICY']=='adaptive'
     assert env['GLM_SPEC_COSTS']=='/kvcache/boot-costs.json'
     assert env['GLM_SPEC_HINT_PRIORS']=='/kvcache/hint-priors.json'
+    assert (env['KVBYTES'],env['MAXLEN'],env['MAXSEQS'])==('6000000000','180224','12')
+
+
+def test_confidence_diagnostics_are_explicit_and_do_not_change_policy(tmp_path,monkeypatch):
+    setup(tmp_path)
+    (tmp_path/'confidence-trace-enabled').touch()
+    monkeypatch.setattr(N,'inspect',lambda name=N.NAME:
+                        {'State':{'Running':False}} if name=='old-id' else None)
+    calls=[]
+    monkeypatch.setattr(N.subprocess,'run',lambda *args,**kw:calls.append(kw) or NS(returncode=0))
+    N.launch(tmp_path,'label',0)
+    env=calls[0]['env']
+    assert env['GLM_SPEC_CONFIDENCE_TRACE']=='1'
+    assert env['GLM_SPEC_POLICY']=='shadow'
     assert (env['KVBYTES'],env['MAXLEN'],env['MAXSEQS'])==('6000000000','180224','12')

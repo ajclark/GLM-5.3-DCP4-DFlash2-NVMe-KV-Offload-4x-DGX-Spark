@@ -163,6 +163,7 @@ def launch(root, label, rank):
                NCCL_HOTPLUG='0', GLM_SPEC_POLICY='shadow',
                GLM_SPEC_TRACE='' if (root/'trace-disabled').exists() else '/kvcache/spec-trace.jsonl',
                GLM_SPEC_EXPERIMENT=label)
+    env['GLM_SPEC_CONFIDENCE_TRACE'] = '1' if (root/'confidence-trace-enabled').exists() else '0'
     if (root/'kvcache/boot-costs.json').exists():
         env.update(GLM_SPEC_POLICY='adaptive', GLM_SPEC_COSTS='/kvcache/boot-costs.json')
     if (root/'kvcache/hint-priors.json').exists():

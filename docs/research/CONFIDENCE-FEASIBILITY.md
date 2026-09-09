@@ -1,18 +1,22 @@
 # DFlash2 confidence: feasible as a measured, lagged predictor
 
-**2026-09-09. Decision:** implement bounded shadow collection as the next
-confidence experiment; defer a serving policy change until real calibration
-and overhead evidence exists. Defer same-block host stopping in the current
+**2026-09-09. Decision:** bounded shadow collection is implemented locally,
+disabled by default, and ready for a guarded overhead/identity trial. Defer a
+serving policy change until real calibration and overhead evidence exists.
+Defer same-block host stopping in the current
 asynchronous C1 runtime. The existing selected-path scores are small and
 accessible, but become available after the output-copy boundary and potentially
 after the next target graph has already been scheduled.
 
-This task changes no runtime, deployment, graph, model or sampler. It delivers
-[an offline screen](../../bench/spec_confidence_screen.py) and
-[23 passing CPU tests](../../tests/test_spec_confidence_screen.py), including
-the actual captured selector. No Spark request or measured throughput result
-was produced. Historical acceptance traces do not contain the required scores;
-they cannot establish confidence quality retroactively.
+The implementation adds an opt-in collector and a formal optional runner-output
+field; graphs, model weights, sampler and adaptive cap selection are unchanged.
+It includes [an offline screen](../../bench/spec_confidence_screen.py),
+[a verify-trace converter](../../bench/spec_confidence_convert.py),
+[23 existing semantic tests](../../tests/test_spec_confidence_screen.py), and
+[56 collector/transport tests](../../tests/test_spec_confidence_trace.py).
+No Spark request or measured collector throughput result was produced by this
+task. Historical traces without scores cannot establish confidence quality
+retroactively.
 
 ## What the score actually means
 
@@ -128,33 +132,36 @@ is a **lagged** predictor for a later proposal. Record its age; do not promise
 a fixed one-step lag. Existing asynchronous queuing can make the usable age
 two or more proposals.
 
-An implementation needs the following explicit contract:
+The implementation follows this contract:
 
 1. Assign every proposal a monotonic sequence within a request incarnation.
    Retain runtime/checkpoint identity, run identity, request identity and
    epoch, proposal sequence, actual anchor position, actual live batch row,
    and any row/slot generation. The verification result must refer to that
    exact proposal and anchor. GPU request-state index alone is not identity.
-2. Snapshot the selected-path scores into a bounded GPU packet ring before
+   The live packet supplies worker epoch/proposal metadata; runtime/run IDs
+   and explicit prompt-family provenance are added by the offline converter.
+2. Snapshot the selected-path scores into a private GPU packet before
    `_selector_scores` can be overwritten by the next draft. A retained tensor
    reference or `record_stream` protects allocation lifetime, not mutation of
    a persistent buffer. Use explicit stream/event ordering and slot ownership.
-3. Copy only actual live rows into bounded pinned host storage. A ring depth
-   derived from maximum in-flight batches plus two spare slots is a reasonable
-   initial design. Release a slot after its copy and host consumption finish;
-   if the ring fills, drop telemetry and fall back to existing policy rather
-   than waiting or overwriting unread packets.
+3. Copy only the actual live C1 row into explicitly pinned host storage. This
+   implementation ties private packet lifetime to the existing bounded
+   in-flight AsyncOutput lifetime and caps collection at 128 packets per
+   request incarnation. Source and host tensors are released after the
+   existing event completes and CPU lists are formed. A reusable ring/pool
+   could reduce allocation overhead later, but would need its own lease tests.
 4. Attach only ready host packets to an ordinary internal runner-output
    message. The scheduler stamps receipt with its own monotonic clock. Do not
    compare a remote worker's wall clock or CUDA event time to a scheduler
    deadline. If using a separate post-proposal copy instead, test readiness
    without waiting and deliver it at a later normal output boundary.
-5. At the scheduling decision, use the latest compatible packet whose receipt
+5. In the offline screen, use the latest compatible packet whose receipt
    precedes the decision and whose proposal age is within the calibrated
    range. Unknown epoch, cancellation, reset/preemption, malformed values,
    unsupported sampling, stale age or missing packet means abstain. The
-   scheduler owns the selected cap and sends one consistent decision to all
-   ranks.
+   scheduler still owns the selected cap and sends one consistent decision
+   to all ranks. The live collector never reads packets to choose a cap.
 
 **Padded graph rows require special care.** DFlash input preparation pads
 `sample_idx_mapping` with zero. The selector's `req_state >= 0` check therefore
@@ -164,19 +171,86 @@ zero-mapped padded rows. Export must use the real `input_batch.num_reqs`, not
 the graph's padded count. `_selector_scores` is indexed by batch row, while
 the sampling mapping indexes request state; they cannot be interchanged.
 
-At max-seqs 12, four ring slots holding raw scores require 21504 bytes on the
-GPU and the same amount in pinned host memory, plus small metadata. This is
-about 42 KiB combined per owning process, before allocator overhead. One
-authoritative scoring rank should publish the decision features; verify which
-rank's tokens are authoritative rather than silently averaging potentially
-different score rows. Memory is modest, but extra kernels, event operations,
-serialization and copy ordering still need an overhead control.
+The collector runs on target TP rank 0 only, with PP1/DP1 and asynchronous
+V2 DFlash K7. A maximum-size packet holds 448 bytes of FP32 scores, seven
+int64 sample positions, seven int64 draft IDs, and at most eight target
+positions/IDs: **656 bytes on GPU plus 656 bytes in pinned host storage**,
+before allocator overhead and JSON expansion. Only one actual request row is
+copied, even if the graph pads to twelve. Verify TP rank 0 packet/target
+agreement in the live identity trial rather than averaging different ranks.
+Additional kernels, allocation, serialization and copy ordering still need
+an overhead control.
 
 No new GPU synchronization should occur in the serving path. Extending the
 existing output copy with an **already-produced, stable** packet adds a small
 copy and may extend that copy's completion time; it is not zero-cost. The
 control must measure this effect. Never attach current P+1 scores to P's
 verification result merely because they share the same worker call.
+
+### Implemented integration and first-boot contract
+
+The [collector helper](../../overlay/vllm/v1/spec_decode/confidence_trace.py)
+registers an incarnation on every `add_requests`, including replacement after
+streaming updates, and clears ownership on removal/preemption. It requires
+one registered request and one actual scheduled request. C2 admission,
+prefill, unsupported sampling, a missing predecessor, or malformed source
+shapes clears ownership. The first decode establishes ownership for its next
+proposal and is intentionally not captured. Collection stops after 128
+packets, including invalid diagnostic packets, per incarnation.
+
+Before constructing [AsyncOutput](../../overlay/vllm/v1/worker/gpu/async_utils.py),
+the runner clones the **previous** proposal's scores, sample positions and
+draft IDs together with the actual current target positions/input IDs. The
+copy stream waits on the main stream at its existing boundary, copies into
+explicitly pinned destinations, and records its existing event. The next
+proposal can then overwrite its persistent buffers while the private clones
+remain valid. No extra CUDA event, `synchronize`, `.item()`, or GPU-to-host
+scalar decision is introduced. The event's copy duration can increase.
+
+After that event completes, host validation requires
+`sample_positions[0] - 1 == target_positions[0]`, contiguous original absolute
+positions, and `draft_tokens[:K] == target_input_ids[1:K+1]`. Tests execute the
+actual DFlash preparation and target input kernels to prove this mapping.
+Nonfinite scores and mismatches become invalid diagnostics, with scores
+removed. Target tokens are never modified. The optional
+[`ModelRunnerOutput.spec_confidence`](../../overlay/vllm/v1/outputs.py) field
+carries CPU values keyed by internal request ID.
+
+The scheduler's existing weak-reference/incarnation, invalid-KV, terminal,
+eligibility, cap and discarded-async-output gates remain authoritative. A
+packet's accepted prefix must also match the actual sampled prefix. Valid
+and invalid diagnostics join the existing `verify` row; its request identifier
+remains hashed. `decision_ns` is recorded on entry to selection, and
+`receipt_ns` on entry to completion, using the same scheduler's
+`monotonic_ns`. The collector's proposal age of one worker step is **not** its
+usable age at a later scheduling decision.
+
+For the root agent's later guarded boot, set `GLM_SPEC_CONFIDENCE_TRACE=1`
+together with a non-off speculation policy and `GLM_SPEC_TRACE`. The shadow
+collector works with fixed/adaptive experiment policies but never changes
+their choices. The first dataset should use fixed cap 7. A request with
+`vllm_xargs.spec_confidence_trace=false` disables its packets in the same boot;
+omit the key or use boolean `true` to collect. Invalid types abstain. The
+environment flag alone does not create a scheduler trace sink or enable an
+otherwise off verification policy.
+
+Start with a short known counting request and inspect packet ownership,
+anchor agreement, nonfinite/mismatch counts, sample limit and trace drops on
+the output rank. Inspect per-rank memory pressure before boot/capture and
+during the request. Then randomize identical fixed-seven requests with
+capture enabled/disabled in the same boot, preserving all other controls.
+Measure the first 128 eligible cycles separately: whole-request averages
+would dilute overhead after collection stops. Inspect tok/sec, device and
+wall joules/token, copy/CPU time, trace-writer backlog, pinned-host allocation
+and peak GPU memory. An initial acceptance gate is no identity failure, no
+new quality failure, no pressure excursion, no trace loss, and overhead below
+the measured noise floor or a justified small bound before collecting broadly.
+
+The existing [100k complete-function quality failure](../../results/adaptive-next/cache-width-r1/complete-100k/complete-100k-adaptive-k7.json)
+remains an independent no-promotion gate. Its adaptive request scheduled cap 7
+throughout, and a later repeat passed. This does not establish a cap-transition
+bug or a target-logit tie. Shadow collection must not weaken that investigation's
+prompt-level correctness checks.
 
 ## Calibration that respects what was observed
 
@@ -208,9 +282,11 @@ history merely because a GPU slot or request name was reused.
 
 Only fixed-seven records enter the all-cap utility comparison. The metric
 evaluates different prefix choices at the same recorded boundaries, omitting
-changes to subsequent proposals. It also omits V4's warmup, periodic probes
-and hysteresis, so its history screen is not a V4 reproduction. Any serving
-proposal still needs a real V4 control. Calibration metrics alone are not
+changes to subsequent proposals. It also omits the serving controller's warmup,
+periodic probes and hysteresis, so its history screen is not a controller
+reproduction. Any serving proposal still needs a real inference-only control.
+Version 5 with hints disabled is locally parity-tested against the repaired V4
+decisions. Calibration metrics alone are not
 tok/s or energy measurements.
 
 Before a live policy experiment, collect development-only fixed-seven shadow
@@ -232,14 +308,14 @@ invented data and must never enter Spark benchmark summaries.
 
 | Next action | Decision and evidence needed |
 |---|---|
-| Bounded immutable shadow packets | **Implement as an experiment.** Preserve proposal ownership and existing verifier, measure copy/instrumentation overhead against identical uninstrumented requests. |
+| Bounded immutable shadow packets | **Implemented locally, off by default.** Guarded identity and overhead validation on the Sparks remains outstanding. |
 | Lagged confidence affecting caps | **Defer until data.** Require improvement beyond available acceptance history/hints on held-out prompts, useful coverage at actual ages, and a positive same-boundary signal before a live A/B. |
 | Current-block host cap selection | **Defer.** It requires changing an existing dependency or graph-dispatch contract. Prototype/measure that cost only if same-block signal materially exceeds the usable lagged signal. |
 | Learned head or selector fine-tuning | **Defer.** First separate candidate recall failures from selector/path errors; raw margin calibration may already suffice. |
 
 For a bounded live trial, retain C1 greedy eligibility, finite graph shapes,
 full target verification and fallback on unavailable features. Compare against
-the repaired V4 runtime, then add Pi hints as an ablation. Keep the current
+the hint-disabled V5 runtime, then add Pi hints as an ablation. Keep the current
 warmup/probe/hysteresis behavior initially rather than confounding this test
 with another cold-start change. Require no new correctness/pressure failures,
 a positive paired confidence interval on the targeted workload, no material
@@ -251,15 +327,21 @@ does not lower them.
 
 ```sh
 .venv/bin/pytest -q tests/test_spec_confidence_screen.py
+.venv/bin/pytest -q tests/test_spec_confidence_trace.py
 .venv/bin/python bench/spec_confidence_screen.py
 .venv/bin/python bench/spec_confidence_screen.py --demo
+.venv/bin/python bench/spec_confidence_convert.py --trace verify.jsonl --out joined-confidence.jsonl --runtime-id REPAIRED_RUNTIME --run-id BOOT_ID --case-map prompt-cases.json
 .venv/bin/python bench/spec_confidence_screen.py --trace joined-confidence.jsonl --max-age 2
 ```
 
 The command without data reports that no feature dataset was supplied. The
 prototype never contacts a model, reads KV contents, or launches CUDA. Its
-tests run the captured Triton walk under the existing CPU interpreter.
-All 23 tests work from a fresh checkout. Original selector, model and async
+tests run the captured Triton walk under the existing CPU interpreter. The
+56 additional collector tests run actual modified async/runner methods with
+deferred fake streams/copies, lifecycle changes, and source-buffer overwrite;
+they also exercise real preparation kernels, trace receipt joins and invalid
+conversion counterexamples. These establish CPU contracts, not CUDA timing.
+All tests work from a fresh checkout. Original selector, model and async
 sources are pinned in [tests/fixtures/spec_confidence](../../tests/fixtures/spec_confidence),
 with source paths and SHA-256 hashes in its
 [manifest](../../tests/fixtures/spec_confidence/manifest.json). The source-replay
@@ -284,7 +366,12 @@ Each joined JSONL record requires:
 
 The screen selects older available packets itself. Do not replace a record's
 score packet with an old row while leaving its proposal identity unchanged.
-The compact schema is a diagnostic contract, not an implemented wire API.
+`prompt-cases.json` explicitly maps experiment labels to prompt/case IDs;
+all repeats share the same case, and missing mappings fail. The converter
+counts absent/invalid/unlearnable packets and missing measured cost tables,
+refuses missing timestamps or incorrect joins, and never substitutes worker
+wall time. It emits the compact offline format from the implemented internal
+runner/verify-trace diagnostic; this is not a public serving response field.
 
 Captured source hashes (SHA-256): selector speculator
 `4dac8303f68baafc0a2e675c053df8a15df2f1345b4032ef9348122d1f71cef9`;

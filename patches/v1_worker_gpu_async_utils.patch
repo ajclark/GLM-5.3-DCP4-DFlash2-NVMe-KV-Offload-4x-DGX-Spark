@@ -1,0 +1,47 @@
+--- a/vllm/v1/worker/gpu/async_utils.py
++++ b/vllm/v1/worker/gpu/async_utils.py
+@@ -7,6 +7,7 @@
+ 
+ from vllm.v1.outputs import AsyncModelRunnerOutput, LogprobsTensors, ModelRunnerOutput
+ from vllm.v1.worker.gpu.sample.output import SamplerOutput
++from vllm.v1.spec_decode.confidence_trace import finish_packet, packet_to_host
+ 
+ 
+ class AsyncOutput(AsyncModelRunnerOutput):
+@@ -17,6 +18,7 @@
+         num_sampled_tokens: torch.Tensor,
+         main_stream: torch.cuda.Stream,
+         copy_stream: torch.cuda.Stream,
++        confidence_packet: dict | None = None,
+     ):
+         # NOTE(woosuk): We must retain references to the GPU tensors,
+         # as the copy operations are performed on a different CUDA stream than
+@@ -24,6 +26,8 @@
+         self.model_runner_output = model_runner_output
+         self.sampler_output = sampler_output
+         self.num_sampled_tokens = num_sampled_tokens
++        self.confidence_packet = confidence_packet
++        self.confidence_cpu = None
+         self.copy_event = torch.cuda.Event()
+ 
+         with stream(copy_stream, main_stream):
+@@ -43,6 +47,8 @@
+                 k: v.to_cpu_nonblocking() if v is not None else None
+                 for k, v in self.model_runner_output.prompt_logprobs_dict.items()
+             }
++            if confidence_packet is not None:
++                self.confidence_cpu = packet_to_host(confidence_packet)
+             self.copy_event.record(copy_stream)
+ 
+     def get_output(self) -> ModelRunnerOutput:
+@@ -66,6 +72,10 @@
+         if self.logprobs_tensors is not None:
+             self.model_runner_output.logprobs = self.logprobs_tensors.tolists()
+         self.model_runner_output.prompt_logprobs_dict = self.prompt_logprobs_dict
++        if self.confidence_cpu is not None:
++            self.model_runner_output.spec_confidence = finish_packet(self.confidence_cpu)
++            self.confidence_packet = None
++            self.confidence_cpu = None
+         return self.model_runner_output
+ 
+ 
