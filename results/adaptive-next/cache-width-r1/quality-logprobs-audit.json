@@ -1,0 +1,56 @@
+{
+  "requests": [
+    {
+      "label": "quality-logprobs-r0-adaptive-k7",
+      "functional_check": "functional checks passed",
+      "scheduled_caps": {
+        "7": 41
+      },
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d"
+    },
+    {
+      "label": "quality-logprobs-r0-fixed-k7",
+      "functional_check": "functional checks passed",
+      "scheduled_caps": {
+        "7": 42
+      },
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d"
+    },
+    {
+      "label": "quality-logprobs-r1-adaptive-k7",
+      "functional_check": "functional checks passed",
+      "scheduled_caps": {
+        "7": 41
+      },
+      "token_sha256": "740013a476d4af8a90e5e9f420180a32d87e8547f99681435963a3ad31e73e5c"
+    },
+    {
+      "label": "quality-logprobs-r1-fixed-k7",
+      "functional_check": "functional checks passed",
+      "scheduled_caps": {
+        "7": 42
+      },
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d"
+    },
+    {
+      "label": "quality-logprobs-r2-adaptive-k7",
+      "functional_check": "functional checks passed",
+      "scheduled_caps": {
+        "7": 40
+      },
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d"
+    },
+    {
+      "label": "quality-logprobs-r2-fixed-k7",
+      "functional_check": "FAILED: Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n    exec(compile(sys.stdin.read(),'<generated>','exec'),ns)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<generated>\", line 50, in <module>\nAssertionError\n",
+      "scheduled_caps": {
+        "7": 42
+      },
+      "token_sha256": "5fffd176056ae22871cd396b402a093ec967dee53c361355e51f03359ecd95a5"
+    }
+  ],
+  "trace_sha256": {
+    "results/adaptive-next/cache-width-r1/quality-logprobs-trace.jsonl": "44965ff83ff3e0dd2f5e989f51d5c14abf77749d8ca49f3a46e861a468106ec6"
+  },
+  "finding": "Fixed7 also fails the original interval test. Matched prompt/output prefixes have different target logprob rankings with substantial margins (examples .5 and .75, not a tiny tie). This does not prove a root cause or excuse either failure. Diagnostic logprob runs are excluded from throughput and energy comparisons."
+}

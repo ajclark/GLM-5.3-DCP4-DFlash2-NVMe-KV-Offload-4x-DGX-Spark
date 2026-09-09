@@ -1,0 +1,31 @@
+{
+  "runtime": "542df7f",
+  "confidence_packets": 60,
+  "all_valid": true,
+  "caps": [
+    1,
+    3,
+    5,
+    7
+  ],
+  "trace_sha256": "774f2519285e64a64896c50a1918072c2d378b1ed11adce406686ca0a90866b1",
+  "geometry": {
+    "spark-ddbf.local": [
+      "(Worker_TP2_DCP0 pid=226) INFO 09-09 08:35:14 [model_runner.py:473] DCP_BLOCK_TABLE group=0 cp=2 block=64 kernel_block=64 rows=12 cols=1408 capacity=180224",
+      "(Worker_TP2_DCP0 pid=226) INFO 09-09 08:35:14 [model_runner.py:473] DCP_BLOCK_TABLE group=1 cp=1 block=64 kernel_block=64 rows=12 cols=2816 capacity=180224"
+    ],
+    "spark-06c4.local": [
+      "(Worker_TP0_DCP0 pid=231) INFO 09-09 08:35:14 [model_runner.py:473] DCP_BLOCK_TABLE group=0 cp=2 block=64 kernel_block=64 rows=12 cols=1408 capacity=180224",
+      "(Worker_TP0_DCP0 pid=231) INFO 09-09 08:35:14 [model_runner.py:473] DCP_BLOCK_TABLE group=1 cp=1 block=64 kernel_block=64 rows=12 cols=2816 capacity=180224"
+    ],
+    "spark-365c.local": [
+      "(Worker_TP1_DCP1 pid=179) INFO 09-09 08:35:14 [model_runner.py:473] DCP_BLOCK_TABLE group=0 cp=2 block=64 kernel_block=64 rows=12 cols=1408 capacity=180224",
+      "(Worker_TP1_DCP1 pid=179) INFO 09-09 08:35:14 [model_runner.py:473] DCP_BLOCK_TABLE group=1 cp=1 block=64 kernel_block=64 rows=12 cols=2816 capacity=180224"
+    ],
+    "spark-a218.local": [
+      "(Worker_TP3_DCP1 pid=226) INFO 09-09 08:35:14 [model_runner.py:473] DCP_BLOCK_TABLE group=0 cp=2 block=64 kernel_block=64 rows=12 cols=1408 capacity=180224",
+      "(Worker_TP3_DCP1 pid=226) INFO 09-09 08:35:14 [model_runner.py:473] DCP_BLOCK_TABLE group=1 cp=1 block=64 kernel_block=64 rows=12 cols=2816 capacity=180224"
+    ]
+  },
+  "note": "First live transport identity audit; no overhead or predictive-value claim."
+}

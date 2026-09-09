@@ -1,0 +1,30 @@
+{
+  "time": 1788935745.256909,
+  "all_four_rank_geometry_passed": true,
+  "cache_capacity_tokens": 198551,
+  "geometry": {
+    "spark-365c.local-geometry.log": [
+      "(Worker_TP1_DCP1 pid=178) INFO 09-09 06:32:48 [model_runner.py:467] DCP_BLOCK_TABLE group=0 cp=2 block=64 kernel_block=64 rows=12 cols=1408 capacity=180224",
+      "(Worker_TP1_DCP1 pid=178) INFO 09-09 06:32:48 [model_runner.py:467] DCP_BLOCK_TABLE group=1 cp=1 block=64 kernel_block=64 rows=12 cols=2816 capacity=180224"
+    ],
+    "spark-06c4.local-geometry.log": [
+      "(Worker_TP0_DCP0 pid=230) INFO 09-09 06:32:48 [model_runner.py:467] DCP_BLOCK_TABLE group=0 cp=2 block=64 kernel_block=64 rows=12 cols=1408 capacity=180224",
+      "(Worker_TP0_DCP0 pid=230) INFO 09-09 06:32:48 [model_runner.py:467] DCP_BLOCK_TABLE group=1 cp=1 block=64 kernel_block=64 rows=12 cols=2816 capacity=180224"
+    ],
+    "spark-ddbf.local-geometry.log": [
+      "(Worker_TP2_DCP0 pid=225) INFO 09-09 06:32:48 [model_runner.py:467] DCP_BLOCK_TABLE group=0 cp=2 block=64 kernel_block=64 rows=12 cols=1408 capacity=180224",
+      "(Worker_TP2_DCP0 pid=225) INFO 09-09 06:32:48 [model_runner.py:467] DCP_BLOCK_TABLE group=1 cp=1 block=64 kernel_block=64 rows=12 cols=2816 capacity=180224"
+    ],
+    "spark-a218.local-geometry.log": [
+      "(Worker_TP3_DCP1 pid=226) INFO 09-09 06:32:48 [model_runner.py:467] DCP_BLOCK_TABLE group=0 cp=2 block=64 kernel_block=64 rows=12 cols=1408 capacity=180224",
+      "(Worker_TP3_DCP1 pid=226) INFO 09-09 06:32:48 [model_runner.py:467] DCP_BLOCK_TABLE group=1 cp=1 block=64 kernel_block=64 rows=12 cols=2816 capacity=180224"
+    ]
+  },
+  "short_count_caps_passed": [
+    7,
+    5,
+    3,
+    1
+  ],
+  "runtime_commit": "8f684a4"
+}

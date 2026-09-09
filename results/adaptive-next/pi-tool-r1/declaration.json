@@ -1,0 +1,13 @@
+{
+  "purpose": "Actual Pi tool transition integration, not a performance comparison",
+  "tools": [
+    "read",
+    "edit"
+  ],
+  "max_output_tokens_per_request": 512,
+  "memory_guard_deadline_seconds": 300,
+  "herdr_agent": "spec-pi",
+  "server_experiment": "hints-conf-20260909-r2",
+  "expected": "First user request code_edit; requests ending in real tool results tool_followup and no server domain prior; fixture functional checks after actual edit.",
+  "fixture_before_sha256": "f5740a83438efc5362feec56cc0d225dd4c99d30b480dfc1957f825e782b4b9e"
+}

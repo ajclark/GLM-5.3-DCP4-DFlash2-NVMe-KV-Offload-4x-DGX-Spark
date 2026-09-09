@@ -1,0 +1,140 @@
+{
+  "runs": [
+    {
+      "label": "complete-100k-adaptive-k7",
+      "functional_check": "FAILED: Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n    exec(compile(sys.stdin.read(),'<generated>','exec'),ns)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<generated>\", line 52, in <module>\nAssertionError\n",
+      "output_tokens": 294,
+      "token_sha256": "5113bfe55980aeb8aa9966f28d427351ab3bf7a8c8c24bd3a60475577485cfce",
+      "scheduled_caps": {
+        "7": 42
+      },
+      "source_sha256": "8c49768f1ec7d214856a17cde5995fd3c7d27a6c32ecc9588dc28268f6e860fb"
+    },
+    {
+      "label": "complete-100k-fixed-k3",
+      "functional_check": "functional checks passed",
+      "output_tokens": 285,
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "scheduled_caps": {
+        "3": 73
+      },
+      "source_sha256": "0628f29cdecc14ed2bef20ee03ff5bfa77af363eb1046fff47c466626c45b47b"
+    },
+    {
+      "label": "complete-100k-fixed-k7",
+      "functional_check": "functional checks passed",
+      "output_tokens": 285,
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "scheduled_caps": {
+        "7": 41
+      },
+      "source_sha256": "d68469292daf0caede04bc867860bb560ba21d0a95fa2cc8dfb1f3dde689371a"
+    },
+    {
+      "label": "complete-100k-controls-r0-adaptive-k7",
+      "functional_check": "functional checks passed",
+      "output_tokens": 284,
+      "token_sha256": "6b7fd6f4d878c0adca101d70041caf2c81576d2bf5a3ad27fd822564e4188ece",
+      "scheduled_caps": {
+        "7": 41
+      },
+      "source_sha256": "48c691c7494fb175b781953f8e5ba62f495bcc48173bfa7920ab6c0398300906"
+    },
+    {
+      "label": "complete-100k-controls-r0-fixed-k1",
+      "functional_check": "functional checks passed",
+      "output_tokens": 285,
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "scheduled_caps": {
+        "1": 143
+      },
+      "source_sha256": "b66ee9600f553d2e454ea7799f9b5602d8175be2d60efd735f23ad7d60728482"
+    },
+    {
+      "label": "complete-100k-controls-r0-fixed-k3",
+      "functional_check": "functional checks passed",
+      "output_tokens": 285,
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "scheduled_caps": {
+        "3": 74
+      },
+      "source_sha256": "e1482e2d51ca363a720253428b2b3125ef636d85c190fc79d0b15011b01ded2e"
+    },
+    {
+      "label": "complete-100k-controls-r0-fixed-k5",
+      "functional_check": "functional checks passed",
+      "output_tokens": 285,
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "scheduled_caps": {
+        "5": 51
+      },
+      "source_sha256": "3cab25d70c871c34942cf3f96671caa812d745becf8b122a60f8ef370b8ca34d"
+    },
+    {
+      "label": "complete-100k-controls-r0-fixed-k7",
+      "functional_check": "functional checks passed",
+      "output_tokens": 285,
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "scheduled_caps": {
+        "7": 41
+      },
+      "source_sha256": "61404d62d4898c33ea04e2e682e6dba1a5e36642219302c4411dc82d74bbe4ef"
+    },
+    {
+      "label": "complete-100k-controls-r1-adaptive-k7",
+      "functional_check": "functional checks passed",
+      "output_tokens": 285,
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "scheduled_caps": {
+        "7": 40
+      },
+      "source_sha256": "e03f3124476416b917e97634ccd6dcd5f8c0f4ee7748dcc222fd007d89501f20"
+    },
+    {
+      "label": "complete-100k-controls-r1-fixed-k1",
+      "functional_check": "functional checks passed",
+      "output_tokens": 255,
+      "token_sha256": "3f2b7212b2d3ba63d1498b6b94ae5b6834486c3880eb5c8fbd06d320629c5def",
+      "scheduled_caps": {
+        "1": 128
+      },
+      "source_sha256": "d2c5e104cd54a42abec3c7a8374e365ed01ae99d956d8f117c46c3e864ff97df"
+    },
+    {
+      "label": "complete-100k-controls-r1-fixed-k3",
+      "functional_check": "functional checks passed",
+      "output_tokens": 245,
+      "token_sha256": "9c0e4d7958d21902216d467ce1ce46be85bea2cd42e91adcdb731ab615239c79",
+      "scheduled_caps": {
+        "3": 63
+      },
+      "source_sha256": "76d0b635cbac954808efddefaa2620812978e28e39ec87c6dac9c2b31b540f99"
+    },
+    {
+      "label": "complete-100k-controls-r1-fixed-k5",
+      "functional_check": "functional checks passed",
+      "output_tokens": 285,
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "scheduled_caps": {
+        "5": 50
+      },
+      "source_sha256": "f31ff537b9e5019b7468ee52e1b1329cbb98f6efe69a8aa3951b3e9e02d9c06b"
+    },
+    {
+      "label": "complete-100k-controls-r1-fixed-k7",
+      "functional_check": "functional checks passed",
+      "output_tokens": 279,
+      "token_sha256": "26b929e7012f636d03384601ce0d43a0add7024277a106b8587b5e4f757f6d13",
+      "scheduled_caps": {
+        "7": 39
+      },
+      "source_sha256": "73944ffc8cc08f4968ef8bfb4e80ba7a1823059261043b8862608faf3f35af99"
+    }
+  ],
+  "requests": 13,
+  "passed": 12,
+  "trace_sha256": {
+    "results/adaptive-next/cache-width-r1/complete-100k-trace.jsonl": "132122acda724a1d5a4bbff8e93036c2d998869d59b54e37418c9871d33f78b0"
+  },
+  "finding": "The initial adaptive run fails interval semantics; all10 declared followupcontrols pass. The failing adaptive run uses K7 throughout. Same-policy fixed runs can differ across repeats, so cap changes are not a sufficient explanation. Target logits/numerical ties were not captured; root cause remains unresolved. Do not call all end-to-end quality gates passed."
+}

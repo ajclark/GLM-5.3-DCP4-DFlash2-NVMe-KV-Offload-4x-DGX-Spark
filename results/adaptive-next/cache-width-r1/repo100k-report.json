@@ -1,0 +1,83 @@
+{
+  "runtime_commit": "8f684a4",
+  "phase": "repaired replicated-cache geometry",
+  "fixed_cap": 7,
+  "rows": [
+    {
+      "case": "code_repo_context",
+      "repeat": 0,
+      "prompt_tokens": 100157,
+      "output_tokens": 128,
+      "decode_tps": 15.769584377279708,
+      "ttft": 219.2543846629851,
+      "draft_cycles": 51.0,
+      "accepted_tokens": 76.0,
+      "first_position_accepted": 33.0,
+      "first_position_fraction": 0.6470588235294118,
+      "token_sha256": "c303126630b1a0b07610bc914eaf20a9f3cd02458f582166b6433b59efbf2cad",
+      "source": "results/adaptive-next/cache-width-r1/repo100k/repo100k-code_repo_context-r0-fixed-k7.json",
+      "sha256": "38fc069d0c4bff39cb2b86d84318ae10a31f71b58949ad2e5dd2ce05dfa760b2"
+    },
+    {
+      "case": "code_repo_context",
+      "repeat": 1,
+      "prompt_tokens": 100157,
+      "output_tokens": 128,
+      "decode_tps": 16.630102910562943,
+      "ttft": 1.1065875260101166,
+      "draft_cycles": 47.0,
+      "accepted_tokens": 83.0,
+      "first_position_accepted": 35.0,
+      "first_position_fraction": 0.7446808510638298,
+      "token_sha256": "60c9e1fdede80170ada45f4ac5cdb92f620e39b6accca50f77c45a529814ac87",
+      "source": "results/adaptive-next/cache-width-r1/repo100k/repo100k-code_repo_context-r1-fixed-k7.json",
+      "sha256": "357c21df4dfe252b254db403611b20a233d0ab254442215fca09a176a33bee1e"
+    },
+    {
+      "case": "prose_repo_context",
+      "repeat": 0,
+      "prompt_tokens": 100150,
+      "output_tokens": 128,
+      "decode_tps": 16.712651338189595,
+      "ttft": 2.5503977760090493,
+      "draft_cycles": 47.0,
+      "accepted_tokens": 81.0,
+      "first_position_accepted": 34.0,
+      "first_position_fraction": 0.723404255319149,
+      "token_sha256": "0411d50e589ac4517ea4486fe278f6d4b9a52fa8cf90ebc80505bb810c37f8d6",
+      "source": "results/adaptive-next/cache-width-r1/repo100k/repo100k-prose_repo_context-r0-fixed-k7.json",
+      "sha256": "163c3357d9465139f96e2efdd16af62f1d9e2bbf1f50ffa0c81a3d5765d9fd53"
+    },
+    {
+      "case": "prose_repo_context",
+      "repeat": 1,
+      "prompt_tokens": 100150,
+      "output_tokens": 128,
+      "decode_tps": 15.380288332861635,
+      "ttft": 1.077710620011203,
+      "draft_cycles": 51.0,
+      "accepted_tokens": 76.0,
+      "first_position_accepted": 35.0,
+      "first_position_fraction": 0.6862745098039216,
+      "token_sha256": "91f29102750fbb7fe376158747f3129c0bb3fa406836d1396f485fc5658b0c39",
+      "source": "results/adaptive-next/cache-width-r1/repo100k/repo100k-prose_repo_context-r1-fixed-k7.json",
+      "sha256": "5f983ea7e962dfbac546ea65bf1def15266c0ebc5c757748a617554989202e17"
+    }
+  ],
+  "summary": {
+    "code_repo_context": {
+      "mean_decode_tps": 16.199843643921326,
+      "output_ids_identical_across_repeats": false
+    },
+    "prose_repo_context": {
+      "mean_decode_tps": 16.046469835525613,
+      "output_ids_identical_across_repeats": false
+    }
+  },
+  "limitations": [
+    "New repository snapshot and128-token outputs differ from earlier256-token historical runs, so no paired speedup claim.",
+    "Cold/warm token sequences differ, as observed with the quantized target in earlier same-policy repeats; this screen does not establish output identity.",
+    "Prose/code outputs are truncated; separate complete-function checks remain required."
+  ],
+  "decision": "Acceptance no longer collapses near100k. Recalibrate long-context cap costs/priors; do not reuse old near-zero priors."
+}

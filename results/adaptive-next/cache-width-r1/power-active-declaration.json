@@ -1,0 +1,29 @@
+{
+  "experiment": "cache-width-20260909-r1",
+  "runtime_commit": "8f684a4",
+  "controller_commit": "d245ac0",
+  "profiles": [
+    "baseline",
+    "gpu2200",
+    "baseline",
+    "gpu1800",
+    "baseline",
+    "gpu1600",
+    "baseline",
+    "schedutil",
+    "baseline"
+  ],
+  "cases": [
+    "code_cache",
+    "code_csv",
+    "prose_heat",
+    "prose_library"
+  ],
+  "tokens": 256,
+  "idle_seconds": 60,
+  "idle_only": false,
+  "policy": "fixed7",
+  "cpu_watts_measured": false,
+  "comparison": "nearest same-prompt baseline before and after; development screen only",
+  "restoration": "All20 original governors per node and documented2000,2000 GPU lock; independent45second watchdog."
+}

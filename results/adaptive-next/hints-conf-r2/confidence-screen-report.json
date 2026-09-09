@@ -1,0 +1,38 @@
+{
+  "runtime": "f71eac0",
+  "case_count": 12,
+  "valid_learnable_records": 1050,
+  "available_records": 1026,
+  "all_available_features_age_steps": 2,
+  "source_sha256": {
+    "confidence-screen.log": "46e6bdde3c6f8137522c4ef838db442c455b9641bc6b0ab988453eab158a2978",
+    "confidence-joined.jsonl": "76a56c34d4d4a925f66050a3afa13f76a104aa59c4a33f72489ca45c4a71ebae",
+    "confidence-development-trace.jsonl": "3b29eb813e80132df555b9b975e714873643e838e2e613005b2646b0dab77bf5"
+  },
+  "domains": {
+    "code": {
+      "prompts": 6,
+      "records": 421,
+      "brier": {
+        "history_screen": 0.19395584192573836,
+        "available_confidence": 0.19932985698843775,
+        "same_block_noncausal_diagnostic": 0.1235355472585555
+      },
+      "available_over_history_same_boundary_utility": 0.9830786041004353,
+      "noncausal_over_history_same_boundary_utility": 1.0806618912947166
+    },
+    "prose": {
+      "prompts": 6,
+      "records": 629,
+      "brier": {
+        "history_screen": 0.1111822944601146,
+        "available_confidence": 0.11144154387392036,
+        "same_block_noncausal_diagnostic": 0.07990473447918446
+      },
+      "available_over_history_same_boundary_utility": 0.9951540574885789,
+      "noncausal_over_history_same_boundary_utility": 1.0423043638189078
+    }
+  },
+  "decision": "Do not integrate this lag-two confidence predictor into serving: it fails to improve over available acceptance history. Same-block scores are informative, but unavailable at the existing scheduling deadline; investigate worker scheduling only as a separate design.",
+  "cost_provenance": "The frozen measured 8f684a4 repaired-runtime atomic1 cycle curve was supplied to these fixed7 f71eac0 shadow requests. Collector overhead is not assumed zero or independently recalibrated at every cap. Utility is an offline same-boundary sensitivity screen, never measured TPS. Brier errors do not depend on those costs."
+}

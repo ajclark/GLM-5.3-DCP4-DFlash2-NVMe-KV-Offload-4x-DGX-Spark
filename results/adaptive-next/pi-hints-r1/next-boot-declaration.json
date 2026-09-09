@@ -1,0 +1,34 @@
+{
+  "label": "hints-conf-20260909-r1",
+  "runtime_commit": "542df7f",
+  "capacity": {
+    "tp": 4,
+    "dcp": 2,
+    "max_model_len": 180224,
+    "max_num_seqs": 12,
+    "kv_bytes_per_rank": 6000000000,
+    "draft_capacity": 7
+  },
+  "calibration_sha256": {
+    "results/adaptive-next/cache-width-r1/costs-repaired-curve.json": "bdbb804c330e46033e50f228ec847e380e7e5d463705d15f7f37d771e647f7ff",
+    "results/adaptive-next/cache-width-r1/hint-priors.json": "4dcb66fcde0494ea238d90bfd358c0b1fe3ff5ed3c417a3fbf57074d3e2bf922"
+  },
+  "sequence": [
+    "restore original r1 containers before prepare",
+    "same capacity guarded boot with hints and confidence explicitly enabled",
+    "inspect all per-group geometry and bounded confidence identity on smoke",
+    "actual Pi code/prose through herdr, memory monitor ready before prompts",
+    "exact Pi payload confidence on/off at fixed7, hints disabled",
+    "exact Pi payload hints on/off/wrong at adaptive, confidence disabled",
+    "fixed7 development confidence capture, causal offline screen",
+    "held-out hint controls only if development warrants further testing",
+    "record decisions and restore original containers"
+  ],
+  "independent_controls": true,
+  "confidence_affects_policy": false,
+  "global_pi_extension_installed": false,
+  "herdr_poll_seconds": 60,
+  "pi_control_max_tokens": 512,
+  "numerical_baseline": "After short-context studies, six fixed7 100189-token complete-function logprob controls; confidence and hints disabled per request, fresh cache at this boot.",
+  "atomic_setting": 1
+}

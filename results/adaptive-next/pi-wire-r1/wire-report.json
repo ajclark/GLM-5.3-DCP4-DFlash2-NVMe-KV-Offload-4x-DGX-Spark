@@ -1,0 +1,36 @@
+{
+  "created_at": 1788933952.1665769,
+  "pi_version": "0.85.1",
+  "herdr_agent": "spec-pi",
+  "provider": "glm53",
+  "model": "glm-5.3",
+  "server_policy": "off (original deployment)",
+  "request_hook_accepted": true,
+  "requests": [
+    {
+      "hint": {
+        "workload": "code_generate",
+        "phase": "user_turn",
+        "strength": "weak"
+      },
+      "output_tokens": 18,
+      "thinking_level": "minimal",
+      "reasoning_tokens": 0,
+      "temperature": 0,
+      "stop_reason": "stop"
+    },
+    {
+      "hint": {
+        "workload": "mixed",
+        "phase": "user_turn",
+        "strength": "abstain"
+      },
+      "output_tokens": 256,
+      "thinking_level": "minimal",
+      "reasoning_tokens": 0,
+      "temperature": 0,
+      "stop_reason": "length"
+    }
+  ],
+  "note": "Actual installed pi invoked through herdr. Metadata wire smoke only; no adaptive effect claimed. Prose reached the explicit256-token cap. Its explicit negative code mention caused conservative mixed abstention. A60-second background herdr watcher remains active; cluster samplers are stopped."
+}

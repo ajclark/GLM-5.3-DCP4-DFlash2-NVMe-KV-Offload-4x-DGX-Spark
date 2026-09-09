@@ -1,0 +1,375 @@
+{
+  "sensor": "NVIDIA-reported power summed across four devices; CPU counters are separate proxies, not watts.",
+  "screening_only": true,
+  "whole_node_or_wall_power_measured": false,
+  "policies": [
+    "adaptive"
+  ],
+  "method": "Treatment divided by geometric mean of nearest same-prompt baseline before and after; one declared policy across profiles, complete request energy includes prefill.",
+  "limitations": "Small development screen, no confidence interval or promotion claim. Sampling needs all four devices with bracketing coverage and gaps <=5s. Output hashes retained to expose changing work.",
+  "profiles": {
+    "gpu1600": {
+      "paired_requests": 4,
+      "decode_tps_ratio": 0.9289615198306999,
+      "decode_tps_ratio_valid_pairs": 4,
+      "decode_device_j_per_token_ratio": 0.8355084637226987,
+      "decode_device_j_per_token_ratio_valid_pairs": 4,
+      "request_device_j_per_token_ratio": 0.8335522081958131,
+      "request_device_j_per_token_ratio_valid_pairs": 4
+    }
+  },
+  "requests": [
+    {
+      "label": "power-adaptive-0-baseline-code_cache",
+      "profile": "baseline",
+      "profile_index": 0,
+      "case": "code_cache",
+      "decode_tps": 28.786926210929213,
+      "ttft": 0.3993728210043628,
+      "token_sha256": "5a693bf3f351ddcdc8ebf28bbdb56d2c600b7b04574c8738b9d2ccfc007e9c9c",
+      "policy": "adaptive",
+      "decode_device_j_per_token": 2.4244769108942648,
+      "request_device_j_per_token": 2.4762010499233527
+    },
+    {
+      "label": "power-adaptive-0-baseline-code_csv",
+      "profile": "baseline",
+      "profile_index": 0,
+      "case": "code_csv",
+      "decode_tps": 26.68117487254963,
+      "ttft": 0.3798296820023097,
+      "token_sha256": "216b9f42e8141336423b0f9abd2b88858f0b405c6a02d15dafe5e5439a631788",
+      "policy": "adaptive",
+      "decode_device_j_per_token": 2.6334110773564268,
+      "request_device_j_per_token": 2.6905611019339037
+    },
+    {
+      "label": "power-adaptive-0-baseline-prose_heat",
+      "profile": "baseline",
+      "profile_index": 0,
+      "case": "prose_heat",
+      "decode_tps": 21.536491231342776,
+      "ttft": 0.42828287300653756,
+      "token_sha256": "252812ae73f137bcd1f708ad66ceef3f3da0ab31fb8b1fb3162eabea18a2b506",
+      "policy": "adaptive",
+      "decode_device_j_per_token": 3.223535355909535,
+      "request_device_j_per_token": 3.292266263486924
+    },
+    {
+      "label": "power-adaptive-0-baseline-prose_library",
+      "profile": "baseline",
+      "profile_index": 0,
+      "case": "prose_library",
+      "decode_tps": 17.021804617408844,
+      "ttft": 0.4362284390081186,
+      "token_sha256": "1792e7d8b9901b4240736fab757476f94bac782a66a8f25ab770868d29b8efda",
+      "policy": "adaptive",
+      "decode_device_j_per_token": 4.127088439887366,
+      "request_device_j_per_token": 4.182116702255849
+    },
+    {
+      "label": "power-adaptive-1-gpu1600-code_cache",
+      "profile": "gpu1600",
+      "profile_index": 1,
+      "case": "code_cache",
+      "decode_tps": 26.57664788749195,
+      "ttft": 0.41899810801260173,
+      "token_sha256": "d6fd5452e9ce359f04638a3676be1beb62017b747dc3f5ab1eb3c076eb68e0d1",
+      "policy": "adaptive",
+      "decode_device_j_per_token": 2.0144611543497986,
+      "request_device_j_per_token": 2.0635952054912425
+    },
+    {
+      "label": "power-adaptive-1-gpu1600-code_csv",
+      "profile": "gpu1600",
+      "profile_index": 1,
+      "case": "code_csv",
+      "decode_tps": 25.27174224771448,
+      "ttft": 0.3860753719927743,
+      "token_sha256": "be6bc9da476f0015dd2cce43eb381b5e33d4b22e4b2c7f000752fef1a5b7240f",
+      "policy": "adaptive",
+      "decode_device_j_per_token": 2.2021005114248826,
+      "request_device_j_per_token": 2.2464007383353666
+    },
+    {
+      "label": "power-adaptive-1-gpu1600-prose_heat",
+      "profile": "gpu1600",
+      "profile_index": 1,
+      "case": "prose_heat",
+      "decode_tps": 17.731585333765572,
+      "ttft": 0.44331823001266457,
+      "token_sha256": "f3ad901a76d6314e1c5954ae20839a717e1c7c1039133ee8053cd1c25fdeb093",
+      "policy": "adaptive",
+      "decode_device_j_per_token": 3.0895138898341563,
+      "request_device_j_per_token": 3.134873041747579
+    },
+    {
+      "label": "power-adaptive-1-gpu1600-prose_library",
+      "profile": "gpu1600",
+      "profile_index": 1,
+      "case": "prose_library",
+      "decode_tps": 16.589550394290015,
+      "ttft": 0.44607967999763787,
+      "token_sha256": "81468b5456e3375ff45db839cdaa4fde8639f6f3145d5067256d034ac46242db",
+      "policy": "adaptive",
+      "decode_device_j_per_token": 3.399553564561199,
+      "request_device_j_per_token": 3.463637738661572
+    },
+    {
+      "label": "power-adaptive-2-baseline-code_cache",
+      "profile": "baseline",
+      "profile_index": 2,
+      "case": "code_cache",
+      "decode_tps": 27.466154783093184,
+      "ttft": 0.4062311870220583,
+      "token_sha256": "37c41b0e7fb0dd1761f6f4a8bd0232cd7681af97c6d69182df282cf6ee0923a9",
+      "policy": "adaptive",
+      "decode_device_j_per_token": 2.575472940909508,
+      "request_device_j_per_token": 2.643950291642406
+    },
+    {
+      "label": "power-adaptive-2-baseline-code_csv",
+      "profile": "baseline",
+      "profile_index": 2,
+      "case": "code_csv",
+      "decode_tps": 26.556150803367707,
+      "ttft": 0.47783178399549797,
+      "token_sha256": "d00322401c2f8c5c7c8304728de210960eeab3fcc4e30aae804fc07972590de2",
+      "policy": "adaptive",
+      "decode_device_j_per_token": 2.7401728334800857,
+      "request_device_j_per_token": 2.8256064034822486
+    },
+    {
+      "label": "power-adaptive-2-baseline-prose_heat",
+      "profile": "baseline",
+      "profile_index": 2,
+      "case": "prose_heat",
+      "decode_tps": 18.93885335213129,
+      "ttft": 0.43500866199610755,
+      "token_sha256": "af876a4ee12b03048d7d70aed970e15a73355601c05826d0eda27a27e0990e1f",
+      "policy": "adaptive",
+      "decode_device_j_per_token": 3.778456039979893,
+      "request_device_j_per_token": 3.8561202761432747
+    },
+    {
+      "label": "power-adaptive-2-baseline-prose_library",
+      "profile": "baseline",
+      "profile_index": 2,
+      "case": "prose_library",
+      "decode_tps": 18.094886994068997,
+      "ttft": 0.4365173949918244,
+      "token_sha256": "429e0e03c165ebc04db1233ef88870ce870802668aa58510d24b3ec4c3d809a8",
+      "policy": "adaptive",
+      "decode_device_j_per_token": 4.035962068498728,
+      "request_device_j_per_token": 4.113679862194963
+    }
+  ],
+  "comparisons": [
+    {
+      "label": "power-adaptive-1-gpu1600-code_cache",
+      "profile": "gpu1600",
+      "case": "code_cache",
+      "controls": [
+        "power-adaptive-0-baseline-code_cache",
+        "power-adaptive-2-baseline-code_cache"
+      ],
+      "decode_tps_ratio": 0.945156278527074,
+      "decode_device_j_per_token_ratio": 0.8061602406399776,
+      "request_device_j_per_token_ratio": 0.8065010099312175
+    },
+    {
+      "label": "power-adaptive-1-gpu1600-code_csv",
+      "profile": "gpu1600",
+      "case": "code_csv",
+      "controls": [
+        "power-adaptive-0-baseline-code_csv",
+        "power-adaptive-2-baseline-code_csv"
+      ],
+      "decode_tps_ratio": 0.9494020075374779,
+      "decode_device_j_per_token_ratio": 0.8197639778092817,
+      "request_device_j_per_token_ratio": 0.8147229882151187
+    },
+    {
+      "label": "power-adaptive-1-gpu1600-prose_heat",
+      "profile": "gpu1600",
+      "case": "prose_heat",
+      "controls": [
+        "power-adaptive-0-baseline-prose_heat",
+        "power-adaptive-2-baseline-prose_heat"
+      ],
+      "decode_tps_ratio": 0.8779772274750272,
+      "decode_device_j_per_token_ratio": 0.8852516525839744,
+      "request_device_j_per_token_ratio": 0.8798268179575933
+    },
+    {
+      "label": "power-adaptive-1-gpu1600-prose_library",
+      "profile": "gpu1600",
+      "case": "prose_library",
+      "controls": [
+        "power-adaptive-0-baseline-prose_library",
+        "power-adaptive-2-baseline-prose_library"
+      ],
+      "decode_tps_ratio": 0.9452656532233881,
+      "decode_device_j_per_token_ratio": 0.8329644426007337,
+      "request_device_j_per_token_ratio": 0.8350628122802018
+    }
+  ],
+  "idle_windows": [
+    {
+      "index": 0,
+      "profile": "baseline",
+      "started_at": 1788941454.1774354,
+      "settled_start": 1788941474.1774354,
+      "ended_at": 1788941514.5961447,
+      "four_device_mean_idle_watts": 31.891034015670122,
+      "cpu_proxies": {
+        "spark-06c4.local": {
+          "samples": 4,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9934136819785753,
+          "idle_counter_interval_seconds": 31.116604804992676
+        },
+        "spark-365c.local": {
+          "samples": 4,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9942103723680107,
+          "idle_counter_interval_seconds": 31.116604804992676
+        },
+        "spark-a218.local": {
+          "samples": 4,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9928926771934581,
+          "idle_counter_interval_seconds": 31.116604804992676
+        },
+        "spark-ddbf.local": {
+          "samples": 4,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9935883716670572,
+          "idle_counter_interval_seconds": 31.116604804992676
+        }
+      },
+      "device_proxies": {
+        "spark-ddbf.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 42.0
+        },
+        "spark-a218.local": {
+          "mean_graphics_mhz": 1976.0,
+          "mean_temperature_c": 42.0
+        },
+        "spark-365c.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 44.0
+        },
+        "spark-06c4.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 43.0
+        }
+      }
+    },
+    {
+      "index": 1,
+      "profile": "gpu1600",
+      "started_at": 1788941581.5637078,
+      "settled_start": 1788941601.5637078,
+      "ended_at": 1788941641.9788535,
+      "four_device_mean_idle_watts": 27.671932735258387,
+      "cpu_proxies": {
+        "spark-06c4.local": {
+          "samples": 4,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9936502274423193,
+          "idle_counter_interval_seconds": 31.14296841621399
+        },
+        "spark-365c.local": {
+          "samples": 4,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9936229403838527,
+          "idle_counter_interval_seconds": 31.14296841621399
+        },
+        "spark-a218.local": {
+          "samples": 4,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9925982981733373,
+          "idle_counter_interval_seconds": 31.14296841621399
+        },
+        "spark-ddbf.local": {
+          "samples": 4,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9930793907204498,
+          "idle_counter_interval_seconds": 31.14296841621399
+        }
+      },
+      "device_proxies": {
+        "spark-ddbf.local": {
+          "mean_graphics_mhz": 1540.45,
+          "mean_temperature_c": 45.55
+        },
+        "spark-a218.local": {
+          "mean_graphics_mhz": 1600.2,
+          "mean_temperature_c": 45.4
+        },
+        "spark-365c.local": {
+          "mean_graphics_mhz": 1599.0,
+          "mean_temperature_c": 48.0
+        },
+        "spark-06c4.local": {
+          "mean_graphics_mhz": 1583.55,
+          "mean_temperature_c": 47.2
+        }
+      }
+    },
+    {
+      "index": 2,
+      "profile": "baseline",
+      "started_at": 1788941713.3111417,
+      "settled_start": 1788941733.3111417,
+      "ended_at": 1788941773.731689,
+      "four_device_mean_idle_watts": 33.55990996132139,
+      "cpu_proxies": {
+        "spark-06c4.local": {
+          "samples": 4,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9938643830252106,
+          "idle_counter_interval_seconds": 31.133529663085938
+        },
+        "spark-365c.local": {
+          "samples": 4,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9945694106991536,
+          "idle_counter_interval_seconds": 31.133529663085938
+        },
+        "spark-a218.local": {
+          "samples": 4,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9931168914862866,
+          "idle_counter_interval_seconds": 31.133529663085938
+        },
+        "spark-ddbf.local": {
+          "samples": 4,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9932851634444195,
+          "idle_counter_interval_seconds": 31.133529663085938
+        }
+      },
+      "device_proxies": {
+        "spark-ddbf.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 47.05
+        },
+        "spark-a218.local": {
+          "mean_graphics_mhz": 1976.0,
+          "mean_temperature_c": 46.95
+        },
+        "spark-365c.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 48.1
+        },
+        "spark-06c4.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 49.15
+        }
+      }
+    }
+  ]
+}

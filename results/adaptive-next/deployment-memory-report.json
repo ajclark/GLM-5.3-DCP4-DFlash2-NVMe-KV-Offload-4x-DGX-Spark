@@ -1,0 +1,245 @@
+{
+  "scope": "Complete deployment controller guards, including load/hold and separate original restoration. Loading can reclaim file cache with stalls at high available memory; admission uses phase-aware pressure checks.",
+  "phases": {
+    "cache-width-20260909-r1/memory.jsonl": {
+      "spark-06c4.local": {
+        "minimum_available_mib": 1758.37109375,
+        "max_full_psi_avg10": 16.33,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2747.1953125
+      },
+      "spark-365c.local": {
+        "minimum_available_mib": 3125.44921875,
+        "max_full_psi_avg10": 12.08,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2088.21484375
+      },
+      "spark-a218.local": {
+        "minimum_available_mib": 3191.23046875,
+        "max_full_psi_avg10": 16.8,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2101.84765625
+      },
+      "spark-ddbf.local": {
+        "minimum_available_mib": 3220.46875,
+        "max_full_psi_avg10": 9.74,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2128.5625
+      }
+    },
+    "cache-width-20260909-r1/restore-memory.jsonl": {
+      "spark-365c.local": {
+        "minimum_available_mib": 6430.94140625,
+        "max_full_psi_avg10": 6.02,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2071.44921875
+      },
+      "spark-a218.local": {
+        "minimum_available_mib": 6425.66015625,
+        "max_full_psi_avg10": 12.41,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2024.42578125
+      },
+      "spark-06c4.local": {
+        "minimum_available_mib": 5066.265625,
+        "max_full_psi_avg10": 16.95,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2722.92578125
+      },
+      "spark-ddbf.local": {
+        "minimum_available_mib": 6481.12109375,
+        "max_full_psi_avg10": 13.32,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2037.19140625
+      }
+    },
+    "hints-conf-20260909-r1/memory.jsonl": {
+      "spark-365c.local": {
+        "minimum_available_mib": 5273.19140625,
+        "max_full_psi_avg10": 13.19,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2075.08203125
+      },
+      "spark-06c4.local": {
+        "minimum_available_mib": 3967.8046875,
+        "max_full_psi_avg10": 11.65,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2710.48828125
+      },
+      "spark-a218.local": {
+        "minimum_available_mib": 5310.0703125,
+        "max_full_psi_avg10": 13.62,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2080.38671875
+      },
+      "spark-ddbf.local": {
+        "minimum_available_mib": 5354.25,
+        "max_full_psi_avg10": 10.31,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2091.07421875
+      }
+    },
+    "hints-conf-20260909-r1/restore-memory.jsonl": {
+      "spark-06c4.local": {
+        "minimum_available_mib": 4880.515625,
+        "max_full_psi_avg10": 14.72,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2705.8984375
+      },
+      "spark-365c.local": {
+        "minimum_available_mib": 6319.67578125,
+        "max_full_psi_avg10": 11.06,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2030.4453125
+      },
+      "spark-ddbf.local": {
+        "minimum_available_mib": 6309.94140625,
+        "max_full_psi_avg10": 13.65,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2026.48046875
+      },
+      "spark-a218.local": {
+        "minimum_available_mib": 6507.9453125,
+        "max_full_psi_avg10": 17.0,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2059.94921875
+      }
+    },
+    "hints-conf-20260909-r2/memory.jsonl": {
+      "spark-06c4.local": {
+        "minimum_available_mib": 2598.65234375,
+        "max_full_psi_avg10": 12.98,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2699.98828125
+      },
+      "spark-a218.local": {
+        "minimum_available_mib": 4407.46875,
+        "max_full_psi_avg10": 9.84,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2084.84375
+      },
+      "spark-365c.local": {
+        "minimum_available_mib": 4076.62109375,
+        "max_full_psi_avg10": 10.23,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2077.47265625
+      },
+      "spark-ddbf.local": {
+        "minimum_available_mib": 4374.6171875,
+        "max_full_psi_avg10": 9.92,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2085.421875
+      }
+    },
+    "hints-conf-20260909-r2/restore-memory.jsonl": {
+      "spark-365c.local": {
+        "minimum_available_mib": 6287.28515625,
+        "max_full_psi_avg10": 9.5,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2040.5234375
+      },
+      "spark-06c4.local": {
+        "minimum_available_mib": 5028.02734375,
+        "max_full_psi_avg10": 17.91,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2728.1015625
+      },
+      "spark-ddbf.local": {
+        "minimum_available_mib": 6279.2421875,
+        "max_full_psi_avg10": 17.38,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2052.26171875
+      },
+      "spark-a218.local": {
+        "minimum_available_mib": 6434.5078125,
+        "max_full_psi_avg10": 14.58,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2025.8984375
+      }
+    },
+    "atomic-off-20260909-r1/memory.jsonl": {
+      "spark-06c4.local": {
+        "minimum_available_mib": 3004.97265625,
+        "max_full_psi_avg10": 15.2,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2715.34375
+      },
+      "spark-365c.local": {
+        "minimum_available_mib": 4432.1875,
+        "max_full_psi_avg10": 12.85,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2080.01953125
+      },
+      "spark-a218.local": {
+        "minimum_available_mib": 4390.62109375,
+        "max_full_psi_avg10": 13.3,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2094.68359375
+      },
+      "spark-ddbf.local": {
+        "minimum_available_mib": 4468.29296875,
+        "max_full_psi_avg10": 14.85,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2072.6640625
+      }
+    },
+    "atomic-off-20260909-r1/restore-memory.jsonl": {
+      "spark-365c.local": {
+        "minimum_available_mib": 6377.31640625,
+        "max_full_psi_avg10": 11.88,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2026.15234375
+      },
+      "spark-a218.local": {
+        "minimum_available_mib": 6457.13671875,
+        "max_full_psi_avg10": 11.08,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2044.39453125
+      },
+      "spark-06c4.local": {
+        "minimum_available_mib": 4919.24609375,
+        "max_full_psi_avg10": 10.07,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2694.8046875
+      },
+      "spark-ddbf.local": {
+        "minimum_available_mib": 6213.93359375,
+        "max_full_psi_avg10": 12.26,
+        "trips": [],
+        "oom_delta": 0,
+        "swap_out_delta_mib": 2032.96875
+      }
+    }
+  }
+}

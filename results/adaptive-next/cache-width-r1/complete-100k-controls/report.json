@@ -1,0 +1,125 @@
+{
+  "runs": [
+    {
+      "label": "complete-100k-controls-r0-fixed-k7",
+      "functional_check": "functional checks passed",
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100474,
+        "completion_tokens": 285
+      },
+      "ttft": 1.1901562889979687,
+      "decode_tps": 41.527473442067965
+    },
+    {
+      "label": "complete-100k-controls-r0-adaptive-k7",
+      "functional_check": "functional checks passed",
+      "token_sha256": "6b7fd6f4d878c0adca101d70041caf2c81576d2bf5a3ad27fd822564e4188ece",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100473,
+        "completion_tokens": 284
+      },
+      "ttft": 1.1502711909997743,
+      "decode_tps": 41.31233888049194
+    },
+    {
+      "label": "complete-100k-controls-r0-fixed-k1",
+      "functional_check": "functional checks passed",
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100474,
+        "completion_tokens": 285
+      },
+      "ttft": 1.1655348649946973,
+      "decode_tps": 18.0631598140456
+    },
+    {
+      "label": "complete-100k-controls-r0-fixed-k5",
+      "functional_check": "functional checks passed",
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100474,
+        "completion_tokens": 285
+      },
+      "ttft": 1.1652905679948162,
+      "decode_tps": 37.24256980905729
+    },
+    {
+      "label": "complete-100k-controls-r0-fixed-k3",
+      "functional_check": "functional checks passed",
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100474,
+        "completion_tokens": 285
+      },
+      "ttft": 1.1408244500053115,
+      "decode_tps": 28.858624076169523
+    },
+    {
+      "label": "complete-100k-controls-r1-fixed-k3",
+      "functional_check": "functional checks passed",
+      "token_sha256": "9c0e4d7958d21902216d467ce1ce46be85bea2cd42e91adcdb731ab615239c79",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100434,
+        "completion_tokens": 245
+      },
+      "ttft": 1.1449320260144304,
+      "decode_tps": 29.140938121459776
+    },
+    {
+      "label": "complete-100k-controls-r1-fixed-k5",
+      "functional_check": "functional checks passed",
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100474,
+        "completion_tokens": 285
+      },
+      "ttft": 1.1667065920191817,
+      "decode_tps": 37.81695717905507
+    },
+    {
+      "label": "complete-100k-controls-r1-fixed-k1",
+      "functional_check": "functional checks passed",
+      "token_sha256": "3f2b7212b2d3ba63d1498b6b94ae5b6834486c3880eb5c8fbd06d320629c5def",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100444,
+        "completion_tokens": 255
+      },
+      "ttft": 1.1414058200025465,
+      "decode_tps": 18.04625066607839
+    },
+    {
+      "label": "complete-100k-controls-r1-adaptive-k7",
+      "functional_check": "functional checks passed",
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100474,
+        "completion_tokens": 285
+      },
+      "ttft": 1.1362264080089517,
+      "decode_tps": 42.30679378727004
+    },
+    {
+      "label": "complete-100k-controls-r1-fixed-k7",
+      "functional_check": "functional checks passed",
+      "token_sha256": "26b929e7012f636d03384601ce0d43a0add7024277a106b8587b5e4f757f6d13",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100468,
+        "completion_tokens": 279
+      },
+      "ttft": 1.1505055500019807,
+      "decode_tps": 42.53080043241242
+    }
+  ],
+  "all_token_ids_identical": false
+}

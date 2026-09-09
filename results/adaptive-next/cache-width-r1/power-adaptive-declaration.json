@@ -1,0 +1,25 @@
+{
+  "declared_before_run": true,
+  "experiment": "cache-width-20260909-r1",
+  "runtime_code": "8f684a4",
+  "profiles": [
+    "baseline",
+    "gpu1600",
+    "baseline"
+  ],
+  "cases": [
+    "code_cache",
+    "code_csv",
+    "prose_heat",
+    "prose_library"
+  ],
+  "tokens": 256,
+  "idle_seconds": 60,
+  "policy": "frozen repaired V4 adaptive with the measured 2000 MHz curve at both clock settings",
+  "costs_sha256": "bdbb804c330e46033e50f228ec847e380e7e5d463705d15f7f37d771e647f7ff",
+  "confidence_capture": false,
+  "hints": false,
+  "purpose": "Check clock/controller interaction; no claim that the 2GHz calibration is optimal or newly measured at 1.6GHz",
+  "limitations": "One treatment per development prompt, bracketed controls, changing outputs retained, no confidence interval or promotion",
+  "restoration": "independent clock/governor watchdog and original container controller remain active"
+}

@@ -1,0 +1,658 @@
+{
+  "source_sha256": {
+    "results/adaptive-next/atomic-control-r1/atomic1-quality/atomic1-quality-r0-fixed-k7.json": "ad3e8b5b725bdcee23768c2606e462135550d148a0829a6455e4f0ed85a77c2e",
+    "results/adaptive-next/atomic-control-r1/atomic1-quality/atomic1-quality-r1-fixed-k7.json": "c12b23811f583bb0fc6a64b5ca880d76dc46c3cc0334610dc20392602c9b9622",
+    "results/adaptive-next/atomic-control-r1/atomic1-quality/atomic1-quality-r2-fixed-k7.json": "87d0614c2f127ed033f676f047b4504eaa784fc9b3f113f76ae1496423f6921f",
+    "results/adaptive-next/atomic-control-r1/atomic1-quality/atomic1-quality-r3-fixed-k7.json": "b367e7a744dda6941454a91ad31d5e2aa762166da392ae2c5c32bf0852a44e1f",
+    "results/adaptive-next/atomic-control-r1/atomic1-quality/atomic1-quality-r4-fixed-k7.json": "4a71ddb1ed98a35b25caf51ffd0a57ddd273e389d921c594299ba63cbdb31da2",
+    "results/adaptive-next/atomic-control-r1/atomic1-quality/atomic1-quality-r5-fixed-k7.json": "edb278b173812a060eaaaf1ba17ca27a3ee2a8177e500bc81fe99696485da96c"
+  },
+  "pairs": [
+    {
+      "labels": [
+        "atomic1-quality-r0-fixed-k7",
+        "atomic1-quality-r1-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true
+    },
+    {
+      "labels": [
+        "atomic1-quality-r0-fixed-k7",
+        "atomic1-quality-r2-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true
+    },
+    {
+      "labels": [
+        "atomic1-quality-r0-fixed-k7",
+        "atomic1-quality-r3-fixed-k7"
+      ],
+      "first_divergence": 74,
+      "shared_output_prefix_tokens": 74,
+      "observations": [
+        {
+          "label": "atomic1-quality-r0-fixed-k7",
+          "selected_token_id": 421,
+          "selected_logprob": -0.9937731623649597,
+          "top_logprobs": [
+            {
+              "token": " if",
+              "logprob": -0.9937731623649597,
+              "bytes": [
+                32,
+                105,
+                102
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -0.9937731623649597,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.0
+        },
+        {
+          "label": "atomic1-quality-r3-fixed-k7",
+          "selected_token_id": 3589,
+          "selected_logprob": -0.9931790232658386,
+          "top_logprobs": [
+            {
+              "token": " items",
+              "logprob": -0.9931790232658386,
+              "bytes": [
+                32,
+                105,
+                116,
+                101,
+                109,
+                115
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.2431790828704834,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.2500000596046448
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic1-quality-r0-fixed-k7",
+        "atomic1-quality-r4-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true
+    },
+    {
+      "labels": [
+        "atomic1-quality-r0-fixed-k7",
+        "atomic1-quality-r5-fixed-k7"
+      ],
+      "first_divergence": 137,
+      "shared_output_prefix_tokens": 137,
+      "observations": [
+        {
+          "label": "atomic1-quality-r0-fixed-k7",
+          "selected_token_id": 10338,
+          "selected_logprob": -0.0892559140920639,
+          "top_logprobs": [
+            {
+              "token": "]:\n",
+              "logprob": -0.0892559140920639,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            },
+            {
+              "token": "]",
+              "logprob": -2.4642558097839355,
+              "bytes": [
+                93
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 2.3749998956918716
+        },
+        {
+          "label": "atomic1-quality-r5-fixed-k7",
+          "selected_token_id": 60,
+          "selected_logprob": -0.6936103105545044,
+          "top_logprobs": [
+            {
+              "token": "]",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93
+              ]
+            },
+            {
+              "token": "]:\n",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.0
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic1-quality-r1-fixed-k7",
+        "atomic1-quality-r2-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true
+    },
+    {
+      "labels": [
+        "atomic1-quality-r1-fixed-k7",
+        "atomic1-quality-r3-fixed-k7"
+      ],
+      "first_divergence": 74,
+      "shared_output_prefix_tokens": 74,
+      "observations": [
+        {
+          "label": "atomic1-quality-r1-fixed-k7",
+          "selected_token_id": 421,
+          "selected_logprob": -0.7945828437805176,
+          "top_logprobs": [
+            {
+              "token": " if",
+              "logprob": -0.7945828437805176,
+              "bytes": [
+                32,
+                105,
+                102
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.1695828437805176,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.375
+        },
+        {
+          "label": "atomic1-quality-r3-fixed-k7",
+          "selected_token_id": 3589,
+          "selected_logprob": -0.9931790232658386,
+          "top_logprobs": [
+            {
+              "token": " items",
+              "logprob": -0.9931790232658386,
+              "bytes": [
+                32,
+                105,
+                116,
+                101,
+                109,
+                115
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.2431790828704834,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.2500000596046448
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic1-quality-r1-fixed-k7",
+        "atomic1-quality-r4-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true
+    },
+    {
+      "labels": [
+        "atomic1-quality-r1-fixed-k7",
+        "atomic1-quality-r5-fixed-k7"
+      ],
+      "first_divergence": 137,
+      "shared_output_prefix_tokens": 137,
+      "observations": [
+        {
+          "label": "atomic1-quality-r1-fixed-k7",
+          "selected_token_id": 10338,
+          "selected_logprob": -0.038181524723768234,
+          "top_logprobs": [
+            {
+              "token": "]:\n",
+              "logprob": -0.038181524723768234,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            },
+            {
+              "token": "]",
+              "logprob": -3.2881815433502197,
+              "bytes": [
+                93
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 3.2500000186264515
+        },
+        {
+          "label": "atomic1-quality-r5-fixed-k7",
+          "selected_token_id": 60,
+          "selected_logprob": -0.6936103105545044,
+          "top_logprobs": [
+            {
+              "token": "]",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93
+              ]
+            },
+            {
+              "token": "]:\n",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.0
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic1-quality-r2-fixed-k7",
+        "atomic1-quality-r3-fixed-k7"
+      ],
+      "first_divergence": 74,
+      "shared_output_prefix_tokens": 74,
+      "observations": [
+        {
+          "label": "atomic1-quality-r2-fixed-k7",
+          "selected_token_id": 421,
+          "selected_logprob": -0.60066157579422,
+          "top_logprobs": [
+            {
+              "token": " if",
+              "logprob": -0.60066157579422,
+              "bytes": [
+                32,
+                105,
+                102
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.3506615161895752,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.7499999403953552
+        },
+        {
+          "label": "atomic1-quality-r3-fixed-k7",
+          "selected_token_id": 3589,
+          "selected_logprob": -0.9931790232658386,
+          "top_logprobs": [
+            {
+              "token": " items",
+              "logprob": -0.9931790232658386,
+              "bytes": [
+                32,
+                105,
+                116,
+                101,
+                109,
+                115
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.2431790828704834,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.2500000596046448
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic1-quality-r2-fixed-k7",
+        "atomic1-quality-r4-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true
+    },
+    {
+      "labels": [
+        "atomic1-quality-r2-fixed-k7",
+        "atomic1-quality-r5-fixed-k7"
+      ],
+      "first_divergence": 137,
+      "shared_output_prefix_tokens": 137,
+      "observations": [
+        {
+          "label": "atomic1-quality-r2-fixed-k7",
+          "selected_token_id": 10338,
+          "selected_logprob": -0.1129913330078125,
+          "top_logprobs": [
+            {
+              "token": "]:\n",
+              "logprob": -0.1129913330078125,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            },
+            {
+              "token": "]",
+              "logprob": -2.2379913330078125,
+              "bytes": [
+                93
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 2.125
+        },
+        {
+          "label": "atomic1-quality-r5-fixed-k7",
+          "selected_token_id": 60,
+          "selected_logprob": -0.6936103105545044,
+          "top_logprobs": [
+            {
+              "token": "]",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93
+              ]
+            },
+            {
+              "token": "]:\n",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.0
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic1-quality-r3-fixed-k7",
+        "atomic1-quality-r4-fixed-k7"
+      ],
+      "first_divergence": 74,
+      "shared_output_prefix_tokens": 74,
+      "observations": [
+        {
+          "label": "atomic1-quality-r3-fixed-k7",
+          "selected_token_id": 3589,
+          "selected_logprob": -0.9931790232658386,
+          "top_logprobs": [
+            {
+              "token": " items",
+              "logprob": -0.9931790232658386,
+              "bytes": [
+                32,
+                105,
+                116,
+                101,
+                109,
+                115
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.2431790828704834,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.2500000596046448
+        },
+        {
+          "label": "atomic1-quality-r4-fixed-k7",
+          "selected_token_id": 421,
+          "selected_logprob": -0.9023587703704834,
+          "top_logprobs": [
+            {
+              "token": " if",
+              "logprob": -0.9023587703704834,
+              "bytes": [
+                32,
+                105,
+                102
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.4023587703704834,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.5
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic1-quality-r3-fixed-k7",
+        "atomic1-quality-r5-fixed-k7"
+      ],
+      "first_divergence": 74,
+      "shared_output_prefix_tokens": 74,
+      "observations": [
+        {
+          "label": "atomic1-quality-r3-fixed-k7",
+          "selected_token_id": 3589,
+          "selected_logprob": -0.9931790232658386,
+          "top_logprobs": [
+            {
+              "token": " items",
+              "logprob": -0.9931790232658386,
+              "bytes": [
+                32,
+                105,
+                116,
+                101,
+                109,
+                115
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.2431790828704834,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.2500000596046448
+        },
+        {
+          "label": "atomic1-quality-r5-fixed-k7",
+          "selected_token_id": 421,
+          "selected_logprob": -0.5997142195701599,
+          "top_logprobs": [
+            {
+              "token": " if",
+              "logprob": -0.5997142195701599,
+              "bytes": [
+                32,
+                105,
+                102
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.7247142791748047,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 1.1250000596046448
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic1-quality-r4-fixed-k7",
+        "atomic1-quality-r5-fixed-k7"
+      ],
+      "first_divergence": 137,
+      "shared_output_prefix_tokens": 137,
+      "observations": [
+        {
+          "label": "atomic1-quality-r4-fixed-k7",
+          "selected_token_id": 10338,
+          "selected_logprob": -0.4744775891304016,
+          "top_logprobs": [
+            {
+              "token": "]:\n",
+              "logprob": -0.4744775891304016,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            },
+            {
+              "token": "]",
+              "logprob": -0.9744775891304016,
+              "bytes": [
+                93
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.5
+        },
+        {
+          "label": "atomic1-quality-r5-fixed-k7",
+          "selected_token_id": 60,
+          "selected_logprob": -0.6936103105545044,
+          "top_logprobs": [
+            {
+              "token": "]",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93
+              ]
+            },
+            {
+              "token": "]:\n",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.0
+        }
+      ]
+    }
+  ],
+  "note": "Reported probabilities are observations at identical prompt/output prefixes, not proof of a numerical root cause. Logprob capture changes diagnostic overhead; these rates are excluded from performance comparisons."
+}

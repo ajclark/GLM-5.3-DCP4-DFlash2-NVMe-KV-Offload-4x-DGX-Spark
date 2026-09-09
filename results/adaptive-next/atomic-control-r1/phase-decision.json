@@ -1,0 +1,21 @@
+{
+  "runtime": "f71eac0",
+  "phase": "complete; original containers restored and generating",
+  "one_setting_change": "VLLM_MARLIN_USE_ATOMIC_ADD1 ->0",
+  "source_package_difference": "package-difference-report.json",
+  "atomic1": {
+    "functional_passes": 5,
+    "requests": 6,
+    "distinct_output_sequences": 3
+  },
+  "atomic0": {
+    "functional_passes": 6,
+    "requests": 6,
+    "distinct_output_sequences": 2
+  },
+  "decision": "Disabling dense atomics is insufficient for repeatability; do not claim an accuracy gain or promote this flag change. No causal numerical root cause established.",
+  "conditional_performance_screen": "skipped according to the declaration: output sequences remained different",
+  "no_logprob_throughput_used_as_performance_evidence": true,
+  "trace_final_sha256": "214461427f7dff85d0319ffae53792971cdea6dd6c829089bd191bb18f8d51a0",
+  "restored_generation_sha256": "7cc3b7df1d53173be187685f64838032eb00e29d2073164f68b35d82b7071a2e"
+}

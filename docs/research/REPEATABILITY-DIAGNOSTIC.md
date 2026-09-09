@@ -1,6 +1,14 @@
 # Target repeatability diagnostic
 
-**2026-09-09.** The saved runs show a material target-distribution change,
+**September 9 follow-up result:** disabling the dense Marlin atomic flag did
+not eliminate repeatability differences. The isolated atomic1/atomic0 controls
+produced three/two distinct output sequences across six requests each, with
+five/six functional passes. All requests actually used fixed K7 with hints and
+confidence off. The changed compile-cache key and environment were verified
+on every rank. See the completed control below; this is not an established
+root cause or a justified production flag change.
+
+The initial saved runs show a material target-distribution change,
 including a functional coding failure, with the same prompt and matching
 generated prefix. This is not adequately explained by tiny final-token ties.
 The first focused control should disable **dense Marlin atomic reduction**:
@@ -350,3 +358,68 @@ Validation: `.venv/bin/pytest -q tests/test_repeatability_diagnostic.py` —
 **13 passed**. This report's public-source statuses were checked September 9,
 2026; current web documentation and open-PR bodies can change independently
 of the pinned installed runtime.
+
+## Completed isolated atomic control
+
+The subsequent control pins runtime `f71eac0`, including the repaired cache
+geometry and corrected request switches. The
+[package comparison](../../results/adaptive-next/atomic-control-r1/package-difference-report.json)
+verifies that the actual baseline package and treatment differ only in
+`VLLM_MARLIN_USE_ATOMIC_ADD=1` versus `0` in the packaged launcher. Every other
+packaged file is byte-identical. Model, TP4/DCP2, graph sizes and KV capacity
+are unchanged. Each boot uses a fresh persisted cache; cache reuse across
+atomic settings is refused by the experiment preparer.
+
+All four ranks report the intended environment value. Their compile-cache
+key changes from `ad2f0adfc2` to `712ecca060`; the setting is included in the
+installed environment's compile factors. This excludes accidentally reusing
+the original compiled-cache key as an explanation for the negative result.
+The shared-expert invocation remains an opaque `moe_forward_shared` operation
+in the captured outer graph. These records do not prove its exact CUDA tile
+or split-reduction dispatch.
+
+Both boots run the same 100189-token prompt, temperature zero, seed 42,
+768-token bound and top-two target logprobs. All twelve requests actually
+schedule fixed K7, with hints and confidence packets absent. The normalized
+request bodies and exact prompt token digests match across boots.
+
+| Atomic flag | Functional passes | Distinct output sequences | Divergent within-boot pairs /15 | Largest shared-prefix common-token relative-logit change |
+|---|---:|---:|---:|---:|
+| 1 | 5/6 | 3 | 9/15 | 4.125 |
+| 0 | 6/6 | 2 | 8/15 | 3.250 |
+
+The [paired report](../../results/adaptive-next/atomic-control-r1/repeatability-report.json)
+contains every output hash and all comparisons. The pair counts are derived
+from six requests, not fifteen independent samples. Largest changes are over
+all comparable token pairs through the first output divergence, not necessarily
+at the first semantic branch. The earlier 2.375 example remains the particular
+colon/plus semantic comparison described above.
+
+The [cache counter audit](../../results/adaptive-next/atomic-control-r1/cache-control-report.json)
+shows zero local and external hits for each first request, with TTFT 218.96 s
+and 219.77 s. All five warm repeats in each boot report 99968 local prefix hits,
+zero external hits and zero preemptions, with TTFT around 1.15–1.19 s. This
+records cache provenance; equal hit counts do not prove that every GPU cache
+byte and input row is identical.
+
+Additional CPU audits confirm that the API's probability-entry counts match
+output-token counts, its selected-token strings reproduce the generated text
+plus the terminal special token, and every selected logprob is a reported
+maximum. This strengthens the record-consistency check without proving GPU
+score-row ownership. All raw numerical failures remain retained.
+
+**Decision:** disabling this dense atomic flag is insufficient to establish
+repeatability. Six passes rather than five cannot establish an accuracy gain
+or a changed failure rate. The flag could contribute to some variation, but
+it does not account for all observed variation. A predeclared extra throughput
+screen required six functional passes **and identical output IDs**; its
+[decision](../../results/adaptive-next/atomic-control-r1/conditional-performance-decision.json)
+therefore skips that screen. Logprob-enabled rates are not repurposed as a
+performance comparison, and the ordinary launch setting is unchanged.
+
+Further investigation should capture actual sparse/indexer metadata,
+verification-row ownership and live router dtype, while keeping the hypotheses
+separate. An FP32 router conversion has a concrete per-rank memory cost and
+requires a confirmed dtype/path; batch invariance is not a proven drop-in mode
+for this custom backend. No blind backend replacement or extra model allocation
+follows from this negative control.

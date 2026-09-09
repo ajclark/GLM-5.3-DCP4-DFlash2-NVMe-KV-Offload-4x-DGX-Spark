@@ -1,0 +1,66 @@
+{
+  "geometry": {
+    "spark-06c4.local": [
+      "(EngineCore pid=183) INFO 09-09 09:44:24 [kv_cache_utils.py:2304] GPU KV cache size: 198,551 tokens",
+      "(EngineCore pid=183) INFO 09-09 09:44:24 [kv_cache_utils.py:2305] Maximum concurrency for 180,224 tokens per request: 1.10x",
+      "(Worker_TP0_DCP0 pid=230) INFO 09-09 09:44:25 [model_runner.py:473] DCP_BLOCK_TABLE group=0 cp=2 block=64 kernel_block=64 rows=12 cols=1408 capacity=180224",
+      "(Worker_TP0_DCP0 pid=230) INFO 09-09 09:44:25 [model_runner.py:473] DCP_BLOCK_TABLE group=1 cp=1 block=64 kernel_block=64 rows=12 cols=2816 capacity=180224"
+    ],
+    "spark-365c.local": [
+      "(Worker_TP1_DCP1 pid=178) INFO 09-09 09:44:25 [model_runner.py:473] DCP_BLOCK_TABLE group=0 cp=2 block=64 kernel_block=64 rows=12 cols=1408 capacity=180224",
+      "(Worker_TP1_DCP1 pid=178) INFO 09-09 09:44:25 [model_runner.py:473] DCP_BLOCK_TABLE group=1 cp=1 block=64 kernel_block=64 rows=12 cols=2816 capacity=180224"
+    ],
+    "spark-ddbf.local": [
+      "(Worker_TP2_DCP0 pid=222) INFO 09-09 09:44:25 [model_runner.py:473] DCP_BLOCK_TABLE group=0 cp=2 block=64 kernel_block=64 rows=12 cols=1408 capacity=180224",
+      "(Worker_TP2_DCP0 pid=222) INFO 09-09 09:44:25 [model_runner.py:473] DCP_BLOCK_TABLE group=1 cp=1 block=64 kernel_block=64 rows=12 cols=2816 capacity=180224"
+    ],
+    "spark-a218.local": [
+      "(Worker_TP3_DCP1 pid=225) INFO 09-09 09:44:25 [model_runner.py:473] DCP_BLOCK_TABLE group=0 cp=2 block=64 kernel_block=64 rows=12 cols=1408 capacity=180224",
+      "(Worker_TP3_DCP1 pid=225) INFO 09-09 09:44:25 [model_runner.py:473] DCP_BLOCK_TABLE group=1 cp=1 block=64 kernel_block=64 rows=12 cols=2816 capacity=180224"
+    ]
+  },
+  "runtime_build": {
+    "spark-06c4.local": {
+      "atomic": "0",
+      "compile_roots": [
+        "/root/.cache/vllm/torch_compile_cache/712ecca060",
+        "/root/.cache/vllm/torch_compile_cache/torch_aot_compile"
+      ]
+    },
+    "spark-365c.local": {
+      "atomic": "0",
+      "compile_roots": [
+        "/root/.cache/vllm/torch_compile_cache/712ecca060",
+        "/root/.cache/vllm/torch_compile_cache/torch_aot_compile"
+      ]
+    },
+    "spark-ddbf.local": {
+      "atomic": "0",
+      "compile_roots": [
+        "/root/.cache/vllm/torch_compile_cache/712ecca060",
+        "/root/.cache/vllm/torch_compile_cache/torch_aot_compile"
+      ]
+    },
+    "spark-a218.local": {
+      "atomic": "0",
+      "compile_roots": [
+        "/root/.cache/vllm/torch_compile_cache/712ecca060",
+        "/root/.cache/vllm/torch_compile_cache/torch_aot_compile"
+      ]
+    }
+  },
+  "compile_cache_key_changed_on_all_four_ranks": true,
+  "source_manifest": {
+    "git_head": "f71eac09344364a3744f3c5d9b82f30ce764702b",
+    "runtime_implementation_commit": "f71eac09344364a3744f3c5d9b82f30ce764702b",
+    "files": {
+      "overlay/vllm/v1/spec_decode/adaptive.py": "c739c6c2f91ba44e3647ee8106881fbd3a900ffb8f9d002ad777984d657e0546",
+      "overlay/vllm/v1/spec_decode/confidence_trace.py": "ff9eef32c4ea66652575b1775e0b62feb89305ecfca28da38bc3d62ec7dcae03",
+      "overlay/vllm/v1/worker/gpu/model_runner.py": "e6486745637d8c4cbb7fe2ebd91065380e8cdffe2267939f37cc8842f2e60142",
+      "overlay/vllm/v1/worker/gpu/async_utils.py": "9b12bb84f4412535a2ff8655fab290b2a9e83c295686598ae678da52a696faa4",
+      "overlay/vllm/v1/outputs.py": "7b3d38ce96ac7121181de8f9b6f77ab7d19005422e514673c286e08dfc8681a4",
+      "overlay/vllm/v1/worker/gpu/block_table.py": "17368a5f2b4a004ee74a468e3b4c1beb0d10a68fa1b3e321defb78da3a99168c",
+      "launch-glm53big-dcp.sh": "11ede711c3364eeab44d7f4634f5d0ea3240ad583eeb242b75770a7b6a3bc03d"
+    }
+  }
+}

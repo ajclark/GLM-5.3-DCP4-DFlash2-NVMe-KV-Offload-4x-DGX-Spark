@@ -24,7 +24,7 @@ by the subsequently reproduced draft-cache table defect.
 | Loaded idle | Explicit GPU clock locks with independent rollback watchdogs and device power sampling | 600 MHz saves about 9.8 W across four devices; automatic clock mode was worse |
 | True K0 | Actual sampler/input tests, park/arm/resume state-machine prototype and context-state memory analysis | Defer integration until measured target-only/resume costs justify it after the cache repair |
 | Training, trees, copying, draft memory | Exact CPU tree selector; source, parameter-state, copy-opportunity and trained-block-boundary screens | Keep their explicit evidence gates; no additional model allocation or training beside the resident target |
-| Target repeatability | Same-prompt functional/logprob diagnostics and source/kernel audit | Isolated atomic1/atomic0 numerical control in progress; quality promotion remains withheld |
+| Target repeatability | Same-prompt functional/logprob diagnostics and source/kernel audit | Atomic0 still varies: three/two distinct outputs and five/six passes for atomic1/0; no flag or quality promotion |
 
 The [K0 feasibility report](research/K0-FEASIBILITY.md) and
 [architecture screens](research/ARCHITECTURE-SCREENS.md) contain the implementations,
@@ -158,7 +158,7 @@ An automatic idle policy needs authoritative shared-server quiescence,
 restoration before work and a watchdog. One idle Pi session cannot establish
 that the whole server is idle.
 
-## Validation and remaining work
+## Validation, restoration and open questions
 
 The full local suite at `f71eac0` passes **787 tests**, including API-boundary,
 request ownership, delayed transport, cap parity and cache-layout checks.
@@ -167,8 +167,31 @@ minimum head availability 1758 MiB, full-PSI average zero and at most 8 KiB
 swap-out per phase. Loading and restoration have separate pressure records.
 These observations are not universal admission thresholds.
 
-The corrected hint/confidence phase is complete and its controller is restoring
-the original containers. The atomic-enabled six-request numerical baseline
-reproduced one interval-semantics failure; warm controls share 99968 local
-prefix-cache hits and zero preemptions. The remaining declared work is the
-separate atomic-disabled control, final restoration and evidence publication.
+All declared inference and sandbox screens are complete. The atomic control
+changes exactly one packaged environment setting and uses a fresh cache in
+each boot. Atomic1/0 produce three/two distinct output sequences and five/six
+functional passes across six requests each. Shared-prefix relative-logit changes
+remain substantial under atomic0. All warm controls report 99968 local prefix
+hits and zero preemptions. The conditional throughput follow-up required
+identical outputs and was therefore skipped; no accuracy or speedup claim is
+made for the flag change. The original containers are restored and generating
+on all four nodes. The documented 2000 MHz GPU lock was restored, with final
+observations near 2000 MHz. All eighty CPU governors are back at their original
+performance setting, and experiment watchdogs,
+power samplers and the dedicated Pi session/watcher are stopped. Exact original
+container IDs and final observations are in the
+[restoration report](../results/adaptive-next/final-restoration-report.json).
+The [evidence index](../results/adaptive-next/README.md) links the curated archive
+and per-file provenance. No global hint policy, confidence controller, atomic
+flag change or automatic idle-clock policy was promoted.
+
+Restoration returns the original runtime as well. Those containers still have
+the diagnosed draft-cache defect beyond 90112 tokens; further long-context
+work requires deploying the committed repair. The repaired runtime was validated
+in isolated experiment deployments and is not permanently installed.
+
+The final C1-report integrity change adds three rejection cases; all eight
+targeted report tests pass. The runtime full-suite result remains the recorded
+787-test run at `f71eac0`. Ten follow-up request guards show no OOM, pressure
+trip or swap-out, with minimum available memory 2598.68 MiB. Complete deployment
+and restoration guards also record no OOM or guard trip.

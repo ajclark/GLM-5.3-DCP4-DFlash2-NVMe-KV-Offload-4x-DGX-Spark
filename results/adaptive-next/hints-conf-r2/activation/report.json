@@ -1,0 +1,18 @@
+{
+  "purpose": "Joint wire activation only, not a performance comparison",
+  "initial_audit": "Initial snapshot preceded the asynchronous trace writer one-second idle flush. Incomplete trace preserved; completed trace collected without repeating either request.",
+  "variants": {
+    "on": {
+      "rows": 30,
+      "hint_rows": 9,
+      "confidence_packets": 29,
+      "all_packets_valid": true
+    },
+    "off": {
+      "rows": 30,
+      "hint_rows": 0,
+      "confidence_packets": 0,
+      "all_packets_valid": true
+    }
+  }
+}

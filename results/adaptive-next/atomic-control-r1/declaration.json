@@ -1,0 +1,33 @@
+{
+  "date": "2026-09-09",
+  "runtime_code": "f71eac09344364a3744f3c5d9b82f30ce764702b",
+  "baseline_label": "hints-conf-20260909-r2",
+  "treatment_label": "atomic-off-20260909-r1",
+  "one_numerical_change": "VLLM_MARLIN_USE_ATOMIC_ADD 1 -> 0 in packaged launch copy only",
+  "fresh_persisted_cache_each_boot": true,
+  "memory_capacity_unchanged": true,
+  "prompt_source": "results/adaptive-next/cache-width-r1/repo100k-corpus.json",
+  "prompt_source_sha256": "5c6b9eadecf45946f3e18e2473abe0e094b27139f8186970fda3975f52901db7",
+  "controls": {
+    "variants": [
+      "fixed7"
+    ],
+    "repeats": 6,
+    "logprobs": true,
+    "confidence_trace_per_request": false,
+    "hints_per_request": false,
+    "max_output_tokens": 768,
+    "seed": 42,
+    "temperature": 0
+  },
+  "required_evidence": [
+    "verify live atomic setting on all four nodes",
+    "same runtime source and capacity on both boots",
+    "capture warm/cold cache provenance separately",
+    "all outputs and functional failures retained",
+    "target first-divergence logprob comparison",
+    "no performance inference from logprob diagnostic",
+    "restore original containers after each bounded hold"
+  ],
+  "interpretation": "Atomic-off is a falsifiable candidate, not an established root cause. Identical output IDs in six repeats would be limited evidence; absence of failure would not prove invariance. No pooled adaptive-policy calibration across atomic settings."
+}

@@ -1,0 +1,817 @@
+{
+  "requests": 6,
+  "pairs": [
+    {
+      "labels": [
+        "atomic1-quality-r0-fixed-k7",
+        "atomic1-quality-r1-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true,
+      "comparable_shared_prefix_positions": 242,
+      "maximum_common_token_relative_logit_change": {
+        "position": 64,
+        "tokens": [
+          " if",
+          " return"
+        ],
+        "gap_left": -9.750000362801075,
+        "gap_right": -13.375000357637418,
+        "absolute_gap_change": 3.624999994836344
+      }
+    },
+    {
+      "labels": [
+        "atomic1-quality-r0-fixed-k7",
+        "atomic1-quality-r2-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true,
+      "comparable_shared_prefix_positions": 240,
+      "maximum_common_token_relative_logit_change": {
+        "position": 104,
+        "tokens": [
+          " =",
+          "_start"
+        ],
+        "gap_left": 7.125000169384293,
+        "gap_right": 10.374999882275006,
+        "absolute_gap_change": 3.2499997128907125
+      }
+    },
+    {
+      "labels": [
+        "atomic1-quality-r0-fixed-k7",
+        "atomic1-quality-r3-fixed-k7"
+      ],
+      "first_divergence": 74,
+      "shared_output_prefix_tokens": 74,
+      "observations": [
+        {
+          "label": "atomic1-quality-r0-fixed-k7",
+          "selected_token_id": 421,
+          "selected_logprob": -0.9937731623649597,
+          "top_logprobs": [
+            {
+              "token": " if",
+              "logprob": -0.9937731623649597,
+              "bytes": [
+                32,
+                105,
+                102
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -0.9937731623649597,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.0
+        },
+        {
+          "label": "atomic1-quality-r3-fixed-k7",
+          "selected_token_id": 3589,
+          "selected_logprob": -0.9931790232658386,
+          "top_logprobs": [
+            {
+              "token": " items",
+              "logprob": -0.9931790232658386,
+              "bytes": [
+                32,
+                105,
+                116,
+                101,
+                109,
+                115
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.2431790828704834,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.2500000596046448
+        }
+      ],
+      "comparable_shared_prefix_positions": 59,
+      "maximum_common_token_relative_logit_change": {
+        "position": 64,
+        "tokens": [
+          " if",
+          " return"
+        ],
+        "gap_left": -9.750000362801075,
+        "gap_right": -12.2499998808471,
+        "absolute_gap_change": 2.4999995180460246
+      }
+    },
+    {
+      "labels": [
+        "atomic1-quality-r0-fixed-k7",
+        "atomic1-quality-r4-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true,
+      "comparable_shared_prefix_positions": 243,
+      "maximum_common_token_relative_logit_change": {
+        "position": 104,
+        "tokens": [
+          " =",
+          "_start"
+        ],
+        "gap_left": 7.125000169384293,
+        "gap_right": 11.249999881485564,
+        "absolute_gap_change": 4.124999712101271
+      }
+    },
+    {
+      "labels": [
+        "atomic1-quality-r0-fixed-k7",
+        "atomic1-quality-r5-fixed-k7"
+      ],
+      "first_divergence": 137,
+      "shared_output_prefix_tokens": 137,
+      "observations": [
+        {
+          "label": "atomic1-quality-r0-fixed-k7",
+          "selected_token_id": 10338,
+          "selected_logprob": -0.0892559140920639,
+          "top_logprobs": [
+            {
+              "token": "]:\n",
+              "logprob": -0.0892559140920639,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            },
+            {
+              "token": "]",
+              "logprob": -2.4642558097839355,
+              "bytes": [
+                93
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 2.3749998956918716
+        },
+        {
+          "label": "atomic1-quality-r5-fixed-k7",
+          "selected_token_id": 60,
+          "selected_logprob": -0.6936103105545044,
+          "top_logprobs": [
+            {
+              "token": "]",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93
+              ]
+            },
+            {
+              "token": "]:\n",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.0
+        }
+      ],
+      "comparable_shared_prefix_positions": 122,
+      "maximum_common_token_relative_logit_change": {
+        "position": 64,
+        "tokens": [
+          " if",
+          " return"
+        ],
+        "gap_left": -9.750000362801075,
+        "gap_right": -12.50000023845314,
+        "absolute_gap_change": 2.7499998756520654
+      }
+    },
+    {
+      "labels": [
+        "atomic1-quality-r1-fixed-k7",
+        "atomic1-quality-r2-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true,
+      "comparable_shared_prefix_positions": 237,
+      "maximum_common_token_relative_logit_change": {
+        "position": 109,
+        "tokens": [
+          "[",
+          "[i"
+        ],
+        "gap_left": 12.374999523212864,
+        "gap_right": 14.12500023842199,
+        "absolute_gap_change": 1.7500007152091257
+      }
+    },
+    {
+      "labels": [
+        "atomic1-quality-r1-fixed-k7",
+        "atomic1-quality-r3-fixed-k7"
+      ],
+      "first_divergence": 74,
+      "shared_output_prefix_tokens": 74,
+      "observations": [
+        {
+          "label": "atomic1-quality-r1-fixed-k7",
+          "selected_token_id": 421,
+          "selected_logprob": -0.7945828437805176,
+          "top_logprobs": [
+            {
+              "token": " if",
+              "logprob": -0.7945828437805176,
+              "bytes": [
+                32,
+                105,
+                102
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.1695828437805176,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.375
+        },
+        {
+          "label": "atomic1-quality-r3-fixed-k7",
+          "selected_token_id": 3589,
+          "selected_logprob": -0.9931790232658386,
+          "top_logprobs": [
+            {
+              "token": " items",
+              "logprob": -0.9931790232658386,
+              "bytes": [
+                32,
+                105,
+                116,
+                101,
+                109,
+                115
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.2431790828704834,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.2500000596046448
+        }
+      ],
+      "comparable_shared_prefix_positions": 59,
+      "maximum_common_token_relative_logit_change": {
+        "position": 64,
+        "tokens": [
+          " if",
+          " return"
+        ],
+        "gap_left": -13.375000357637418,
+        "gap_right": -12.2499998808471,
+        "absolute_gap_change": 1.1250004767903192
+      }
+    },
+    {
+      "labels": [
+        "atomic1-quality-r1-fixed-k7",
+        "atomic1-quality-r4-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true,
+      "comparable_shared_prefix_positions": 243,
+      "maximum_common_token_relative_logit_change": {
+        "position": 137,
+        "tokens": [
+          "]",
+          "]:\n"
+        ],
+        "gap_left": -3.2500000186264515,
+        "gap_right": -0.5,
+        "absolute_gap_change": 2.7500000186264515
+      }
+    },
+    {
+      "labels": [
+        "atomic1-quality-r1-fixed-k7",
+        "atomic1-quality-r5-fixed-k7"
+      ],
+      "first_divergence": 137,
+      "shared_output_prefix_tokens": 137,
+      "observations": [
+        {
+          "label": "atomic1-quality-r1-fixed-k7",
+          "selected_token_id": 10338,
+          "selected_logprob": -0.038181524723768234,
+          "top_logprobs": [
+            {
+              "token": "]:\n",
+              "logprob": -0.038181524723768234,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            },
+            {
+              "token": "]",
+              "logprob": -3.2881815433502197,
+              "bytes": [
+                93
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 3.2500000186264515
+        },
+        {
+          "label": "atomic1-quality-r5-fixed-k7",
+          "selected_token_id": 60,
+          "selected_logprob": -0.6936103105545044,
+          "top_logprobs": [
+            {
+              "token": "]",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93
+              ]
+            },
+            {
+              "token": "]:\n",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.0
+        }
+      ],
+      "comparable_shared_prefix_positions": 123,
+      "maximum_common_token_relative_logit_change": {
+        "position": 137,
+        "tokens": [
+          "]",
+          "]:\n"
+        ],
+        "gap_left": -3.2500000186264515,
+        "gap_right": 0.0,
+        "absolute_gap_change": 3.2500000186264515
+      }
+    },
+    {
+      "labels": [
+        "atomic1-quality-r2-fixed-k7",
+        "atomic1-quality-r3-fixed-k7"
+      ],
+      "first_divergence": 74,
+      "shared_output_prefix_tokens": 74,
+      "observations": [
+        {
+          "label": "atomic1-quality-r2-fixed-k7",
+          "selected_token_id": 421,
+          "selected_logprob": -0.60066157579422,
+          "top_logprobs": [
+            {
+              "token": " if",
+              "logprob": -0.60066157579422,
+              "bytes": [
+                32,
+                105,
+                102
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.3506615161895752,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.7499999403953552
+        },
+        {
+          "label": "atomic1-quality-r3-fixed-k7",
+          "selected_token_id": 3589,
+          "selected_logprob": -0.9931790232658386,
+          "top_logprobs": [
+            {
+              "token": " items",
+              "logprob": -0.9931790232658386,
+              "bytes": [
+                32,
+                105,
+                116,
+                101,
+                109,
+                115
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.2431790828704834,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.2500000596046448
+        }
+      ],
+      "comparable_shared_prefix_positions": 56,
+      "maximum_common_token_relative_logit_change": {
+        "position": 68,
+        "tokens": [
+          " merge",
+          " run"
+        ],
+        "gap_left": 12.375000238439497,
+        "gap_right": 10.999999881012627,
+        "absolute_gap_change": 1.3750003574268703
+      }
+    },
+    {
+      "labels": [
+        "atomic1-quality-r2-fixed-k7",
+        "atomic1-quality-r4-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true,
+      "comparable_shared_prefix_positions": 233,
+      "maximum_common_token_relative_logit_change": {
+        "position": 98,
+        "tokens": [
+          " -",
+          " iv"
+        ],
+        "gap_left": -15.62499976158145,
+        "gap_right": -13.375000238419943,
+        "absolute_gap_change": 2.249999523161506
+      }
+    },
+    {
+      "labels": [
+        "atomic1-quality-r2-fixed-k7",
+        "atomic1-quality-r5-fixed-k7"
+      ],
+      "first_divergence": 137,
+      "shared_output_prefix_tokens": 137,
+      "observations": [
+        {
+          "label": "atomic1-quality-r2-fixed-k7",
+          "selected_token_id": 10338,
+          "selected_logprob": -0.1129913330078125,
+          "top_logprobs": [
+            {
+              "token": "]:\n",
+              "logprob": -0.1129913330078125,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            },
+            {
+              "token": "]",
+              "logprob": -2.2379913330078125,
+              "bytes": [
+                93
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 2.125
+        },
+        {
+          "label": "atomic1-quality-r5-fixed-k7",
+          "selected_token_id": 60,
+          "selected_logprob": -0.6936103105545044,
+          "top_logprobs": [
+            {
+              "token": "]",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93
+              ]
+            },
+            {
+              "token": "]:\n",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.0
+        }
+      ],
+      "comparable_shared_prefix_positions": 113,
+      "maximum_common_token_relative_logit_change": {
+        "position": 93,
+        "tokens": [
+          " (",
+          " iv"
+        ],
+        "gap_left": 0.0,
+        "gap_right": 2.749999899417162,
+        "absolute_gap_change": 2.749999899417162
+      }
+    },
+    {
+      "labels": [
+        "atomic1-quality-r3-fixed-k7",
+        "atomic1-quality-r4-fixed-k7"
+      ],
+      "first_divergence": 74,
+      "shared_output_prefix_tokens": 74,
+      "observations": [
+        {
+          "label": "atomic1-quality-r3-fixed-k7",
+          "selected_token_id": 3589,
+          "selected_logprob": -0.9931790232658386,
+          "top_logprobs": [
+            {
+              "token": " items",
+              "logprob": -0.9931790232658386,
+              "bytes": [
+                32,
+                105,
+                116,
+                101,
+                109,
+                115
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.2431790828704834,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.2500000596046448
+        },
+        {
+          "label": "atomic1-quality-r4-fixed-k7",
+          "selected_token_id": 421,
+          "selected_logprob": -0.9023587703704834,
+          "top_logprobs": [
+            {
+              "token": " if",
+              "logprob": -0.9023587703704834,
+              "bytes": [
+                32,
+                105,
+                102
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.4023587703704834,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.5
+        }
+      ],
+      "comparable_shared_prefix_positions": 63,
+      "maximum_common_token_relative_logit_change": {
+        "position": 65,
+        "tokens": [
+          " hi",
+          " lo"
+        ],
+        "gap_left": -11.749999761686922,
+        "gap_right": -10.250000358493708,
+        "absolute_gap_change": 1.4999994031932147
+      }
+    },
+    {
+      "labels": [
+        "atomic1-quality-r3-fixed-k7",
+        "atomic1-quality-r5-fixed-k7"
+      ],
+      "first_divergence": 74,
+      "shared_output_prefix_tokens": 74,
+      "observations": [
+        {
+          "label": "atomic1-quality-r3-fixed-k7",
+          "selected_token_id": 3589,
+          "selected_logprob": -0.9931790232658386,
+          "top_logprobs": [
+            {
+              "token": " items",
+              "logprob": -0.9931790232658386,
+              "bytes": [
+                32,
+                105,
+                116,
+                101,
+                109,
+                115
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.2431790828704834,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.2500000596046448
+        },
+        {
+          "label": "atomic1-quality-r5-fixed-k7",
+          "selected_token_id": 421,
+          "selected_logprob": -0.5997142195701599,
+          "top_logprobs": [
+            {
+              "token": " if",
+              "logprob": -0.5997142195701599,
+              "bytes": [
+                32,
+                105,
+                102
+              ]
+            },
+            {
+              "token": " result",
+              "logprob": -1.7247142791748047,
+              "bytes": [
+                32,
+                114,
+                101,
+                115,
+                117,
+                108,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 1.1250000596046448
+        }
+      ],
+      "comparable_shared_prefix_positions": 59,
+      "maximum_common_token_relative_logit_change": {
+        "position": 33,
+        "tokens": [
+          " hi",
+          "hi"
+        ],
+        "gap_left": 14.125000119210881,
+        "gap_right": 15.50000035762804,
+        "absolute_gap_change": 1.375000238417158
+      }
+    },
+    {
+      "labels": [
+        "atomic1-quality-r4-fixed-k7",
+        "atomic1-quality-r5-fixed-k7"
+      ],
+      "first_divergence": 137,
+      "shared_output_prefix_tokens": 137,
+      "observations": [
+        {
+          "label": "atomic1-quality-r4-fixed-k7",
+          "selected_token_id": 10338,
+          "selected_logprob": -0.4744775891304016,
+          "top_logprobs": [
+            {
+              "token": "]:\n",
+              "logprob": -0.4744775891304016,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            },
+            {
+              "token": "]",
+              "logprob": -0.9744775891304016,
+              "bytes": [
+                93
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.5
+        },
+        {
+          "label": "atomic1-quality-r5-fixed-k7",
+          "selected_token_id": 60,
+          "selected_logprob": -0.6936103105545044,
+          "top_logprobs": [
+            {
+              "token": "]",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93
+              ]
+            },
+            {
+              "token": "]:\n",
+              "logprob": -0.6936103105545044,
+              "bytes": [
+                93,
+                58,
+                10
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.0
+        }
+      ],
+      "comparable_shared_prefix_positions": 116,
+      "maximum_common_token_relative_logit_change": {
+        "position": 33,
+        "tokens": [
+          " hi",
+          "hi"
+        ],
+        "gap_left": 13.249999880795258,
+        "gap_right": 15.50000035762804,
+        "absolute_gap_change": 2.2500004768327813
+      }
+    }
+  ],
+  "max_shared_prefix_relative_logit_change": 4.124999712101271,
+  "note": "Same prefix through the first divergent output; logprob differences cancel normalization. These are reported target observations, not a kernel root-cause proof."
+}

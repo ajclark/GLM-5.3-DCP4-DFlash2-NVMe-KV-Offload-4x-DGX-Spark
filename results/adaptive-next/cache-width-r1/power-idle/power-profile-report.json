@@ -1,0 +1,272 @@
+{
+  "sensor": "NVIDIA-reported power summed across four devices; CPU counters are separate proxies, not watts.",
+  "screening_only": true,
+  "whole_node_or_wall_power_measured": false,
+  "method": "Treatment divided by geometric mean of nearest same-prompt baseline before and after; fixed cap7, complete request energy includes prefill.",
+  "limitations": "Small development screen, no confidence interval or promotion claim. Sampling needs all four devices with bracketing coverage and gaps <=5s. Output hashes retained to expose changing work.",
+  "profiles": {},
+  "requests": [],
+  "comparisons": [],
+  "idle_windows": [
+    {
+      "index": 0,
+      "profile": "baseline",
+      "started_at": 1788940240.444387,
+      "settled_start": 1788940260.444387,
+      "ended_at": 1788940360.8320167,
+      "four_device_mean_idle_watts": 32.841648226742,
+      "cpu_proxies": {
+        "spark-06c4.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9930454681460392,
+          "idle_counter_interval_seconds": 83.11792802810669
+        },
+        "spark-365c.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9932217532189184,
+          "idle_counter_interval_seconds": 83.11792802810669
+        },
+        "spark-a218.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9933220588954167,
+          "idle_counter_interval_seconds": 83.11792802810669
+        },
+        "spark-ddbf.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9932283805496648,
+          "idle_counter_interval_seconds": 83.11792802810669
+        }
+      },
+      "device_proxies": {
+        "spark-ddbf.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 45.3
+        },
+        "spark-a218.local": {
+          "mean_graphics_mhz": 1976.0,
+          "mean_temperature_c": 45.66
+        },
+        "spark-365c.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 46.14
+        },
+        "spark-06c4.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 46.04
+        }
+      }
+    },
+    {
+      "index": 1,
+      "profile": "schedutil",
+      "started_at": 1788940364.8480601,
+      "settled_start": 1788940384.8480601,
+      "ended_at": 1788940485.4141905,
+      "four_device_mean_idle_watts": 32.419637689626335,
+      "cpu_proxies": {
+        "spark-06c4.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 1378000.0,
+          "mean_cpu_idle_residency_fraction": 0.9925875220288307,
+          "idle_counter_interval_seconds": 83.22923517227173
+        },
+        "spark-365c.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 1378000.0,
+          "mean_cpu_idle_residency_fraction": 0.9931722240256624,
+          "idle_counter_interval_seconds": 83.22923517227173
+        },
+        "spark-a218.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 1378000.0,
+          "mean_cpu_idle_residency_fraction": 0.9930585470228591,
+          "idle_counter_interval_seconds": 83.22923517227173
+        },
+        "spark-ddbf.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 1277584.5,
+          "mean_cpu_idle_residency_fraction": 0.9930737988751364,
+          "idle_counter_interval_seconds": 83.22923517227173
+        }
+      },
+      "device_proxies": {
+        "spark-ddbf.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 44.14
+        },
+        "spark-a218.local": {
+          "mean_graphics_mhz": 1976.0,
+          "mean_temperature_c": 44.26
+        },
+        "spark-365c.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 45.82
+        },
+        "spark-06c4.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 45.0
+        }
+      }
+    },
+    {
+      "index": 2,
+      "profile": "baseline",
+      "started_at": 1788940489.4348416,
+      "settled_start": 1788940509.4348416,
+      "ended_at": 1788940610.2109244,
+      "four_device_mean_idle_watts": 32.26755338887228,
+      "cpu_proxies": {
+        "spark-06c4.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9929593465091027,
+          "idle_counter_interval_seconds": 83.1238443851471
+        },
+        "spark-365c.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9936001084997682,
+          "idle_counter_interval_seconds": 83.1238443851471
+        },
+        "spark-a218.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.993337162889376,
+          "idle_counter_interval_seconds": 83.1238443851471
+        },
+        "spark-ddbf.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9930487618875056,
+          "idle_counter_interval_seconds": 83.1238443851471
+        }
+      },
+      "device_proxies": {
+        "spark-ddbf.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 43.35294117647059
+        },
+        "spark-a218.local": {
+          "mean_graphics_mhz": 1976.0,
+          "mean_temperature_c": 43.294117647058826
+        },
+        "spark-365c.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 45.0
+        },
+        "spark-06c4.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 44.0
+        }
+      }
+    },
+    {
+      "index": 3,
+      "profile": "idle_auto",
+      "started_at": 1788940614.2255201,
+      "settled_start": 1788940634.2255201,
+      "ended_at": 1788940734.6439075,
+      "four_device_mean_idle_watts": 47.07509376701999,
+      "cpu_proxies": {
+        "spark-06c4.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 1378000.0,
+          "mean_cpu_idle_residency_fraction": 0.9930593245271283,
+          "idle_counter_interval_seconds": 83.14954400062561
+        },
+        "spark-365c.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 1378000.0,
+          "mean_cpu_idle_residency_fraction": 0.9932258997040155,
+          "idle_counter_interval_seconds": 83.14954400062561
+        },
+        "spark-a218.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 1378000.0,
+          "mean_cpu_idle_residency_fraction": 0.9930164481645114,
+          "idle_counter_interval_seconds": 83.14954400062561
+        },
+        "spark-ddbf.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 1378000.0,
+          "mean_cpu_idle_residency_fraction": 0.9931954623753396,
+          "idle_counter_interval_seconds": 83.14954400062561
+        }
+      },
+      "device_proxies": {
+        "spark-ddbf.local": {
+          "mean_graphics_mhz": 2405.36,
+          "mean_temperature_c": 44.52
+        },
+        "spark-a218.local": {
+          "mean_graphics_mhz": 2405.0,
+          "mean_temperature_c": 44.0
+        },
+        "spark-365c.local": {
+          "mean_graphics_mhz": 2411.0,
+          "mean_temperature_c": 46.0
+        },
+        "spark-06c4.local": {
+          "mean_graphics_mhz": 2411.0,
+          "mean_temperature_c": 45.0
+        }
+      }
+    },
+    {
+      "index": 4,
+      "profile": "baseline",
+      "started_at": 1788940738.6648495,
+      "settled_start": 1788940758.6648495,
+      "ended_at": 1788940859.4934015,
+      "four_device_mean_idle_watts": 32.189745356850594,
+      "cpu_proxies": {
+        "spark-06c4.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9929284415197994,
+          "idle_counter_interval_seconds": 83.12180042266846
+        },
+        "spark-365c.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9931942797221439,
+          "idle_counter_interval_seconds": 83.12180042266846
+        },
+        "spark-a218.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9932384408204519,
+          "idle_counter_interval_seconds": 83.12180042266846
+        },
+        "spark-ddbf.local": {
+          "samples": 9,
+          "median_reported_cpu_khz": 3354000.0,
+          "mean_cpu_idle_residency_fraction": 0.9929593828611434,
+          "idle_counter_interval_seconds": 83.12180042266846
+        }
+      },
+      "device_proxies": {
+        "spark-ddbf.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 43.04
+        },
+        "spark-a218.local": {
+          "mean_graphics_mhz": 1976.0,
+          "mean_temperature_c": 43.0
+        },
+        "spark-365c.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 45.0
+        },
+        "spark-06c4.local": {
+          "mean_graphics_mhz": 1995.0,
+          "mean_temperature_c": 43.98
+        }
+      }
+    }
+  ]
+}

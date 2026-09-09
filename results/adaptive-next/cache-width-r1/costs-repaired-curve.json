@@ -1,0 +1,79 @@
+{
+  "config": {
+    "tp": 4,
+    "dcp": 2,
+    "max_model_len": 180224,
+    "draft_capacity": 7
+  },
+  "lane": "tp4-dcp2-l180224-k7",
+  "context_range": [
+    0,
+    171000
+  ],
+  "calibration_points": [
+    {
+      "cycle_ms": {
+        "1": 95.9395389945712,
+        "3": 116.2839390017325,
+        "5": 130.47873499454,
+        "7": 145.11183050490217
+      },
+      "conditional_acceptance_prior": [
+        0.7386831275720165,
+        0.6472222222222223,
+        0.5512820512820513,
+        0.5615384615384615,
+        0.7162162162162162,
+        0.6481481481481481,
+        0.8611111111111112
+      ],
+      "prior_strength": 2.0,
+      "context": 221
+    },
+    {
+      "cycle_ms": {
+        "1": 109.83798799861688,
+        "3": 131.99552550213411,
+        "5": 148.24614499229938,
+        "7": 165.1645040110452
+      },
+      "conditional_acceptance_prior": [
+        0.7246835443037974,
+        0.6391304347826087,
+        0.6148648648648649,
+        0.5543478260869565,
+        0.7115384615384616,
+        0.6578947368421053,
+        0.8076923076923077
+      ],
+      "prior_strength": 2.0,
+      "context": 100289
+    },
+    {
+      "cycle_ms": {
+        "1": 110.41747500712518,
+        "3": 133.23769850103417,
+        "5": 151.133559003938,
+        "7": 168.25440149841597
+      },
+      "conditional_acceptance_prior": [
+        0.6257142857142857,
+        0.6227272727272727,
+        0.6159420289855072,
+        0.5465116279069767,
+        0.7291666666666666,
+        0.6388888888888888,
+        0.375
+      ],
+      "prior_strength": 2.0,
+      "context": 170166
+    }
+  ],
+  "sources": {
+    "results/adaptive-next/cache-width-r1/costs-short.json": "adb9fa8661f896dddb6c95beff9ab95d55b4e3f70574312b2dc3d91ce61d2603",
+    "results/adaptive-next/cache-width-r1/costs-100k.json": "8105deba9e88845ca2a68267eb3e149fd57555eec87d1cb2bc3fdccb87b29f2b",
+    "results/adaptive-next/cache-width-r1/costs-170k.json": "3c28ea2272ee39505bb94aa08722983e4831c57391989a37157bbfbc7d514546"
+  },
+  "method": "Linear interpolation of measured cycle costs and conditional acceptance priors; nearest endpoint outside the measured points.",
+  "note": "Performance estimates within this operating range, not a claim that every intermediate context or prompt was measured."
+}

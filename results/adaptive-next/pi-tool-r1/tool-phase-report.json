@@ -1,0 +1,125 @@
+{
+  "actual_herdr_pi_invocation": true,
+  "runs": [
+    {
+      "label": "pi-spec-1788946063124-1",
+      "hint": {
+        "workload": "code_edit",
+        "phase": "user_turn",
+        "strength": "weak"
+      },
+      "usage": {
+        "input": 820,
+        "output": 12,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "reasoning": 0,
+        "totalTokens": 832,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "stop_reason": "toolUse",
+      "server_verify_rows": 2,
+      "server_caps": {
+        "7": 2
+      },
+      "server_hint_rows": 2,
+      "valid_confidence_packets": 1
+    },
+    {
+      "label": "pi-spec-1788946065091-2",
+      "hint": {
+        "workload": "code_edit",
+        "phase": "tool_followup",
+        "strength": "weak"
+      },
+      "usage": {
+        "input": 1053,
+        "output": 59,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "reasoning": 0,
+        "totalTokens": 1112,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "stop_reason": "toolUse",
+      "server_verify_rows": 10,
+      "server_caps": {
+        "7": 10
+      },
+      "server_hint_rows": 0,
+      "valid_confidence_packets": 9
+    },
+    {
+      "label": "pi-spec-1788946067996-3",
+      "hint": {
+        "workload": "code_edit",
+        "phase": "tool_followup",
+        "strength": "weak"
+      },
+      "usage": {
+        "input": 1127,
+        "output": 20,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "reasoning": 0,
+        "totalTokens": 1147,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "stop_reason": "stop",
+      "server_verify_rows": 8,
+      "server_caps": {
+        "7": 8
+      },
+      "server_hint_rows": 0,
+      "valid_confidence_packets": 7
+    }
+  ],
+  "actual_tool_calls": [
+    {
+      "name": "read",
+      "path": "fixture.py"
+    },
+    {
+      "name": "edit",
+      "path": "fixture.py"
+    }
+  ],
+  "tool_results": [
+    {
+      "name": "read",
+      "is_error": false
+    },
+    {
+      "name": "edit",
+      "is_error": false
+    }
+  ],
+  "functional_check": "passed",
+  "only_changed_function": "merge_intervals",
+  "source_sha256": {
+    "fixture-before.py": "f5740a83438efc5362feec56cc0d225dd4c99d30b480dfc1957f825e782b4b9e",
+    "fixture-after.py": "2c7841b30e7cda920d9c586314c5a6f6b1950d72cd8134a1f1307ce076b41d25",
+    "trace.jsonl": "5a2f631fe661069a13d55a0e37fcfea1e8cb68e9f0fbc173eac3175d2084fa79",
+    "pi-events.jsonl": "e1e9fbcf806aa27820caf2fda6ee751a027027d52d99387a3ed64a2917340825"
+  },
+  "performance_claim": false,
+  "scope": "Three requests in one bounded actual Pi tool workflow; private session/payloads and full pane text excluded from publication."
+}

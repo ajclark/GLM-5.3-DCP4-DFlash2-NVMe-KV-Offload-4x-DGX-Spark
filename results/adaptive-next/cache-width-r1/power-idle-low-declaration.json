@@ -1,0 +1,19 @@
+{
+  "declared_after": "automatic idle clock screen raised graphics clock to ~2400 MHz instead of downclocking",
+  "experiment": "cache-width-20260909-r1",
+  "profiles": [
+    "baseline",
+    "idle600",
+    "baseline",
+    "idle300",
+    "baseline"
+  ],
+  "idle_seconds": 90,
+  "cpu_governors": "original performance on all nodes; isolate GPU clock effect",
+  "active_inference_during_low_clocks": false,
+  "admission": "all-node memory guard and endpoint idle; supported-clock inventory before run",
+  "restoration": "existing independent watchdogs and exact original 2000,2000 lock/CPU governors",
+  "after_restoration": "bounded count completion to verify wake without model reload",
+  "claim_limit": "NVIDIA device power only, short settled windows, no whole-node meter",
+  "supported_clock_query": "NVML reports N/A on all four nodes; driver command acceptance and observed frequency will be recorded, unsupported settings trigger restoration"
+}

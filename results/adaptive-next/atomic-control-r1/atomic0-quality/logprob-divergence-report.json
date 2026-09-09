@@ -1,0 +1,613 @@
+{
+  "source_sha256": {
+    "results/adaptive-next/atomic-control-r1/atomic0-quality/atomic0-quality-r0-fixed-k7.json": "741c3e00ed5db9fcbece726eb8347ffbb2c057b0dec84197c2dc276f4a20c0ed",
+    "results/adaptive-next/atomic-control-r1/atomic0-quality/atomic0-quality-r1-fixed-k7.json": "58e943557a9e585467ecc86c88dcbe6f17d48d4c9e54ff7e80502ea6382146cf",
+    "results/adaptive-next/atomic-control-r1/atomic0-quality/atomic0-quality-r2-fixed-k7.json": "cd006bc7d9013be190e476fffe4d5f1581ac44185d3ce499e9f49badb41e146a",
+    "results/adaptive-next/atomic-control-r1/atomic0-quality/atomic0-quality-r3-fixed-k7.json": "ca70ebcf9c9202bba0b70c0cee501848378a7d85943b04378a8c1d1b602455ed",
+    "results/adaptive-next/atomic-control-r1/atomic0-quality/atomic0-quality-r4-fixed-k7.json": "68329d8d4f0cd075beb06937d470307144368a7e3272551a39892bba7d9bc448",
+    "results/adaptive-next/atomic-control-r1/atomic0-quality/atomic0-quality-r5-fixed-k7.json": "32827dc1394afb45d77d676eb27e1cb318ff34d6b0672701fccea9ff1a46ef17"
+  },
+  "pairs": [
+    {
+      "labels": [
+        "atomic0-quality-r0-fixed-k7",
+        "atomic0-quality-r1-fixed-k7"
+      ],
+      "first_divergence": 106,
+      "shared_output_prefix_tokens": 106,
+      "observations": [
+        {
+          "label": "atomic0-quality-r0-fixed-k7",
+          "selected_token_id": 1607,
+          "selected_logprob": -0.7326103448867798,
+          "top_logprobs": [
+            {
+              "token": "list",
+              "logprob": -0.7326103448867798,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            },
+            {
+              "token": "tuple",
+              "logprob": -0.7326103448867798,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.0
+        },
+        {
+          "label": "atomic0-quality-r1-fixed-k7",
+          "selected_token_id": 24515,
+          "selected_logprob": -0.5992696285247803,
+          "top_logprobs": [
+            {
+              "token": "tuple",
+              "logprob": -0.5992696285247803,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            },
+            {
+              "token": "list",
+              "logprob": -0.8492696285247803,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.25
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic0-quality-r0-fixed-k7",
+        "atomic0-quality-r2-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true
+    },
+    {
+      "labels": [
+        "atomic0-quality-r0-fixed-k7",
+        "atomic0-quality-r3-fixed-k7"
+      ],
+      "first_divergence": 106,
+      "shared_output_prefix_tokens": 106,
+      "observations": [
+        {
+          "label": "atomic0-quality-r0-fixed-k7",
+          "selected_token_id": 1607,
+          "selected_logprob": -0.7326103448867798,
+          "top_logprobs": [
+            {
+              "token": "list",
+              "logprob": -0.7326103448867798,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            },
+            {
+              "token": "tuple",
+              "logprob": -0.7326103448867798,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.0
+        },
+        {
+          "label": "atomic0-quality-r3-fixed-k7",
+          "selected_token_id": 24515,
+          "selected_logprob": -0.3486233353614807,
+          "top_logprobs": [
+            {
+              "token": "tuple",
+              "logprob": -0.3486233353614807,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            },
+            {
+              "token": "list",
+              "logprob": -1.348623275756836,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.9999999403953552
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic0-quality-r0-fixed-k7",
+        "atomic0-quality-r4-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true
+    },
+    {
+      "labels": [
+        "atomic0-quality-r0-fixed-k7",
+        "atomic0-quality-r5-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true
+    },
+    {
+      "labels": [
+        "atomic0-quality-r1-fixed-k7",
+        "atomic0-quality-r2-fixed-k7"
+      ],
+      "first_divergence": 106,
+      "shared_output_prefix_tokens": 106,
+      "observations": [
+        {
+          "label": "atomic0-quality-r1-fixed-k7",
+          "selected_token_id": 24515,
+          "selected_logprob": -0.5992696285247803,
+          "top_logprobs": [
+            {
+              "token": "tuple",
+              "logprob": -0.5992696285247803,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            },
+            {
+              "token": "list",
+              "logprob": -0.8492696285247803,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.25
+        },
+        {
+          "label": "atomic0-quality-r2-fixed-k7",
+          "selected_token_id": 1607,
+          "selected_logprob": -0.7244269847869873,
+          "top_logprobs": [
+            {
+              "token": "list",
+              "logprob": -0.7244269847869873,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            },
+            {
+              "token": "tuple",
+              "logprob": -0.7244269847869873,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.0
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic0-quality-r1-fixed-k7",
+        "atomic0-quality-r3-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true
+    },
+    {
+      "labels": [
+        "atomic0-quality-r1-fixed-k7",
+        "atomic0-quality-r4-fixed-k7"
+      ],
+      "first_divergence": 106,
+      "shared_output_prefix_tokens": 106,
+      "observations": [
+        {
+          "label": "atomic0-quality-r1-fixed-k7",
+          "selected_token_id": 24515,
+          "selected_logprob": -0.5992696285247803,
+          "top_logprobs": [
+            {
+              "token": "tuple",
+              "logprob": -0.5992696285247803,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            },
+            {
+              "token": "list",
+              "logprob": -0.8492696285247803,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.25
+        },
+        {
+          "label": "atomic0-quality-r4-fixed-k7",
+          "selected_token_id": 1607,
+          "selected_logprob": -0.6879672408103943,
+          "top_logprobs": [
+            {
+              "token": "list",
+              "logprob": -0.6879672408103943,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            },
+            {
+              "token": "tuple",
+              "logprob": -0.8129672408103943,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.125
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic0-quality-r1-fixed-k7",
+        "atomic0-quality-r5-fixed-k7"
+      ],
+      "first_divergence": 106,
+      "shared_output_prefix_tokens": 106,
+      "observations": [
+        {
+          "label": "atomic0-quality-r1-fixed-k7",
+          "selected_token_id": 24515,
+          "selected_logprob": -0.5992696285247803,
+          "top_logprobs": [
+            {
+              "token": "tuple",
+              "logprob": -0.5992696285247803,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            },
+            {
+              "token": "list",
+              "logprob": -0.8492696285247803,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.25
+        },
+        {
+          "label": "atomic0-quality-r5-fixed-k7",
+          "selected_token_id": 1607,
+          "selected_logprob": -0.626354992389679,
+          "top_logprobs": [
+            {
+              "token": "list",
+              "logprob": -0.626354992389679,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            },
+            {
+              "token": "tuple",
+              "logprob": -0.876354992389679,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.25
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic0-quality-r2-fixed-k7",
+        "atomic0-quality-r3-fixed-k7"
+      ],
+      "first_divergence": 106,
+      "shared_output_prefix_tokens": 106,
+      "observations": [
+        {
+          "label": "atomic0-quality-r2-fixed-k7",
+          "selected_token_id": 1607,
+          "selected_logprob": -0.7244269847869873,
+          "top_logprobs": [
+            {
+              "token": "list",
+              "logprob": -0.7244269847869873,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            },
+            {
+              "token": "tuple",
+              "logprob": -0.7244269847869873,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.0
+        },
+        {
+          "label": "atomic0-quality-r3-fixed-k7",
+          "selected_token_id": 24515,
+          "selected_logprob": -0.3486233353614807,
+          "top_logprobs": [
+            {
+              "token": "tuple",
+              "logprob": -0.3486233353614807,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            },
+            {
+              "token": "list",
+              "logprob": -1.348623275756836,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.9999999403953552
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic0-quality-r2-fixed-k7",
+        "atomic0-quality-r4-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true
+    },
+    {
+      "labels": [
+        "atomic0-quality-r2-fixed-k7",
+        "atomic0-quality-r5-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true
+    },
+    {
+      "labels": [
+        "atomic0-quality-r3-fixed-k7",
+        "atomic0-quality-r4-fixed-k7"
+      ],
+      "first_divergence": 106,
+      "shared_output_prefix_tokens": 106,
+      "observations": [
+        {
+          "label": "atomic0-quality-r3-fixed-k7",
+          "selected_token_id": 24515,
+          "selected_logprob": -0.3486233353614807,
+          "top_logprobs": [
+            {
+              "token": "tuple",
+              "logprob": -0.3486233353614807,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            },
+            {
+              "token": "list",
+              "logprob": -1.348623275756836,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.9999999403953552
+        },
+        {
+          "label": "atomic0-quality-r4-fixed-k7",
+          "selected_token_id": 1607,
+          "selected_logprob": -0.6879672408103943,
+          "top_logprobs": [
+            {
+              "token": "list",
+              "logprob": -0.6879672408103943,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            },
+            {
+              "token": "tuple",
+              "logprob": -0.8129672408103943,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.125
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic0-quality-r3-fixed-k7",
+        "atomic0-quality-r5-fixed-k7"
+      ],
+      "first_divergence": 106,
+      "shared_output_prefix_tokens": 106,
+      "observations": [
+        {
+          "label": "atomic0-quality-r3-fixed-k7",
+          "selected_token_id": 24515,
+          "selected_logprob": -0.3486233353614807,
+          "top_logprobs": [
+            {
+              "token": "tuple",
+              "logprob": -0.3486233353614807,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            },
+            {
+              "token": "list",
+              "logprob": -1.348623275756836,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.9999999403953552
+        },
+        {
+          "label": "atomic0-quality-r5-fixed-k7",
+          "selected_token_id": 1607,
+          "selected_logprob": -0.626354992389679,
+          "top_logprobs": [
+            {
+              "token": "list",
+              "logprob": -0.626354992389679,
+              "bytes": [
+                108,
+                105,
+                115,
+                116
+              ]
+            },
+            {
+              "token": "tuple",
+              "logprob": -0.876354992389679,
+              "bytes": [
+                116,
+                117,
+                112,
+                108,
+                101
+              ]
+            }
+          ],
+          "top_two_logprob_gap": 0.25
+        }
+      ]
+    },
+    {
+      "labels": [
+        "atomic0-quality-r4-fixed-k7",
+        "atomic0-quality-r5-fixed-k7"
+      ],
+      "first_divergence": null,
+      "identical_output_ids": true
+    }
+  ],
+  "note": "Reported probabilities are observations at identical prompt/output prefixes, not proof of a numerical root cause. Logprob capture changes diagnostic overhead; these rates are excluded from performance comparisons."
+}

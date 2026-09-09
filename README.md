@@ -91,14 +91,23 @@ An opt-in controller chooses target verification caps 1/3/5/7 while retaining
 DFlash2's trained block of eight and seven draft tokens. On the current
 TP4/DCP2 lane, the held-out prose benchmark improved 15.8%; the expanded
 coding follow-up measured +1.14% with a 95% interval of -1.30% to +3.64%.
-NVIDIA-device energy per prose token fell 17.4%. Whole-system and hardware
-idle-power improvements are unmeasured, and CX-7 cycling remains paused.
+NVIDIA-device energy per prose token fell 17.4%. Whole-system energy remains
+unmeasured in this experiment, and CX-7 cycling remains paused.
 
 `GLM_SPEC_POLICY` defaults to `off`. The experiment preserves the 180224-token
 window, 12 sequences and 6 GB/rank KV allocation. See the
 [benchmark report and reproducible commands](results/adaptive-spec/README.md),
 [completion audit](results/adaptive-spec/COMPLETION-AUDIT.md), and
 [design](docs/ADAPTIVE-SPECULATION-PLAN.md). Broad promotion remains gated.
+
+The [follow-up experiments](docs/ADAPTIVE-SPECULATION-NEXT.md) repair a replicated
+draft-cache table defect, validate real Pi text/tool hints through herdr, reject
+the tested lagged-confidence predictor, and measure active/idle GPU-clock
+tradeoffs. Loaded-idle device power falls from about 32 W across four GPUs to
+22.14 W at 600 MHz, with no permanent clock policy installed. Target-output
+repeatability remains unresolved after an isolated atomic-reduction control.
+The [curated evidence](results/adaptive-next/README.md) preserves all outcomes,
+invalid controls, privacy transformations and exact restoration checks.
 
 ## Layout
 
@@ -110,7 +119,7 @@ window, 12 sequences and 6 GB/rank KV allocation. See the
 | `patches/*.patch` | `baseline` to `overlay` diffs, plus `apply.sh` |
 | `stage/glm-dcp/` | deployed sources flattened for bind-mounting, with `SHA256SUMS` |
 | `launch-glm53big-dcp.sh` | TP4 + DCP4 + DFlash launcher, derived from the selected one |
-| `tests/` | 370 local tests covering the real patched kernels, NVMe tier, adaptive verification, API controls and guarded experiments |
+| `tests/` | Local tests of real patched kernels, NVMe tier, adaptive verification, API controls and guarded experiments; validation counts are recorded with each experiment |
 | `upstream-vllm/` | an upstream clone, used to locate the fork's base commit |
 
 `baseline` is what the image runs: for `flashmla_sparse.py` and
@@ -122,7 +131,7 @@ bind-mounts, and for the other eleven the pristine file from the image's
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install pytest torch triton numpy pydantic==2.13.5
-PYTHONPATH=tests .venv/bin/python -m pytest tests/ -q     # 370 passed in the validated environment
+PYTHONPATH=tests .venv/bin/python -m pytest tests/ -q
 ```
 
 They run Triton in interpreter mode on CPU and extract the kernels straight out

@@ -1,0 +1,16 @@
+{
+  "requests": "results/adaptive-next/pi-hints-r1/requests.json",
+  "out": "results/adaptive-next/pi-hints-r1/confidence-controls-r2",
+  "study": "confidence",
+  "base": "http://spark-06c4.local:8000",
+  "repeats": 2,
+  "tokens": 512,
+  "variants": [
+    "off",
+    "on"
+  ],
+  "source_sha256": {
+    "~/spark-cluster-mla-dcp/results/adaptive-next/pi-hints-r1/payloads/pi-spec-1788943204677-1.json": "2474fad9c4a397c4bbf318016252a7058e96266ceb539b3b7e0d47dd05c44340",
+    "~/spark-cluster-mla-dcp/results/adaptive-next/pi-hints-r1/payloads/pi-spec-1788943251573-2.json": "05427174d87f1c2d2e735032611f71f89d7862b03fb60f3b5cfe58e9248257af"
+  }
+}

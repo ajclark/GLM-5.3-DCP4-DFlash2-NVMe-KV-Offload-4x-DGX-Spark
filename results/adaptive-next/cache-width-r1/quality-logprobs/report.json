@@ -1,0 +1,77 @@
+{
+  "runs": [
+    {
+      "label": "quality-logprobs-r0-fixed-k7",
+      "functional_check": "functional checks passed",
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100474,
+        "completion_tokens": 285
+      },
+      "ttft": 1.4237307549919933,
+      "decode_tps": 40.46290653594546
+    },
+    {
+      "label": "quality-logprobs-r0-adaptive-k7",
+      "functional_check": "functional checks passed",
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100474,
+        "completion_tokens": 285
+      },
+      "ttft": 1.1605945820047054,
+      "decode_tps": 41.30500584691641
+    },
+    {
+      "label": "quality-logprobs-r1-adaptive-k7",
+      "functional_check": "functional checks passed",
+      "token_sha256": "740013a476d4af8a90e5e9f420180a32d87e8547f99681435963a3ad31e73e5c",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100470,
+        "completion_tokens": 281
+      },
+      "ttft": 1.142430471983971,
+      "decode_tps": 40.73489510009101
+    },
+    {
+      "label": "quality-logprobs-r1-fixed-k7",
+      "functional_check": "functional checks passed",
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100474,
+        "completion_tokens": 285
+      },
+      "ttft": 1.1914546379994135,
+      "decode_tps": 40.65014552823753
+    },
+    {
+      "label": "quality-logprobs-r2-fixed-k7",
+      "functional_check": "FAILED: Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n    exec(compile(sys.stdin.read(),'<generated>','exec'),ns)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<generated>\", line 50, in <module>\nAssertionError\n",
+      "token_sha256": "5fffd176056ae22871cd396b402a093ec967dee53c361355e51f03359ecd95a5",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100473,
+        "completion_tokens": 284
+      },
+      "ttft": 1.1522024019795936,
+      "decode_tps": 40.19705980464904
+    },
+    {
+      "label": "quality-logprobs-r2-adaptive-k7",
+      "functional_check": "functional checks passed",
+      "token_sha256": "5cd45fd55eea39d27622de3448ba09946bb2f5e3537bf4451b55a58e5147202d",
+      "usage": {
+        "prompt_tokens": 100189,
+        "total_tokens": 100474,
+        "completion_tokens": 285
+      },
+      "ttft": 1.1460233280085959,
+      "decode_tps": 42.261124163746764
+    }
+  ],
+  "all_token_ids_identical": false
+}

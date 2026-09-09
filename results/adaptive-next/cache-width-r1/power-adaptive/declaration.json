@@ -1,0 +1,12 @@
+{
+  "out": "results/adaptive-next/cache-width-r1/power-adaptive",
+  "experiment": "cache-width-20260909-r1",
+  "profiles": "baseline,gpu1600,baseline",
+  "cases": "code_cache,code_csv,prose_heat,prose_library",
+  "corpus": "~/spark-cluster-mla-dcp/bench/spec-development.json",
+  "idle_seconds": 60,
+  "idle_only": false,
+  "tokens": 256,
+  "policy": "adaptive",
+  "costs": "results/adaptive-next/cache-width-r1/costs-repaired-curve.json"
+}

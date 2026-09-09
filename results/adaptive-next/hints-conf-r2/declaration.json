@@ -1,0 +1,10 @@
+{
+  "runtime": "f71eac09344364a3744f3c5d9b82f30ce764702b",
+  "label": "hints-conf-20260909-r2",
+  "atomic": 1,
+  "confidence_collection": true,
+  "activation_gate": "Two bounded 64-token captured-Pi prose replays with both switches true vs false; activation only, not an isolated performance comparison.",
+  "controls": "Two cases, two repeats: eight fixed7 confidence requests; sixteen hint requests (off/on/wrong/fixed7); 512-token bound; fresh directories.",
+  "confidence_screen": "Twelve frozen development prompts, fixed7, 256 tokens, one repeat; actual causal timestamps; no serving decision changes.",
+  "atomic_baseline": "Six fixed7 100189-token prompt numerical controls, confidence and hints disabled; 768-token bound and top-two logprobs."
+}

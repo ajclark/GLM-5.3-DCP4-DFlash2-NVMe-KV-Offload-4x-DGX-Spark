@@ -1,0 +1,51 @@
+{
+  "config": {
+    "tp": 4,
+    "dcp": 2,
+    "max_model_len": 180224,
+    "draft_capacity": 7
+  },
+  "context_range": [
+    0,
+    4096
+  ],
+  "prior_strength": 2,
+  "domains": {
+    "code": [
+      0.7657004830917874,
+      0.7830188679245284,
+      0.732,
+      0.6467391304347826,
+      0.7583333333333333,
+      0.75,
+      0.7571428571428571
+    ],
+    "prose": [
+      0.6671779141104295,
+      0.4793577981651376,
+      0.5095238095238095,
+      0.49074074074074076,
+      0.5370370370370371,
+      0.5666666666666667,
+      0.2777777777777778
+    ]
+  },
+  "runtime_commit": "8f684a4",
+  "source_trace_sha256": "d6f23ff8d9590c9dff5b7eb5a9b893e96d52e66672a795295949afaa1e8ac1dc",
+  "development_only": true,
+  "observations_per_case": {
+    "code_cache": 32,
+    "code_csv": 30,
+    "code_retry": 30,
+    "code_sql": 47,
+    "code_queue": 43,
+    "code_patch": 24,
+    "prose_heat": 48,
+    "prose_library": 62,
+    "prose_explain": 60,
+    "prose_argument": 58,
+    "prose_edit": 55,
+    "prose_incident": 42
+  },
+  "source_trace": "results/adaptive-next/cache-width-r1/calibration-trace-hints.jsonl"
+}

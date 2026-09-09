@@ -1,0 +1,102 @@
+{
+  "runs": [
+    {
+      "label": "pi-spec-1788943204677-1",
+      "hint": {
+        "workload": "code_generate",
+        "phase": "user_turn",
+        "strength": "weak"
+      },
+      "usage": {
+        "input": 312,
+        "output": 262,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "reasoning": 0,
+        "totalTokens": 574,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "stop_reason": "stop",
+      "server_verify_rows": 37,
+      "server_caps": {
+        "7": 37
+      },
+      "hint_domains": {
+        "code": 9
+      },
+      "hint_observations": [
+        0,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "confidence_packets": 36,
+      "confidence_all_valid": true,
+      "output_sha256": "341dfb3fdd2c1a487b2e661d34c83c2c5a71be688ab2e9457c1528093cb09ebc",
+      "message_sha256": "201c0fdb4503b7a8432450e99377563f7c892d614eb1e6c0d861f9538d3c3f04"
+    },
+    {
+      "label": "pi-spec-1788943251573-2",
+      "hint": {
+        "workload": "prose",
+        "phase": "user_turn",
+        "strength": "weak"
+      },
+      "usage": {
+        "input": 609,
+        "output": 174,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "reasoning": 0,
+        "totalTokens": 783,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "stop_reason": "stop",
+      "server_verify_rows": 90,
+      "server_caps": {
+        "3": 85,
+        "7": 5
+      },
+      "hint_domains": {
+        "prose": 9
+      },
+      "hint_observations": [
+        0,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "confidence_packets": 89,
+      "confidence_all_valid": true,
+      "output_sha256": "31dec5888ed122221582bb8115ada1a328f6d3fdf085274775d44345a4b41b24",
+      "message_sha256": "22b9d36db0db53dabb158fa14b0b3e10360b15d94a5b3dfd9b3f15e241d7fb76"
+    }
+  ],
+  "code_functional_check": "functional checks passed",
+  "actual_herdr_pi_invocation": true,
+  "herdr_poll_seconds": 60,
+  "performance_claim": false,
+  "next": "Exact payload controlled HTTP replays isolate collector overhead and hint priors."
+}

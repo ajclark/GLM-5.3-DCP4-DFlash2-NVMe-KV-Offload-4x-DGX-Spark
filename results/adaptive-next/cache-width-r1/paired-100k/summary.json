@@ -1,0 +1,175 @@
+{
+  "screening_only": true,
+  "cases": {
+    "code_repo_context": {
+      "adaptive": {
+        "runs": 2,
+        "decode_tps": [
+          18.283689735940083,
+          16.778352399986307
+        ],
+        "median_tps": 17.531021067963195,
+        "verified_cycles": 216,
+        "mean_emitted": 2.3425925925925926,
+        "median_cycle_ms": 131.65255499916384,
+        "actual_caps": [
+          1,
+          3,
+          7
+        ],
+        "cap_counts": {
+          "1": 16,
+          "3": 169,
+          "5": 0,
+          "7": 31
+        },
+        "median_ttft_s": 1.0674643794918666,
+        "p95_emission_gap_s": 0.16446991500561126,
+        "device_j_per_decode_token": [
+          4.185916546839714,
+          4.556404003967518
+        ],
+        "median_ratio_to_7": 1.0462967001791919
+      },
+      "fixed7": {
+        "runs": 2,
+        "decode_tps": [
+          17.305215578207978,
+          16.2053958285962
+        ],
+        "median_tps": 16.755305703402087,
+        "verified_cycles": 184,
+        "mean_emitted": 2.739130434782609,
+        "median_cycle_ms": 164.76378500374267,
+        "actual_caps": [
+          7
+        ],
+        "cap_counts": {
+          "1": 0,
+          "3": 0,
+          "5": 0,
+          "7": 184
+        },
+        "median_ttft_s": 1.7933841525082244,
+        "p95_emission_gap_s": 0.16892540498520248,
+        "device_j_per_decode_token": [
+          4.757699474743504,
+          5.035122323255571
+        ],
+        "median_ratio_to_7": 1.0
+      }
+    },
+    "prose_repo_context": {
+      "adaptive": {
+        "runs": 2,
+        "decode_tps": [
+          18.757468523328217,
+          18.4917529791697
+        ],
+        "median_tps": 18.62461075124896,
+        "verified_cycles": 196,
+        "mean_emitted": 2.5714285714285716,
+        "median_cycle_ms": 132.31905700376956,
+        "actual_caps": [
+          3,
+          5,
+          7
+        ],
+        "cap_counts": {
+          "1": 0,
+          "3": 131,
+          "5": 36,
+          "7": 29
+        },
+        "median_ttft_s": 1.1812055235059233,
+        "p95_emission_gap_s": 0.16549933300120756,
+        "device_j_per_decode_token": [
+          4.122805326640068,
+          4.183579419509817
+        ],
+        "median_ratio_to_7": 1.100536073597793
+      },
+      "fixed7": {
+        "runs": 2,
+        "decode_tps": [
+          16.91620000288098,
+          16.9302339270178
+        ],
+        "median_tps": 16.92321696494939,
+        "verified_cycles": 182,
+        "mean_emitted": 2.791208791208791,
+        "median_cycle_ms": 165.21458300121594,
+        "actual_caps": [
+          7
+        ],
+        "cap_counts": {
+          "1": 0,
+          "3": 0,
+          "5": 0,
+          "7": 182
+        },
+        "median_ttft_s": 1.0692086304916302,
+        "p95_emission_gap_s": 0.17029950601863675,
+        "device_j_per_decode_token": [
+          4.899437209469527,
+          4.851063402009241
+        ],
+        "median_ratio_to_7": 1.0
+      }
+    }
+  },
+  "paired": {
+    "code/adaptive": {
+      "prompts": 1,
+      "pairs": 2,
+      "paired_geomean_ratio": 1.045895389846761,
+      "prompt_bootstrap_95": null,
+      "prompt_ratios": {
+        "code_repo_context": 1.045895389846761
+      }
+    },
+    "prose/adaptive": {
+      "prompts": 1,
+      "pairs": 2,
+      "paired_geomean_ratio": 1.100508166825396,
+      "prompt_bootstrap_95": null,
+      "prompt_ratios": {
+        "prose_repo_context": 1.100508166825396
+      }
+    }
+  },
+  "graphs": [
+    "SPEC_GRAPH k=1 target_tokens=2 padded_tokens=2 mode=FULL draft_capacity=7",
+    "SPEC_GRAPH k=3 target_tokens=4 padded_tokens=4 mode=FULL draft_capacity=7",
+    "SPEC_GRAPH k=5 target_tokens=6 padded_tokens=6 mode=FULL draft_capacity=7",
+    "SPEC_GRAPH k=7 target_tokens=8 padded_tokens=8 mode=FULL draft_capacity=7"
+  ],
+  "memory": {
+    "spark-06c4.local": {
+      "minimum_available_mib": 1976.37109375,
+      "new_swap_out_mib": 0.0078125,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-365c.local": {
+      "minimum_available_mib": 3396.76953125,
+      "new_swap_out_mib": 0.0,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-a218.local": {
+      "minimum_available_mib": 3431.59375,
+      "new_swap_out_mib": 0.0,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-ddbf.local": {
+      "minimum_available_mib": 3386.96484375,
+      "new_swap_out_mib": 0.0,
+      "oom_delta": 0,
+      "trips": []
+    }
+  },
+  "wall_energy_measured": false,
+  "note": "Screening precision depends on independent prompt coverage and repeat counts; this is not a promotion gate. Greedy output identity is not assumed."
+}

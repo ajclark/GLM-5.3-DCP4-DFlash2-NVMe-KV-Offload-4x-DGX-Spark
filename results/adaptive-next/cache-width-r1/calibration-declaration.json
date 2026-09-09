@@ -1,0 +1,9 @@
+{
+  "time": 1788936573.3843193,
+  "runtime_commit": "8f684a4",
+  "purpose": "Recalibrate after replicated-cache repair; same2GHz GPU lock and6GB/rank KV pool",
+  "short_costs": "All fixed caps, three standard development workloads,256 outputs, one repeat; fit requires50 eligible cycles per cap. Extend only if count deficient.",
+  "hint_priors": "Twelve development prompts, fixed7,128 outputs, one repeat; no evaluation corpus used.",
+  "long_costs": "Both100k repo tasks, caps1/3/5/7,256 outputs, one repeat; use saved exact prompt corpus from repair probes.",
+  "independent_validation": "Separate prompts/repeats after calibration freeze; broad old long speedup claims stay historical mitigation results."
+}

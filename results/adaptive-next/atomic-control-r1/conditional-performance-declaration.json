@@ -1,0 +1,11 @@
+{
+  "declared_at": 1788946699.526227,
+  "condition_before_atomic0_results": "Run only if all six atomic0 numerical controls pass and their output token sequences are identical. Otherwise stop this branch after the declared numerical control.",
+  "purpose": "Screen throughput and device energy cost of a promising numerical fix while the same isolated atomic0 stack is already resident.",
+  "baseline": "hints-conf-r2/confidence-development: twelve fixed7 prompts, 256 output tokens each, one repeat, confidence collection on",
+  "treatment": "Identical corpus, token bound, greedy seed42 sampling, fixed7 and shadow collection in atomic0 boot; no logprobs",
+  "corpus_sha256": "0e79a1f2fb0e3ccc1a9ecb16c88c95739e5d9921ceb74aca55489ade1147ebda",
+  "additional_requests": 12,
+  "additional_model_or_kv_capacity": false,
+  "limitations": "One baseline/treatment boot, one repeat per prompt. Boot/time effects are not counterbalanced; no causal confidence interval or production promotion from this screen. Do not mix logprob diagnostic throughput into it. Do not pool confidence training data across atomic settings."
+}

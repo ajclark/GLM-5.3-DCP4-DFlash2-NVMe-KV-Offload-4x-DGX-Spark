@@ -1,0 +1,98 @@
+{
+  "sensor": "NVIDIA-reported device power, summed across four nodes; not wall power",
+  "requests": [
+    {
+      "label": "paired-100k-code_repo_context-r0-adaptive-k7",
+      "device_request_joules": 1141.4190257066716,
+      "device_request_j_per_output_token": 4.458668069166686,
+      "device_decode_j_per_token": 4.185916546839714
+    },
+    {
+      "label": "paired-100k-code_repo_context-r0-fixed-k7",
+      "device_request_joules": 1360.0258974477078,
+      "device_request_j_per_output_token": 5.312601161905109,
+      "device_decode_j_per_token": 4.757699474743504
+    },
+    {
+      "label": "paired-100k-code_repo_context-r1-adaptive-k7",
+      "device_request_joules": 1240.7837249388604,
+      "device_request_j_per_output_token": 4.846811425542423,
+      "device_decode_j_per_token": 4.556404003967518
+    },
+    {
+      "label": "paired-100k-code_repo_context-r1-fixed-k7",
+      "device_request_joules": 1354.3171748151838,
+      "device_request_j_per_output_token": 5.290301464121812,
+      "device_decode_j_per_token": 5.035122323255571
+    },
+    {
+      "label": "paired-100k-prose_repo_context-r0-adaptive-k7",
+      "device_request_joules": 1118.2724529998418,
+      "device_request_j_per_output_token": 4.368251769530632,
+      "device_decode_j_per_token": 4.122805326640068
+    },
+    {
+      "label": "paired-100k-prose_repo_context-r0-fixed-k7",
+      "device_request_joules": 1326.173206819872,
+      "device_request_j_per_output_token": 5.180364089140125,
+      "device_decode_j_per_token": 4.899437209469527
+    },
+    {
+      "label": "paired-100k-prose_repo_context-r1-adaptive-k7",
+      "device_request_joules": 1122.601076651808,
+      "device_request_j_per_output_token": 4.385160455671125,
+      "device_decode_j_per_token": 4.183579419509817
+    },
+    {
+      "label": "paired-100k-prose_repo_context-r1-fixed-k7",
+      "device_request_joules": 1288.3034889256778,
+      "device_request_j_per_output_token": 5.032435503615929,
+      "device_decode_j_per_token": 4.851063402009241
+    }
+  ],
+  "paired_decode_energy": {
+    "code/adaptive": {
+      "prompts": 1,
+      "pairs": 2,
+      "paired_geomean_ratio": 0.8922835355524718,
+      "prompt_bootstrap_95": null,
+      "prompt_ratios": {
+        "code_repo_context": 0.8922835355524718
+      }
+    },
+    "prose/adaptive": {
+      "prompts": 1,
+      "pairs": 2,
+      "paired_geomean_ratio": 0.8518808385269726,
+      "prompt_bootstrap_95": null,
+      "prompt_ratios": {
+        "prose_repo_context": 0.8518808385269726
+      }
+    }
+  },
+  "paired_request_energy": {
+    "code/adaptive": {
+      "prompts": 1,
+      "pairs": 2,
+      "paired_geomean_ratio": 0.8768732379597577,
+      "prompt_bootstrap_95": null,
+      "prompt_ratios": {
+        "code_repo_context": 0.8768732379597577
+      }
+    },
+    "prose/adaptive": {
+      "prompts": 1,
+      "pairs": 2,
+      "paired_geomean_ratio": 0.8571904510305965,
+      "prompt_bootstrap_95": null,
+      "prompt_ratios": {
+        "prose_repo_context": 0.8571904510305965
+      }
+    }
+  },
+  "lower_ratio_is_better": true,
+  "wall_energy_measured": false,
+  "missing_decode_records": 0,
+  "missing_request_records": 0,
+  "note": "Two-second samples with <=5s gaps and bracketing coverage required. Whole-request interval starts at submission and ends at the last SSE event; prefill is included. Cold/warm cache conditions must still be compared separately."
+}

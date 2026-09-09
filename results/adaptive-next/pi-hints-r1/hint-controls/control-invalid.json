@@ -1,0 +1,7 @@
+{
+  "valid_experiment": false,
+  "reason": "Live API schema converts JSON true to integer 1; runtime used identity-to-True checks, so explicit-on flags were disabled. Off/on/wrong comparisons do not identify the intended treatment.",
+  "evidence": "All confidence on/off trace rows had no packets; actual Pi default-enabled requests had valid packets.",
+  "retain_raw_records": true,
+  "performance_or_overhead_claim": false
+}

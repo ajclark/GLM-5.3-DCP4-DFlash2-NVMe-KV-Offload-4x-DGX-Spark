@@ -1,0 +1,33 @@
+{
+  "time": 1788935074.9664104,
+  "commit": "8f684a41d57ade6a021dfe66175cf5d88465df2d",
+  "experiment": "cache-width-20260909-r1",
+  "purpose": "Validate replicated KV table geometry, correctness and acceptance recovery across the original 90112-token boundary",
+  "lane": {
+    "tp": 4,
+    "dcp": 2,
+    "maxlen": 180224,
+    "maxseqs": 12,
+    "kvbytes_per_rank": 6000000000,
+    "draft_tokens": 7
+  },
+  "source_sha256": {
+    "stage/glm-dcp/model_runner.py": "ae2db16dcdd87e5a5e1d16fd5365a3a0d5b9cf8ae6f70e52393a02ba4f815c19",
+    "stage/glm-dcp/v2_block_table.py": "17368a5f2b4a004ee74a468e3b4c1beb0d10a68fa1b3e321defb78da3a99168c",
+    "stage/glm-dcp/adaptive.py": "2620cf7a112c347a0bdc7b6ed4b2f1647a118ebe2d34942b4257402ea7c55d33",
+    "stage/glm-dcp/scheduler.py": "024d9181f16e27fd28d08a2b3d1166ed014e9e7bef169d61d695a40c17630d39",
+    "launch-glm53big-dcp.sh": "73a1d1a5f0d991823ea902737e0c49599b0e1b6934bee7d10014a5dbc15302ef"
+  },
+  "gates": [
+    "all-node phase-aware MemoryGuard plus remote watchdogs",
+    "no overlapping model allocations",
+    "startup geometry per group, short count smoke at caps7/5/3/1",
+    "89k then92k counting marker with64 output tokens",
+    "100k code/prose fixed7 128-token cold/warm only after boundary passes",
+    "calibrate fixed caps on repaired runtime before any adaptive long comparison"
+  ],
+  "historical_control": "Frozen earlier observed long failures; do not rerun known-invalid original long requests",
+  "max_extra_table_bytes_per_rank": 135168,
+  "restoration": "Exact original containers, image, mounts, launch options; watchdog expiration if controller lost",
+  "power": "NVIDIA-reported device power; no whole-node or wall measurement claim"
+}
