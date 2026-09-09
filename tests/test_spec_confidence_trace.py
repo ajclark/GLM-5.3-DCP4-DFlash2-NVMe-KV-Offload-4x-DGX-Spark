@@ -76,8 +76,8 @@ def test_request_filters_match_unsupported_sampling_contract(key,value):
     assert not C.request_eligible(data)
 
 
-@pytest.mark.parametrize("value", [False,0,1,"false","true"])
-def test_only_boolean_true_or_omission_allows_request_capture(value):
+@pytest.mark.parametrize("value", [False,0,1.0,2,None,"false","true"])
+def test_only_boolean_true_integer_one_or_omission_allows_request_capture(value):
     data = new_request()
     data.sampling_params.extra_args = {"spec_confidence_trace":value}
     assert not C.request_eligible(data)

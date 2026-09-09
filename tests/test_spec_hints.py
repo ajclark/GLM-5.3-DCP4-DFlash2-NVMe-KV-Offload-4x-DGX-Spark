@@ -51,7 +51,8 @@ def test_prior_only_cold_start_changes_choice_without_inventing_trials(policy):
     ('spec_workload', 'mixed'), ('spec_workload', 'unknown'),
     ('spec_workload', 'prose;force_cap=1'), ('spec_hint_strength', 'strong'),
     ('spec_hint_strength', 'abstain'), ('spec_phase', 'tool_followup'),
-    ('spec_use_hints', False), ('spec_use_hints', 1), ('spec_use_hints', 'true')])
+    ('spec_use_hints', False), ('spec_use_hints', 0), ('spec_use_hints', 1.0),
+    ('spec_use_hints', 2), ('spec_use_hints', 'true')])
 def test_ambiguous_untrusted_or_disabled_hints_keep_original_warmup(policy, field, value):
     request = Request()
     request.sampling_params.extra_args = {**hint(), field: value}

@@ -1,0 +1,41 @@
+{
+  "anyOf": [
+    {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "type": "array"
+          }
+        ]
+      },
+      "type": "object"
+    },
+    {
+      "type": "null"
+    }
+  ],
+  "title": "Vllm Xargs",
+  "description": "Additional request parameters with (list of) string or numeric values, used by custom extensions."
+}

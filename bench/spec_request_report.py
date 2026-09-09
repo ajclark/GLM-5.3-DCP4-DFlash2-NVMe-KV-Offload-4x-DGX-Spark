@@ -45,9 +45,31 @@ def summarize(runs, events=(), samples=None):
             raise ValueError('duplicate or unknown request variant')
         indexed[key] = row
         rows = traces[row['label']]
+        if not rows:
+            raise ValueError('missing runtime control trace for ' + row['label'])
         caps = Counter(r['scheduled_k'] for r in rows)
         hints = [r for r in rows if r.get('hint_domain') is not None]
         packets = [r['confidence'] for r in rows if r.get('confidence')]
+        expected_mode = 'fixed' if study == 'confidence' or row['variant'] == 'fixed7' else 'adaptive'
+        if any(r.get('mode') != expected_mode for r in rows):
+            raise ValueError('runtime policy did not match the requested control')
+        if expected_mode == 'fixed' and set(caps) != {7}:
+            raise ValueError('fixed control did not actually use cap seven')
+        if study == 'confidence':
+            if hints or (row['variant'] == 'off' and packets):
+                raise ValueError('disabled control unexpectedly activated')
+            if row['variant'] == 'on' and (not packets or not all(p.get('valid') for p in packets)):
+                raise ValueError('confidence-on control has no valid packet stream')
+        else:
+            if packets:
+                raise ValueError('hint control unexpectedly collected confidence')
+            if row['variant'] in ('off', 'fixed7') and hints:
+                raise ValueError('disabled hint control unexpectedly activated')
+            if row['variant'] in ('on', 'wrong'):
+                workload = row['experiment_xargs']['spec_workload']
+                domain = 'prose' if workload == 'prose' else 'code'
+                if not hints or any(r['hint_domain'] != domain or r['observations'] >= 8 for r in hints):
+                    raise ValueError('hint-on control did not apply the bounded intended prior')
         details.append({k: row[k] for k in ('label', 'case', 'repeat', 'variant',
                                            'decode_tps', 'ttft', 'token_sha256')})
         details[-1].update(
@@ -100,7 +122,7 @@ def summarize(runs, events=(), samples=None):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('directory', type=Path)
-    ap.add_argument('--trace', type=Path)
+    ap.add_argument('--trace', type=Path, required=True, help='Required proof that each requested treatment actually activated')
     ap.add_argument('--power', type=Path)
     args = ap.parse_args()
     runs, sources = [], {}

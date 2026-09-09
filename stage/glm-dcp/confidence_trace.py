@@ -32,8 +32,9 @@ def request_eligible(data):
     if sp is None:
         return False
     xargs = getattr(sp, "extra_args", None) or {}
+    capture = xargs.get("spec_confidence_trace", True)
     return bool(
-        sp.temperature == 0 and xargs.get("spec_confidence_trace", True) is True
+        sp.temperature == 0 and type(capture) in (bool, int) and capture == 1
         and not getattr(sp, "structured_outputs", None)
         and not getattr(data, "resumable", False)
         and not getattr(data, "lora_request", None)

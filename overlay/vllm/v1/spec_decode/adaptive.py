@@ -57,8 +57,11 @@ class HintPriors:
             raise ValueError('Invalid server workload prior table') from None
 
     def select(self, xargs, context):
+        # The OpenAI vllm_xargs schema accepts numeric/string primitives and
+        # normalizes JSON booleans to integer 0/1 before SamplingParams.
+        enabled = xargs.get('spec_use_hints', True)
         if (not self.bounds[0] <= context < self.bounds[1]
-                or xargs.get('spec_use_hints', True) is not True
+                or type(enabled) not in (bool, int) or enabled != 1
                 or xargs.get('spec_hint_strength') != 'weak'
                 or xargs.get('spec_phase') != 'user_turn'):
             return None, None
