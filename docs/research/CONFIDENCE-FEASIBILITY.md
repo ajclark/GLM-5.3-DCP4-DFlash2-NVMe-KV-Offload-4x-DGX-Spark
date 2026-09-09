@@ -1,0 +1,294 @@
+# DFlash2 confidence: feasible as a measured, lagged predictor
+
+**2026-09-09. Decision:** implement bounded shadow collection as the next
+confidence experiment; defer a serving policy change until real calibration
+and overhead evidence exists. Defer same-block host stopping in the current
+asynchronous C1 runtime. The existing selected-path scores are small and
+accessible, but become available after the output-copy boundary and potentially
+after the next target graph has already been scheduled.
+
+This task changes no runtime, deployment, graph, model or sampler. It delivers
+[an offline screen](../../bench/spec_confidence_screen.py) and
+[23 passing CPU tests](../../tests/test_spec_confidence_screen.py), including
+the actual captured selector. No Spark request or measured throughput result
+was produced. Historical acceptance traces do not contain the required scores;
+they cannot establish confidence quality retroactively.
+
+## What the score actually means
+
+The active checkpoint's selector top-k is 16, with seven proposed tokens and
+an eight-token query block. In captured
+[qwen3_dflash2.py](../../tests/fixtures/spec_confidence/qwen3_dflash2.py),
+`compute_candidates` obtains 16 candidate IDs and unary logits for each draft
+position. `_score_edges` constructs a tensor of shape
+`[batch, 7, predecessor_candidate, child_candidate]`:
+
+```text
+edge_score(j, parent, child) = unary_logit(j, child)
+    + dot(predecessor_codebook[parent_token] * projected_hidden[j],
+          successor_codebook[child_token])
+```
+
+At the first position, the predecessor token is the bonus/anchor token,
+repeated across all predecessor indices. At later positions, it is the token
+at the preceding position's candidate index. The score is a learned lexical
+interaction plus a unary candidate logit. It is not a target logit, a target
+probability, or a directly calibrated acceptance prediction.
+
+The captured [selector walk](../../tests/fixtures/spec_confidence/dflash2_speculator.py)
+starts with predecessor index 0. At every position it loads the row for the
+**previously chosen candidate index**, selects a child, writes that entire
+16-element row to `_selector_scores`, and uses the chosen child index as the
+next predecessor. Thus `_selector_scores[batch_row, j, :]` already contains
+the correct row along the realized path. Taking the maximum over every parent
+or using unary logits alone would describe a different decision.
+
+For greedy requests, the chosen child maximizes that realized row. Candidate
+IDs need not be sorted by token ID or score. The CPU tests independently check
+the edge formula and replay the actual Triton walk with nonidentity token IDs,
+request-state permutations, and absolute positions 32 and 100055. Neither
+absolute position nor random seed changes this fixed-score greedy walk.
+Sampling uses a different noise-dependent path and remains outside this first
+experiment's eligibility contract.
+
+Three useful reductions of each realized row are:
+
+| Feature | Definition | Interpretation |
+|---|---|---|
+| Margin | Selected score minus best other score | Separation within these 16 candidates |
+| Candidate pmax | `1 / sum(exp(score - selected_score))` | Selected probability after normalizing only this candidate set |
+| Normalized entropy | Entropy of that candidate-set softmax divided by `log(16)` | Uncertainty among the proposed alternatives |
+
+Compute reductions in FP32 from the existing FP32 realized buffer. This does
+not recover precision lost in earlier model operations. Nonfinite rows
+abstain. Constant logit offsets should not change any feature; score scaling
+does change confidence and needs model-specific calibration. A missing target
+token can coexist with a very confident selector, so high pmax is not evidence
+that target verification may be omitted. The full target verifier stays
+authoritative.
+
+The existing score buffer is only **448 bytes per C1 proposal**
+(`7 × 16 × 4`). Reducing to three FP32 features per position would produce
+84 bytes. No vocabulary-sized tensor or new model is needed. First collecting
+the raw 448-byte rows makes alternate feature calculations possible offline;
+fusion into the existing walk should be considered only after the predictor
+is useful and extraction overhead is measured.
+
+## Availability is the binding constraint
+
+The relevant ordering in the active
+[V2 runner](../../overlay/vllm/v1/worker/gpu/model_runner.py) is:
+
+| Worker order | Data available |
+|---|---|
+| Target verifies proposal P | Target output and P's accepted/rejected counts |
+| Construct `AsyncOutput` | Starts copying target results |
+| Postprocess sampled tokens | Commits request-state updates needed for drafting |
+| `speculator.propose` | Generates proposal P+1 and its selector scores |
+| Return async output | CPU may process results while later GPU work continues |
+
+Captured [async_utils.py](../../tests/fixtures/spec_confidence/async_utils.py)
+makes this explicit: `AsyncOutput.__init__` waits the copy stream on the main
+stream, copies the sampled output, and records its completion event.
+`get_output` later synchronizes **that event**. Adding P+1's scores to the
+already-launched copy cannot make those not-yet-produced values valid. Moving
+the copy after drafting would extend its dependency and change the overlap
+being optimized.
+
+There is also no ordinary greedy draft-token copy to extend for free.
+Captured [DraftTokensHandler](../../results/adaptive-spec/inventory/runtime/v1/worker/gpu/spec_decode/utils.py)
+copies IDs for structured-output validation; without that need it keeps no
+CPU draft array. Its exceptional copy path synchronizes on retrieval, which
+is not a suitable template for adding an unconditional new wait.
+
+CPU scheduling can already have queued the next verification shape. Reducing
+a GPU score to a cap does not itself change that CPU-selected shape. Masking
+tail tokens inside an already-selected M8 graph is not proof that M2 target
+work executes. The measured finite action set remains K=1/3/5/7 and genuine
+target M2/4/6/8 graphs.
+
+[EVICT](https://arxiv.org/html/2605.00342v1) combines candidate-benefit estimates
+with profiled verification costs and graph-compatible selection. Its useful
+transfer here is the cost-aware objective. Its integration does not establish
+that this fork can consume same-block GPU signals without a new dependency.
+
+For a chain, the candidate objective remains
+`(1 + sum(prefix_survival[0:K])) / measured_cycle_cost[K]`. DFlash2 has already
+computed the complete parallel draft when its selector scores exist, so this
+can reduce target verification work; it cannot retroactively save that draft
+pass. A GPU-controlled graph dispatcher or a deliberate host wait is a larger
+separate experiment, with its own measured break-even condition.
+
+## Minimal viable collection and ownership contract
+
+Prefer collecting P's immutable score packet with the ordinary target output
+that verifies P, then use it only at a scheduling boundary where the packet
+has actually arrived. At that point it is naturally paired with P's label and
+is a **lagged** predictor for a later proposal. Record its age; do not promise
+a fixed one-step lag. Existing asynchronous queuing can make the usable age
+two or more proposals.
+
+An implementation needs the following explicit contract:
+
+1. Assign every proposal a monotonic sequence within a request incarnation.
+   Retain runtime/checkpoint identity, run identity, request identity and
+   epoch, proposal sequence, actual anchor position, actual live batch row,
+   and any row/slot generation. The verification result must refer to that
+   exact proposal and anchor. GPU request-state index alone is not identity.
+2. Snapshot the selected-path scores into a bounded GPU packet ring before
+   `_selector_scores` can be overwritten by the next draft. A retained tensor
+   reference or `record_stream` protects allocation lifetime, not mutation of
+   a persistent buffer. Use explicit stream/event ordering and slot ownership.
+3. Copy only actual live rows into bounded pinned host storage. A ring depth
+   derived from maximum in-flight batches plus two spare slots is a reasonable
+   initial design. Release a slot after its copy and host consumption finish;
+   if the ring fills, drop telemetry and fall back to existing policy rather
+   than waiting or overwriting unread packets.
+4. Attach only ready host packets to an ordinary internal runner-output
+   message. The scheduler stamps receipt with its own monotonic clock. Do not
+   compare a remote worker's wall clock or CUDA event time to a scheduler
+   deadline. If using a separate post-proposal copy instead, test readiness
+   without waiting and deliver it at a later normal output boundary.
+5. At the scheduling decision, use the latest compatible packet whose receipt
+   precedes the decision and whose proposal age is within the calibrated
+   range. Unknown epoch, cancellation, reset/preemption, malformed values,
+   unsupported sampling, stale age or missing packet means abstain. The
+   scheduler owns the selected cap and sends one consistent decision to all
+   ranks.
+
+**Padded graph rows require special care.** DFlash input preparation pads
+`sample_idx_mapping` with zero. The selector's `req_state >= 0` check therefore
+does not distinguish padded graph rows from real request state 0. The actual
+kernel tests demonstrate both masked negative rows and finite outputs from
+zero-mapped padded rows. Export must use the real `input_batch.num_reqs`, not
+the graph's padded count. `_selector_scores` is indexed by batch row, while
+the sampling mapping indexes request state; they cannot be interchanged.
+
+At max-seqs 12, four ring slots holding raw scores require 21504 bytes on the
+GPU and the same amount in pinned host memory, plus small metadata. This is
+about 42 KiB combined per owning process, before allocator overhead. One
+authoritative scoring rank should publish the decision features; verify which
+rank's tokens are authoritative rather than silently averaging potentially
+different score rows. Memory is modest, but extra kernels, event operations,
+serialization and copy ordering still need an overhead control.
+
+No new GPU synchronization should occur in the serving path. Extending the
+existing output copy with an **already-produced, stable** packet adds a small
+copy and may extend that copy's completion time; it is not zero-cost. The
+control must measure this effect. Never attach current P+1 scores to P's
+verification result merely because they share the same worker call.
+
+## Calibration that respects what was observed
+
+For an actual cap K and accepted prefix A:
+
+- Conditional position j is observed only when `j < K` and `j <= A`.
+  Positions before A succeed, the first rejected position fails, and later
+  conditional outcomes are unknown.
+- Prefix-survival labels have a different mask. After a rejection, every
+  longer prefix is false. If a short cap is fully accepted, its unverified
+  longer prefixes remain unknown.
+- A lagged feature from P paired with the outcome of P+2 is a predictor for
+  P+2. It must be trained with that relationship and age. Training it against
+  P's label and then using it two steps later silently changes the problem.
+
+The new screen implements these masks and checks exact proposal/anchor joins.
+It extracts margin, pmax and entropy; its initial calibrator uses pmax bins
+conditioned on context band, feature age and block position, with bounded
+shrinkage toward causally available acceptance history. It compares a
+history-only screen, available confidence and a separately named same-block
+noncausal diagnostic. The last comparison estimates how much signal is lost
+to timing; it is not a deployable policy or a mathematical upper bound.
+
+All repeats of a prompt/case are held out together. No request incarnation can
+cross split groups. The screen refuses mixed runtime identities: geometry
+repair changed the long-context data-generating process, so original and
+repaired traces must not be pooled. Other request incarnations cannot provide
+history merely because a GPU slot or request name was reused.
+
+Only fixed-seven records enter the all-cap utility comparison. The metric
+evaluates different prefix choices at the same recorded boundaries, omitting
+changes to subsequent proposals. It also omits V4's warmup, periodic probes
+and hysteresis, so its history screen is not a V4 reproduction. Any serving
+proposal still needs a real V4 control. Calibration metrics alone are not
+tok/s or energy measurements.
+
+Before a live policy experiment, collect development-only fixed-seven shadow
+records after the geometry repair. Include coding, prose, actual thinking
+settings, tool transitions and distinct context bands. Fit bins on development
+prompts and lock a separate evaluation set. Compare acceptance-history only,
+harness hints only, confidence only and hybrid predictions. Add a shuffled
+confidence control that preserves age/context and calibration splits; keep
+it clearly separate from a deployable causal predictor. Do not add a
+classifier-model request or train alongside the loaded service.
+
+The offline artifact intentionally contains no real fitted confidence claim.
+Its 96-record demo is synthetic: current scores arrive after their decisions,
+so only age-two packets are available for 88 records. The tests establish
+that this distinction is honored. Demo utility values are properties of
+invented data and must never enter Spark benchmark summaries.
+
+## Implement/defer gates
+
+| Next action | Decision and evidence needed |
+|---|---|
+| Bounded immutable shadow packets | **Implement as an experiment.** Preserve proposal ownership and existing verifier, measure copy/instrumentation overhead against identical uninstrumented requests. |
+| Lagged confidence affecting caps | **Defer until data.** Require improvement beyond available acceptance history/hints on held-out prompts, useful coverage at actual ages, and a positive same-boundary signal before a live A/B. |
+| Current-block host cap selection | **Defer.** It requires changing an existing dependency or graph-dispatch contract. Prototype/measure that cost only if same-block signal materially exceeds the usable lagged signal. |
+| Learned head or selector fine-tuning | **Defer.** First separate candidate recall failures from selector/path errors; raw margin calibration may already suffice. |
+
+For a bounded live trial, retain C1 greedy eligibility, finite graph shapes,
+full target verification and fallback on unavailable features. Compare against
+the repaired V4 runtime, then add Pi hints as an ablation. Keep the current
+warmup/probe/hysteresis behavior initially rather than confounding this test
+with another cold-start change. Require no new correctness/pressure failures,
+a positive paired confidence interval on the targeted workload, no material
+regression in the other workload, and no regression in measured J/token.
+Loaded idle watts are a separate policy problem; a workload confidence score
+does not lower them.
+
+## Running the offline prototype
+
+```sh
+.venv/bin/pytest -q tests/test_spec_confidence_screen.py
+.venv/bin/python bench/spec_confidence_screen.py
+.venv/bin/python bench/spec_confidence_screen.py --demo
+.venv/bin/python bench/spec_confidence_screen.py --trace joined-confidence.jsonl --max-age 2
+```
+
+The command without data reports that no feature dataset was supplied. The
+prototype never contacts a model, reads KV contents, or launches CUDA. Its
+tests run the captured Triton walk under the existing CPU interpreter.
+All 23 tests work from a fresh checkout. Original selector, model and async
+sources are pinned in [tests/fixtures/spec_confidence](../../tests/fixtures/spec_confidence),
+with source paths and SHA-256 hashes in its
+[manifest](../../tests/fixtures/spec_confidence/manifest.json). The source-replay
+tests verify those hashes and have no ignored-inventory dependency.
+
+Each joined JSONL record requires:
+
+| Fields | Meaning |
+|---|---|
+| `runtime_id`, `run_id`, `request`, `epoch` | Stable owner identity; runtime ID includes repaired checkpoint/runtime provenance |
+| `case` | Prompt-family split key, identical for every repeat |
+| `proposal_id`, `anchor` | The proposal actually verified; IDs increase within an incarnation |
+| `feature_proposal_id`, `feature_anchor` | Origin of this record's raw score packet; must equal proposal/anchor |
+| `verified_proposal_id`, `verified_anchor` | Verifier's recorded origin; must match exactly |
+| `decision_ns` | Scheduler-local time when this proposal's verification cap was chosen |
+| `feature_available_ns` | Scheduler-local packet receipt time, or null if unavailable |
+| `feedback_available_ns` | Scheduler-local availability of this record's verification result |
+| `scheduled_k`, `accepted`, `eligible`, `terminal` | Actual feedback and censoring/eligibility fields |
+| `realized_scores` | Seven rows of 16 finite scores; absent data or invalid rows abstain |
+| `candidate_ids`, `selected_tokens` | Optional seven candidate rows and selected IDs, supplied together for mapping validation |
+| `costs_ms` | Positive context-matched complete-cycle costs keyed by `"1"`, `"3"`, `"5"`, `"7"` |
+
+The screen selects older available packets itself. Do not replace a record's
+score packet with an old row while leaving its proposal identity unchanged.
+The compact schema is a diagnostic contract, not an implemented wire API.
+
+Captured source hashes (SHA-256): selector speculator
+`4dac8303f68baafc0a2e675c053df8a15df2f1345b4032ef9348122d1f71cef9`;
+DFlash2 model
+`c141daa4b2059c0098224ac36471c2197b7052c100bef0a4dbc2ca79b627053f`;
+async utilities
+`a6256b706253868e340641a7a8fd6d327eedf7c513e492c54df7cf34d486af73`.
