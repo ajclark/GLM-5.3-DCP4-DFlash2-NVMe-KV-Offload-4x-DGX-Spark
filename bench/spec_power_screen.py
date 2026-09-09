@@ -16,7 +16,7 @@ from types import SimpleNamespace
 from adaptive_spec import generate, idle_check, request_body
 from spec_experiment import BASE, HOSTS, parallel, ssh
 from spec_memory import MemoryGuard
-from spec_power_node import PROFILES
+from spec_power_node import IDLE_ONLY_PROFILES, PROFILES
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -37,6 +37,8 @@ def main():
     cases = args.cases.split(',')
     if any(p not in PROFILES for p in profiles) or any(c not in corpus for c in cases):
         ap.error('unknown profile or corpus case')
+    if not args.idle_only and IDLE_ONLY_PROFILES.intersection(profiles):
+        ap.error('idle clock profiles require --idle-only; restore before active work')
     if not 30 <= args.idle_seconds <= 180 or not 64 <= args.tokens <= 512:
         ap.error('idle seconds must be 30..180, tokens 64..512')
     if (len(profiles) > 12 or len(cases) > 6

@@ -14,7 +14,9 @@ import time
 
 PROFILES = {'baseline': (2000, None), 'gpu2200': (2200, None), 'gpu1800': (1800, None),
             'gpu1600': (1600, None), 'schedutil': (2000, 'schedutil'),
+            'idle600': (600, None), 'idle300': (300, None),
             'idle_auto': (None, 'schedutil')}
+IDLE_ONLY_PROFILES = {'idle600', 'idle300', 'idle_auto'}
 
 
 def command(*args):
