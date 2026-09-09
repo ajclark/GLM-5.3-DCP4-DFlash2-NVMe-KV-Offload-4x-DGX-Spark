@@ -26,6 +26,7 @@ Failure on one node still restores every initialized node.
 | Profile | GPU | CPU | Purpose |
 |---|---|---|---|
 | baseline | 2000 MHz lock | Original governors | Bracket comparisons and restore |
+| gpu2200 | 2200 MHz lock | Original governors | Higher-frequency throughput/energy tradeoff |
 | gpu1800 | 1800 MHz lock | Original governors | Moderate frequency reduction |
 | gpu1600 | 1600 MHz lock | Original governors | Larger reduction |
 | schedutil | 2000 MHz lock | `schedutil` | CPU response and idle policy |
@@ -49,7 +50,11 @@ there is no discovered remotely queryable wall meter in this workspace.
 The existing idle-power notes estimate only a small gain from these controls.
 That estimate is not new measured evidence. The output of this experiment is
 a device-energy/latency tradeoff and a measured loaded-idle GPU floor, with
-CPU governor changes reported as configuration rather than inferred watts.
+CPU governor changes, reported CPU frequency and exported idle-residency
+counters treated as proxies rather than inferred watts. Missing counters stay
+missing. The report divides each treatment by the geometric mean of its nearest
+same-prompt baseline before and after; it retains absent energy measurements and
+output hashes. These are small development screens, with no promotion claim.
 
 Local tests verify per-core restoration, failure before mutation when a
 governor is unavailable, and watchdog retention after a failed restore.

@@ -12,7 +12,7 @@ import subprocess
 import sys
 import time
 
-PROFILES = {'baseline': (2000, None), 'gpu1800': (1800, None),
+PROFILES = {'baseline': (2000, None), 'gpu2200': (2200, None), 'gpu1800': (1800, None),
             'gpu1600': (1600, None), 'schedutil': (2000, 'schedutil'),
             'idle_auto': (None, 'schedutil')}
 
@@ -23,6 +23,24 @@ def command(*args):
 
 def original(root):
     return json.loads((root / 'original.json').read_text())
+
+
+def cpu_observations():
+    """Read-only frequency and idle residency proxies; these are not watts."""
+    frequencies, idle = {}, {}
+    for path in Path('/sys/devices/system/cpu/cpufreq').glob('policy*/scaling_cur_freq'):
+        try:
+            frequencies[path.parent.name] = int(path.read_text())
+        except (OSError, ValueError):
+            continue
+    for path in Path('/sys/devices/system/cpu').glob('cpu[0-9]*/cpuidle/state*'):
+        try:
+            idle[str(path)] = {'name': (path / 'name').read_text().strip(),
+                               'time_us': int((path / 'time').read_text()),
+                               'usage': int((path / 'usage').read_text())}
+        except (OSError, ValueError):
+            continue
+    return {'cpu_scaling_cur_freq_khz': frequencies, 'cpu_idle_counters': idle}
 
 
 def apply_profile(snapshot, profile):
@@ -108,7 +126,8 @@ def main():
             (args.root / 'profile').write_text(args.profile)
         print(json.dumps({'profile': (args.root / 'profile').read_text() if (args.root / 'profile').exists() else 'baseline',
                           'graphics_mhz': command('nvidia-smi', '--query-gpu=clocks.gr', '--format=csv,noheader,nounits'),
-                          'governors': sorted({(Path(p) / 'scaling_governor').read_text().strip() for p in original(args.root)['cpus']})}))
+                          'governors': sorted({(Path(p) / 'scaling_governor').read_text().strip() for p in original(args.root)['cpus']}),
+                          **cpu_observations()}))
 
 
 if __name__ == '__main__':

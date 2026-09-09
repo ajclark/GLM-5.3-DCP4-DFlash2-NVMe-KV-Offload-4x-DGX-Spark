@@ -11,6 +11,7 @@ import re
 import shlex
 import threading
 import time
+from types import SimpleNamespace
 
 from adaptive_spec import generate, idle_check, request_body
 from spec_experiment import BASE, HOSTS, parallel, ssh
@@ -68,6 +69,7 @@ def main():
         guard.check()
         if errors: raise RuntimeError('; '.join(errors))
 
+    request_guard = SimpleNamespace(check=check)
     monitor = threading.Thread(target=heartbeat, daemon=True)
     try:
         print('preflight:', guard.preflight(), flush=True)
@@ -91,7 +93,9 @@ def main():
             guard.preflight(seconds=4)
             started = time.time()
             states = parallel(lambda h: json.loads(rpc(h, 'profile', profile)))
-            print('profile', index, profile, states, flush=True)
+            (args.out / f'profile-{index}.json').write_text(json.dumps(states, indent=2) + '\n')
+            print('profile', index, profile,
+                  {h: {k: row[k] for k in ('graphics_mhz', 'governors')} for h, row in states.items()}, flush=True)
             settled = time.time() + args.idle_seconds
             while time.time() < settled:
                 check()
@@ -108,7 +112,7 @@ def main():
                 idle_check(BASE)
                 guard.preflight(seconds=4)
                 label = f'{args.out.name}-{index}-{profile}-{case}'
-                result = generate(BASE, request_body(corpus[case], 7, label, args.tokens), guard)
+                result = generate(BASE, request_body(corpus[case], 7, label, args.tokens), request_guard)
                 check()
                 result.update(label=label, profile=profile, profile_index=index, case=case, cap=7, repeat=index, policy='fixed')
                 (args.out / (label + '.json')).write_text(json.dumps(result, indent=2) + '\n')
