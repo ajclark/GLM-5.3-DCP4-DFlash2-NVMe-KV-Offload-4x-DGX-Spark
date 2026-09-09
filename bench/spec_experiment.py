@@ -6,6 +6,7 @@ watchdogs stop only labelled experimental containers if memory pressure rises
 or the controller heartbeat disappears. Preparations do not stop serving.
 """
 import argparse
+import hashlib
 import io
 import json
 import re
@@ -59,7 +60,7 @@ def package():
         'spec_node.py':ROOT/'bench/spec_node.py', 'spec_memory.py':ROOT/'bench/spec_memory.py',
         'launch.sh':ROOT/'launch-glm53big-dcp.sh',
     }
-    for name in ('scheduler.py','adaptive.py','model_runner.py','cudagraph_utils.py'):
+    for name in ('scheduler.py','adaptive.py','model_runner.py','cudagraph_utils.py','v2_block_table.py'):
         files['changes/'+name] = ROOT/'stage/glm-dcp'/name
     full_manifest = json.loads((ROOT/'results/adaptive-spec/inventory/python-sha256.json').read_text())
     relevant = ['v1/core/sched/scheduler.py','v1/core/sched/async_scheduler.py',
@@ -68,6 +69,9 @@ def package():
                 'v1/worker/gpu/input_batch.py']
     relevant += [p for p in full_manifest if p.startswith('v1/worker/gpu/spec_decode/')]
     manifest = {p:full_manifest[p] for p in relevant}
+    # Added after the original inventory; keep that historical manifest frozen.
+    rel = 'v1/worker/gpu/block_table.py'
+    manifest[rel] = hashlib.sha256((ROOT/'baseline/vllm'/rel).read_bytes()).hexdigest()
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf,mode='w') as tar:
         for name,path in files.items():

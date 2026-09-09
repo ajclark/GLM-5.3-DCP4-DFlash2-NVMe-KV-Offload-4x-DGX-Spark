@@ -126,7 +126,8 @@ DCP_FILES=(flashmla_sparse.py sparse_attn_indexer.py sparse_utils.py indexer.py
   kv_cache_interface.py kv_cache_utils.py kv_cache_coordinator.py
   block_table.py gpu_input_batch.py gpu_model_runner.py cp_utils.py
   flash_attn.py
-  scheduler.py b12x_sparse_helpers.py adaptive.py model_runner.py cudagraph_utils.py)
+  scheduler.py b12x_sparse_helpers.py adaptive.py model_runner.py cudagraph_utils.py
+  v2_block_table.py)
 for f in "${DCP_FILES[@]}"; do
   [ -f "$DCP_DIR/$f" ] || { echo "DCP overlay missing: $DCP_DIR/$f" >&2; exit 4; }
 done
@@ -268,6 +269,7 @@ run_docker run -d --name "$NAME" \
   -v "$DCP_DIR/scheduler.py:$VLLM/v1/core/sched/scheduler.py:ro" \
   -v "$DCP_DIR/adaptive.py:$VLLM/v1/spec_decode/adaptive.py:ro" \
   -v "$DCP_DIR/model_runner.py:$VLLM/v1/worker/gpu/model_runner.py:ro" \
+  -v "$DCP_DIR/v2_block_table.py:$VLLM/v1/worker/gpu/block_table.py:ro" \
   -v "$DCP_DIR/cudagraph_utils.py:$VLLM/v1/worker/gpu/cudagraph_utils.py:ro" \
   "${KVTIER_MOUNTS[@]}" \
   "${DRAFT_MOUNT[@]}" \

@@ -59,6 +59,8 @@ def test_stage_matches_changes_and_checksums():
     for rel in ('v1/core/sched/scheduler.py','v1/spec_decode/adaptive.py',
                 'v1/worker/gpu/model_runner.py','v1/worker/gpu/cudagraph_utils.py'):
         assert (ROOT/'overlay/vllm'/rel).read_bytes() == (ROOT/'stage/glm-dcp'/Path(rel).name).read_bytes()
+    assert (ROOT/'overlay/vllm/v1/worker/gpu/block_table.py').read_bytes() == (
+        ROOT/'stage/glm-dcp/v2_block_table.py').read_bytes()
     for line in (ROOT/'stage/SHA256SUMS').read_text().splitlines():
         digest,name = line.split(maxsplit=1)
         assert '__pycache__' not in name
