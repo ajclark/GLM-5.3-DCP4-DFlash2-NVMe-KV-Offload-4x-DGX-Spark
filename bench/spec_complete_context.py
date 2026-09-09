@@ -17,6 +17,7 @@ def main():
     ap.add_argument('--base', default='http://spark-06c4.local:8000')
     ap.add_argument('--variants', default='fixed7,fixed3,adaptive')
     ap.add_argument('--repeats', type=int, choices=(1, 2, 3), default=1)
+    ap.add_argument('--logprobs', action='store_true', help='Diagnostic top-two token probabilities; changes measurement overhead')
     args = ap.parse_args()
     corpus = json.loads(args.corpus.read_text())
     reference = next(iter(corpus.values()))
@@ -55,6 +56,8 @@ def main():
             label = f'{args.out.name}-r{repeat}-{mode}-k{cap}'
             body = request_body(prompt, cap, label, 768)
             body['vllm_xargs']['spec_policy'] = mode
+            if args.logprobs:
+                body.update(logprobs=True, top_logprobs=2)
             if costs:
                 add_costs(body, costs)
             (args.out / (label + '-request.json')).write_text(json.dumps(body) + '\n')

@@ -94,8 +94,15 @@ def main():
     for line in (args.directory / 'idle-windows.jsonl').read_text().splitlines():
         window = json.loads(line)
         energy = integrate(samples, window['settled_start'], window['ended_at'])
+        device_proxies = {}
+        for host, values in samples.items():
+            selected = [r for r in values if window['settled_start'] <= r['received_at'] <= window['ended_at']]
+            device_proxies[host] = {}
+            for key in ('graphics_mhz', 'temperature_c'):
+                observed = [r[key] for r in selected if r.get(key) is not None]
+                device_proxies[host]['mean_' + key] = statistics.mean(observed) if observed else None
         idle.append({**window, 'four_device_mean_idle_watts': energy / (window['ended_at'] - window['settled_start']) if energy is not None else None,
-                     'cpu_proxies': cpu_window(heartbeats, window)})
+                     'cpu_proxies': cpu_window(heartbeats, window), 'device_proxies': device_proxies})
     result = {'sensor': 'NVIDIA-reported power summed across four devices; CPU counters are separate proxies, not watts.',
               'screening_only': True, 'whole_node_or_wall_power_measured': False,
               'method': 'Treatment divided by geometric mean of nearest same-prompt baseline before and after; fixed cap7, complete request energy includes prefill.',
