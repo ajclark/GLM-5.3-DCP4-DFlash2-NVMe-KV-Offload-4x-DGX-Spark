@@ -136,3 +136,26 @@ between treatments, so the aggregate timing ratio cannot isolate packet-copy
 and serialization overhead. This small screen does not establish a strict
 one-percent upper overhead bound. It validates the request switches and
 transport while retaining confidence as an off-by-default diagnostic.
+
+## Actual tool-followup check
+
+A separate bounded Pi/herdr session enabled only `read` and `edit` in a VM
+scratch directory. Pi read a deliberately faulty Python fixture, removed the
+incorrect adjacency rule from `merge_intervals`, and finished naturally.
+AST comparison confirms that the other three functions were unchanged, and
+the edited module passes the same functional checks. No code-generation or
+edit was simulated by the test driver.
+
+There were three real provider requests: 820/1053/1127 input tokens and
+12/59/20 output tokens. The initial user turn carried a weak `code_edit` hint,
+which the server applied on its two verification rows. Both subsequent
+requests ended in actual tool results and carried `tool_followup`; all eighteen
+server verification rows for those requests omitted the domain prior. The
+17 confidence packets across this workflow were valid. The memory guard was
+active throughout and the 60-second herdr watcher remained in use; the
+intentional Pi restart briefly removed the named agent before it was renamed.
+
+The [tool-phase report](../../results/adaptive-next/pi-tool-r1/tool-phase-report.json)
+retains tool names, fixture hashes, usage and server phase evidence. Raw Pi
+sessions, provider payloads and pane captures stay private. This establishes
+a real tool-phase integration contract, not a measured tool-workflow speedup.

@@ -22,6 +22,7 @@ def pair(case='code_a', repeat=0, ratio=2):
 
 def traces(rows):
     return [{'event': 'verify', 'label': r['label'], 'mode': 'fixed', 'scheduled_k': 7,
+             'eligible': True, 'dropped': 0, 'writer_error': None,
              **({'confidence': {'valid': True}} if r['variant'] == 'on' else {})} for r in rows]
 
 
@@ -80,4 +81,14 @@ def test_missing_or_inactive_runtime_treatments_cannot_produce_an_overhead_repor
     events = traces(rows)
     events[0]['confidence'] = {'valid': True}
     with pytest.raises(ValueError, match='disabled control'):
+        summarize(rows, events)
+
+
+@pytest.mark.parametrize('field,value', [('eligible', False), ('dropped', 1),
+                                        ('writer_error', 'disk write failed')])
+def test_lost_c1_eligibility_or_telemetry_invalidates_the_control(field, value):
+    rows = pair()
+    events = traces(rows)
+    events[0][field] = value
+    with pytest.raises(ValueError, match='eligibility or complete telemetry'):
         summarize(rows, events)

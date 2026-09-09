@@ -47,6 +47,9 @@ def summarize(runs, events=(), samples=None):
         rows = traces[row['label']]
         if not rows:
             raise ValueError('missing runtime control trace for ' + row['label'])
+        if any(r.get('eligible') is not True or r.get('dropped') != 0
+               or r.get('writer_error') is not None for r in rows):
+            raise ValueError('control lost C1 eligibility or complete telemetry')
         caps = Counter(r['scheduled_k'] for r in rows)
         hints = [r for r in rows if r.get('hint_domain') is not None]
         packets = [r['confidence'] for r in rows if r.get('confidence')]

@@ -1,132 +1,174 @@
-# Adaptive speculation follow-up experiments
+# Adaptive speculation follow-up: measured findings and decisions
 
-The user authorized autonomous investigation, implementation and benchmarks across
-the research avenues on September 9, 2026, using the sandbox VM first and observing
-Spark memory pressure before and during experiments. Pi is installed locally and
-must be invoked through herdr for the harness investigation.
+The goal is better single-stream coding/prose throughput and lower active and
+loaded-idle power on the four-Spark GLM-5.3 deployment. The user authorized
+autonomous research, implementation and bounded experiments, using the sandbox
+VM first and checking Spark memory pressure before and during inference.
+Pi is invoked through herdr, with a separate 60-second state/pane watcher.
 
-Historical implementation and evidence: commit `340c7ae`. Research inventory and
-experiment designs: commit `53daa7f`. The completed evaluation and calibration stay
-frozen. New policies compare against the repaired version 4 runtime on new data. The
-original long-context measurements remain preserved but are confounded by the
-subsequently reproduced cache-table defect.
+The [research survey](ADAPTIVE-SPECULATION-RESEARCH.md) and its pinned evidence
+inventory led to the experiments below. Historical V4 held-out results remain
+frozen under [results/adaptive-spec](../results/adaptive-spec/README.md). New
+results do not overwrite that evaluation. In particular, its original
+100k/170k acceptance collapse and apparent 35–42% adaptive gains are confounded
+by the subsequently reproduced draft-cache table defect.
 
-| Avenue | Evidence and current decision | Remaining experiment |
+## Current decisions
+
+| Avenue | What was implemented or measured | Decision |
 |---|---|---|
-| Pi workload/phase hints | Real Pi/herdr wire path validated; opt-in extension and eight-observation server prior implemented; disabled-hint decisions match frozen V4 over 4,497 drifting steps | Actual Pi payload controls with correct, absent and wrong hints on the repaired server |
-| Candidate confidence | Bounded previous-proposal collector committed as `542df7f`; policy unchanged | Guarded shadow boot, transport identity, overhead and causal calibration |
-| Long-context acceptance | Repair `8f684a4` passes same-capacity Spark boundary probes; healthy 100k/170k acceptance; paired exploration shows approximately +4–5% code and +10% prose | Preserve the functional failure and investigate target repeatability before any quality promotion |
-| Target-only K=0 | [State-machine and memory screen](research/K0-FEASIBILITY.md) completed; repaired acceptance weakens the original opportunity | Defer serving integration pending measured target-only/context-maintenance opportunity |
-| Energy operating points | Four-prompt GPU/CPU screen and separately bracketed idle screen; watchdogs restore original clocks and governors | Finish idle controls and report device energy separately from CPU proxies |
-| Selector training | [Parameter and optimizer-state screen](research/ARCHITECTURE-SCREENS.md) completed | Defer training until candidate coverage and path-choice errors justify it |
-| Trees/copy/compressed memory/longer blocks | Exact CPU tree selector and source/kernel screens completed; copy opportunity is sparse in these repo prompts | Defer serving integration; no live gain inferred from CPU or synthetic screens |
-| Target repeatability | [Source and causal-kernel diagnostic](research/REPEATABILITY-DIAGNOSTIC.md); functional failure also occurs at fixed K7 | Isolated atomic-off run with fresh prompt cache after the separate hint/confidence experiment |
+| Long-context cache geometry | Per-group V2 block-table sizing and bounds tests; same-capacity boundary/100k/170k Spark validation | Repair is supported; retain a separate target-quality gate |
+| Pi workload and phase hints | Opt-in Pi extension, server-owned priors limited to eight completed observations, actual Pi requests and 16 paired-control requests | Continue opt-in evaluation; no broad coding/prose promotion |
+| Candidate confidence | Bounded asynchronous score transport, live identity checks, on/off controls and 1050 learnable records from 12 prompts | Reject the tested lag-two predictor for serving; current-proposal use requires a separate scheduling design |
+| Active energy | Four-prompt interleaved frequency/governor screen; separate frozen-adaptive 1600 MHz bracket | 1600 MHz is a useful energy/throughput candidate; no permanent clock change |
+| Loaded idle | Explicit GPU clock locks with independent rollback watchdogs and device power sampling | 600 MHz saves about 9.8 W across four devices; automatic clock mode was worse |
+| True K0 | Actual sampler/input tests, park/arm/resume state-machine prototype and context-state memory analysis | Defer integration until measured target-only/resume costs justify it after the cache repair |
+| Training, trees, copying, draft memory | Exact CPU tree selector; source, parameter-state, copy-opportunity and trained-block-boundary screens | Keep their explicit evidence gates; no additional model allocation or training beside the resident target |
+| Target repeatability | Same-prompt functional/logprob diagnostics and source/kernel audit | Isolated atomic1/atomic0 numerical control in progress; quality promotion remains withheld |
 
-Initial read-only cluster preflight: healthy and idle; available memory about
-4895 MiB on the head and 5982–6276 MiB on workers. These are starting observations,
-not admission thresholds for every later experiment. The guard retains its
-phase-aware pressure limits and checks all four nodes.
+The [K0 feasibility report](research/K0-FEASIBILITY.md) and
+[architecture screens](research/ARCHITECTURE-SCREENS.md) contain the implementations,
+CPU results and reasons for deferring larger serving changes. A negative result
+or a concrete missing-evidence gate is an outcome; synthetic results are not
+reported as Spark performance.
 
-The dedicated pi agent uses the installed `glm53/glm-5.3` OpenAI-compatible
-connection. Its initial probes use explicit output limits and a fresh session;
-the user's existing pi pane and global settings are preserved. Harness labels
-are request metadata, never instructions to bypass target verification. They do
-not enable a server whose adaptive policy is off.
+## Cache repair and new long-context measurements
 
-Only one cluster workload/experimental deployment runs at a time. Capture source
-hashes and a new experiment declaration before active comparisons. Keep each run
-bounded with monitoring and restoration. A failed hypothesis is recorded as a
-result; new training or larger allocations require a concrete fit and expected
-benefit within the existing serving capacity.
+Commit `8f684a4` fixes the V2 worker's replicated draft group. The target group
+is CP2 with 1408 logical columns; the draft group is CP1 and needs 2816.
+All four nodes log the corrected geometry. Additional table metadata is
+132 KiB/rank; the model, TP4/DCP2, 180224 context limit, twelve sequences,
+6 GB/rank KV pool and reported 198551-token capacity are unchanged.
 
-## Follow-up decisions, 06:32 UTC
+Fixed-K7 probes at 89055 and 92056 prompt tokens emit identical 60-token
+outputs, retain the marker and count correctly. Both accept 56 of 70 drafted
+tokens across ten cycles, at 42.77 and 43.00 tok/s. These are diagnostic
+outputs, not a broad benchmark. The
+[long-context report](research/LONG-CONTEXT-DIAGNOSTIC.md) connects the CPU
+reproduction to the actual Spark validation.
 
-The old long-context acceptance collapse is confounded by a reproduced V2 cache
-table defect. New experiment `cache-width-20260909-r1` deploys commit `8f684a4`
-with the same TP4/DCP2, maxlen180224, maxseq12 and 6 GB/rank KV pool. Its
-package is already frozen remotely; ongoing local hint changes are not in that
-experiment. Before boot, head available memory was 4269 MiB and workers
-5539–6090 MiB. The original containers are retained for exact restoration.
+New fixed-cap calibration measures complete cycles at short, 100k and 170k
+contexts. Two-repeat paired screens use one coding and one prose prompt per
+context and 256 output tokens per request:
 
-Pi's two initial requests reached the existing server with HTTP200 and weak
-workload metadata. The code probe completed; the prose probe hit its explicit
-256-token experimental limit. These validate the wire path only. A precision
-first classifier abstains on mixed/unknown intent; negated code words can cause
-unnecessary abstention and are not treated as evidence of a speedup.
+| Context | Coding fixed7 → adaptive tok/s | Paired gain | Prose fixed7 → adaptive tok/s | Paired gain |
+|---|---:|---:|---:|---:|
+| 100k | 16.76 → 17.53 | +4.59% | 16.92 → 18.62 | +10.05% |
+| 170k | 16.90 → 17.56 | +4.13% | 16.26 → 17.94 | +10.16% |
 
-The 12-prompt development-only leave-one-prompt-out screen found lower Brier
-error for domain priors than a pooled prior: code 0.2041 to 0.1906, prose 0.1167
-to 0.1114. The hypothetical same-boundary utility ratios are not measured
-throughput. A local server prototype therefore uses hints only for the first
-eight eligible observations, retains the full-width probe every 16 steps, and
-then returns to ordinary inference-only priors. An adversarial low-confidence
-hint test exposed persistent tail bias if hints were retained indefinitely;
-the eight-observation limit removes that failure mode. No hint policy has yet
-been deployed or promoted.
+Device decode J/token ratios are 0.892/0.852 for code/prose at 100k and
+0.911/0.861 at 170k. One prompt per domain/context cannot support an independent
+prompt-level interval. The first 100k baseline also has a longer TTFT than its
+warm controls; whole-request energy is separate from decode energy.
 
-Power inventory confirms the existing idle-power documentation: there is no
-CPU/package/wall energy sensor available through NVML or hwmon. The already
-measured ConnectX-7 saving is a separate mechanism; its hotplug configuration
-is unchanged during these inference experiments. Small GPU clock and governor
-experiments must not be represented as new wall-power measurements.
+Complete-function checks found an interval-semantics failure on a request
+labelled adaptive that actually stayed at K7. Further controls reproduced a
+failure under fixed K7. Shared-prefix target logprob differences change by up
+to 2.375 at the semantic branch in the original six-request diagnostic. This
+is not established as a tiny final-token tie or an adaptive cap-change bug.
+The [repeatability report](research/REPEATABILITY-DIAGNOSTIC.md) preserves the
+failures and narrows the first numerical control to dense Marlin atomics.
 
-At 06:43 UTC, the repaired Spark stack passed both fixed-seven boundary probes.
-At 89055 tokens: TTFT 188.21 s, decode 42.77 tok/s; at 92056: TTFT 194.97 s,
-decode 43.00 tok/s. Each accepted 56 draft tokens in 10 draft cycles and emitted
-identical token IDs, with the marker retained and sequential counting correct.
-These are two short diagnostic outputs, not a broad workload estimate.
-The 100k and 170k repository coding/prose screens have completed. New calibration
-artifacts are isolated under results/adaptive-next/cache-width-r1; historical
-priors remain frozen and are not reused for the repaired long-context policy.
+## Actual Pi integration and paired controls
 
-At 100k, one complete-function adaptive request failed closed-interval semantics.
-Its trace scheduled cap 7 throughout. Fixed 7 and 3 initial outputs passed with
-identical 285 token IDs; all 10 declared follow-up controls passed, but same-policy
-fixed repeats also changed output IDs. The 13-request audit records 12 passes
-and retains the original failure. A separate subsequent experiment captured
-target logprobs; the root cause remains unresolved. This is not a clean
-end-to-end quality pass.
+Actual Pi/herdr requests completed four Python functions and a prose scene
+against the repaired V5 server. All functions passed their checks. Their
+traces show valid code/prose hints during warm-up and 125 valid confidence
+packets. These establish integration, not a paired speedup.
 
-The confidence transport is off by default. Source clones are bounded to 656 bytes
-per packet plus 656 bytes pinned host storage, capped at 128 packets per request.
-The existing AsyncOutput event owns the copies; the scheduler records real
-decision and receipt times for causal offline evaluation. Confidence changes
-no cap or target sampling decision in the first live experiment.
+The first explicit HTTP controls exposed an API-boundary bug: `vllm_xargs`
+normalizes JSON booleans into integers, defeating an `is True` check. Those
+comparisons are marked invalid and preserved. Commit `f71eac0` fixes the
+switches, tests the captured OpenAPI boundary, and requires activation proof
+in paired reports. A live two-request gate proved both on/off states before
+the corrected comparisons. Trace snapshots allow the background writer's
+one-second idle flush; an initial incomplete snapshot is retained separately.
 
+The corrected hint screen contains two actual Pi prompt payloads × two repeats
+× four variants, with confidence disabled. Relative to inference-only adaptive
+verification, correct hints measure 0.9720 coding and 1.0844 prose tok/s ratios;
+device J/token ratios are 1.0448 and 0.9637. Wrong hints measure 0.9241 and
+0.9790 tok/s ratios. Both correct coding-hint requests remain K7 throughout,
+so their slower observed rate does not establish a cap-change regression.
+Only one of four correct-hint pairs has identical output IDs. All twelve
+complete coding outputs across the independent confidence and hint controls
+pass functional checks. These small screens do not justify global enablement.
 
-The subsequent six-request top-two-logprob diagnostic also reproduced the
-interval failure under fixed cap 7. All six requests used cap 7 throughout.
-At a shared prompt/output prefix, reported target rankings switched between
-`list` and `tuple`, with gaps around 0.5–0.75; the later semantic branch also
-changed with substantial margins. The target sampler source confirms these
-are target-side logprobs. This is not established as a tiny numerical tie.
-A source and kernel repeatability investigation is now tracked separately;
-no adaptive or fixed policy receives a clean quality promotion on this evidence.
+An additional actual Pi session read and edited a scratch Python fixture using
+its tools. The edit passed functional checks, and server traces applied the
+code prior on the initial user turn while excluding both real tool-followup
+requests. This is integration evidence, not a tool-workflow speedup.
 
-Repaired-runtime two-repeat paired screens show +4.59% code/+10.05% prose
-at 100k and +4.13%/+10.16% at 170k versus fixed seven. Device decode energy
-ratios are 0.892/0.852 at 100k and 0.911/0.861 at 170k. Each domain/context
-uses only one prompt, so no prompt-level confidence interval is estimable.
-These are exploration results, not replacements for a broad held-out gate.
-The 100k first baseline also has longer TTFT than its warm controls; whole
-request energy should be interpreted separately from decode energy.
+The independent eight-request fixed-K7 confidence control proves 229 valid
+on packets and zero off packets. Its two coding pairs have identical outputs
+and a throughput ratio of 0.99935; prose outputs vary, preventing a precise
+collection-overhead conclusion. A strict one-percent upper overhead bound is
+not established. See [Pi hints](research/PI-HINTS.md) for protocols and reports.
 
-The clock/governor screen is now running on the repaired runtime, with its
-own independent rollback watchdogs. The subsequent idle-only screen and
-confidence/hint boot remain pending. Pi was restarted into a fresh private
-session on the same herdr pane; the watcher recorded its brief name gap and
-then returned to `done_or_idle`. No Pi inference overlaps these benchmarks.
+## What the confidence data says about architecture
 
-The complete local suite at commit `85cecd0` passes **769 tests**. The isolated
-atomic control (`d43f62f`) changes one environment setting in the experiment's
-packaged launch copy and requires fresh persisted KV; the ordinary launcher
-remains unchanged. Source inspection establishes eligibility of 75 shared-expert
-gate/up projections, not that atomics caused the observed output variation.
+The twelve-prompt fixed-seven development trace yields 1050 valid learnable
+records. Of these, 1026 have usable confidence by the decision deadline,
+and every available feature is two proposal steps old. The first two records
+per request abstain. Whole-prompt leave-one-out prefix Brier loss is:
 
-The completed frequency brackets in the still-running active screen give the
-following four-prompt geometric-mean ratios against the nearest original-setting
-baseline before and after: GPU 1600 MHz throughput 0.9537, decode device J/token
-0.8200; 1800 MHz 0.9483/0.9080; 2200 MHz 0.9893/1.1919. These are small development
-screens without confidence intervals, with output hashes retained to expose
-changing work. They do not justify a permanent clock change. The separate idle
-screen will measure GPU-clock auto mode and CPU governor proxies.
+| Predictor | Coding | Prose |
+|---|---:|---:|
+| Available acceptance history | 0.19396 | 0.11118 |
+| History plus available lag-two scores | 0.19933 | 0.11144 |
+| Same-proposal scores, intentionally noncausal diagnostic | 0.12354 | 0.07990 |
+
+Lower is better. The tested lagged predictor adds no demonstrated value.
+Current-proposal scores are informative, but their diagnostic use ignores the
+existing scheduling deadline. Moving that decision requires measured changes
+to graph dispatch, TP agreement and immutable asynchronous bookkeeping.
+The [confidence report](research/CONFIDENCE-FEASIBILITY.md) records the full
+causal checks and costs. Its same-boundary utility numbers are not rollout
+or measured throughput; they reuse the frozen repaired atomic1 cost curve,
+without assuming that the shadow collector has zero overhead.
+
+## Active and idle power
+
+The fixed-K7 clock/governor screen uses four development prompts, 256 tokens,
+and same-prompt baselines before and after each profile:
+
+| Profile | Tok/s ratio | Device decode J/token ratio |
+|---|---:|---:|
+| GPU 2200 MHz | 0.9893 | 1.1919 |
+| GPU 1800 MHz | 0.9483 | 0.9080 |
+| GPU 1600 MHz | 0.9537 | 0.8200 |
+| CPU schedutil, GPU 2000 MHz | 0.9386 | 1.0804 |
+
+A separate baseline/1600/baseline adaptive screen gives 0.9290 throughput and
+0.8355 device J/token ratios, retaining the same frozen 2000 MHz cost curve
+at both frequencies. It does not claim calibration at 1600 MHz.
+
+Loaded-idle baseline power is approximately 32 W across four GPUs. Automatic
+GPU clocks plus schedutil increased it to 47.08 W; GPUs rose above 2400 MHz.
+Explicit 600 MHz measured 22.14 W, and 300 MHz measured 21.56 W. The extra
+saving below 600 MHz is only about 0.5 W after adjacent-baseline correction.
+A correct generation after restoration proves that resident model state
+survived; it ran after a settled baseline, so immediate wake latency is unmeasured.
+
+No permanent clock/governor policy was installed. GPU device sensors exclude
+CPU/package and wall energy. Existing ConnectX-7 savings are a separate result;
+network power settings were unchanged in these tests. See
+[power experiments](research/POWER-EXPERIMENT.md) and [idle integration](IDLE-POWER.md).
+An automatic idle policy needs authoritative shared-server quiescence,
+restoration before work and a watchdog. One idle Pi session cannot establish
+that the whole server is idle.
+
+## Validation and remaining work
+
+The full local suite at `f71eac0` passes **787 tests**, including API-boundary,
+request ownership, delayed transport, cap parity and cache-layout checks.
+R1's eighteen completed request/profile guards record no OOM or guard trip,
+minimum head availability 1758 MiB, full-PSI average zero and at most 8 KiB
+swap-out per phase. Loading and restoration have separate pressure records.
+These observations are not universal admission thresholds.
+
+The corrected hint/confidence phase is complete and its controller is restoring
+the original containers. The atomic-enabled six-request numerical baseline
+reproduced one interval-semantics failure; warm controls share 99968 local
+prefix-cache hits and zero preemptions. The remaining declared work is the
+separate atomic-disabled control, final restoration and evidence publication.
