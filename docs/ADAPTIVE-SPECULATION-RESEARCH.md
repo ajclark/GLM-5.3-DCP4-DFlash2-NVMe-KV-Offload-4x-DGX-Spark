@@ -1,5 +1,12 @@
 # Adaptive speculative decoding: research and implementation opportunities
 
+**Follow-up evidence:** the investigation below led to a reproduced and repaired
+draft-cache table defect. The old near-zero long-context acceptance and its
+apparent 35–42% adaptive gains are confounded by that defect. Subsequent Spark
+power, Pi and confidence experiments are recorded in the
+[follow-up report](ADAPTIVE-SPECULATION-NEXT.md); the literature assessment and
+its original starting observations remain distinguishable below.
+
 The most promising next step is to improve the information used by the existing verification controller, while investigating why the deployed DFlash2 drafter loses almost all acceptance at long context. A second large draft model is a poor starting point for this cluster. A genuine target-only fallback and a separately measured energy controller deserve bounded prototypes after those investigations.
 
 The literature supports this direction, but does not establish a transferable speedup. Recent systems increasingly combine candidate-level acceptance estimates, hardware-specific verification costs, and explicit graph execution. Several attractive papers already have substantial implementations. The clearest gaps found are EVICT's public serving implementation, the full author implementation of Cascade, and recent research on compressed draft memory and energy-constrained scheduling. These are opportunities to build and evaluate an adaptation, not evidence that no implementation exists anywhere.

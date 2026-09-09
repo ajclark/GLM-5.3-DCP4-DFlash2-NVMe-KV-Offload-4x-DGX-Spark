@@ -93,3 +93,46 @@ evidence remains valid. Commit `f71eac0` accepts exactly boolean true or integer
 one, tests the captured OpenAPI boundary, and makes the paired reporter require
 server traces proving each requested treatment activated. Corrected replay
 results must come from fresh experiment directories.
+
+## Corrected paired Spark controls
+
+Experiment `hints-conf-20260909-r2` pins runtime `f71eac0`. Before comparisons,
+a two-request live wire check proved that explicit true activates both controls
+and false activates neither. Its first snapshot preceded the background writer's
+one-second idle flush; the incomplete snapshot is preserved, and a later snapshot
+validated both original requests without rerunning them. Subsequent captures
+allow that flush before analysis. The
+[activation report](../../results/adaptive-next/hints-conf-r2/activation/report.json)
+records 29 valid packets and nine bounded prose-prior rows for on, zero for off.
+
+The [hint report](../../results/adaptive-next/pi-hints-r1/hint-controls-r2/request-control-report.json)
+uses the two actual captured Pi prompts, two repeats each, and interleaved
+inference-only, correct-hint, wrong-hint and fixed-seven controls. All 16
+requests preserve their case's exact prompt; completion limit is 512 tokens,
+with natural stops and token accounting retained. Confidence collection is
+disabled in every hint comparison.
+
+| Treatment / inference-only adaptive | Coding tok/s ratio | Prose tok/s ratio | Coding device J/token ratio | Prose device J/token ratio |
+|---|---:|---:|---:|---:|
+| Correct workload hint | 0.9720 | 1.0844 | 1.0448 | 0.9637 |
+| Deliberately wrong workload hint | 0.9241 | 0.9790 | 1.1242 | 1.0253 |
+| Fixed K7 | 0.9877 | 0.8897 | 1.0427 | 1.2205 |
+
+Each cell averages two matched ratios for **one prompt**; there is no
+prompt-level interval. Only one of four correct-hint pairs has identical
+output IDs. Both correct coding-hint requests stayed at K7 throughout, so
+their slower observed rates do not establish a cap-change regression.
+The prose hints begin shortening verification during warm-up. Every active
+hint is bounded to observations 0–7; tool-followup exclusion is separate.
+All 12 complete coding outputs across the confidence and hint controls passed
+[functional checks](../../results/adaptive-next/pi-hints-r1/pi-control-quality-r2.json).
+These results justify continued opt-in evaluation, not global enablement.
+
+The independent [confidence on/off report](../../results/adaptive-next/pi-hints-r1/confidence-controls-r2/request-control-report.json)
+contains eight fixed-K7 requests with hints disabled. All 229 on-treatment
+packets validate; all four off controls collect zero. The two coding pairs
+have identical output IDs and a 0.99935 throughput ratio. Prose outputs differ
+between treatments, so the aggregate timing ratio cannot isolate packet-copy
+and serialization overhead. This small screen does not establish a strict
+one-percent upper overhead bound. It validates the request switches and
+transport while retaining confidence as an off-by-default diagnostic.

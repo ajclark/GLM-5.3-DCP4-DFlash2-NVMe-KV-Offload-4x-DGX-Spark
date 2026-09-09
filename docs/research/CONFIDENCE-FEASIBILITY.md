@@ -1,12 +1,12 @@
-# DFlash2 confidence: feasible as a measured, lagged predictor
+# DFlash2 confidence: useful current scores, unsuccessful lagged predictor
 
-**2026-09-09. Decision:** bounded shadow collection is implemented locally,
-disabled by default, and ready for a guarded overhead/identity trial. Defer a
-serving policy change until real calibration and overhead evidence exists.
-Defer same-block host stopping in the current
-asynchronous C1 runtime. The existing selected-path scores are small and
-accessible, but become available after the output-copy boundary and potentially
-after the next target graph has already been scheduled.
+**2026-09-09. Decision:** bounded shadow collection is implemented and validated
+on the Sparks, disabled by default. The 12-prompt live dataset shows that the
+tested lag-two predictor does not improve on available acceptance history.
+Do not integrate it into serving. Same-proposal scores are informative, but
+using them requires a separately measured worker/scheduler change: the present
+transport delivers them after their scheduling decision. Detailed live results
+and their limits follow below.
 
 The implementation adds an opt-in collector and a formal optional runner-output
 field; graphs, model weights, sampler and adaptive cap selection are unchanged.
@@ -14,9 +14,9 @@ It includes [an offline screen](../../bench/spec_confidence_screen.py),
 [a verify-trace converter](../../bench/spec_confidence_convert.py),
 [23 existing semantic tests](../../tests/test_spec_confidence_screen.py), and
 [56 collector/transport tests](../../tests/test_spec_confidence_trace.py).
-No Spark request or measured collector throughput result was produced by this
-task. Historical traces without scores cannot establish confidence quality
-retroactively.
+The initial source-audit task produced no Spark requests; subsequent parent
+experiments validated the transport and collected the real dataset below.
+Historical traces without scores cannot establish confidence quality retroactively.
 
 ## What the score actually means
 
@@ -298,8 +298,7 @@ confidence control that preserves age/context and calibration splits; keep
 it clearly separate from a deployable causal predictor. Do not add a
 classifier-model request or train alongside the loaded service.
 
-The offline artifact intentionally contains no real fitted confidence claim.
-Its 96-record demo is synthetic: current scores arrive after their decisions,
+The original 96-record demo remains explicitly synthetic: current scores arrive after their decisions,
 so only age-two packets are available for 88 records. The tests establish
 that this distinction is honored. Demo utility values are properties of
 invented data and must never enter Spark benchmark summaries.
@@ -308,8 +307,8 @@ invented data and must never enter Spark benchmark summaries.
 
 | Next action | Decision and evidence needed |
 |---|---|
-| Bounded immutable shadow packets | **Implemented locally, off by default.** Guarded identity and overhead validation on the Sparks remains outstanding. |
-| Lagged confidence affecting caps | **Defer until data.** Require improvement beyond available acceptance history/hints on held-out prompts, useful coverage at actual ages, and a positive same-boundary signal before a live A/B. |
+| Bounded immutable shadow packets | **Implemented and validated on the Sparks, off by default.** Identity checks pass; the small on/off screen does not establish a strict one-percent overhead bound. |
+| Lagged confidence affecting caps | **Reject the tested predictor for serving.** At the actual two-step delay it is slightly worse than history alone on the 12 development prompts. A different predictor needs new held-out evidence. |
 | Current-block host cap selection | **Defer.** It requires changing an existing dependency or graph-dispatch contract. Prototype/measure that cost only if same-block signal materially exceeds the usable lagged signal. |
 | Learned head or selector fine-tuning | **Defer.** First separate candidate recall failures from selector/path errors; raw margin calibration may already suffice. |
 
@@ -379,3 +378,56 @@ DFlash2 model
 `c141daa4b2059c0098224ac36471c2197b7052c100bef0a4dbc2ca79b627053f`;
 async utilities
 `a6256b706253868e340641a7a8fd6d327eedf7c513e492c54df7cf34d486af73`.
+
+## Live repaired-runtime confidence screen
+
+Experiment `hints-conf-20260909-r2`, runtime `f71eac0`, collected fixed-seven
+shadow data from twelve frozen development prompts: six coding and six prose,
+256 output tokens each, one repeat. No confidence-based cap decision was made.
+The collector produced **1050 valid learnable records**; twelve initial records
+had no packet and twelve terminal/censored records were excluded. There were
+no invalid packets in this development trace.
+
+Of the 1050 evaluated records, **1026** had a usable packet by their scheduling
+deadline, and every such feature was **two proposal steps old**. The first two
+records per request therefore abstain. These are actual scheduler-local
+receipt/decision times with request epoch and proposal identity checks, not
+assumed GPU completion times or backdated features.
+
+The screen fits conditional-risk bins with one entire prompt held out at a
+time, including all records belonging to that prompt. Mean prefix Brier loss
+is averaged equally across the six prompts in each domain; lower is better:
+
+| Predictor | Coding Brier loss | Prose Brier loss |
+|---|---:|---:|
+| Available acceptance history | 0.19396 | 0.11118 |
+| History plus available lag-two confidence | 0.19933 | 0.11144 |
+| Same-proposal confidence, intentionally noncausal diagnostic | 0.12354 | 0.07990 |
+
+The lagged variant also loses in the offline same-boundary utility screen:
+ratios 0.9831 for coding and 0.9952 for prose against history alone. The
+same-proposal diagnostic ratios are 1.0807 and 1.0423. **None are measured
+tok/s gains or a closed-loop rollout.** Warm-up, periodic probes, hysteresis
+and the changed future trajectories are absent from that screen. Its costs
+come from the frozen measured `8f684a4` repaired-runtime atomic1 curve, supplied
+to the `f71eac0` fixed-seven shadow requests; collector overhead was not
+recalibrated independently at every cap. Brier losses do not depend on those
+costs. The separate Pi on/off control validates switch activation and packet
+transport, but does not supply a strict overhead bound.
+
+The [screen report](../../results/adaptive-next/hints-conf-r2/confidence-screen-report.json)
+links source hashes for the joined data and full per-prompt analysis. This is
+development evidence, not a locked independent evaluation or evidence about
+uncollected long-context/tool/reasoning features. It supports a concrete
+negative decision: the tested lagged bins should not be added to the serving
+controller merely because current-proposal scores correlate with acceptance.
+
+A current-proposal design would need to resolve worker graph selection,
+TP-consistent cap choice, immutable asynchronous step counts, input positions,
+accept/reject bookkeeping and ownership of queued proposals. Simply copying
+a score to the host earlier, or shortening a tensor after FULL M8 dispatch,
+does not establish saved target compute. Prototype the changed dependency and
+measure its synchronization cost separately before claiming that the apparent
+same-boundary opportunity can survive serving integration. The unresolved
+[target repeatability investigation](REPEATABILITY-DIAGNOSTIC.md) is another
+reason to keep this architectural change separate from the validated transport.

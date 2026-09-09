@@ -103,7 +103,7 @@ After clocks were restored and the final 90-second baseline elapsed, a
 generation probe produced the correct count from 1 to 30 at 52.05 tok/s and
 0.274 s TTFT, with no model reload. This proves resident state survived; it
 does **not** measure immediate low-clock wake latency. No automatic idle
-policy was installed. [IDLE-POWER.md](../../IDLE-POWER.md) records the next
+policy was installed. [IDLE-POWER.md](../IDLE-POWER.md) records the next
 integration contract: authoritative server quiescence, restore before work,
 and a restoration watchdog. A single Pi pane being idle is insufficient to
 declare the shared server idle.
