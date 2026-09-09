@@ -1,0 +1,150 @@
+{
+  "screening_only": true,
+  "cases": {
+    "code_repo_context": {
+      "adaptive": {
+        "runs": 1,
+        "decode_tps": [
+          8.857859339068181
+        ],
+        "median_tps": 8.857859339068181,
+        "verified_cycles": 0,
+        "mean_emitted": null,
+        "median_cycle_ms": null,
+        "actual_caps": [],
+        "cap_counts": {
+          "1": 0,
+          "3": 0,
+          "5": 0,
+          "7": 0
+        },
+        "median_ttft_s": 1.9574451690132264,
+        "p95_emission_gap_s": 0.16203260599286295,
+        "device_j_per_decode_token": [
+          8.88199286304196
+        ],
+        "median_ratio_to_7": 1.4171728918983764
+      },
+      "fixed7": {
+        "runs": 1,
+        "decode_tps": [
+          6.250373112346667
+        ],
+        "median_tps": 6.250373112346667,
+        "verified_cycles": 0,
+        "mean_emitted": null,
+        "median_cycle_ms": null,
+        "actual_caps": [],
+        "cap_counts": {
+          "1": 0,
+          "3": 0,
+          "5": 0,
+          "7": 0
+        },
+        "median_ttft_s": 402.07582637900487,
+        "p95_emission_gap_s": 0.17068407198530622,
+        "device_j_per_decode_token": [
+          14.584089971741626
+        ],
+        "median_ratio_to_7": 1.0
+      }
+    },
+    "prose_repo_context": {
+      "adaptive": {
+        "runs": 1,
+        "decode_tps": [
+          8.88806819123443
+        ],
+        "median_tps": 8.88806819123443,
+        "verified_cycles": 0,
+        "mean_emitted": null,
+        "median_cycle_ms": null,
+        "actual_caps": [],
+        "cap_counts": {
+          "1": 0,
+          "3": 0,
+          "5": 0,
+          "7": 0
+        },
+        "median_ttft_s": 1.5350745699834079,
+        "p95_emission_gap_s": 0.15670804597903043,
+        "device_j_per_decode_token": [
+          8.824426854355767
+        ],
+        "median_ratio_to_7": 1.4211378977333229
+      },
+      "fixed7": {
+        "runs": 1,
+        "decode_tps": [
+          6.254191240280526
+        ],
+        "median_tps": 6.254191240280526,
+        "verified_cycles": 0,
+        "mean_emitted": null,
+        "median_cycle_ms": null,
+        "actual_caps": [],
+        "cap_counts": {
+          "1": 0,
+          "3": 0,
+          "5": 0,
+          "7": 0
+        },
+        "median_ttft_s": 1.1618197939824313,
+        "p95_emission_gap_s": 0.16973674099426717,
+        "device_j_per_decode_token": [
+          14.207251514230038
+        ],
+        "median_ratio_to_7": 1.0
+      }
+    }
+  },
+  "paired": {
+    "code/adaptive": {
+      "prompts": 1,
+      "pairs": 1,
+      "paired_geomean_ratio": 1.4171728918983764,
+      "prompt_bootstrap_95": null,
+      "prompt_ratios": {
+        "code_repo_context": 1.4171728918983764
+      }
+    },
+    "prose/adaptive": {
+      "prompts": 1,
+      "pairs": 1,
+      "paired_geomean_ratio": 1.4211378977333229,
+      "prompt_bootstrap_95": null,
+      "prompt_ratios": {
+        "prose_repo_context": 1.4211378977333229
+      }
+    }
+  },
+  "graphs": [],
+  "memory": {
+    "spark-06c4.local": {
+      "minimum_available_mib": 2416.43359375,
+      "new_swap_out_mib": 0.0,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-365c.local": {
+      "minimum_available_mib": 3816.71875,
+      "new_swap_out_mib": 0.0,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-a218.local": {
+      "minimum_available_mib": 4250.3125,
+      "new_swap_out_mib": 0.0,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-ddbf.local": {
+      "minimum_available_mib": 4153.21875,
+      "new_swap_out_mib": 0.0,
+      "oom_delta": 0,
+      "trips": []
+    }
+  },
+  "wall_energy_measured": false,
+  "note": "Short synthetic prompts and few repeats are a screen, not a promotion gate. Greedy baseline is not bitwise deterministic."
+}

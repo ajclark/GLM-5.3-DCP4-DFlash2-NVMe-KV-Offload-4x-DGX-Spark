@@ -58,6 +58,7 @@ from vllm.v1.metrics.stats import PrefixCacheStats, SchedulerStats
 from vllm.v1.outputs import DraftTokenIds, KVConnectorOutput, ModelRunnerOutput
 from vllm.v1.request import Request, RequestStatus, StreamingUpdate
 from vllm.v1.spec_decode.dynamic.utils import build_dynamic_sd_schedule_lookup
+from vllm.v1.spec_decode.adaptive import VerificationPolicy, policy_mode
 from vllm.v1.spec_decode.metrics import SpecDecodingStats
 from vllm.v1.structured_output import StructuredOutputManager
 from vllm.v1.utils import record_function_or_nullcontext
@@ -275,6 +276,10 @@ class Scheduler(SchedulerInterface):
         # Scheduler iteration counter. Drives the V2+PP+async decode-throttle
         # cadence (`next_decode_eligible_step`).
         self.current_step = 0
+        # Verification capacity is independent of the trained DFlash block.
+        self._adaptive_spec = (
+            VerificationPolicy(vllm_config) if policy_mode() != "off" else None
+        )
         # DP prefill balancing: Flag to track whether the last cadence-aligned
         # prefill batch fully drained the waiting queue. Prefill throttling
         # is disabled in this case.
@@ -386,6 +391,8 @@ class Scheduler(SchedulerInterface):
 
     def schedule(self, throttle_prefills: bool = False) -> SchedulerOutput:
         self.current_step += 1
+        if getattr(self, "_adaptive_spec", None) is not None:
+            self._adaptive_spec.begin()
         # NOTE(woosuk) on the scheduling algorithm:
         # There's no "decoding phase" nor "prefill phase" in the scheduler.
         # Each request just has the num_computed_tokens and
@@ -458,6 +465,17 @@ class Scheduler(SchedulerInterface):
                 # cadence-aligned step; decodes still run to fill this step.
                 req_index += 1
                 continue
+
+            if getattr(self, "_adaptive_spec", None) is not None and request.spec_token_ids:
+                cap = self._adaptive_spec.select(
+                    request,
+                    c1=(len(self.running) == 1 and not self.waiting and not self.skipped_waiting),
+                    step=self.current_step,
+                )
+                # Slice, never mutate the AsyncScheduler's shared placeholder list.
+                # It will repopulate all 7 slots after scheduling, enabling later
+                # cap increases; current output placeholders use the scheduled k.
+                request.spec_token_ids = request.spec_token_ids[:cap]
 
             num_new_tokens = (
                 request.num_tokens_with_spec
@@ -1073,6 +1091,9 @@ class Scheduler(SchedulerInterface):
             num_spec_tokens_to_schedule=num_spec_tokens_to_schedule,
         )
 
+        if getattr(self, "_adaptive_spec", None) is not None:
+            self._adaptive_spec.scheduled(scheduler_output)
+
         # NOTE(Kuntai): this function is designed for multiple purposes:
         # 1. Plan the KV cache store
         # 2. Wrap up all the KV cache load / save ops into an opaque object
@@ -1465,6 +1486,8 @@ class Scheduler(SchedulerInterface):
         scheduler_output: SchedulerOutput,
         model_runner_output: ModelRunnerOutput,
     ) -> dict[int, EngineCoreOutputs]:
+        if getattr(self, "_adaptive_spec", None) is not None:
+            self._adaptive_spec.complete(scheduler_output, model_runner_output, self.requests)
         sampled_token_ids = model_runner_output.sampled_token_ids
         logprobs = model_runner_output.logprobs
         prompt_logprobs_dict = model_runner_output.prompt_logprobs_dict

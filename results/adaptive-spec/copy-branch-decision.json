@@ -1,0 +1,72 @@
+{
+  "groups": {
+    "code": {
+      "runs": 45,
+      "boundaries": 3019,
+      "matches": 145,
+      "accepted_future_tokens": 564,
+      "full_seven": 56
+    },
+    "code_continue": {
+      "runs": 6,
+      "boundaries": 314,
+      "matches": 33,
+      "accepted_future_tokens": 167,
+      "full_seven": 19
+    },
+    "code_edit": {
+      "runs": 15,
+      "boundaries": 1151,
+      "matches": 29,
+      "accepted_future_tokens": 93,
+      "full_seven": 9
+    },
+    "code_fresh": {
+      "runs": 15,
+      "boundaries": 978,
+      "matches": 14,
+      "accepted_future_tokens": 17,
+      "full_seven": 0
+    },
+    "code_tool": {
+      "runs": 9,
+      "boundaries": 576,
+      "matches": 69,
+      "accepted_future_tokens": 287,
+      "full_seven": 28
+    },
+    "prose": {
+      "runs": 45,
+      "boundaries": 5051,
+      "matches": 8,
+      "accepted_future_tokens": 14,
+      "full_seven": 0
+    },
+    "prose_edit": {
+      "runs": 15,
+      "boundaries": 1632,
+      "matches": 4,
+      "accepted_future_tokens": 9,
+      "full_seven": 0
+    },
+    "prose_explain": {
+      "runs": 15,
+      "boundaries": 1675,
+      "matches": 3,
+      "accepted_future_tokens": 5,
+      "full_seven": 0
+    },
+    "prose_story": {
+      "runs": 15,
+      "boundaries": 1744,
+      "matches": 1,
+      "accepted_future_tokens": 0,
+      "full_seven": 0
+    }
+  },
+  "source": "results/adaptive-spec/heldout-adaptive-r6/copy-full-window.json",
+  "decision": "Do not integrate this copy selector into the GPU path based on this screen.",
+  "reason": "Copy opportunities concentrate in continuation and tool text, with few matches in edits or fresh code. The combined predeclared edit/continuation subset lacks evidence for an8% live gain. This is an offline baseline-trajectory observation, not a bound on changed trajectories or a proof that a different retrieval method cannot help.",
+  "proposal_selection": "Exact most-recent completed suffix match at widths16/8/4; full180224 lookback, capacity7; committed history only.",
+  "future_work": "A separately developed selector for repeated tool scaffolding or richer repository edits needs new live evaluation. No copy source is enabled in serving."
+}

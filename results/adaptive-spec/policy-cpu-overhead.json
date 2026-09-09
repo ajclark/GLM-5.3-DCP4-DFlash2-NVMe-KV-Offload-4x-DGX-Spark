@@ -1,0 +1,15 @@
+{
+  "sandbox_cpu_only": true,
+  "includes_fake_output_construction": true,
+  "trace_enabled": false,
+  "us_per_select_schedule_feedback": [
+    8.26638659927994,
+    8.332759200129658,
+    8.200375500018708,
+    8.191924600396305,
+    8.165861899033189,
+    8.192214000155218
+  ],
+  "median_us_excluding_warmup": 8.192214000155218,
+  "note": "Measures added policy overhead on VM only; does not bound the whole scheduler, Python dispatch, or Spark overhead."
+}

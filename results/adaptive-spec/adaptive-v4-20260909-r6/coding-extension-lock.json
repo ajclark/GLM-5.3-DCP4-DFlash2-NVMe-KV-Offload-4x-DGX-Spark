@@ -1,0 +1,41 @@
+{
+  "created_at": "2026-09-09T04:00:38.760025+00:00",
+  "initial_gate_report_sha256": "2e7484052e5c4365a3b00fdbd8aeb28b349c02bb314797cd91045eb82bc751a1",
+  "initial_lock_sha256": "c0976935693b1d3af7b668d6815d8f9bd1c51b4d7fcab1554e23ba917fb59e96",
+  "reason": "Initial 45 coding pairs have central ratio above1 but lower95 ratio below0.98; double coding repetitions once without changing policy, costs, prompts, or sampling.",
+  "additional_repeats": 3,
+  "combined_repeats": 6,
+  "logical_repeat_offset": 3,
+  "order": "Reverse variant list so local repeats0..2 follow original global repeats3..5 AB/BA order.",
+  "command": [
+    "~/spark-cluster-mla-dcp/.venv/bin/python",
+    "bench/adaptive_spec.py",
+    "--out",
+    "~/spark-cluster-mla-dcp/results/adaptive-spec/heldout-coding-extension-r6",
+    "--corpus",
+    "bench/spec-heldout.json",
+    "--cases",
+    "code_fresh_config,code_fresh_ring,code_fresh_search,code_fresh_metrics,code_fresh_paths,code_edit_dedupe,code_edit_parser,code_edit_paging,code_edit_heap,code_edit_time,code_continue_trie,code_continue_codec,code_tool_build,code_tool_review,code_tool_migration",
+    "--variants",
+    "adaptive,fixed7",
+    "--costs",
+    "results/adaptive-spec/adaptive-v2-20260908-r4/costs-v3-curve.json",
+    "--tokens",
+    "256",
+    "--repeats",
+    "3"
+  ],
+  "frozen_source_sha256": {
+    "bench/spec-heldout.json": "094c848d9ccb25adffea380a7dbef2aa52c0b3a60a6c4831f6b48b58173026fe",
+    "bench/spec-development.json": "0e79a1f2fb0e3ccc1a9ecb16c88c95739e5d9921ceb74aca55489ade1147ebda",
+    "bench/adaptive_spec.py": "3c517cbce39ff2f127c20a170302496a4337987ef5fb453136ab9411eac58f94",
+    "bench/spec_memory.py": "2a0f029c7a3d2c34b253195216fe230ed0b3ae6dc3a34eadc4285a907e7bdb9f",
+    "bench/analyze_adaptive_spec.py": "673512bbd1e8508bdc1028a9a3d2021104e1194155fc28d3c39c3a2c04d8589e",
+    "bench/evaluate_spec_gate.py": "5664dd70aede2273dc4eb324a9c3a903c51c4a74ef98db47758e032865b8b85d",
+    "stage/glm-dcp/adaptive.py": "2620cf7a112c347a0bdc7b6ed4b2f1647a118ebe2d34942b4257402ea7c55d33",
+    "stage/glm-dcp/scheduler.py": "024d9181f16e27fd28d08a2b3d1166ed014e9e7bef169d61d695a40c17630d39",
+    "stage/glm-dcp/model_runner.py": "0f6744b460dd71e9201650880072b3b009012efe8a5ef1ff44fc586325ee4d9f",
+    "stage/glm-dcp/cudagraph_utils.py": "ccf4ef07ce4bc28af9780d0dface0612dee7f1b3217318f919dad28322fe5429"
+  },
+  "interpretation": "Initial locked result is retained. This is a declared follow-up after viewing uncertainty; combined intervals are exploratory, not an independent confirmation or deployment approval."
+}

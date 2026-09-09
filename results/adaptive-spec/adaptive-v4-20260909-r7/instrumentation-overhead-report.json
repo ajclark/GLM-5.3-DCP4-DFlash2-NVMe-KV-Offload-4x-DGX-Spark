@@ -1,0 +1,154 @@
+{
+  "pairs": [
+    {
+      "case": "count_evens",
+      "repeat": 0,
+      "trace_on_decode_seconds": 9.348548173904419,
+      "trace_off_decode_seconds": 9.193804502487183,
+      "on_over_off_time_ratio": 1.0168312988790846
+    },
+    {
+      "case": "count_evens",
+      "repeat": 1,
+      "trace_on_decode_seconds": 9.216457843780518,
+      "trace_off_decode_seconds": 9.20714282989502,
+      "on_over_off_time_ratio": 1.0010117160184866
+    },
+    {
+      "case": "count_evens",
+      "repeat": 2,
+      "trace_on_decode_seconds": 9.537700653076172,
+      "trace_off_decode_seconds": 9.199134111404419,
+      "on_over_off_time_ratio": 1.0368041749986037
+    },
+    {
+      "case": "count_numbers",
+      "repeat": 0,
+      "trace_on_decode_seconds": 6.500458002090454,
+      "trace_off_decode_seconds": 6.503708362579346,
+      "on_over_off_time_ratio": 0.999500229667801
+    },
+    {
+      "case": "count_numbers",
+      "repeat": 1,
+      "trace_on_decode_seconds": 6.483461856842041,
+      "trace_off_decode_seconds": 6.491329908370972,
+      "on_over_off_time_ratio": 0.998787913780382
+    },
+    {
+      "case": "count_numbers",
+      "repeat": 2,
+      "trace_on_decode_seconds": 6.472998380661011,
+      "trace_off_decode_seconds": 6.482483386993408,
+      "on_over_off_time_ratio": 0.9985368252001342
+    },
+    {
+      "case": "count_triples",
+      "repeat": 0,
+      "trace_on_decode_seconds": 11.248730182647705,
+      "trace_off_decode_seconds": 11.295258283615112,
+      "on_over_off_time_ratio": 0.995880740413444
+    },
+    {
+      "case": "count_triples",
+      "repeat": 1,
+      "trace_on_decode_seconds": 11.243152618408203,
+      "trace_off_decode_seconds": 11.287433862686157,
+      "on_over_off_time_ratio": 0.9960769431903971
+    },
+    {
+      "case": "count_triples",
+      "repeat": 2,
+      "trace_on_decode_seconds": 11.307528972625732,
+      "trace_off_decode_seconds": 11.220893859863281,
+      "on_over_off_time_ratio": 1.0077208744547832
+    }
+  ],
+  "paired_geomean_time_ratio": 1.0056046720657152,
+  "prompt_bootstrap_95": [
+    0.9989415728846414,
+    1.0181105424022074
+  ],
+  "per_prompt_time_ratios": {
+    "count_evens": 1.0181105424022074,
+    "count_numbers": 0.9989415728846414,
+    "count_triples": 0.9998775680786353
+  },
+  "identical_output_tokens": true,
+  "trace_on": "results/adaptive-spec/overhead-trace-on-r6",
+  "trace_off": "results/adaptive-spec/overhead-trace-off-r7",
+  "clocks": {
+    "on": {
+      "spark-06c4.local": {
+        "mean_mhz": 1995.0,
+        "min_mhz": 1995.0,
+        "max_mhz": 1995.0,
+        "samples": 41,
+        "complete_coverage": true
+      },
+      "spark-a218.local": {
+        "mean_mhz": 1969.1707317073171,
+        "min_mhz": 1969.0,
+        "max_mhz": 1976.0,
+        "samples": 41,
+        "complete_coverage": true
+      },
+      "spark-365c.local": {
+        "mean_mhz": 1989.1463414634147,
+        "min_mhz": 1989.0,
+        "max_mhz": 1995.0,
+        "samples": 41,
+        "complete_coverage": true
+      },
+      "spark-ddbf.local": {
+        "mean_mhz": 1995.0,
+        "min_mhz": 1995.0,
+        "max_mhz": 1995.0,
+        "samples": 41,
+        "complete_coverage": true
+      }
+    },
+    "off": {
+      "spark-06c4.local": {
+        "mean_mhz": 1995.0,
+        "min_mhz": 1995.0,
+        "max_mhz": 1995.0,
+        "samples": 42,
+        "complete_coverage": true
+      },
+      "spark-a218.local": {
+        "mean_mhz": 1969.1666666666667,
+        "min_mhz": 1969.0,
+        "max_mhz": 1976.0,
+        "samples": 42,
+        "complete_coverage": true
+      },
+      "spark-365c.local": {
+        "mean_mhz": 1989.4285714285713,
+        "min_mhz": 1989.0,
+        "max_mhz": 1995.0,
+        "samples": 42,
+        "complete_coverage": true
+      },
+      "spark-ddbf.local": {
+        "mean_mhz": 1995.0,
+        "min_mhz": 1995.0,
+        "max_mhz": 1995.0,
+        "samples": 42,
+        "complete_coverage": true
+      }
+    }
+  },
+  "mean_graphics_clock_ratios": {
+    "spark-06c4.local": 1.0,
+    "spark-a218.local": 1.000002064345654,
+    "spark-365c.local": 0.9998581351604124,
+    "spark-ddbf.local": 1.0
+  },
+  "graphics_clocks_within_half_percent": true,
+  "upper95_within_one_percent": false,
+  "source_sha256": {
+    "~/spark-cluster-mla-dcp/bench/spec_overhead_report.py": "b669c090f77a21cf5643da054248c7576aa08be054c47adaabe4c83093e23da3"
+  },
+  "note": "Three predictable prompts across separate boots. Time ratio above1 means tracing is slower. Identical outputs required. This is a fixed7 instrumentation control, not a complete adaptive-policy overhead or wall-power measurement; boot effects remain a limitation."
+}

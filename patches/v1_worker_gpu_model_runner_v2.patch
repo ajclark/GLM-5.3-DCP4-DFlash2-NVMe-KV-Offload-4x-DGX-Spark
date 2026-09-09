@@ -1,0 +1,33 @@
+--- a/vllm/v1/worker/gpu/model_runner.py
++++ b/vllm/v1/worker/gpu/model_runner.py
+@@ -103,6 +103,7 @@
+ from vllm.v1.worker.gpu.sample.sampler import Sampler
+ from vllm.v1.worker.gpu.shutdown import free_before_shutdown
+ from vllm.v1.worker.gpu.spec_decode import init_speculator
++from vllm.v1.spec_decode.adaptive import policy_mode
+ from vllm.v1.worker.gpu.spec_decode.eagle.eagle3_utils import (
+     set_eagle3_aux_hidden_state_layers,
+ )
+@@ -187,6 +188,7 @@
+ 
+         # Speculative decoding.
+         self.speculator = None
++        self._spec_graph_observed = set() if policy_mode() != "off" else None
+         self.use_aux_hidden_state_outputs = False
+         self.num_speculative_steps = vllm_config.num_speculative_tokens
+         if self.speculative_config is not None:
+@@ -1156,6 +1158,14 @@
+             empty_output = self.kv_connector.no_forward(scheduler_output)
+             return empty_output
+ 
++        if self._spec_graph_observed is not None and num_reqs == 1 and not dummy_run:
++            k = len(next(iter(scheduler_output.scheduled_spec_decode_tokens.values()), ()))
++            key = (k, num_toks, batch_desc.num_tokens, str(batch_desc.cg_mode))
++            if k and key not in self._spec_graph_observed:
++                self._spec_graph_observed.add(key)
++                logger.info("SPEC_GRAPH k=%d target_tokens=%d padded_tokens=%d mode=%s draft_capacity=%d",
++                            *key, self.num_speculative_steps)
++
+         if not dummy_run:
+             # Common case.
+             # Prepare all the inputs and copy to the input buffers.

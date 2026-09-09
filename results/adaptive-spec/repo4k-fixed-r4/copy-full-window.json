@@ -1,0 +1,35 @@
+{
+  "screening_only": true,
+  "lookback": 180224,
+  "widths": [
+    16,
+    8,
+    4
+  ],
+  "capacity": 7,
+  "runs": [
+    {
+      "label": "repo4k-fixed-r4-code_repo_context-r0-fixed-k7",
+      "case": "code_repo_context",
+      "boundaries": 93,
+      "copy_matches": 0,
+      "accepted_prefixes_on_baseline": [],
+      "full_seven_token_matches": 0,
+      "matched_fraction": 0.0,
+      "mean_accepted_when_matched": null
+    },
+    {
+      "label": "repo4k-fixed-r4-prose_repo_context-r0-fixed-k7",
+      "case": "prose_repo_context",
+      "boundaries": 91,
+      "copy_matches": 1,
+      "accepted_prefixes_on_baseline": [
+        0
+      ],
+      "full_seven_token_matches": 0,
+      "matched_fraction": 0.01098901098901099,
+      "mean_accepted_when_matched": 0.0
+    }
+  ],
+  "warning": "Baseline-trajectory opportunity only; no throughput or energy claim."
+}

@@ -1,0 +1,21 @@
+{
+  "source": "spark-06c4.local: vllm_glm53big, copied 2026-09-08; unmodified runtime sources for CPU tests",
+  "files": {
+    "input_batch.py": {
+      "source": "v1/worker/gpu/input_batch.py",
+      "sha256": "fcc7f2b3e374d8d7f6415b844e83cc1ca87c4962d9a7ec7ef0f24482aaa70661"
+    },
+    "rejection_sampler_utils.py": {
+      "source": "v1/worker/gpu/spec_decode/rejection_sampler_utils.py",
+      "sha256": "d16fb95772a619c98fbbcec01da429f70ae72cdcc536dc229750d5a303d05f95"
+    },
+    "dflash_speculator.py": {
+      "source": "v1/worker/gpu/spec_decode/dflash/speculator.py",
+      "sha256": "69f5d0bb9bb36724cfa36dc40e1ed2509d20540c69fbb9075e4bd482e8882623"
+    },
+    "async_scheduler.py": {
+      "source": "v1/core/sched/async_scheduler.py",
+      "sha256": "da6343d7e7c394a1738cf72905cbecc208003ffa461ccb441268333a3eb9f884"
+    }
+  }
+}

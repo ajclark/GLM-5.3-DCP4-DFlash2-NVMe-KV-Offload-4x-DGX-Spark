@@ -1,0 +1,116 @@
+{
+  "preferences": {
+    "adaptive": 3,
+    "tie": 10,
+    "fixed": 2
+  },
+  "judgments_sha256": "9dd5f9eab5e27c580cc0d8743dc564c8d3a9051ca372767a3bbf0c434b62b29d",
+  "limitations": "One reviewer and first-repeat 256-token openings only. Subjective preference, not a quality noninferiority test, expert factual audit, or full-answer evaluation.",
+  "rows": [
+    {
+      "id": "prose-01",
+      "choice": "B",
+      "reason": "Both are coherent; B reaches the fictional inspection immediately and explains the connector and inspection techniques clearly, with less introductory framing.",
+      "case": "prose_explain_bridge",
+      "preferred_policy": "adaptive"
+    },
+    {
+      "id": "prose-02",
+      "choice": "tie",
+      "reason": "Both coherently relate household routines to light and shared space. A reaches a named household earlier; B explains the relation between room use and lighting more directly. Neither opening has an evident instruction violation.",
+      "case": "prose_explain_sleep",
+      "preferred_policy": "tie"
+    },
+    {
+      "id": "prose-03",
+      "choice": "tie",
+      "reason": "Both give an accessible, coherent introduction to map selection and scale with a concrete hiking-map ratio; differences are mainly phrasing.",
+      "case": "prose_explain_maps",
+      "preferred_policy": "tie"
+    },
+    {
+      "id": "prose-04",
+      "choice": "tie",
+      "reason": "Both follow a washing machine that drains but will not spin, clearly motivating diagnosis as a hidden repair cost. B is more specific about machine type, without a decisive quality difference.",
+      "case": "prose_explain_repair",
+      "preferred_policy": "tie"
+    },
+    {
+      "id": "prose-05",
+      "choice": "tie",
+      "reason": "Both begin with realistic site suitability and soil questions. B adds land tenure and delayed harvest; A reaches sunlight and water sooner. These are reasonable differences in ordering within truncated openings.",
+      "case": "prose_explain_orchard",
+      "preferred_policy": "tie"
+    },
+    {
+      "id": "prose-06",
+      "choice": "tie",
+      "reason": "Both establish believable neighbors, the shared radio program, and concrete domestic details. B reaches discovery sooner; the required failed conversation lies beyond both excerpts, so it cannot be assessed.",
+      "case": "prose_story_radio",
+      "preferred_policy": "tie"
+    },
+    {
+      "id": "prose-07",
+      "choice": "tie",
+      "reason": "Both establish a nearly empty evening ferry, an object attracting notice, and personal bereavement stakes. Neither opening introduces crime or a supernatural explanation.",
+      "case": "prose_story_ferry",
+      "preferred_policy": "tie"
+    },
+    {
+      "id": "prose-08",
+      "choice": "B",
+      "reason": "B uses restrained exchanges and visible mending to reveal the coat history during the tailor\u2019s work. A is coherent but adds a speculative blood stain that distracts from the requested restrained fitting scene.",
+      "case": "prose_story_tailor",
+      "preferred_policy": "adaptive"
+    },
+    {
+      "id": "prose-09",
+      "choice": "A",
+      "reason": "A gives practical grounds-maintenance context and shows the caretaker preserving the uprooted seedling in a pot. This better establishes understandable competing concerns than B\u2019s emphasis on obeying the schedule.",
+      "case": "prose_story_garden",
+      "preferred_policy": "fixed"
+    },
+    {
+      "id": "prose-10",
+      "choice": "tie",
+      "reason": "Both establish a specific borrowed film camera and a plausible reluctant narrator. A gives vivid fair details; B develops the borrowing relationship through effective dialogue. The later collaboration is outside both openings.",
+      "case": "prose_story_camera",
+      "preferred_policy": "tie"
+    },
+    {
+      "id": "prose-11",
+      "choice": "tie",
+      "reason": "Both retain the distinction between activity and progress and use a clearly hypothetical software-team example. Neither opening reaches the interruption tradeoff yet; the shared truncation prevents assessing that part.",
+      "case": "prose_edit_workshop",
+      "preferred_policy": "tie"
+    },
+    {
+      "id": "prose-12",
+      "choice": "tie",
+      "reason": "Both turn the notes into a coherent proposal with budget, volunteer, interpretation, and access concerns. A spends longer on the problem; B gets to a concrete reduction proposal sooner. Neither has an evident instruction failure in the opening.",
+      "case": "prose_edit_museum",
+      "preferred_policy": "tie"
+    },
+    {
+      "id": "prose-13",
+      "choice": "A",
+      "reason": "A preserves the draft\u2019s balance by naming stallholder and bus-passenger concerns and a broader trial within the introduction. B gives more space to congestion and adds a specific road layout not present in the draft.",
+      "case": "prose_edit_market",
+      "preferred_policy": "adaptive"
+    },
+    {
+      "id": "prose-14",
+      "choice": "A",
+      "reason": "A states the practical teaching sequence clearly and reaches concrete workshop tasks without B\u2019s unsupported first-person claim of years of teaching experience.",
+      "case": "prose_edit_training",
+      "preferred_policy": "fixed"
+    },
+    {
+      "id": "prose-15",
+      "choice": "tie",
+      "reason": "Both coherently explain why objects need context. A supplies a specific photograph anecdote while B explains missing context more generally. Neither ending or later disagreement discussion is available, so those requirements cannot be judged.",
+      "case": "prose_edit_archive",
+      "preferred_policy": "tie"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "screening_only": true,
+  "lookback": 180224,
+  "widths": [
+    16,
+    8,
+    4
+  ],
+  "capacity": 7,
+  "runs": [
+    {
+      "label": "repo32k-fixed-r4-code_repo_context-r0-fixed-k7",
+      "case": "code_repo_context",
+      "boundaries": 77,
+      "copy_matches": 3,
+      "accepted_prefixes_on_baseline": [
+        0,
+        0,
+        0
+      ],
+      "full_seven_token_matches": 0,
+      "matched_fraction": 0.03896103896103896,
+      "mean_accepted_when_matched": 0.0
+    },
+    {
+      "label": "repo32k-fixed-r4-prose_repo_context-r0-fixed-k7",
+      "case": "prose_repo_context",
+      "boundaries": 96,
+      "copy_matches": 2,
+      "accepted_prefixes_on_baseline": [
+        0,
+        0
+      ],
+      "full_seven_token_matches": 0,
+      "matched_fraction": 0.020833333333333332,
+      "mean_accepted_when_matched": 0.0
+    }
+  ],
+  "warning": "Baseline-trajectory opportunity only; no throughput or energy claim."
+}

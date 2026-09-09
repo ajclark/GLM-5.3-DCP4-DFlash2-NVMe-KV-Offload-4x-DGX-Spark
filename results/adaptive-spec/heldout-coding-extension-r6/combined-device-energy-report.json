@@ -1,0 +1,1154 @@
+{
+  "coding_pairs": 90,
+  "paired_decode_energy": {
+    "code/adaptive": {
+      "prompts": 15,
+      "pairs": 90,
+      "paired_geomean_ratio": 0.9714615100223662,
+      "prompt_bootstrap_95": [
+        0.9460510846612913,
+        0.9959780748841681
+      ],
+      "prompt_ratios": {
+        "code_edit_paging": 0.8892785788655753,
+        "code_tool_build": 0.9581886828645474,
+        "code_edit_heap": 0.9949158784554559,
+        "code_fresh_ring": 1.0533155077837986,
+        "code_edit_parser": 1.0461494550114558,
+        "code_tool_review": 0.9659249407766978,
+        "code_fresh_paths": 1.0225550829197412,
+        "code_edit_dedupe": 0.8746264148911859,
+        "code_edit_time": 0.9752076946241925,
+        "code_fresh_metrics": 0.9464946159425317,
+        "code_continue_codec": 0.9976014010250148,
+        "code_fresh_config": 0.9517899956831168,
+        "code_fresh_search": 0.9263384457378876,
+        "code_continue_trie": 0.9978329247319652,
+        "code_tool_migration": 0.9907472566548999
+      }
+    }
+  },
+  "paired_request_energy": {
+    "code/adaptive": {
+      "prompts": 15,
+      "pairs": 90,
+      "paired_geomean_ratio": 0.9718132021710653,
+      "prompt_bootstrap_95": [
+        0.94704266532258,
+        0.99567997045548
+      ],
+      "prompt_ratios": {
+        "code_edit_paging": 0.8911538896357755,
+        "code_tool_build": 0.9611023672348155,
+        "code_edit_heap": 0.9936641229624256,
+        "code_fresh_ring": 1.0503288524382468,
+        "code_edit_parser": 1.0442939759640066,
+        "code_tool_review": 0.9701636559090686,
+        "code_fresh_paths": 1.0204343490944874,
+        "code_edit_dedupe": 0.8748418103256266,
+        "code_edit_time": 0.974888738337441,
+        "code_fresh_metrics": 0.9501767785956009,
+        "code_continue_codec": 0.9944360932907429,
+        "code_fresh_config": 0.9520674947828872,
+        "code_fresh_search": 0.926586436455295,
+        "code_continue_trie": 0.9986749722377471,
+        "code_tool_migration": 0.9925630420267858
+      }
+    }
+  },
+  "requests": [
+    {
+      "label": "heldout-adaptive-r6-code_edit_paging-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.3752110084641957,
+      "device_request_j_per_output_token": 3.464224179899166
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_build-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 2.465820803267752,
+      "device_request_j_per_output_token": 2.577745366730054
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_review-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.266852076472166,
+      "device_request_j_per_output_token": 3.3296179199623968
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_heap-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.5662499298882224,
+      "device_request_j_per_output_token": 3.642215301068346
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_review-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.4697521971274727,
+      "device_request_j_per_output_token": 3.571462061753027
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_build-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.3400077663532084,
+      "device_request_j_per_output_token": 2.4584438522833674
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_migration-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.139202785304082,
+      "device_request_j_per_output_token": 3.2600053699291123
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_ring-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 2.6092058038349006,
+      "device_request_j_per_output_token": 2.6808569885257145
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_parser-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.1208785562336367,
+      "device_request_j_per_output_token": 3.214854210350503
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_paging-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.686531873276417,
+      "device_request_j_per_output_token": 3.7828423055330878
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_review-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.622482302503758,
+      "device_request_j_per_output_token": 3.721716418822232
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_paths-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.8258575467723483,
+      "device_request_j_per_output_token": 2.8910898417430655
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_dedupe-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.5589534805008576,
+      "device_request_j_per_output_token": 3.647646057987164
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_paths-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 2.909084155308208,
+      "device_request_j_per_output_token": 2.968256616882972
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_time-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.4092061103825055,
+      "device_request_j_per_output_token": 3.478749515361504
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_parser-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.017969262213159,
+      "device_request_j_per_output_token": 3.1052864910380986
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_paths-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 2.820096828695177,
+      "device_request_j_per_output_token": 2.8981253680185515
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_metrics-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.217654841769732,
+      "device_request_j_per_output_token": 3.2736602419539937
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_time-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.207694921931831,
+      "device_request_j_per_output_token": 3.312495030731281
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_metrics-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.2418053224684185,
+      "device_request_j_per_output_token": 3.3240320495108846
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_build-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 2.3331967552552695,
+      "device_request_j_per_output_token": 2.467403998111341
+    },
+    {
+      "label": "heldout-adaptive-r6-code_continue_codec-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 2.8296155825859293,
+      "device_request_j_per_output_token": 2.9510407966832557
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_paging-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.1526624443211366,
+      "device_request_j_per_output_token": 3.228922816646677
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_ring-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.3808062199841125,
+      "device_request_j_per_output_token": 2.463266166595348
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_search-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.3979098775119043,
+      "device_request_j_per_output_token": 3.4787834647158067
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_heap-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.573641912561275,
+      "device_request_j_per_output_token": 3.6897136067291316
+    },
+    {
+      "label": "heldout-adaptive-r6-code_continue_codec-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 2.897632233787957,
+      "device_request_j_per_output_token": 3.0055496753355224
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_build-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 2.348795686444454,
+      "device_request_j_per_output_token": 2.455106471112728
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_time-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.6978054101848405,
+      "device_request_j_per_output_token": 3.8005895287350193
+    },
+    {
+      "label": "heldout-adaptive-r6-code_continue_trie-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 2.1275176813854735,
+      "device_request_j_per_output_token": 2.2093528831894527
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_config-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 2.9296826644703216,
+      "device_request_j_per_output_token": 2.99345185044508
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_config-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.9974772935273655,
+      "device_request_j_per_output_token": 3.0928513350497147
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_time-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.5904272389986716,
+      "device_request_j_per_output_token": 3.7030469236023986
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_dedupe-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 4.2342627113904,
+      "device_request_j_per_output_token": 4.338559169445858
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_search-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.0786227212573167,
+      "device_request_j_per_output_token": 3.1456139593587777
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_metrics-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.3409824220086795,
+      "device_request_j_per_output_token": 3.408440521567374
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_review-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.428218902341145,
+      "device_request_j_per_output_token": 3.4931404195084124
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_heap-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.748455639233469,
+      "device_request_j_per_output_token": 3.82490711576155
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_ring-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.7309884905008572,
+      "device_request_j_per_output_token": 2.8041370029506916
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_ring-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 2.4209717341481043,
+      "device_request_j_per_output_token": 2.4749112558504223
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_paths-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.1461573527973345,
+      "device_request_j_per_output_token": 3.2224640977195915
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_search-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.0763584509785864,
+      "device_request_j_per_output_token": 3.1387048554877137
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_migration-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 2.9601164851769433,
+      "device_request_j_per_output_token": 3.03794892377994
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_config-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.000599260301384,
+      "device_request_j_per_output_token": 3.079153037804125
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_metrics-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.2064427187689906,
+      "device_request_j_per_output_token": 3.2855612959569105
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_parser-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 2.69289080283518,
+      "device_request_j_per_output_token": 2.762954029441284
+    },
+    {
+      "label": "heldout-adaptive-r6-code_continue_trie-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 2.213071034364431,
+      "device_request_j_per_output_token": 2.3402017751943873
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_search-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.065759962415147,
+      "device_request_j_per_output_token": 3.146612306292282
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_time-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.677225534902512,
+      "device_request_j_per_output_token": 3.7893290121381313
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_heap-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.1955025232434764,
+      "device_request_j_per_output_token": 3.3165008530987383
+    },
+    {
+      "label": "heldout-adaptive-r6-code_continue_codec-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.6627138900829217,
+      "device_request_j_per_output_token": 2.777932422994059
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_metrics-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.274844447234148,
+      "device_request_j_per_output_token": 3.3344173439780467
+    },
+    {
+      "label": "heldout-adaptive-r6-code_continue_trie-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.079765933697139,
+      "device_request_j_per_output_token": 2.181287204139829
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_migration-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.007458168167114,
+      "device_request_j_per_output_token": 3.1099885034080597
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_ring-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 2.515069946769134,
+      "device_request_j_per_output_token": 2.573305023121332
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_review-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.6500200767906166,
+      "device_request_j_per_output_token": 3.7401460968980675
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_parser-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.0166431090463637,
+      "device_request_j_per_output_token": 2.0891055734368402
+    },
+    {
+      "label": "heldout-adaptive-r6-code_continue_codec-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.9643633874525372,
+      "device_request_j_per_output_token": 3.0412676349139827
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_build-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.5655726694882746,
+      "device_request_j_per_output_token": 2.683044056869473
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_parser-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 2.5470274496742555,
+      "device_request_j_per_output_token": 2.6568990705148203
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_build-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 2.182357636642343,
+      "device_request_j_per_output_token": 2.314719533644525
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_dedupe-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 4.048547786815668,
+      "device_request_j_per_output_token": 4.16313387414223
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_metrics-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.945351902134604,
+      "device_request_j_per_output_token": 2.9978893662079202
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_paging-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.803757888229396,
+      "device_request_j_per_output_token": 3.897470946140078
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_config-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.275850423259043,
+      "device_request_j_per_output_token": 3.354486116382595
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_paths-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 2.8175318584375453,
+      "device_request_j_per_output_token": 2.8708853437592694
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_search-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.8472787240791817,
+      "device_request_j_per_output_token": 2.9282660654901767
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_paging-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 2.955358203431936,
+      "device_request_j_per_output_token": 3.0338606866907565
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_paths-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.76037011218351,
+      "device_request_j_per_output_token": 2.8183795982002655
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_review-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.464901467864201,
+      "device_request_j_per_output_token": 3.55907231185989
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_heap-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.544788484501183,
+      "device_request_j_per_output_token": 3.653399116168391
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_paging-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.7192173250084797,
+      "device_request_j_per_output_token": 3.820992248351623
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_migration-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.064830224545873,
+      "device_request_j_per_output_token": 3.1392094286279533
+    },
+    {
+      "label": "heldout-adaptive-r6-code_continue_codec-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 2.9630157372752013,
+      "device_request_j_per_output_token": 3.0777126872346656
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_dedupe-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.2802119291925917,
+      "device_request_j_per_output_token": 3.391457588624663
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_dedupe-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.9304131813270176,
+      "device_request_j_per_output_token": 4.007629679799326
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_dedupe-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.726678939138467,
+      "device_request_j_per_output_token": 3.805373579226214
+    },
+    {
+      "label": "heldout-adaptive-r6-code_continue_codec-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 2.7991542014237543,
+      "device_request_j_per_output_token": 2.9127031319105576
+    },
+    {
+      "label": "heldout-adaptive-r6-code_continue_trie-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 1.963835148112558,
+      "device_request_j_per_output_token": 2.0597494173229793
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_parser-r0-fixed-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.4687048884841447,
+      "device_request_j_per_output_token": 3.5666266429650557
+    },
+    {
+      "label": "heldout-adaptive-r6-code_continue_trie-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.112700908634568,
+      "device_request_j_per_output_token": 2.1911039902694456
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_migration-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.249903505493254,
+      "device_request_j_per_output_token": 3.3227463232057772
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_config-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 2.964763758086694,
+      "device_request_j_per_output_token": 3.0385662618436453
+    },
+    {
+      "label": "heldout-adaptive-r6-code_tool_migration-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.2643863912368096,
+      "device_request_j_per_output_token": 3.3325531076551247
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_heap-r0-adaptive-k7",
+      "logical_repeat": 0,
+      "device_decode_j_per_token": 3.448305540285567,
+      "device_request_j_per_output_token": 3.5440616730696433
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_ring-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 2.231380685223145,
+      "device_request_j_per_output_token": 2.312956159163983
+    },
+    {
+      "label": "heldout-adaptive-r6-code_continue_trie-r2-adaptive-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 2.0926259610362257,
+      "device_request_j_per_output_token": 2.1915818455541616
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_search-r2-fixed-k7",
+      "logical_repeat": 2,
+      "device_decode_j_per_token": 3.4300528727786697,
+      "device_request_j_per_output_token": 3.507901259030308
+    },
+    {
+      "label": "heldout-adaptive-r6-code_edit_time-r1-adaptive-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 3.029070332139513,
+      "device_request_j_per_output_token": 3.1304987781108533
+    },
+    {
+      "label": "heldout-adaptive-r6-code_fresh_config-r1-fixed-k7",
+      "logical_repeat": 1,
+      "device_decode_j_per_token": 2.983051444371233,
+      "device_request_j_per_output_token": 3.076219781603546
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_paths-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 2.9751595289001456,
+      "device_request_j_per_output_token": 3.0516310778489677
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_time-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.273074254704854,
+      "device_request_j_per_output_token": 3.34478712802318
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_build-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 2.1550790932178208,
+      "device_request_j_per_output_token": 2.27428236269408
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_continue_codec-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.81896111972402,
+      "device_request_j_per_output_token": 2.9160072008333517
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_search-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.272397314272396,
+      "device_request_j_per_output_token": 3.349849450672734
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_search-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.0361450674611437,
+      "device_request_j_per_output_token": 3.11450545195073
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_config-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 2.9214299710139775,
+      "device_request_j_per_output_token": 2.980576956213593
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_parser-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.11576917165897,
+      "device_request_j_per_output_token": 3.2121171919939226
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_continue_codec-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.769756386586467,
+      "device_request_j_per_output_token": 2.883697040786214
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_continue_codec-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 2.986780998699349,
+      "device_request_j_per_output_token": 3.091257381029109
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_parser-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 2.70396173847696,
+      "device_request_j_per_output_token": 2.792371401567216
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_metrics-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.259394520814764,
+      "device_request_j_per_output_token": 3.3358135627313024
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_paging-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.0753980639655714,
+      "device_request_j_per_output_token": 3.143669921904158
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_parser-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.4361468788974294,
+      "device_request_j_per_output_token": 2.506116726686596
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_heap-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.3668727584700657,
+      "device_request_j_per_output_token": 3.4684689478142623
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_config-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.2386622904768565,
+      "device_request_j_per_output_token": 3.328861767072507
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_build-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 2.2467048092452586,
+      "device_request_j_per_output_token": 2.3651524253241223
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_config-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.867228762636913,
+      "device_request_j_per_output_token": 2.9515861003030754
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_review-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 3.3501681653092676,
+      "device_request_j_per_output_token": 3.4462369740845524
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_time-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 3.2694492904423864,
+      "device_request_j_per_output_token": 3.3720720995308318
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_migration-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.2551400882287114,
+      "device_request_j_per_output_token": 3.3258250092687107
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_continue_codec-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 2.742505465995018,
+      "device_request_j_per_output_token": 2.8399397068630297
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_parser-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.6842401018039905,
+      "device_request_j_per_output_token": 2.7814772699289625
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_heap-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.2380732007250277,
+      "device_request_j_per_output_token": 3.3491126977725227
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_migration-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.3643361120736315,
+      "device_request_j_per_output_token": 3.4355194134884144
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_continue_trie-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 2.1988687030008536,
+      "device_request_j_per_output_token": 2.3140044873390875
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_migration-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.975055528597339,
+      "device_request_j_per_output_token": 3.072000432606331
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_build-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.2249256077250266,
+      "device_request_j_per_output_token": 2.320605086690946
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_migration-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.0707327563843165,
+      "device_request_j_per_output_token": 3.174879056148453
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_config-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.2345030336120555,
+      "device_request_j_per_output_token": 3.2963284702434033
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_dedupe-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.4973940317878505,
+      "device_request_j_per_output_token": 3.5735147275444827
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_review-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.8821426672921793,
+      "device_request_j_per_output_token": 3.9798764980977013
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_heap-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.0850824165474284,
+      "device_request_j_per_output_token": 3.1714521771603454
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_search-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.140767779677828,
+      "device_request_j_per_output_token": 3.192263200807619
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_ring-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 2.18826814166854,
+      "device_request_j_per_output_token": 2.256197946885966
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_paging-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 3.1287020988225893,
+      "device_request_j_per_output_token": 3.2160825640860784
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_review-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.483100047210064,
+      "device_request_j_per_output_token": 3.545355013651112
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_time-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.299079047812097,
+      "device_request_j_per_output_token": 3.40416961127866
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_heap-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 3.893112643619379,
+      "device_request_j_per_output_token": 3.9668510386494145
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_migration-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.8448476494262915,
+      "device_request_j_per_output_token": 2.9530361565891483
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_paths-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.811988094190136,
+      "device_request_j_per_output_token": 2.888415070755026
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_metrics-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.216984943599718,
+      "device_request_j_per_output_token": 3.296250081319253
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_ring-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.4548198348971595,
+      "device_request_j_per_output_token": 2.5188536261091348
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_paging-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.3142970586894167,
+      "device_request_j_per_output_token": 3.421039242724205
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_ring-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 2.1708295924932854,
+      "device_request_j_per_output_token": 2.2485001978511066
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_metrics-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.991834081358832,
+      "device_request_j_per_output_token": 3.0514533815211715
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_dedupe-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 3.4294675464152853,
+      "device_request_j_per_output_token": 3.5238343547973376
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_continue_trie-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.0170124175891186,
+      "device_request_j_per_output_token": 2.1120862810457974
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_paths-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 2.9986569068345825,
+      "device_request_j_per_output_token": 3.059867447375901
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_ring-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 2.561900667689345,
+      "device_request_j_per_output_token": 2.633320133547192
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_continue_codec-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 2.599927357444232,
+      "device_request_j_per_output_token": 2.688455246286132
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_review-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 3.747930528951212,
+      "device_request_j_per_output_token": 3.8169656444308604
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_dedupe-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 4.5589101806251735,
+      "device_request_j_per_output_token": 4.673694452578351
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_paths-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 3.0066924656556604,
+      "device_request_j_per_output_token": 3.0727239251721548
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_heap-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 3.185698715596081,
+      "device_request_j_per_output_token": 3.293601212528577
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_dedupe-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 3.6786548869217257,
+      "device_request_j_per_output_token": 3.7960239216332656
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_parser-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.0852537248831204,
+      "device_request_j_per_output_token": 3.163185939830596
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_build-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 2.370241639216088,
+      "device_request_j_per_output_token": 2.450377293958366
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_search-r0-adaptive-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 3.2733349501726017,
+      "device_request_j_per_output_token": 3.3502220917147825
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_build-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.2432224668271634,
+      "device_request_j_per_output_token": 2.3299022447356927
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_paging-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.577921379957905,
+      "device_request_j_per_output_token": 3.684130723157692
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_metrics-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.2455326604773105,
+      "device_request_j_per_output_token": 3.311868083076808
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_paths-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 2.8501738566519896,
+      "device_request_j_per_output_token": 2.9124620305324678
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_metrics-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.4921057863527496,
+      "device_request_j_per_output_token": 3.5677906420410106
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_dedupe-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.6873838442643967,
+      "device_request_j_per_output_token": 3.7761233435640045
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_config-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.9986945460542977,
+      "device_request_j_per_output_token": 3.056849963365283
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_review-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 4.020909925040685,
+      "device_request_j_per_output_token": 4.088336692146519
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_heap-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.453280864633,
+      "device_request_j_per_output_token": 3.5236463455749525
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_build-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 2.1528545528733347,
+      "device_request_j_per_output_token": 2.234301442730655
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_migration-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.168875189478476,
+      "device_request_j_per_output_token": 3.240555664537061
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_continue_codec-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.0026608383960256,
+      "device_request_j_per_output_token": 3.1128554945227345
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_ring-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 2.497460246904503,
+      "device_request_j_per_output_token": 2.557699561901878
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_continue_trie-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 2.329649529228533,
+      "device_request_j_per_output_token": 2.441713233826615
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_paths-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 2.7333022071412554,
+      "device_request_j_per_output_token": 2.7944010690754806
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_time-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.2218361978968435,
+      "device_request_j_per_output_token": 3.2994507183082504
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_time-r1-fixed-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.269315487845428,
+      "device_request_j_per_output_token": 3.3680650283198603
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_search-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.5030490707002833,
+      "device_request_j_per_output_token": 3.57819482232528
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_continue_trie-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.0100093419977036,
+      "device_request_j_per_output_token": 2.101395124194532
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_paging-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 3.863760010042016,
+      "device_request_j_per_output_token": 3.9385395039653375
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_dedupe-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.5743887870244087,
+      "device_request_j_per_output_token": 3.667403176693117
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_continue_trie-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 2.1985125154504788,
+      "device_request_j_per_output_token": 2.3110324174084296
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_ring-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.563908652992301,
+      "device_request_j_per_output_token": 2.6368426338086017
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_time-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 2.7966145715225275,
+      "device_request_j_per_output_token": 2.8978543223612947
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_config-r2-fixed-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.4129526361007656,
+      "device_request_j_per_output_token": 3.479048568834914
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_continue_trie-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 2.0354719185420787,
+      "device_request_j_per_output_token": 2.131631934847936
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_search-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 3.2523028720159264,
+      "device_request_j_per_output_token": 3.306015794459873
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_fresh_metrics-r0-fixed-k7",
+      "logical_repeat": 3,
+      "device_decode_j_per_token": 3.347992583541203,
+      "device_request_j_per_output_token": 3.3955559760333
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_paging-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.3628500370235614,
+      "device_request_j_per_output_token": 3.4471181368094395
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_tool_review-r1-adaptive-k7",
+      "logical_repeat": 4,
+      "device_decode_j_per_token": 3.4539746928258945,
+      "device_request_j_per_output_token": 3.5537548776518406
+    },
+    {
+      "label": "heldout-coding-extension-r6-code_edit_parser-r2-adaptive-k7",
+      "logical_repeat": 5,
+      "device_decode_j_per_token": 3.097027474700913,
+      "device_request_j_per_output_token": 3.168140117638261
+    }
+  ],
+  "source_parts": {
+    "results/adaptive-spec/adaptive-v4-20260909-r6/nvml-power-r1.jsonl": {
+      "captured_bytes": 1433673,
+      "captured_sha256": "ae7cb6ded98262f0861f02ff36e3f0c6608a71ccf4589435405a0cbf76a9d92e"
+    },
+    "results/adaptive-spec/adaptive-v4-20260909-r6/nvml-power-r2.jsonl": {
+      "captured_bytes": 469055,
+      "captured_sha256": "695f08a4b1fba9e3ef12551c07a8d568b08ce2df6fe002b072860977eadc5c26"
+    }
+  },
+  "power_snapshot": "results/adaptive-spec/adaptive-v4-20260909-r6/nvml-through-coding-extension.jsonl",
+  "wall_energy_measured": false,
+  "note": "Four NVIDIA devices, 2-second samples, full bracketing <=5-second gaps. Logical repeats3..5 are the declared exploratory follow-up; original locked report unchanged."
+}

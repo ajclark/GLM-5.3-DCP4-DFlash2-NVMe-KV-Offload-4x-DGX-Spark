@@ -1,0 +1,60 @@
+{
+  "config": {
+    "tp": 4,
+    "dcp": 2,
+    "max_model_len": 180224,
+    "draft_capacity": 7
+  },
+  "lane": "tp4-dcp2-l180224-k7",
+  "context_range": [
+    100000,
+    101000
+  ],
+  "cycle_ms": {
+    "1": 110.2345989929745,
+    "3": 131.99779599381145,
+    "5": 144.74806099315174,
+    "7": 155.03017650189577
+  },
+  "calibration_cycles": {
+    "1": 481,
+    "3": 481,
+    "5": 485,
+    "7": 486
+  },
+  "source_sha256": {
+    "results/adaptive-spec/adaptive-v2-20260908-r4/calibration-trace.jsonl": "e5e16e4f6b9273a685d01402bd5c3631681153a2caf62430597b6aff7459427b"
+  },
+  "context_point": 100292,
+  "conditional_acceptance_prior": [
+    0.009240246406570842,
+    0.1,
+    0.5,
+    0.5,
+    0.5,
+    0.5,
+    0.5
+  ],
+  "prior_strength": 2.0,
+  "prior_risk_counts": [
+    486,
+    4,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "prior_success_counts": [
+    4,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "label_prefix": "repo100k-fixed-r4-",
+  "graph_mode": "FULL",
+  "screening_calibration": true
+}

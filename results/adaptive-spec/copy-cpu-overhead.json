@@ -1,0 +1,52 @@
+{
+  "sandbox_cpu_only": true,
+  "source": "results/adaptive-spec/repo170k-fixed-r4/repo170k-fixed-r4-code_repo_context-r0-fixed-k7.json",
+  "source_sha256": "309e9c08be74abf97ee1901b5c7db4e5297152da7b27a0367541259becec563a",
+  "prompt_tokens": 170132,
+  "lookback": 180224,
+  "widths": [
+    16,
+    8,
+    4
+  ],
+  "capacity": 7,
+  "repeats": [
+    {
+      "build_seconds": 0.27069383300840855,
+      "median_update_lookup_us": 3.2284879125654697,
+      "p95_update_lookup_us": 5.36901643499732
+    },
+    {
+      "build_seconds": 0.2655039819946978,
+      "median_update_lookup_us": 3.1859963200986385,
+      "p95_update_lookup_us": 5.287001840770245
+    },
+    {
+      "build_seconds": 0.2660859850002453,
+      "median_update_lookup_us": 3.1854870030656457,
+      "p95_update_lookup_us": 5.5480049923062325
+    },
+    {
+      "build_seconds": 0.2664677130233031,
+      "median_update_lookup_us": 3.238499630242586,
+      "p95_update_lookup_us": 5.699024768546224
+    },
+    {
+      "build_seconds": 0.2656734559859615,
+      "median_update_lookup_us": 3.1925010262057185,
+      "p95_update_lookup_us": 4.839996108785272
+    },
+    {
+      "build_seconds": 0.2648782769974787,
+      "median_update_lookup_us": 3.1470117392018437,
+      "p95_update_lookup_us": 4.9130176194012165
+    },
+    {
+      "build_seconds": 0.2656119729799684,
+      "median_update_lookup_us": 3.2014941098168492,
+      "p95_update_lookup_us": 4.829984391108155
+    }
+  ],
+  "max_process_rss_mib": 157.82421875,
+  "note": "Offline committed-history index on VM, not measured Spark overhead. Includes index construction and update+lookup at recorded emission boundaries. No GPU synchronization, proposal transfer, or live speedup measured."
+}

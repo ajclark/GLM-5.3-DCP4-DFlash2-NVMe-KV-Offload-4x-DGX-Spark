@@ -1,0 +1,30 @@
+{
+  "config": {
+    "tp": 4,
+    "dcp": 2,
+    "max_model_len": 180224,
+    "draft_capacity": 7
+  },
+  "lane": "tp4-dcp2-l180224-k7",
+  "context_range": [
+    0,
+    512
+  ],
+  "cycle_ms": {
+    "1": 95.28625599341467,
+    "3": 115.25188099767547,
+    "5": 129.7269580027205,
+    "7": 144.2832559987437
+  },
+  "calibration_cycles": {
+    "1": 819,
+    "3": 547,
+    "5": 502,
+    "7": 465
+  },
+  "source_sha256": {
+    "results/adaptive-spec/full-caps-20260908-r3/spark-06c4.local/kvcache/spec-trace.jsonl": "b58c25ddb1a2809029dfd106185a8b8d77fb7a31f3f7c73c024469681d0b974c"
+  },
+  "graph_mode": "FULL",
+  "screening_calibration": true
+}

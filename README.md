@@ -85,6 +85,21 @@ tier, `docs/HANDOVER.md` the operating notes. Upstream vLLM has since
 gained DCP for sparse MLA on newer code; these patches are for the June
 2026 base the Spark images pin.
 
+## Adaptive C1 verification experiment (2026-09-09)
+
+An opt-in controller chooses target verification caps 1/3/5/7 while retaining
+DFlash2's trained block of eight and seven draft tokens. On the current
+TP4/DCP2 lane, the held-out prose benchmark improved 15.8%; the expanded
+coding follow-up measured +1.14% with a 95% interval of -1.30% to +3.64%.
+NVIDIA-device energy per prose token fell 17.4%. Whole-system and hardware
+idle-power improvements are unmeasured, and CX-7 cycling remains paused.
+
+`GLM_SPEC_POLICY` defaults to `off`. The experiment preserves the 180224-token
+window, 12 sequences and 6 GB/rank KV allocation. See the
+[benchmark report and reproducible commands](results/adaptive-spec/README.md),
+[completion audit](results/adaptive-spec/COMPLETION-AUDIT.md), and
+[design](docs/ADAPTIVE-SPECULATION-PLAN.md). Broad promotion remains gated.
+
 ## Layout
 
 | path | what it is |
@@ -93,9 +108,9 @@ gained DCP for sparse MLA on newer code; these patches are for the June
 | `baseline/vllm/…` | sixteen files exactly as the running image has them |
 | `overlay/vllm/…` | the same sixteen files patched (thirteen for DCP: target sharded, DFlash drafter replicated, top-k candidates compacted per rank; the engine scheduler's invalid-block recovery; the offloading connector's store progress; the b12x attention helper's candidate-count passthrough) plus the new `v1/kv_offload/tiering/multinode.py` NVMe tier |
 | `patches/*.patch` | `baseline` to `overlay` diffs, plus `apply.sh` |
-| `stage/glm-dcp/` | the seventeen files flattened for bind-mounting, with `SHA256SUMS` |
+| `stage/glm-dcp/` | deployed sources flattened for bind-mounting, with `SHA256SUMS` |
 | `launch-glm53big-dcp.sh` | TP4 + DCP4 + DFlash launcher, derived from the selected one |
-| `tests/` | 156 CPU tests driving the real patched kernels, the NVMe tier and the connector fix |
+| `tests/` | 370 local tests covering the real patched kernels, NVMe tier, adaptive verification, API controls and guarded experiments |
 | `upstream-vllm/` | an upstream clone, used to locate the fork's base commit |
 
 `baseline` is what the image runs: for `flashmla_sparse.py` and
@@ -106,8 +121,8 @@ bind-mounts, and for the other eleven the pristine file from the image's
 ## Tests
 
 ```bash
-python3 -m venv .venv && .venv/bin/pip install pytest torch triton numpy
-PYTHONPATH=tests .venv/bin/python -m pytest tests/ -q     # 156 passed
+python3 -m venv .venv && .venv/bin/pip install pytest torch triton numpy pydantic==2.13.5
+PYTHONPATH=tests .venv/bin/python -m pytest tests/ -q     # 370 passed in the validated environment
 ```
 
 They run Triton in interpreter mode on CPU and extract the kernels straight out

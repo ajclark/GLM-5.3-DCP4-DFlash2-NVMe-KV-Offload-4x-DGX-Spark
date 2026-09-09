@@ -1,0 +1,9 @@
+{
+  "at": "2026-09-09T04:23:25.922557+00:00",
+  "command": ".venv/bin/python -m pytest -q tests",
+  "passed": 370,
+  "seconds": 9.49,
+  "locked_sources_unchanged": true,
+  "collection_note": "Repository tests are explicitly scoped to tests/. Unscoped pytest also traverses the separate upstream-vllm reference checkout, which lacks its own dependencies and working-directory setup.",
+  "diff_check_note": "git diff --check flags three literal single-space context lines in the nested unified scheduler patch (23,46,52). These are required patch context markers, not source trailing whitespace."
+}

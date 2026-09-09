@@ -1,0 +1,96 @@
+{
+  "4k": {
+    "first_different_output_token_zero_based": 17,
+    "first_short_verify_context": 4117,
+    "prompt_tokens": 4090,
+    "first_short_event": {
+      "event": "verify",
+      "version": 4,
+      "request": "3fb43a76b84b94b4",
+      "time": 1788928999.5405846,
+      "step": 30875,
+      "cap": 5,
+      "eligible": true,
+      "mode": "adaptive",
+      "probe": false,
+      "observations": 8,
+      "costs_ms": {
+        "1": 107.26888537822666,
+        "3": 128.08979180397753,
+        "5": 143.67184575550664,
+        "7": 158.29399376916837
+      },
+      "acceptance_prior": [
+        0.7358153294699911,
+        0.5748540150443213,
+        0.6302871434294482,
+        0.5138872319888946,
+        0.6065094125566872,
+        0.6359621885240966,
+        0.6515679836646615
+      ],
+      "label": "repo4k-adaptive-r6-prose_repo_context-r0-adaptive-k7",
+      "scheduled_k": 5,
+      "target_tokens": 6,
+      "scheduled_at": 91375.073781421,
+      "accepted": 2,
+      "sampled": 3,
+      "context": 4117,
+      "terminal": false,
+      "learned": true,
+      "cycle_ms": 139.16797000274528,
+      "latency_ms": 297.6682919979794,
+      "dropped": 0,
+      "writer_error": null
+    },
+    "earlier_emitted_samples": 26,
+    "note": "Context and feedback are asynchronous; this diagnostic does not prove a numerical cause or a sampling bug."
+  },
+  "32k": {
+    "first_different_output_token_zero_based": 20,
+    "first_short_verify_context": 32162,
+    "prompt_tokens": 32135,
+    "first_short_event": {
+      "event": "verify",
+      "version": 4,
+      "request": "6a27f864d400dcdc",
+      "time": 1788928906.6052048,
+      "step": 30462,
+      "cap": 3,
+      "eligible": true,
+      "mode": "adaptive",
+      "probe": false,
+      "observations": 8,
+      "costs_ms": {
+        "1": 108.32562017372155,
+        "3": 129.63704735262604,
+        "5": 145.13539844483708,
+        "7": 160.45750047492552
+      },
+      "acceptance_prior": [
+        0.7499534655208,
+        0.6342354895307148,
+        0.690583795216934,
+        0.5188399682114294,
+        0.5537482719030975,
+        0.4693252609553701,
+        0.6873689278835866
+      ],
+      "label": "repo32k-adaptive-r6-prose_repo_context-r0-adaptive-k7",
+      "scheduled_k": 3,
+      "target_tokens": 4,
+      "scheduled_at": 91282.147520737,
+      "accepted": 0,
+      "sampled": 1,
+      "context": 32162,
+      "terminal": false,
+      "learned": true,
+      "cycle_ms": 128.3943970047403,
+      "latency_ms": 288.55715401005,
+      "dropped": 0,
+      "writer_error": null
+    },
+    "earlier_emitted_samples": 26,
+    "note": "Context and feedback are asynchronous; this diagnostic does not prove a numerical cause or a sampling bug."
+  }
+}

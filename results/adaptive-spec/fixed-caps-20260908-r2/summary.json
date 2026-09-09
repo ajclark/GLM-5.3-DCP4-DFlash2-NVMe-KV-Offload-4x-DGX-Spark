@@ -1,0 +1,225 @@
+{
+  "screening_only": true,
+  "cases": {
+    "code": {
+      "1": {
+        "runs": 2,
+        "decode_tps": [
+          16.968809759723953,
+          15.789063902770009
+        ],
+        "median_tps": 16.378936831246982,
+        "verified_cycles": 268,
+        "mean_emitted": 1.8955223880597014,
+        "median_cycle_ms": 116.72582299797796,
+        "actual_caps": [
+          1
+        ],
+        "median_ratio_to_7": 0.6452072057314117
+      },
+      "3": {
+        "runs": 2,
+        "decode_tps": [
+          23.339048930641987,
+          23.350779860831736
+        ],
+        "median_tps": 23.34491439573686,
+        "verified_cycles": 173,
+        "mean_emitted": 2.913294797687861,
+        "median_cycle_ms": 124.93500600976404,
+        "actual_caps": [
+          3
+        ],
+        "median_ratio_to_7": 0.9196144499792692
+      },
+      "5": {
+        "runs": 2,
+        "decode_tps": [
+          23.82248545256188,
+          24.063572843099468
+        ],
+        "median_tps": 23.943029147830675,
+        "verified_cycles": 151,
+        "mean_emitted": 3.3245033112582782,
+        "median_cycle_ms": 139.87163199635688,
+        "actual_caps": [
+          5
+        ],
+        "median_ratio_to_7": 0.9431756830361651
+      },
+      "7": {
+        "runs": 2,
+        "decode_tps": [
+          25.67182545034549,
+          25.099265404660372
+        ],
+        "median_tps": 25.385545427502933,
+        "verified_cycles": 136,
+        "mean_emitted": 3.698529411764706,
+        "median_cycle_ms": 146.04784699622542,
+        "actual_caps": [
+          7
+        ],
+        "median_ratio_to_7": 1.0
+      }
+    },
+    "prose": {
+      "1": {
+        "runs": 2,
+        "decode_tps": [
+          13.879747590370858,
+          13.490928007762795
+        ],
+        "median_tps": 13.685337799066826,
+        "verified_cycles": 314,
+        "mean_emitted": 1.6146496815286624,
+        "median_cycle_ms": 117.36727600509766,
+        "actual_caps": [
+          1
+        ],
+        "median_ratio_to_7": 0.8536329670894971
+      },
+      "3": {
+        "runs": 2,
+        "decode_tps": [
+          16.715119527635306,
+          17.377765006074473
+        ],
+        "median_tps": 17.04644226685489,
+        "verified_cycles": 243,
+        "mean_emitted": 2.0823045267489713,
+        "median_cycle_ms": 122.10298399440944,
+        "actual_caps": [
+          3
+        ],
+        "median_ratio_to_7": 1.0632843196290984
+      },
+      "5": {
+        "runs": 2,
+        "decode_tps": [
+          16.568443780559527,
+          15.251239036261037
+        ],
+        "median_tps": 15.909841408410282,
+        "verified_cycles": 235,
+        "mean_emitted": 2.1404255319148935,
+        "median_cycle_ms": 135.4257420025533,
+        "actual_caps": [
+          5
+        ],
+        "median_ratio_to_7": 0.9923880087425159
+      },
+      "7": {
+        "runs": 2,
+        "decode_tps": [
+          15.829567344597137,
+          16.234184470723793
+        ],
+        "median_tps": 16.031875907660464,
+        "verified_cycles": 225,
+        "mean_emitted": 2.2488888888888887,
+        "median_cycle_ms": 140.4232700006105,
+        "actual_caps": [
+          7
+        ],
+        "median_ratio_to_7": 1.0
+      }
+    },
+    "repo": {
+      "1": {
+        "runs": 2,
+        "decode_tps": [
+          14.581698405783412,
+          14.584993628117475
+        ],
+        "median_tps": 14.583346016950443,
+        "verified_cycles": 290,
+        "mean_emitted": 1.7517241379310344,
+        "median_cycle_ms": 119.73602900252445,
+        "actual_caps": [
+          1
+        ],
+        "median_ratio_to_7": 0.7906927935973692
+      },
+      "3": {
+        "runs": 2,
+        "decode_tps": [
+          21.224103830636157,
+          21.684714188172244
+        ],
+        "median_tps": 21.454409009404202,
+        "verified_cycles": 189,
+        "mean_emitted": 2.6825396825396823,
+        "median_cycle_ms": 124.314216998755,
+        "actual_caps": [
+          3
+        ],
+        "median_ratio_to_7": 1.163234183356072
+      },
+      "5": {
+        "runs": 2,
+        "decode_tps": [
+          18.62600579062241,
+          17.90567907544823
+        ],
+        "median_tps": 18.26584243303532,
+        "verified_cycles": 200,
+        "mean_emitted": 2.535,
+        "median_cycle_ms": 138.28316400031326,
+        "actual_caps": [
+          5
+        ],
+        "median_ratio_to_7": 0.9903536516241973
+      },
+      "7": {
+        "runs": 2,
+        "decode_tps": [
+          18.346311757181805,
+          18.541202926242686
+        ],
+        "median_tps": 18.443757341712246,
+        "verified_cycles": 95,
+        "mean_emitted": 2.6736842105263157,
+        "median_cycle_ms": 145.39725900249323,
+        "actual_caps": [
+          7
+        ],
+        "median_ratio_to_7": 1.0
+      }
+    }
+  },
+  "graphs": [
+    "SPEC_GRAPH k=1 target_tokens=2 padded_tokens=2 mode=PIECEWISE draft_capacity=7",
+    "SPEC_GRAPH k=3 target_tokens=4 padded_tokens=4 mode=PIECEWISE draft_capacity=7",
+    "SPEC_GRAPH k=5 target_tokens=6 padded_tokens=6 mode=PIECEWISE draft_capacity=7",
+    "SPEC_GRAPH k=7 target_tokens=8 padded_tokens=8 mode=FULL draft_capacity=7"
+  ],
+  "memory": {
+    "spark-06c4.local": {
+      "minimum_available_mib": 4260.73046875,
+      "new_swap_out_mib": 2720.3828125,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-365c.local": {
+      "minimum_available_mib": 5616.4375,
+      "new_swap_out_mib": 2091.3046875,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-a218.local": {
+      "minimum_available_mib": 5656.26953125,
+      "new_swap_out_mib": 2071.78125,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-ddbf.local": {
+      "minimum_available_mib": 5619.82421875,
+      "new_swap_out_mib": 2055.59765625,
+      "oom_delta": 0,
+      "trips": []
+    }
+  },
+  "wall_energy_measured": false,
+  "note": "Short synthetic prompts and few repeats are a screen, not a promotion gate. Greedy baseline is not bitwise deterministic."
+}

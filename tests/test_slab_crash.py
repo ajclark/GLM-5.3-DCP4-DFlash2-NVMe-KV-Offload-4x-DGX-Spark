@@ -192,4 +192,9 @@ with tempfile.TemporaryDirectory() as base:
     check("same-key two slots: each slot reads its OWN payload (no cross-slot bleed)", r0 is True and r1 is True); io.close()
 
 print(f"\n=== {'ALL PASS' if fails==0 else str(fails)+' FAILURE(S)'}")
-sys.exit(1 if fails else 0)
+if __name__ == "__main__":
+    sys.exit(1 if fails else 0)
+
+
+def test_standalone_checks():
+    assert fails == 0

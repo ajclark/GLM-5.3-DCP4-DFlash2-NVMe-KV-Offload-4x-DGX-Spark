@@ -126,7 +126,7 @@ DCP_FILES=(flashmla_sparse.py sparse_attn_indexer.py sparse_utils.py indexer.py
   kv_cache_interface.py kv_cache_utils.py kv_cache_coordinator.py
   block_table.py gpu_input_batch.py gpu_model_runner.py cp_utils.py
   flash_attn.py
-  scheduler.py b12x_sparse_helpers.py)
+  scheduler.py b12x_sparse_helpers.py adaptive.py model_runner.py cudagraph_utils.py)
 for f in "${DCP_FILES[@]}"; do
   [ -f "$DCP_DIR/$f" ] || { echo "DCP overlay missing: $DCP_DIR/$f" >&2; exit 4; }
 done
@@ -266,6 +266,9 @@ run_docker run -d --name "$NAME" \
   -v "$DCP_DIR/cp_utils.py:$VLLM/v1/worker/cp_utils.py:ro" \
   -v "$DCP_DIR/flash_attn.py:$VLLM/v1/attention/backends/flash_attn.py:ro" \
   -v "$DCP_DIR/scheduler.py:$VLLM/v1/core/sched/scheduler.py:ro" \
+  -v "$DCP_DIR/adaptive.py:$VLLM/v1/spec_decode/adaptive.py:ro" \
+  -v "$DCP_DIR/model_runner.py:$VLLM/v1/worker/gpu/model_runner.py:ro" \
+  -v "$DCP_DIR/cudagraph_utils.py:$VLLM/v1/worker/gpu/cudagraph_utils.py:ro" \
   "${KVTIER_MOUNTS[@]}" \
   "${DRAFT_MOUNT[@]}" \
   "${HOTPLUG_MOUNTS[@]}" \
@@ -279,6 +282,11 @@ run_docker run -d --name "$NAME" \
   -e VLLM_DEBUG_WORKSPACE=1 \
   -e "GLM_DCP_Q_PREGATHER=${DCP_Q_PREGATHER:-0}" \
   -e "GLM_DCP_COMPACT=${DCP_COMPACT:-1}" \
+  -e "GLM_SPEC_POLICY=${GLM_SPEC_POLICY:-off}" \
+  -e "GLM_SPEC_VERIFY_CAP=${GLM_SPEC_VERIFY_CAP:-7}" \
+  -e "GLM_SPEC_TRACE=${GLM_SPEC_TRACE:-}" \
+  -e "GLM_SPEC_COSTS=${GLM_SPEC_COSTS:-}" \
+  --label "glm.spec.experiment=${GLM_SPEC_EXPERIMENT:-}" \
   "${KVTIER_ENV[@]}" \
   -e GLM52_BIND_HOST_TRITON=1 \
   -e GLM52_MQA_LOGITS_TRITON=1 \

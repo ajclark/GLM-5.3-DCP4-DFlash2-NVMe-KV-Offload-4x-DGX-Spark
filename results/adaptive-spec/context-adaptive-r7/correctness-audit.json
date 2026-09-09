@@ -1,0 +1,57 @@
+{
+  "32768": {
+    "complete_count30_and_marker": true,
+    "identical_token_ids": true,
+    "requests": [
+      {
+        "label": "context-adaptive-r7-32768-fixed-k7",
+        "tokens": 66,
+        "sha256": "b412e8fa203956c758e66f6afa1659ff4e24416359667d4f7b9eced56b740258",
+        "tps": 43.104524974567056,
+        "ttft": 64.75189271802083
+      },
+      {
+        "label": "context-adaptive-r7-32768-fixed-k3",
+        "tokens": 66,
+        "sha256": "b412e8fa203956c758e66f6afa1659ff4e24416359667d4f7b9eced56b740258",
+        "tps": 28.765443064073875,
+        "ttft": 0.7639132170006633
+      },
+      {
+        "label": "context-adaptive-r7-32768-adaptive-k7",
+        "tokens": 66,
+        "sha256": "b412e8fa203956c758e66f6afa1659ff4e24416359667d4f7b9eced56b740258",
+        "tps": 43.5394418525965,
+        "ttft": 0.7413039160019252
+      }
+    ]
+  },
+  "100000": {
+    "complete_count30_and_marker": true,
+    "identical_token_ids": false,
+    "requests": [
+      {
+        "label": "context-adaptive-r7-100000-fixed-k3",
+        "tokens": 66,
+        "sha256": "b412e8fa203956c758e66f6afa1659ff4e24416359667d4f7b9eced56b740258",
+        "tps": 7.932895652277732,
+        "ttft": 1.0877719999989495
+      },
+      {
+        "label": "context-adaptive-r7-100000-fixed-k7",
+        "tokens": 66,
+        "sha256": "b412e8fa203956c758e66f6afa1659ff4e24416359667d4f7b9eced56b740258",
+        "tps": 7.002171770645256,
+        "ttft": 216.97793916799128
+      },
+      {
+        "label": "context-adaptive-r7-100000-adaptive-k7",
+        "tokens": 66,
+        "sha256": "4d85eb3af395063401d55c88c07b14cb4d5e13b4d7cc19999022ebdba7a41fc2",
+        "tps": 8.554824711815117,
+        "ttft": 1.0774139759887476
+      }
+    ],
+    "difference_note": "Adaptive emits one newline after CINNAMON; fixed variants emit two. Only token index5 differs (198 versus271). Marker and all30numbers are identical. This precedes eight-observation adaptive warm-up."
+  }
+}

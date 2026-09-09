@@ -1,0 +1,35 @@
+{
+  "completed_at": "2026-09-09T05:34:43.255425+00:00",
+  "implementation_and_experimental_validation_complete": true,
+  "promotion_approved": false,
+  "default_policy": "off",
+  "original_deployment_restored": true,
+  "main_measurements": {
+    "initial_heldout_requests": 180,
+    "additional_coding_requests": 90,
+    "prose_paired_gain_pct": 15.799402337825663,
+    "coding_combined_paired_gain_pct": 1.13889325136018,
+    "coding_combined_95_gain_pct": [
+      -1.29502761282542,
+      3.63974046327693
+    ],
+    "device_prose_energy_saving_pct": 17.369316808582425,
+    "device_combined_coding_energy_saving_pct": 2.85384899776338
+  },
+  "promotion_limits": [
+    "Initial coding confidence gate narrowly missed; the declared unchanged-policy extension meets the margin but is follow-up evidence.",
+    "Whole-cluster wall-energy gate was not measured; NVIDIA-device energy does not satisfy it.",
+    "Tracing overhead central0.56%,95%interval-0.11\u20131.81%; the upper1% budget is not established by three prompts across separate boots.",
+    "Repository context follow-ups use one prompt per category; thinking/code/prose quality controls are limited, not a production-traffic quality guarantee."
+  ],
+  "idle_power": "No measured hardware idle-watt improvement; CX-7 cycling remains paused.",
+  "copy_branch": "Offline opportunity and CPU-cost screen complete; insufficient edit/continuation evidence for GPU integration.",
+  "validation": [
+    "370local tests passed; pinned runtime kernels/async/graph/API/cache guards covered.",
+    "R6 30154verification events without integrity errors; FULL M2/4/6/8 confirmed on all ranks in R6/R7.",
+    "Complete functions,C1/C2/cancel/fallback,random32k/100k marker/count,and once-store disk-cache restart continuation passed.",
+    "Exact original containers/config/mount/source/lane and final generation verified; no OOM or guard trips."
+  ],
+  "report": "README.md",
+  "audit": "COMPLETION-AUDIT.md"
+}

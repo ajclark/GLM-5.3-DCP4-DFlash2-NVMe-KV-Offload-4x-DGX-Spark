@@ -1,0 +1,81 @@
+{
+  "screening_only": true,
+  "lookback": 180224,
+  "widths": [
+    16,
+    8,
+    4
+  ],
+  "capacity": 7,
+  "runs": [
+    {
+      "label": "repo100k-fixed-r4-code_repo_context-r0-fixed-k7",
+      "case": "code_repo_context",
+      "boundaries": 246,
+      "copy_matches": 17,
+      "accepted_prefixes_on_baseline": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        4,
+        3,
+        2,
+        1,
+        0,
+        2,
+        1,
+        0,
+        1,
+        0
+      ],
+      "full_seven_token_matches": 0,
+      "matched_fraction": 0.06910569105691057,
+      "mean_accepted_when_matched": 0.8823529411764706
+    },
+    {
+      "label": "repo100k-fixed-r4-prose_repo_context-r0-fixed-k7",
+      "case": "prose_repo_context",
+      "boundaries": 248,
+      "copy_matches": 29,
+      "accepted_prefixes_on_baseline": [
+        1,
+        0,
+        7,
+        6,
+        5,
+        4,
+        3,
+        2,
+        1,
+        0,
+        1,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0,
+        0,
+        5,
+        4,
+        0,
+        2,
+        1,
+        0,
+        2,
+        1,
+        0,
+        0,
+        0
+      ],
+      "full_seven_token_matches": 1,
+      "matched_fraction": 0.11693548387096774,
+      "mean_accepted_when_matched": 1.6551724137931034
+    }
+  ],
+  "warning": "Baseline-trajectory opportunity only; no throughput or energy claim."
+}

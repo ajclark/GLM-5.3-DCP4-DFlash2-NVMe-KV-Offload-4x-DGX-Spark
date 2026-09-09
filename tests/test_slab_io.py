@@ -134,4 +134,9 @@ check("gate: dtype change -> WIPE", W(good,sb2,sc2,rc,ev,"A",True,{**ident,"dtyp
 check("gate: old meta lacks content_identity (v2) -> WIPE (version bump handles it too)", W({**good,"version":2},sb2,sc2,rc,ev,"A",True,ident) is True)
 
 print(f"\n=== {'ALL PASS' if fails==0 else str(fails)+' FAILURE(S)'}")
-sys.exit(1 if fails else 0)
+if __name__ == "__main__":
+    sys.exit(1 if fails else 0)
+
+
+def test_standalone_checks():
+    assert fails == 0

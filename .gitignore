@@ -20,3 +20,40 @@ results/**/*.pt.trace.json.gz
 
 # working design notes / research syntheses, deliberately not committed
 docs/notes/
+
+# Read-only runtime inventory; curated manifests and results are retained.
+results/adaptive-spec/inventory/runtime/
+results/adaptive-spec/inventory/runtime.tar
+results/adaptive-spec/**/experiment.log
+results/adaptive-spec/**/watchdog.log
+results/adaptive-spec/**/live.log
+
+# Adaptive experiment captures are stored in measurements.tar.gz; keep reports readable.
+results/adaptive-spec/**
+!results/adaptive-spec/**/
+!results/adaptive-spec/**/*.md
+!results/adaptive-spec/**/costs*.json
+!results/adaptive-spec/**/*-report.json
+!results/adaptive-spec/**/*-audit.json
+!results/adaptive-spec/**/*-lock.json
+!results/adaptive-spec/**/*-decision.json
+!results/adaptive-spec/**/*-diagnostic.json
+!results/adaptive-spec/**/*-comparison.json
+!results/adaptive-spec/**/blind-pairs.json
+!results/adaptive-spec/**/cache-policy.json
+!results/adaptive-spec/**/cache-reuse.json
+!results/adaptive-spec/**/calibration-stability.json
+!results/adaptive-spec/**/copy-cpu-overhead.json
+!results/adaptive-spec/**/copy-full-window.json
+!results/adaptive-spec/**/judgments.json
+!results/adaptive-spec/**/local-validation-final.json
+!results/adaptive-spec/**/policy-cpu-overhead.json
+!results/adaptive-spec/**/policy-map.json
+!results/adaptive-spec/**/python-sha256.json
+!results/adaptive-spec/**/repo-context-manifest.json
+!results/adaptive-spec/**/review-summary.json
+!results/adaptive-spec/**/startup-parity.json
+!results/adaptive-spec/**/summary.json
+!results/adaptive-spec/ARTIFACT-PROVENANCE.json
+!results/adaptive-spec/measurements.tar.gz
+results/adaptive-spec/inventory/runtime/

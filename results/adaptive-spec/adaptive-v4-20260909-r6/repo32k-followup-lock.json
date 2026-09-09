@@ -1,0 +1,19 @@
+{
+  "declared_at": "2026-09-09T04:44:00.522549+00:00",
+  "reason": "R6 single32k pair: coding+7.97%,prose-7.89%. Resolve direction with a fixed three-repeat follow-up, without changing source or calibration.",
+  "requests": 12,
+  "repeats": 3,
+  "cases": [
+    "code_repo_context",
+    "prose_repo_context"
+  ],
+  "output": "results/adaptive-spec/repo32k-followup-r7",
+  "runtime_lock": "results/adaptive-spec/adaptive-v4-20260909-r6/evaluation-lock.json",
+  "observed_run_sha256": {
+    "results/adaptive-spec/repo32k-adaptive-r6/repo32k-adaptive-r6-code_repo_context-r0-adaptive-k7.json": "6690afe2e8a3b90075dc95968b1fa6119758338b3c46bab1461da7bdc3599478",
+    "results/adaptive-spec/repo32k-adaptive-r6/repo32k-adaptive-r6-code_repo_context-r0-fixed-k7.json": "ce36f8f4368dd07c709d869974a6825051c7d3f080e08152465ec02b05f63f66",
+    "results/adaptive-spec/repo32k-adaptive-r6/repo32k-adaptive-r6-prose_repo_context-r0-adaptive-k7.json": "048b83966efa0451c37436d7f15c4d7160a436ec23eb6ff74beb339a72747a26",
+    "results/adaptive-spec/repo32k-adaptive-r6/repo32k-adaptive-r6-prose_repo_context-r0-fixed-k7.json": "6147c969abdbe608304263c9cc896844d29ba7abedbd50963d3243b5edf9ebc7"
+  },
+  "interpretation": "Exploratory after observing R6. R7 tracing is disabled; fixed/adaptive pairs share that boot. Do not pool R6/R7 as a new locked confirmation or substitute this for independent context-wide validation."
+}

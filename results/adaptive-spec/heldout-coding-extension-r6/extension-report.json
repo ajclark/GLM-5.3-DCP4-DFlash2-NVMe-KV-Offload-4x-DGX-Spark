@@ -1,0 +1,224 @@
+{
+  "combined_pairs": 90,
+  "initial_paired": {
+    "prompts": 15,
+    "pairs": 45,
+    "paired_geomean_ratio": 1.0098670501028864,
+    "prompt_bootstrap_95": [
+      0.9789300619502566,
+      1.0443748741223084
+    ],
+    "prompt_ratios": {
+      "code_edit_paging": 1.1567997740077023,
+      "code_tool_build": 1.0339747936423107,
+      "code_edit_heap": 0.9537881026684909,
+      "code_fresh_ring": 0.9724162278759851,
+      "code_edit_parser": 0.9210070536828879,
+      "code_tool_review": 0.9457682850317446,
+      "code_fresh_paths": 0.9586018750425163,
+      "code_edit_dedupe": 1.1092702547319617,
+      "code_edit_time": 1.0938492856264828,
+      "code_fresh_metrics": 1.020463321415029,
+      "code_continue_codec": 0.9572927283693086,
+      "code_fresh_config": 1.0231319761464917,
+      "code_fresh_search": 1.0667344509623957,
+      "code_continue_trie": 0.9776103305886747,
+      "code_tool_migration": 0.9890404099400528
+    }
+  },
+  "extension_paired": {
+    "code/adaptive": {
+      "prompts": 15,
+      "pairs": 45,
+      "paired_geomean_ratio": 1.012913108420349,
+      "prompt_bootstrap_95": [
+        0.9839955948918867,
+        1.040214266374893
+      ],
+      "prompt_ratios": {
+        "code_edit_time": 0.9480852904307256,
+        "code_tool_build": 1.0497710943691918,
+        "code_continue_codec": 0.9982523070604417,
+        "code_fresh_search": 1.0501577427225104,
+        "code_fresh_config": 1.0341708487663823,
+        "code_fresh_metrics": 1.0374046251457891,
+        "code_edit_parser": 0.9533089428221266,
+        "code_edit_heap": 0.992155937311279,
+        "code_tool_review": 1.1091193550167124,
+        "code_tool_migration": 1.0148535861422852,
+        "code_edit_dedupe": 1.0744301168480945,
+        "code_edit_paging": 1.0543627792251475,
+        "code_fresh_ring": 0.8898144397271289,
+        "code_continue_trie": 1.048462574949833,
+        "code_fresh_paths": 0.9624753638902175
+      }
+    }
+  },
+  "combined_paired": {
+    "code/adaptive": {
+      "prompts": 15,
+      "pairs": 90,
+      "paired_geomean_ratio": 1.0113889325136018,
+      "prompt_bootstrap_95": [
+        0.9870497238717458,
+        1.0363974046327693
+      ],
+      "prompt_ratios": {
+        "code_edit_paging": 1.104394234288546,
+        "code_tool_build": 1.0418430067299236,
+        "code_edit_heap": 0.9727828786524787,
+        "code_fresh_ring": 0.9301989039926019,
+        "code_edit_parser": 0.9370188155411585,
+        "code_tool_review": 1.0241923209484,
+        "code_fresh_paths": 0.9605366669250012,
+        "code_edit_dedupe": 1.0917112115425844,
+        "code_edit_time": 1.018362615992273,
+        "code_fresh_metrics": 1.0288991055626324,
+        "code_continue_codec": 0.9775580159902771,
+        "code_fresh_config": 1.028636604526323,
+        "code_fresh_search": 1.0584136446149048,
+        "code_continue_trie": 1.0124168333777148,
+        "code_tool_migration": 1.0018638664346062
+      }
+    }
+  },
+  "combined_subgroups": {
+    "code_continue/adaptive": {
+      "prompts": 2,
+      "pairs": 12,
+      "paired_geomean_ratio": 0.9948347556211925,
+      "prompt_bootstrap_95": [
+        0.9775580159902771,
+        1.0124168333777148
+      ],
+      "prompt_ratios": {
+        "code_continue_codec": 0.9775580159902771,
+        "code_continue_trie": 1.0124168333777148
+      }
+    },
+    "code_edit/adaptive": {
+      "prompts": 5,
+      "pairs": 30,
+      "paired_geomean_ratio": 1.0227740860463053,
+      "prompt_bootstrap_95": [
+        0.9671329538506415,
+        1.0816163661086495
+      ],
+      "prompt_ratios": {
+        "code_edit_paging": 1.104394234288546,
+        "code_edit_heap": 0.9727828786524787,
+        "code_edit_parser": 0.9370188155411585,
+        "code_edit_dedupe": 1.0917112115425844,
+        "code_edit_time": 1.018362615992273
+      }
+    },
+    "code_fresh/adaptive": {
+      "prompts": 5,
+      "pairs": 30,
+      "paired_geomean_ratio": 1.0001749960931359,
+      "prompt_bootstrap_95": [
+        0.9552627470104519,
+        1.0405517472931307
+      ],
+      "prompt_ratios": {
+        "code_fresh_ring": 0.9301989039926019,
+        "code_fresh_paths": 0.9605366669250012,
+        "code_fresh_metrics": 1.0288991055626324,
+        "code_fresh_config": 1.028636604526323,
+        "code_fresh_search": 1.0584136446149048
+      }
+    },
+    "code_tool/adaptive": {
+      "prompts": 3,
+      "pairs": 18,
+      "paired_geomean_ratio": 1.0225020088221222,
+      "prompt_bootstrap_95": [
+        1.0018638664346062,
+        1.0418430067299236
+      ],
+      "prompt_ratios": {
+        "code_tool_build": 1.0418430067299236,
+        "code_tool_review": 1.0241923209484,
+        "code_tool_migration": 1.0018638664346062
+      }
+    }
+  },
+  "aggregate_decode_rates": {
+    "code/adaptive": {
+      "decoded_tokens": 22950,
+      "decode_seconds": 900.9924936258467,
+      "tokens_per_second": 25.4719103237395
+    },
+    "code/fixed7": {
+      "decoded_tokens": 22950,
+      "decode_seconds": 915.3253159009328,
+      "tokens_per_second": 25.07305282757406
+    }
+  },
+  "matched_case_latency_ratios": {
+    "code_continue_codec": {
+      "ttft": 1.005624379579021,
+      "p95_gap": 0.9361993342324754
+    },
+    "code_continue_trie": {
+      "ttft": 1.0044913924984864,
+      "p95_gap": 1.0034768919840844
+    },
+    "code_edit_dedupe": {
+      "ttft": 1.0085911939495256,
+      "p95_gap": 0.9629200217603702
+    },
+    "code_edit_heap": {
+      "ttft": 0.9929467994966754,
+      "p95_gap": 0.9591638709707025
+    },
+    "code_edit_paging": {
+      "ttft": 1.0040398522370193,
+      "p95_gap": 0.9609905003643714
+    },
+    "code_edit_parser": {
+      "ttft": 0.9933527180252877,
+      "p95_gap": 0.9534894440588509
+    },
+    "code_edit_time": {
+      "ttft": 1.0026874479559673,
+      "p95_gap": 0.9956433711311409
+    },
+    "code_fresh_config": {
+      "ttft": 0.9964877600417562,
+      "p95_gap": 0.9841616806306934
+    },
+    "code_fresh_metrics": {
+      "ttft": 1.001542689173987,
+      "p95_gap": 0.9339951699950773
+    },
+    "code_fresh_paths": {
+      "ttft": 1.0003825110213616,
+      "p95_gap": 0.9600448944455848
+    },
+    "code_fresh_ring": {
+      "ttft": 0.9950348051020071,
+      "p95_gap": 0.9556878833904776
+    },
+    "code_fresh_search": {
+      "ttft": 0.9990990313586702,
+      "p95_gap": 0.958548070572617
+    },
+    "code_tool_build": {
+      "ttft": 1.0055180132344461,
+      "p95_gap": 0.9959017670809058
+    },
+    "code_tool_migration": {
+      "ttft": 0.999691368026246,
+      "p95_gap": 0.9741428124940359
+    },
+    "code_tool_review": {
+      "ttft": 0.9981687480193954,
+      "p95_gap": 0.9543689927207712
+    }
+  },
+  "coding_lower95_at_least_0_98": true,
+  "runtime_trace_audit_passed": true,
+  "promotion_approved": false,
+  "interpretation": "Initial locked result is retained. This is a declared follow-up after viewing uncertainty; combined intervals are exploratory, not an independent confirmation or deployment approval."
+}

@@ -12,4 +12,5 @@ done
 for p in "$HERE"/*.patch; do patch -p2 -d "$TARGET" < "$p"; done
 # New files (no patch): the multi-node NVMe tier module.
 cp "$HERE/../overlay/vllm/v1/kv_offload/tiering/multinode.py" "$TARGET/v1/kv_offload/tiering/multinode.py"
+cp "$HERE/../overlay/vllm/v1/spec_decode/adaptive.py" "$TARGET/v1/spec_decode/adaptive.py"
 echo "applied"

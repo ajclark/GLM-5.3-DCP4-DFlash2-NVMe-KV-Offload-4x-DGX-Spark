@@ -82,4 +82,9 @@ with tempfile.TemporaryDirectory() as base:
     check("only the two fully-consistent images serve a block; all 10 mixed states serve nothing", only_full)
 
 print(f"\n=== {'ALL PASS' if fails==0 else str(fails)+' FAILURE(S)'}")
-sys.exit(1 if fails else 0)
+if __name__ == "__main__":
+    sys.exit(1 if fails else 0)
+
+
+def test_standalone_checks():
+    assert fails == 0

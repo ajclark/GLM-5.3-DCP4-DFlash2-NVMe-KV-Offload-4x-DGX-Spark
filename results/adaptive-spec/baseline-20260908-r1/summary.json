@@ -1,0 +1,79 @@
+{
+  "screening_only": true,
+  "cases": {
+    "code": {
+      "7": {
+        "runs": 2,
+        "decode_tps": [
+          27.601421701936136,
+          29.68817282982331
+        ],
+        "median_tps": 28.644797265879724,
+        "verified_cycles": 0,
+        "mean_emitted": null,
+        "median_cycle_ms": null,
+        "actual_caps": [],
+        "median_ratio_to_7": 1.0
+      }
+    },
+    "prose": {
+      "7": {
+        "runs": 2,
+        "decode_tps": [
+          14.918810549088262,
+          15.50174286320219
+        ],
+        "median_tps": 15.210276706145226,
+        "verified_cycles": 0,
+        "mean_emitted": null,
+        "median_cycle_ms": null,
+        "actual_caps": [],
+        "median_ratio_to_7": 1.0
+      }
+    },
+    "repo": {
+      "7": {
+        "runs": 2,
+        "decode_tps": [
+          18.87448701218986,
+          20.31325791489971
+        ],
+        "median_tps": 19.593872463544784,
+        "verified_cycles": 0,
+        "mean_emitted": null,
+        "median_cycle_ms": null,
+        "actual_caps": [],
+        "median_ratio_to_7": 1.0
+      }
+    }
+  },
+  "graphs": [],
+  "memory": {
+    "spark-06c4.local": {
+      "minimum_available_mib": 2789.84375,
+      "new_swap_out_mib": 0.0,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-365c.local": {
+      "minimum_available_mib": 4248.82421875,
+      "new_swap_out_mib": 0.0,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-a218.local": {
+      "minimum_available_mib": 4826.7109375,
+      "new_swap_out_mib": 0.0,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-ddbf.local": {
+      "minimum_available_mib": 4370.25,
+      "new_swap_out_mib": 0.0,
+      "oom_delta": 0,
+      "trips": []
+    }
+  },
+  "wall_energy_measured": false,
+  "note": "Short synthetic prompts and few repeats are a screen, not a promotion gate. Greedy baseline is not bitwise deterministic."
+}

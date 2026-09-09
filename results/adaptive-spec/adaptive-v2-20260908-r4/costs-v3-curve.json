@@ -1,0 +1,119 @@
+{
+  "config": {
+    "tp": 4,
+    "dcp": 2,
+    "max_model_len": 180224,
+    "draft_capacity": 7
+  },
+  "lane": "tp4-dcp2-l180224-k7",
+  "context_range": [
+    0,
+    180224
+  ],
+  "calibration_points": [
+    {
+      "cycle_ms": {
+        "1": 95.69330100202933,
+        "3": 115.70911900344072,
+        "5": 130.3358750010375,
+        "7": 145.0984580005752
+      },
+      "conditional_acceptance_prior": [
+        0.7037422037422038,
+        0.6799410029498525,
+        0.5692640692640693,
+        0.625,
+        0.6927710843373494,
+        0.7327586206896551,
+        0.7093023255813954
+      ],
+      "prior_strength": 2.0,
+      "context": 220
+    },
+    {
+      "cycle_ms": {
+        "1": 107.58326199720614,
+        "3": 128.42603349417914,
+        "5": 144.03403199685272,
+        "7": 158.65236599347554
+      },
+      "conditional_acceptance_prior": [
+        0.7366863905325444,
+        0.572,
+        0.6319444444444444,
+        0.5108695652173914,
+        0.6041666666666666,
+        0.6333333333333333,
+        0.65
+      ],
+      "prior_strength": 2.0,
+      "context": 4229
+    },
+    {
+      "cycle_ms": {
+        "1": 108.32822400698205,
+        "3": 129.64129500323907,
+        "5": 145.13926150539191,
+        "7": 160.4638320131926
+      },
+      "conditional_acceptance_prior": [
+        0.75,
+        0.634453781512605,
+        0.6907894736842105,
+        0.5188679245283019,
+        0.5535714285714286,
+        0.46875,
+        0.6875
+      ],
+      "prior_strength": 2.0,
+      "context": 32267
+    },
+    {
+      "cycle_ms": {
+        "1": 110.2345989929745,
+        "3": 131.99779599381145,
+        "5": 144.74806099315174,
+        "7": 155.03017650189577
+      },
+      "conditional_acceptance_prior": [
+        0.009240246406570842,
+        0.1,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "prior_strength": 2.0,
+      "context": 100292
+    },
+    {
+      "cycle_ms": {
+        "1": 111.62259300181177,
+        "3": 132.9953550011851,
+        "5": 147.2846130054677,
+        "7": 160.6010430114111
+      },
+      "conditional_acceptance_prior": [
+        0.019791666666666666,
+        0.15,
+        0.25,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "prior_strength": 2.0,
+      "context": 170262
+    }
+  ],
+  "sources": {
+    "results/adaptive-spec/adaptive-v2-20260908-r4/costs-point-short.json": "a1e97fc04ba7a68bdb7e444c12b5e0f362c5ae42f62e7ccc36ab7d372b940ed6",
+    "results/adaptive-spec/adaptive-v2-20260908-r4/costs-point-4k.json": "b24be660ac61e122fd04219efcaf4892ad401ca3e8823060b34598c1369df072",
+    "results/adaptive-spec/adaptive-v2-20260908-r4/costs-point-32k.json": "a8046c0f52ef5ccaf1ae7c84e526f43005bd8fc10fd1beb5d77ae2ab656b82eb",
+    "results/adaptive-spec/adaptive-v2-20260908-r4/costs-point-100k.json": "1d7ad2123b3910cc8cf9005abea884834d39bc7ebc7d3848e33334cb2ff15061",
+    "results/adaptive-spec/adaptive-v2-20260908-r4/costs-point-170k.json": "e2bd93f7017efeb5d71335a3cb508b64f49d48fc09770abb2319d8e7b2c78734"
+  },
+  "method": "Linear interpolation of measured cycle costs and conditional acceptance priors; nearest endpoint outside the measured points.",
+  "note": "Performance estimates within this operating range, not a claim that every intermediate context or prompt was measured."
+}

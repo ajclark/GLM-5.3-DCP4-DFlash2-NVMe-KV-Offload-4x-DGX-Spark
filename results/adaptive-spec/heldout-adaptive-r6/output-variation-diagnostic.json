@@ -1,0 +1,22 @@
+{
+  "case": "code_edit_parser",
+  "examples": [
+    {
+      "repeat": 0,
+      "fixed_tps": 22.14201558887654,
+      "adaptive_tps": 30.1772699177609,
+      "first_differing_output_token": 1,
+      "fixed_opening": "# CSV Row Parser: Patch and Tests\n\n## Analysis of the Original Code\n\nThe original implementation has several bugs:\n\n1. **Commas inside quotes split fields** \u2014 `",
+      "adaptive_opening": "# Patch\n\nThe original implementation fails on all three requirements: it splits on commas inside quotes, it can't handle doubled quotes (`\"\"` \u2192 `\"`), and it sil"
+    },
+    {
+      "repeat": 1,
+      "fixed_tps": 37.69182215810998,
+      "adaptive_tps": 24.57215929250243,
+      "first_differing_output_token": 3,
+      "fixed_opening": "# Patch\n\n```python\ndef parse_row(line):\n    \"\"\"Parse a single CSV row.\n\n    - Quoted fields may contain commas and doubled quotes (\"\").\n    - Whitespace outside",
+      "adaptive_opening": "# Patch\n\nThe original implementation is broken in several ways:\n\n1. **Quoted commas**: `line.split(',')` splits inside quoted fields.\n2. **Doubled quotes**: `\"\""
+    }
+  ],
+  "note": "Diagnostic only; no policy tuning or exclusion. The fixed-seven baseline itself emits different text across repetitions. Differences at output positions1/3 precede adaptive warmup. This does not identify the underlying numerical cause or establish fixed-prefix correctness by itself."
+}

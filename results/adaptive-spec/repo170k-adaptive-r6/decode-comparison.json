@@ -1,0 +1,24 @@
+{
+  "context_target": 170000,
+  "pairs": [
+    {
+      "case": "code_repo_context",
+      "prompt_tokens": 170132,
+      "fixed7_decode_tps": 6.250373112346667,
+      "adaptive_decode_tps": 8.857859339068181,
+      "gain_pct": 41.717289189837636,
+      "fixed7_ttft": 402.07582637900487,
+      "adaptive_ttft": 1.9574451690132264
+    },
+    {
+      "case": "prose_repo_context",
+      "prompt_tokens": 170125,
+      "fixed7_decode_tps": 6.254191240280526,
+      "adaptive_decode_tps": 8.88806819123443,
+      "gain_pct": 42.113789773332286,
+      "fixed7_ttft": 1.1618197939824313,
+      "adaptive_ttft": 1.5350745699834079
+    }
+  ],
+  "note": "One256-token request per prompt and policy, two repository tasks. Decode only. First coding fixed7 has cold prompt prefill; adaptive reuses that prompt. Prose starts with a shared repository prefix and fixed7 repeats the exact prose prompt. TTFT and whole-request energy do not have matched cache state and are not policy gains."
+}

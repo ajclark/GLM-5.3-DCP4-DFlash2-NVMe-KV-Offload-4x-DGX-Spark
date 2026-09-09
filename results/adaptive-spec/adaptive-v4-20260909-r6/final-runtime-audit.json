@@ -1,0 +1,63 @@
+{
+  "verify_events": 30154,
+  "version_counts": {
+    "4": 30154
+  },
+  "integrity_errors": 0,
+  "locked_sources_unchanged": true,
+  "transition_caps": [
+    1,
+    7,
+    1
+  ],
+  "temperature_and_penalty_full7": true,
+  "ineligible_C2_events": 536,
+  "ineligible_C2_caps": [
+    7
+  ],
+  "unique_labels": 342,
+  "serving_memory": {
+    "spark-365c.local": {
+      "min_available_mib": 3097.60546875,
+      "max_full_psi_avg10": 0.0,
+      "new_swap_out_mib": 0.0,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-06c4.local": {
+      "min_available_mib": 1640.8203125,
+      "max_full_psi_avg10": 0.0,
+      "new_swap_out_mib": 2.6015625,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-a218.local": {
+      "min_available_mib": 3322.26171875,
+      "max_full_psi_avg10": 0.0,
+      "new_swap_out_mib": 0.0,
+      "oom_delta": 0,
+      "trips": []
+    },
+    "spark-ddbf.local": {
+      "min_available_mib": 3279.703125,
+      "max_full_psi_avg10": 0.0,
+      "new_swap_out_mib": 0.0,
+      "oom_delta": 0,
+      "trips": []
+    }
+  },
+  "head_swap_and_stall_detail": {
+    "repo100k-adaptive-r6": {
+      "new_swap_out_mib": 0.08203125,
+      "full_psi_total_microseconds_delta": 1716.0
+    },
+    "repo32k-adaptive-r6": {
+      "new_swap_out_mib": 2.48046875,
+      "full_psi_total_microseconds_delta": 12115.0
+    },
+    "durable-first-r6": {
+      "new_swap_out_mib": 0.0390625,
+      "full_psi_total_microseconds_delta": 340.0
+    }
+  }
+}

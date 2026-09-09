@@ -21,7 +21,7 @@ import torch
 from harness import OVERLAY, cdiv, extract, extract_methods, ref_local_seq_lens
 
 # The unmodified helper the localizer relies on, read from the image's tree.
-FORK = pathlib.Path("~/lmcache-mg/spark-src/vllm")
+FORK = pathlib.Path("~/lmcache-mg/spark-src/vllm").expanduser()
 UTILS = extract(
     FORK / "v1/attention/backends/utils.py", ["get_dcp_local_seq_lens"]
 )
@@ -141,7 +141,7 @@ def test_localizer_never_mutates_shared_seq_lens():
 
 
 @pytest.mark.parametrize("world", [2, 4])
-@pytest.mark.parametrize("next_n", [1, 5, 9])
+@pytest.mark.parametrize("next_n", [1, 2, 4, 5, 6, 8, 9])
 def test_static_logits_width_covers_every_local_bound(world, next_n):
     """dcp_logits_max_len must exceed the largest per-token local bound any
     rank can see, including a spec-decode request one block past

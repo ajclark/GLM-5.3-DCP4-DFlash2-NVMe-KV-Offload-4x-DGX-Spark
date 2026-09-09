@@ -1,0 +1,74 @@
+{
+  "paired": {
+    "code/adaptive": {
+      "prompts": 1,
+      "pairs": 3,
+      "paired_geomean_ratio": 1.071937713532117,
+      "prompt_bootstrap_95": null,
+      "prompt_ratios": {
+        "code_repo_context": 1.071937713532117
+      }
+    },
+    "prose/adaptive": {
+      "prompts": 1,
+      "pairs": 3,
+      "paired_geomean_ratio": 1.2407430437582898,
+      "prompt_bootstrap_95": null,
+      "prompt_ratios": {
+        "prose_repo_context": 1.2407430437582898
+      }
+    }
+  },
+  "cases": {
+    "code_repo_context": {
+      "fixed7_tps": [
+        20.823297927701756,
+        18.17500506637377,
+        16.48156871898309
+      ],
+      "adaptive_tps": [
+        20.220324171286055,
+        19.982830098817743,
+        19.014553929293793
+      ],
+      "paired_ratios": [
+        0.9710433112704232,
+        1.0994676494362412,
+        1.1536859296283652
+      ],
+      "paired_geomean_ratio": 1.071937713532117,
+      "device_decode_energy_ratios": [
+        0.9675946328638668,
+        0.8391921820658288,
+        0.8224831515228352
+      ],
+      "device_energy_geomean_ratio": 0.8740990134819251
+    },
+    "prose_repo_context": {
+      "fixed7_tps": [
+        16.819589618051094,
+        15.479582438903075,
+        14.555993184169672
+      ],
+      "adaptive_tps": [
+        20.749206958698387,
+        18.842946340929405,
+        18.514488288222985
+      ],
+      "paired_ratios": [
+        1.2336333662047234,
+        1.2172774307899656,
+        1.271949502446756
+      ],
+      "paired_geomean_ratio": 1.2407430437582898,
+      "device_decode_energy_ratios": [
+        0.7916514403056208,
+        0.7768402899547207,
+        0.7292953739415564
+      ],
+      "device_energy_geomean_ratio": 0.7654610008229772
+    }
+  },
+  "prompts_identical_to_R6": true,
+  "note": "Declared exploratory three-repeat follow-up after the R6 single-pair result; same core/cost/prompt, tracing disabled for both policies in R7. One prompt per category, so no prompt confidence interval. No pooling with R6 into a new locked gate. Decode-only energy excludes unmatched prefix warming."
+}

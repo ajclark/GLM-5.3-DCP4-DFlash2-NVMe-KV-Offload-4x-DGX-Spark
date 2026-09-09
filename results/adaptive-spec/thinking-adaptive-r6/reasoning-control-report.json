@@ -1,0 +1,53 @@
+{
+  "requests": [
+    {
+      "case": "code_retry",
+      "policy": "adaptive",
+      "decode_tps": 24.72602533193552,
+      "reasoning_chars": 1053,
+      "visible_chars": 0,
+      "tokens": 256
+    },
+    {
+      "case": "code_csv",
+      "policy": "fixed",
+      "decode_tps": 19.205217440659816,
+      "reasoning_chars": 1132,
+      "visible_chars": 0,
+      "tokens": 256
+    },
+    {
+      "case": "code_cache",
+      "policy": "adaptive",
+      "decode_tps": 25.275734649549157,
+      "reasoning_chars": 241,
+      "visible_chars": 915,
+      "tokens": 256
+    },
+    {
+      "case": "code_cache",
+      "policy": "fixed",
+      "decode_tps": 20.44057966075064,
+      "reasoning_chars": 426,
+      "visible_chars": 750,
+      "tokens": 256
+    },
+    {
+      "case": "code_csv",
+      "policy": "adaptive",
+      "decode_tps": 19.887090313243885,
+      "reasoning_chars": 1169,
+      "visible_chars": 33,
+      "tokens": 256
+    },
+    {
+      "case": "code_retry",
+      "policy": "fixed",
+      "decode_tps": 23.996843871886,
+      "reasoning_chars": 860,
+      "visible_chars": 190,
+      "tokens": 256
+    }
+  ],
+  "note": "Three coding development prompts, one256-token opening per policy, high reasoning effort enabled for both. These are reasoning-mode runtime controls, not completed coding tasks or independent promotion evidence."
+}

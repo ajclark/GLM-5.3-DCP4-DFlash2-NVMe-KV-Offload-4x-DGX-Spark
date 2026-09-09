@@ -75,4 +75,9 @@ with tempfile.TemporaryDirectory() as root:
     check("corrupt epoch file -> no crash, epoch above max on disk, nothing resurrected", m3.epoch>=3 and len(m3.index[0])==0)
 
 print(f"\n=== {'ALL PASS' if fails==0 else str(fails)+' FAILURE(S)'}")
-sys.exit(1 if fails else 0)
+if __name__ == "__main__":
+    sys.exit(1 if fails else 0)
+
+
+def test_standalone_checks():
+    assert fails == 0

@@ -1,0 +1,60 @@
+{
+  "config": {
+    "tp": 4,
+    "dcp": 2,
+    "max_model_len": 180224,
+    "draft_capacity": 7
+  },
+  "lane": "tp4-dcp2-l180224-k7",
+  "context_range": [
+    0,
+    512
+  ],
+  "cycle_ms": {
+    "1": 96.023559999594,
+    "3": 115.92684850620572,
+    "5": 130.5615869932808,
+    "7": 144.79873899836093
+  },
+  "calibration_cycles": {
+    "1": 818,
+    "3": 448,
+    "5": 493,
+    "7": 392
+  },
+  "source_sha256": {
+    "results/adaptive-spec/adaptive-v3-20260909-r5/spark-06c4.local/kvcache/spec-trace.jsonl": "7d0cf8421e4757b1f44ced6b1603ee8f7e701d0fb4a15ee0d7f5e29a94024ead"
+  },
+  "context_point": 217,
+  "conditional_acceptance_prior": [
+    0.7111959287531806,
+    0.6410714285714286,
+    0.5972222222222222,
+    0.7083333333333334,
+    0.6298701298701299,
+    0.8061224489795918,
+    0.8375
+  ],
+  "prior_strength": 2.0,
+  "prior_risk_counts": [
+    392,
+    279,
+    179,
+    107,
+    76,
+    48,
+    39
+  ],
+  "prior_success_counts": [
+    279,
+    179,
+    107,
+    76,
+    48,
+    39,
+    33
+  ],
+  "label_prefix": "adaptive-v3-20260909-r5-",
+  "graph_mode": "FULL",
+  "screening_calibration": true
+}

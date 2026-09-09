@@ -1,0 +1,60 @@
+{
+  "config": {
+    "tp": 4,
+    "dcp": 2,
+    "max_model_len": 180224,
+    "draft_capacity": 7
+  },
+  "lane": "tp4-dcp2-l180224-k7",
+  "context_range": [
+    0,
+    512
+  ],
+  "cycle_ms": {
+    "1": 95.73741999338381,
+    "3": 115.95870100427419,
+    "5": 130.44974401418585,
+    "7": 145.03750699805096
+  },
+  "calibration_cycles": {
+    "1": 409,
+    "3": 283,
+    "5": 269,
+    "7": 243
+  },
+  "source_sha256": {
+    "results/adaptive-spec/adaptive-v4-20260909-r6/fixed-calibration-trace.jsonl": "e3de4a3d126ad0fe25d17b290fea2c3a57090e5d8c9af0f437e05dd9fa0123ac"
+  },
+  "context_point": 221,
+  "conditional_acceptance_prior": [
+    0.6659836065573771,
+    0.6533742331288344,
+    0.6588785046728972,
+    0.6690140845070423,
+    0.6145833333333334,
+    0.65,
+    0.775
+  ],
+  "prior_strength": 2.0,
+  "prior_risk_counts": [
+    243,
+    162,
+    106,
+    70,
+    47,
+    29,
+    19
+  ],
+  "prior_success_counts": [
+    162,
+    106,
+    70,
+    47,
+    29,
+    19,
+    15
+  ],
+  "label_prefix": "adaptive-v4-20260909-r6-",
+  "graph_mode": "FULL",
+  "screening_calibration": true
+}

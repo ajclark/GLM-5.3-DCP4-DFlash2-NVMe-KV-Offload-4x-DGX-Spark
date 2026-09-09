@@ -1,0 +1,25 @@
+{
+  "source_sha256": {
+    "bench/spec-heldout.json": "094c848d9ccb25adffea380a7dbef2aa52c0b3a60a6c4831f6b48b58173026fe",
+    "bench/spec-development.json": "0e79a1f2fb0e3ccc1a9ecb16c88c95739e5d9921ceb74aca55489ade1147ebda",
+    "stage/glm-dcp/adaptive.py": "11663e75888894db4e9c45e930ea5dad8302766838886f4348f2c0cc358b1455",
+    "stage/glm-dcp/scheduler.py": "024d9181f16e27fd28d08a2b3d1166ed014e9e7bef169d61d695a40c17630d39",
+    "stage/glm-dcp/model_runner.py": "0f6744b460dd71e9201650880072b3b009012efe8a5ef1ff44fc586325ee4d9f",
+    "stage/glm-dcp/cudagraph_utils.py": "ccf4ef07ce4bc28af9780d0dface0612dee7f1b3217318f919dad28322fe5429"
+  },
+  "policy_version": 2,
+  "warmup_observations": 8,
+  "probe_period": 16,
+  "decay": 0.97,
+  "hysteresis": 0.03,
+  "heldout_repeats": 3,
+  "heldout_output_tokens": 256,
+  "template": "enable_thinking=false",
+  "temperature": 0,
+  "seed": 42,
+  "gate": "prose >=8% paired gain with 95% CI above 0; coding lower 95% ratio >=0.98; latency/energy/correctness gates remain separate",
+  "synthetic_prompts": true,
+  "order": "AB/BA alternates by prompt index + repeat; paired adjacent requests",
+  "baseline_long_context_control": "baseline-100k-r3: 65 drafts, 455 proposed, zero accepted; 7.050 tok/s",
+  "short_costs_sha256": "3285e68dcd21641e0ea715e44636c918d86173a781357ef88fc4cb2000c089c2"
+}

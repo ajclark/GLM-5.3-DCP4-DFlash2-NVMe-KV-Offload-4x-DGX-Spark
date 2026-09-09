@@ -1,0 +1,131 @@
+{
+  "contexts": {
+    "4k": {
+      "code_repo_context": {
+        "fixed7_tps": 19.909431142044497,
+        "adaptive_tps": 19.865615308929904,
+        "decode_gain_pct": -0.22007576611299262,
+        "device_decode_energy_ratio": 0.9712578305899953,
+        "adaptive_caps": {
+          "1": 0,
+          "3": 81,
+          "5": 0,
+          "7": 14
+        },
+        "fixed7_ttft_s": 0.9630810460075736,
+        "adaptive_ttft_s": 0.6465240319957957
+      },
+      "prose_repo_context": {
+        "fixed7_tps": 18.765621743995943,
+        "adaptive_tps": 16.97502317044178,
+        "decode_gain_pct": -9.541909125004421,
+        "device_decode_energy_ratio": 1.049151259874545,
+        "adaptive_caps": {
+          "1": 0,
+          "3": 90,
+          "5": 6,
+          "7": 16
+        },
+        "fixed7_ttft_s": 0.8878358619986102,
+        "adaptive_ttft_s": 0.886612664005952
+      }
+    },
+    "32k": {
+      "code_repo_context": {
+        "fixed7_tps": 17.75153852062917,
+        "adaptive_tps": 19.165912432107746,
+        "decode_gain_pct": 7.967613116096528,
+        "device_decode_energy_ratio": 0.8725517723191402,
+        "adaptive_caps": {
+          "1": 0,
+          "3": 78,
+          "5": 4,
+          "7": 15
+        },
+        "fixed7_ttft_s": 1.4812069989857264,
+        "adaptive_ttft_s": 0.7396426699997392
+      },
+      "prose_repo_context": {
+        "fixed7_tps": 18.144504415344617,
+        "adaptive_tps": 16.71312256484379,
+        "decode_gain_pct": -7.8887900034917635,
+        "device_decode_energy_ratio": 1.037103424327815,
+        "adaptive_caps": {
+          "1": 0,
+          "3": 97,
+          "5": 0,
+          "7": 16
+        },
+        "fixed7_ttft_s": 0.7381543619849253,
+        "adaptive_ttft_s": 1.0084604760049842
+      }
+    },
+    "100k": {
+      "code_repo_context": {
+        "fixed7_tps": 6.657686892939202,
+        "adaptive_tps": 8.959065796074894,
+        "decode_gain_pct": 34.56724445206962,
+        "device_decode_energy_ratio": 0.6732042947089203,
+        "adaptive_caps": {
+          "1": 224,
+          "3": 0,
+          "5": 0,
+          "7": 24
+        },
+        "fixed7_ttft_s": 2.612842701986665,
+        "adaptive_ttft_s": 1.1334206990140956
+      },
+      "prose_repo_context": {
+        "fixed7_tps": 6.5160727545644015,
+        "adaptive_tps": 8.939777120541299,
+        "decode_gain_pct": 37.19578429014827,
+        "device_decode_energy_ratio": 0.657744592209536,
+        "adaptive_caps": {
+          "1": 223,
+          "3": 0,
+          "5": 0,
+          "7": 24
+        },
+        "fixed7_ttft_s": 1.074341870000353,
+        "adaptive_ttft_s": 1.330081934982445
+      }
+    },
+    "170k": {
+      "code_repo_context": {
+        "fixed7_tps": 6.250373112346667,
+        "adaptive_tps": 8.857859339068181,
+        "decode_gain_pct": 41.717289189837636,
+        "device_decode_energy_ratio": 0.6090193409566079,
+        "adaptive_caps": {
+          "1": 224,
+          "3": 0,
+          "5": 0,
+          "7": 24
+        },
+        "fixed7_ttft_s": 402.07582637900487,
+        "adaptive_ttft_s": 1.9574451690132264
+      },
+      "prose_repo_context": {
+        "fixed7_tps": 6.254191240280526,
+        "adaptive_tps": 8.88806819123443,
+        "decode_gain_pct": 42.113789773332286,
+        "device_decode_energy_ratio": 0.6211213228341307,
+        "adaptive_caps": {
+          "1": 224,
+          "3": 0,
+          "5": 0,
+          "7": 24
+        },
+        "fixed7_ttft_s": 1.1618197939824313,
+        "adaptive_ttft_s": 1.5350745699834079
+      }
+    }
+  },
+  "repeats_per_pair": 1,
+  "wall_energy_measured": false,
+  "note": "Single-repeat repository screens, two tasks per context. Decode intervals only; prefill/cache state differs between variants. No confidence interval from one prompt per category. Follow-up4k/32k locked separately after observing prose regressions.",
+  "cache_conditions": {
+    "170k": "First coding fixed7:402.1s cold prefill. Adaptive repeats exact prompt. Prose starts with common repository prefix; fixed7 repeats exact prose prompt.",
+    "4k/32k/100k": "Repository prefix already processed during170k. First versus repeated prompts have different suffix reuse; no matched TTFT or whole-request energy inference."
+  }
+}

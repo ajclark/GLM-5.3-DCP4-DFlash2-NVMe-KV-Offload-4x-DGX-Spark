@@ -1,0 +1,23 @@
+{
+  "host": "spark-06c4.local",
+  "source_path": "vllm/v1/kv_offload/base.py",
+  "source_sha256": "531191376cf79d1ebe44b0ab23b101024113e30a18919ee819faaba1e1237645",
+  "source_default": "self.extra_config.get(\"offload_prompt_only\", True)",
+  "kv_transfer_config": {
+    "kv_connector": "MultiNodeSlabConnector",
+    "kv_connector_module_path": "vllm.v1.kv_offload.tiering.multinode",
+    "kv_role": "kv_both",
+    "kv_connector_extra_config": {
+      "spec_name": "MultiNodeSlabOffloadingSpec",
+      "spec_module_path": "vllm.v1.kv_offload.tiering.multinode",
+      "root_dir": "/kvcache",
+      "disk_bytes_per_rank": 150000000000,
+      "bounce_blocks": 48,
+      "n_read_threads": 8,
+      "n_write_threads": 8,
+      "slab_salt": "28097bbb4fa3b476"
+    }
+  },
+  "offload_prompt_only": true,
+  "interpretation": "Only prompt KV is durable. Restart continuation must reload prompt blocks and recompute any supplied generated suffix. Do not claim generated KV was stored."
+}
