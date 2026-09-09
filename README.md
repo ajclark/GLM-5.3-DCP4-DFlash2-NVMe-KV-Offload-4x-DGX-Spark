@@ -109,6 +109,11 @@ repeatability remains unresolved after an isolated atomic-reduction control.
 The [curated evidence](results/adaptive-next/README.md) preserves all outcomes,
 invalid controls, privacy transformations and exact restoration checks.
 
+The [current priority is C1 speed](docs/SPEED-NEXT.md): compare short built-in
+MTP with repaired adaptive DFlash, then address communication and verification
+costs. Power optimization is deferred. An MTP model/proposer contract mismatch
+has a CPU-tested experimental fix; no new MTP Spark speed result is claimed.
+
 ## Layout
 
 | path | what it is |
