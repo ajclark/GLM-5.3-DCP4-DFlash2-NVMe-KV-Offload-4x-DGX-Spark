@@ -301,3 +301,18 @@ pi prompting is already in use; re-instrumentation (#1) goes last.
 - **Speed:** per-task wall geomean vs control 1.21× (m2.5) / 1.25× (m5.0) slower overall, and still 1.17×/1.12× slower excluding task 132 with 25–31% more output tokens — but the inert arms of hold 9 pass 1 already differed by ±20–25% in tokens and calls between identical requests (tool results and prefix-cache state make pi runs non-deterministic), so 12-task speed ratios are noise; the pass-agreement matrix is the robust part. Pooled decode tok/s (+15–20%) and accepted/cycle (6.3/6.6 vs 5.4) are inflated by the runaway calls and mean nothing here.
 - **Scope check (1:1 call↔request pairing by order):** on calls with no reasoning, relaxed tokens are 58/5170 (1.1%, m2.5) and 74/4235 (1.7%, m5.0) — small but not zero, i.e. think-scope is relaxing a little outside `reasoning_content` (empty `<think>` spans the template opens, or the kernel's think-state bookkeeping after a rejection; under review). Inside reasoning: ~28–34 relaxed per 1k reasoning chars.
 - Verdict for the pi-alias question: **do not ship think-scoped lossy as a default for coding sessions**; if it is ever used, it needs a reasoning-length guard (e.g. fall back to exact verification after N relaxed tokens per span, or a hard per-call cap) and the small out-of-span leak fixed. The unscoped m2.5 task test (hold 11, official tests as the gate) runs after hold 10. Report: `results/lossy-think-tasks-20260910-r2/report.{md,json}` (activation windows are being fixed in the tool; the label/relaxed counts above are from the trace directly).
+
+## Morning recap (written 11:35 UTC, holds 10 and 11 still queued)
+
+| # | Item | Result | Status |
+|---|------|--------|--------|
+| 3 | Think-scoped lossy, request level (hold 8) | +22/+17% code/prose decode at m2.5, +28/+27% at m5.0 with thinking on; inert with thinking off | measured |
+| 3 | Think-scoped lossy, **task level via pi** (holds 9/9b) | control 24/24 tasks; think-m2.5 22/24; think-m5.0 22/24 — the only reasoning task runs away to the token cap under relaxed acceptance (3 of 4 treatment runs) and fails every time | **negative; do not ship as a default** |
+| 3 | Think-scope leak | 1–2% of tokens relaxed on tool-call-only outputs: first token after prefill bypassed the state machine (`</think>` missed) | fixed (28e9fc5), unmeasured |
+| 2/4 | Tool-argument copy / prompt-lookup drafting | every policy loses to DFlash on 67 real pi calls (−0.2…−1.3% all-token) | closed, negative |
+| 5 | Per-call TTFT | ~500 tok/s prefill + ~0.4 s floor; no hidden fixed cost; lever = prefill throughput | closed |
+| G | Prefill glue overlay (`GLM_DCP_RS_HEADMAJOR`) | head-major DCP LSE merge, removes two relayout copies + output masked_fill (~10% of a 4k prefill expected); codex-reviewed | **hold 10 running** |
+| A | Unscoped lossy m2.5/m5.0, task level via pi, official tests | — | hold 11 queued after hold 10 |
+| 1 | Re-instrumentation | deferred last per instruction | not started |
+
+Ops notes for the morning: production is the user's `lossy-prod` (lossy overlays mounted, `GLM_SPEC_LOSSY=0`); every hold restored and was verified. `~/spark-cluster-experiments/capture_proxy.py` (separate dir, uncommitted) now injects `--force-xargs` on `/v1/chat/completions`. Lessons: one controller per hold; verify kills with `pgrep` (a `kill` on the `$!` of `nohup bash … &` hit a wrapper, not the script); never let a guard `pgrep -f` pattern be matchable by my own tool shell.
