@@ -194,7 +194,11 @@ def test_launcher_defaults_to_dflash_and_mounts_every_overlay():
     launcher = (root / "launch-glm53big-dcp.sh").read_text()
     assert 'SPEC_MODE="${2:-dflash}"' in launcher
     assert '"method":"dflash"' in launcher
-    assert "mtp)" in launcher and "dropped" in launcher  # refused with a reason
+    # mtp is an experiment lane only: it needs the packager-staged contract
+    # overlay and a smaller KV pool (docs/SPEED-ARCHITECTURE-OPTIONS.md B).
+    assert "mtp)" in launcher and '"method":"mtp"' in launcher
+    assert '[ -f "$DCP_DIR/mtp_speculator.py" ]' in launcher
+    assert 'grep -q "model_returns_tuple" "$DCP_DIR/mtp_speculator.py"' in launcher
     # every staged overlay file is bind-mounted, and preflighted
     staged = sorted(p.name for p in (root / "stage/glm-dcp").glob("*.py"))
     for name in staged:

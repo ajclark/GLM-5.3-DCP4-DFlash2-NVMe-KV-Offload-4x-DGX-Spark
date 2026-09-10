@@ -1,0 +1,250 @@
+--- a/vllm/v1/worker/gpu/spec_decode/rejection_sampler_utils.py
++++ b/vllm/v1/worker/gpu/spec_decode/rejection_sampler_utils.py
+@@ -5,6 +5,12 @@
+ from vllm.triton_utils import tl, triton
+ from vllm.v1.worker.gpu.sample.gumbel import gumbel_block_argmax, tl_rand64
+ 
++# GLM overlay: bounded-lossy greedy verification (docs/LOSSY-VERIFICATION-PLAN.md).
++# A greedy request may opt in per request to accept a drafted token that is the
++# target's runner-up within a logit margin (MARS, arXiv 2601.15498). Off unless
++# the request's lossy margin is >= 0; all other rows follow the stock kernels.
++LOSSY_OFF = -1.0
++
+ 
+ @triton.jit
+ def _compute_block_max_and_sumexp(logits):
+@@ -74,6 +80,11 @@
+     expanded_local_pos_ptr,
+     # [max_num_reqs]
+     temp_ptr,
++    # [max_num_reqs] lossy margin in nats, < 0 = exact greedy verification
++    lossy_margin_ptr,
++    # [num_logits, num_blocks] per-block runner-up logit (lossy greedy rows only)
++    target_local_second_ptr,
++    target_local_second_stride,
+     vocab_size,
+     num_speculative_steps,
+     BLOCK_SIZE: tl.constexpr,
+@@ -112,6 +123,28 @@
+             target_local_max_ptr + logit_idx * target_local_max_stride + block_idx,
+             value,
+         )
++        lossy_margin = tl.load(lossy_margin_ptr + req_state_idx).to(tl.float32)
++        if lossy_margin >= 0.0:
++            # Lossy greedy row: also keep this block's runner-up and its summed
++            # exponentials so the rejection kernel can measure the target's
++            # decision margin without a second pass over the logits.
++            lane = tl.arange(0, BLOCK_SIZE)
++            second = tl.max(
++                tl.where(lane == idx, float("-inf"), target_logits), axis=0
++            )
++            tl.store(
++                target_local_second_ptr
++                + logit_idx * target_local_second_stride
++                + block_idx,
++                second,
++            )
++            _, target_sumexp = _compute_block_max_and_sumexp(target_logits)
++            tl.store(
++                target_local_sumexp_ptr
++                + logit_idx * target_local_sumexp_stride
++                + block_idx,
++                target_sumexp,
++            )
+     else:
+         # Get local target max and summed exponentials.
+         target_logits = tl.load(
+@@ -200,10 +233,22 @@
+     pos_ptr,
+     # [num_speculative_steps]
+     synthetic_conditional_rates_ptr,
++    # [num_reqs] relaxed (non-argmax) accepts for the lossy greedy rule
++    relaxed_steps_ptr,
++    # [num_logits, num_blocks]
++    target_local_second_ptr,
++    target_local_second_stride,
++    # [max_num_reqs] lossy margin in nats, < 0 = exact greedy verification
++    lossy_margin_ptr,
++    # [max_num_reqs] log(p_min) floor for a relaxed accept, -inf = none
++    lossy_min_logp_ptr,
++    # [NUM_STOP_IDS] token ids never relaxed (EOS, role and think markers), -1 pad
++    stop_ids_ptr,
+     vocab_num_blocks,
+     PADDED_VOCAB_NUM_BLOCKS: tl.constexpr,
+     HAS_DRAFT_LOGITS: tl.constexpr,
+     SYNTHETIC_MODE: tl.constexpr,
++    NUM_STOP_IDS: tl.constexpr,
+ ):
+     req_idx = tl.program_id(0)
+     req_state_idx = tl.load(idx_mapping_ptr + req_idx)
+@@ -212,8 +257,11 @@
+     num_tokens = end_idx - start_idx
+     seed = tl.load(seed_ptr + req_state_idx)
+     temp = tl.load(temp_ptr + req_state_idx).to(tl.float32)
++    lossy_margin = tl.load(lossy_margin_ptr + req_state_idx).to(tl.float32)
++    lossy_min_logp = tl.load(lossy_min_logp_ptr + req_state_idx).to(tl.float32)
+ 
+     rejected_step = 0
++    relaxed_step = 0
+     target_lse = 0.0
+     draft_lse = 0.0
+     accepted = True
+@@ -247,7 +295,57 @@
+                     rate = tl.load(synthetic_conditional_rates_ptr + i)
+                     accepted &= u < rate
+                 else:
+-                    accepted &= target_argmax == draft_sampled
++                    exact = target_argmax == draft_sampled
++                    relaxed = draft_sampled < 0
++                    if lossy_margin >= 0.0:
++                        # Bounded-lossy greedy rule: accept the draft when it
++                        # is the target's runner-up, within `lossy_margin`
++                        # nats of the argmax, above the optional probability
++                        # floor, and neither token is a stop/role/think id.
++                        target_logit = tl.load(
++                            target_logits_ptr
++                            + logit_idx * target_logits_stride
++                            + draft_sampled
++                        ).to(tl.float32)
++                        target_max = tl.max(target_local_max, axis=0)
++                        target_local_second = tl.load(
++                            target_local_second_ptr
++                            + logit_idx * target_local_second_stride
++                            + target_blocks,
++                            mask=target_blocks_mask,
++                            other=float("-inf"),
++                        )
++                        runner_up = tl.max(
++                            tl.where(
++                                target_blocks == max_target_block_idx,
++                                target_local_second,
++                                target_local_max,
++                            ),
++                            axis=0,
++                        )
++                        stop_ids = tl.load(stop_ids_ptr + tl.arange(0, NUM_STOP_IDS))
++                        draft_stops = tl.sum((stop_ids == draft_sampled).to(tl.int32), axis=0)
++                        argmax_stops = tl.sum((stop_ids == target_argmax).to(tl.int32), axis=0)
++                        relaxed = (
++                            (draft_sampled != target_argmax)
++                            & (target_logit >= runner_up)
++                            & (target_max - target_logit <= lossy_margin)
++                            & (draft_stops == 0)
++                            & (argmax_stops == 0)
++                        )
++                        if lossy_min_logp > float("-inf"):
++                            lse = _compute_global_lse(
++                                target_local_max_ptr,
++                                target_local_max_stride,
++                                target_local_sumexp_ptr,
++                                target_local_sumexp_stride,
++                                logit_idx,
++                                vocab_num_blocks,
++                                PADDED_VOCAB_NUM_BLOCKS,
++                            )
++                            relaxed &= (target_logit - lse) >= lossy_min_logp
++                    accepted &= exact | relaxed
++                    relaxed_step += relaxed
+                 tl.store(
+                     sampled_ptr + req_idx * sampled_stride + i,
+                     draft_sampled if accepted else target_argmax,
+@@ -299,6 +397,7 @@
+                 tl.store(sampled_ptr + req_idx * sampled_stride + i, draft_sampled)
+             rejected_step += accepted
+     tl.store(rejected_steps_ptr + req_idx, rejected_step)
++    tl.store(relaxed_steps_ptr + req_idx, relaxed_step)
+     tl.store(target_rejected_logsumexp_ptr + req_idx, target_lse)
+     tl.store(draft_rejected_logsumexp_ptr + req_idx, draft_lse)
+ 
+@@ -515,10 +614,27 @@
+     # [num_speculative_steps]
+     synthetic_conditional_rates: torch.Tensor | None = None,
+     use_fp64: bool = False,
+-) -> tuple[torch.Tensor, torch.Tensor]:
++    # [max_num_reqs] lossy margin in nats per request, < 0 = off (default)
++    lossy_margin: torch.Tensor | None = None,
++    # [max_num_reqs] log(p_min) floor per request, -inf = none (default)
++    lossy_min_logp: torch.Tensor | None = None,
++    # [n] token ids never relaxed; padded to a power of two with -1
++    stop_ids: torch.Tensor | None = None,
++) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+     num_reqs = cu_num_logits.shape[0] - 1
+     num_logits, vocab_size = target_logits.shape
+     has_draft_logits = draft_logits is not None
++    max_num_reqs = temperature.shape[0]
++    if lossy_margin is None:
++        lossy_margin = torch.full(
++            (max_num_reqs,), LOSSY_OFF, dtype=torch.float32, device=target_logits.device
++        )
++    if lossy_min_logp is None:
++        lossy_min_logp = torch.full(
++            (max_num_reqs,), float("-inf"), dtype=torch.float32,
++            device=target_logits.device,
++        )
++    stop_ids = pad_stop_ids(stop_ids, target_logits.device)
+ 
+     if draft_logits is None:
+         # When draft_logits is None, create a dummy tensor so that Triton
+@@ -547,6 +663,9 @@
+     draft_local_sumexp = target_logits.new_empty(
+         num_logits, vocab_num_blocks, dtype=torch.float32
+     )
++    target_local_second = target_logits.new_empty(
++        num_logits, vocab_num_blocks, dtype=torch.float32
++    )
+     _compute_block_stats_kernel[(num_logits, vocab_num_blocks)](
+         target_local_argmax,
+         target_local_argmax.stride(0),
+@@ -566,6 +685,9 @@
+         expanded_idx_mapping,
+         expanded_local_pos,
+         temperature,
++        lossy_margin,
++        target_local_second,
++        target_local_second.stride(0),
+         vocab_size,
+         num_speculative_steps,
+         BLOCK_SIZE=VOCAB_BLOCK_SIZE,
+@@ -578,6 +700,7 @@
+         num_reqs, num_speculative_steps + 1, dtype=torch.int64
+     )
+     num_sampled = sampled.new_empty(num_reqs, dtype=torch.int32)
++    num_relaxed = sampled.new_empty(num_reqs, dtype=torch.int32)
+     target_rejected_logsumexp = target_logits.new_empty(num_reqs, dtype=torch.float32)
+     draft_rejected_logsumexp = target_logits.new_empty(num_reqs, dtype=torch.float32)
+     _rejection_kernel[(num_reqs,)](
+@@ -608,10 +731,17 @@
+         seed,
+         pos,
+         synthetic_conditional_rates,
++        num_relaxed,
++        target_local_second,
++        target_local_second.stride(0),
++        lossy_margin,
++        lossy_min_logp,
++        stop_ids,
+         vocab_num_blocks,
+         PADDED_VOCAB_NUM_BLOCKS=padded_vocab_num_blocks,
+         HAS_DRAFT_LOGITS=has_draft_logits,
+         SYNTHETIC_MODE=synthetic_conditional_rates is not None,
++        NUM_STOP_IDS=stop_ids.shape[0],
+         num_warps=1,
+     )
+ 
+@@ -667,4 +797,15 @@
+         temperature,
+         PADDED_RESAMPLE_NUM_BLOCKS=padded_resample_num_blocks,
+     )
+-    return sampled, num_sampled
++    return sampled, num_sampled, num_relaxed
++
++
++def pad_stop_ids(stop_ids: torch.Tensor | None, device: torch.device) -> torch.Tensor:
++    """Stop ids for the lossy rule as an int64 vector padded to a power of two."""
++    if stop_ids is None or stop_ids.numel() == 0:
++        return torch.full((8,), -1, dtype=torch.int64, device=device)
++    n = int(stop_ids.numel())
++    width = max(8, triton.next_power_of_2(n))
++    out = torch.full((width,), -1, dtype=torch.int64, device=device)
++    out[:n] = stop_ids.to(device=device, dtype=torch.int64)
++    return out

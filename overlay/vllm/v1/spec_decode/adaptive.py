@@ -132,6 +132,24 @@ def extra_capture_sizes(is_target: bool) -> tuple[int, ...]:
     return (2, 4, 6) if is_target and policy_mode() != "off" else ()
 
 
+def lossy_request_fields(xargs) -> dict:
+    """Echo the bounded-lossy controls a request asked for (audit only).
+
+    The worker decides whether they are honoured (GLM_SPEC_LOSSY=1, greedy,
+    valid ranges); rows carry both the request and the boot switch so a
+    report can prove activation or its absence.
+    """
+    def number(value):
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            return None
+        return float(value) if math.isfinite(value) else None
+    return {
+        "lossy_margin": number(xargs.get("spec_lossy_margin")),
+        "lossy_min_p": number(xargs.get("spec_lossy_min_p", 0)),
+        "lossy_enabled": os.environ.get("GLM_SPEC_LOSSY") == "1",
+    }
+
+
 def eligible(request, c1: bool) -> bool:
     sp = request.sampling_params
     return bool(
@@ -419,6 +437,7 @@ class VerificationPolicy:
             "hint_domain": hint_domain,
             "label": str(xargs.get("spec_label", ""))[:96],
             "decision_ns": decision_ns,
+            **lossy_request_fields(xargs),
         }
         return cap
 
@@ -491,6 +510,7 @@ class VerificationPolicy:
                     "accepted": accepted, "sampled": len(tokens),
                     "context": request.num_tokens, "terminal": terminal,
                     "learned": valid, "cycle_ms": (now - previous) * 1000 if previous else None,
+                    "relaxed": int((getattr(runner_output, "spec_relaxed", None) or {}).get(rid, 0)),
                     "latency_ms": (now - row["scheduled_at"]) * 1000,
                     "dropped": self.sink.dropped, "writer_error": self.sink.error,
                     "receipt_ns": receipt_ns,

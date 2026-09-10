@@ -1435,6 +1435,7 @@ class GPUModelRunner(LoRAModelRunnerMixin):
             main_stream=self.main_stream,
             copy_stream=self.output_copy_stream,
             confidence_packet=confidence_packet,
+            num_relaxed=getattr(sampler_output, "num_relaxed", None),
         )
 
         mm_inputs: tuple[list[torch.Tensor], torch.Tensor] | None = None

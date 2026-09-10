@@ -284,6 +284,10 @@ class ModelRunnerOutput:
     # CPU values only; populated after the existing AsyncOutput copy event.
     spec_confidence: dict[str, dict] | None = None
 
+    # Bounded-lossy verification: relaxed (non-argmax) accepts per request
+    # this step, keyed by internal request ID; None when not collected.
+    spec_relaxed: dict[str, int] | None = None
+
     @staticmethod
     def with_kv_conn_output_only(
         kv_connector_output: KVConnectorOutput | None,

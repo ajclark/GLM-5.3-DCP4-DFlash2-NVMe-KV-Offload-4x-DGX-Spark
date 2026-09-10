@@ -1,0 +1,100 @@
+--- a/vllm/v1/worker/gpu/sample/states.py
++++ b/vllm/v1/worker/gpu/sample/states.py
+@@ -1,5 +1,8 @@
+ # SPDX-License-Identifier: Apache-2.0
+ # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++import math
++import os
++
+ import numpy as np
+ import torch
+ 
+@@ -13,6 +16,53 @@
+ _NP_INT64_MIN = np.iinfo(np.int64).min
+ _NP_INT64_MAX = np.iinfo(np.int64).max
+ 
++# GLM overlay: per-request bounded-lossy greedy verification controls
++# (docs/LOSSY-VERIFICATION-PLAN.md). Honoured only when the boot sets
++# GLM_SPEC_LOSSY=1; otherwise every request keeps exact verification.
++LOSSY_ENABLED = os.environ.get("GLM_SPEC_LOSSY") == "1"
++LOSSY_OFF = -1.0
++LOSSY_MAX_MARGIN = 5.0
++LOSSY_MAX_MIN_P = 0.5
++
++
++def _number(value):
++    """A finite JSON number (not a bool, which the wire may turn into an int)."""
++    if isinstance(value, bool) or not isinstance(value, (int, float)):
++        return None
++    if not math.isfinite(value):
++        return None
++    return float(value)
++
++
++def lossy_controls(sampling_params: SamplingParams) -> tuple[float, float]:
++    """(margin in nats, log p_min) for this request, or (off, -inf).
++
++    Fails closed: any invalid, out-of-range or ineligible combination leaves
++    the request on exact verification. Greedy only; no structured outputs,
++    logit bias, allowed/bad token lists or penalties, mirroring the adaptive
++    policy's eligibility rule.
++    """
++    off = (LOSSY_OFF, float("-inf"))
++    xargs = getattr(sampling_params, "extra_args", None) or {}
++    margin = _number(xargs.get("spec_lossy_margin"))
++    if margin is None or not 0.0 < margin <= LOSSY_MAX_MARGIN:
++        return off
++    rank = xargs.get("spec_lossy_rank", 2)
++    if isinstance(rank, bool) or rank != 2:
++        return off
++    min_p = _number(xargs.get("spec_lossy_min_p", 0))
++    if min_p is None or not 0.0 <= min_p < LOSSY_MAX_MIN_P:
++        return off
++    sp = sampling_params
++    if (sp.temperature != 0.0 or getattr(sp, "structured_outputs", None) is not None
++            or getattr(sp, "logit_bias", None) or getattr(sp, "allowed_token_ids", None)
++            or getattr(sp, "bad_words", None)
++            or getattr(sp, "presence_penalty", 0) != 0
++            or getattr(sp, "frequency_penalty", 0) != 0
++            or getattr(sp, "repetition_penalty", 1) != 1):
++        return off
++    return margin, (math.log(min_p) if min_p > 0.0 else float("-inf"))
++
+ 
+ class SamplingStates:
+     def __init__(self, max_num_reqs: int, vocab_size: int):
+@@ -27,6 +77,13 @@
+         # Tracks whether `seed` was set explicitly by the user, so callers
+         # can fall back from RNG paths that don't honor per-request seeds.
+         self.seeds_set = np.zeros(max_num_reqs, dtype=bool)
++        # Bounded-lossy greedy verification: margin (< 0 = off) and log p_min.
++        self.lossy_margin = UvaBackedTensor(max_num_reqs, dtype=torch.float32)
++        self.lossy_margin.np.fill(LOSSY_OFF)
++        self.lossy_margin.copy_to_uva()
++        self.lossy_min_logp = UvaBackedTensor(max_num_reqs, dtype=torch.float32)
++        self.lossy_min_logp.np.fill(float("-inf"))
++        self.lossy_min_logp.copy_to_uva()
+ 
+         # Initialize top_k and top_p manually because 0 is an invalid value for them.
+         self.top_k.np.fill(self.vocab_size)
+@@ -53,6 +110,11 @@
+             seed = np.random.randint(_NP_INT64_MIN, _NP_INT64_MAX)
+         self.seeds.np[req_idx] = seed
+ 
++        margin, min_logp = (lossy_controls(sampling_params) if LOSSY_ENABLED
++                            else (LOSSY_OFF, float("-inf")))
++        self.lossy_margin.np[req_idx] = margin
++        self.lossy_min_logp.np[req_idx] = min_logp
++
+         num_logprobs = sampling_params.logprobs
+         if num_logprobs is None:
+             num_logprobs = NO_LOGPROBS
+@@ -66,6 +128,8 @@
+         self.top_k.copy_to_uva()
+         self.min_p.copy_to_uva()
+         self.seeds.copy_to_uva()
++        self.lossy_margin.copy_to_uva()
++        self.lossy_min_logp.copy_to_uva()
+ 
+     def apply_temperature(
+         self,

@@ -7,6 +7,11 @@ import { classifyWorkload, preparePayload } from "./pi-speculation-core.mjs";
 // Opt-in experiment extension. Loading it alone does not change requests.
 export default function (pi: ExtensionAPI) {
   let enabled = process.env.PI_SPEC_HINTS === "1";
+  // Bounded-lossy verification: off unless PI_SPEC_LOSSY_MARGIN is set (the
+  // prose persona) or /spec-lossy on is issued; never sent for sampled requests.
+  let lossy: { margin: number; minP: number } | null = process.env.PI_SPEC_LOSSY_MARGIN
+    ? { margin: Number(process.env.PI_SPEC_LOSSY_MARGIN), minP: Number(process.env.PI_SPEC_LOSSY_MIN_P ?? "0") }
+    : null;
   const cap = Number(process.env.PI_SPEC_MAX_TOKENS ?? "0");
   const log = process.env.PI_SPEC_LOG;
   const captureDir = process.env.PI_SPEC_CAPTURE_DIR;
@@ -23,13 +28,25 @@ export default function (pi: ExtensionAPI) {
       ctx.ui.notify(`Speculation request hints ${enabled ? "on" : "off"}`);
     },
   });
+  pi.registerCommand("spec-lossy", {
+    description: "Bounded-lossy prose verification: on [margin [minP]] or off",
+    handler: async (args, ctx) => {
+      const parts = args.trim().split(/\s+/);
+      if (parts[0] === "off") { lossy = null; ctx.ui.notify("Lossy verification off"); return; }
+      if (parts[0] !== "on") { ctx.ui.notify("Usage: /spec-lossy on [margin [minP]] | off", "warning"); return; }
+      const margin = parts[1] ? Number(parts[1]) : Number(process.env.PI_SPEC_LOSSY_MARGIN ?? "1.0");
+      const minP = parts[2] ? Number(parts[2]) : Number(process.env.PI_SPEC_LOSSY_MIN_P ?? "0");
+      lossy = { margin, minP };
+      ctx.ui.notify(`Lossy verification on: margin ${margin} nats, minP ${minP} (greedy requests only)`);
+    },
+  });
   pi.on("before_provider_request", (event, ctx) => {
     current = undefined;
     if (ctx.model?.provider !== "glm53" || ctx.model?.id !== "glm-5.3") return;
-    if (!enabled && !cap && !log && !captureDir) return;
+    if (!enabled && !cap && !log && !captureDir && !lossy) return;
     const original: any = event.payload;
     const label = log || captureDir ? `pi-spec-${Date.now()}-${++serial}` : null;
-    const payload = preparePayload(original, { enabled, maxTokens: cap || null, label });
+    const payload = preparePayload(original, { enabled, maxTokens: cap || null, label, lossy });
     // Explicit local experiment capture, including system/tool context. Keep
     // the directory private and excluded from published benchmark artifacts.
     if (captureDir) {
@@ -37,7 +54,7 @@ export default function (pi: ExtensionAPI) {
       writeFileSync(join(captureDir, `${label}.json`), JSON.stringify(payload) + "\n", { mode: 0o600, flag: "wx" });
     }
     current = { event: "request", label, started_at: Date.now() / 1000,
-      hint: classifyWorkload(original?.messages), hints_enabled: enabled,
+      hint: classifyWorkload(original?.messages), hints_enabled: enabled, lossy,
       prompt_sha256: createHash("sha256").update(JSON.stringify(original?.messages ?? [])).digest("hex"),
       model: ctx.model.id, thinking_level: pi.getThinkingLevel(),
       temperature: payload.temperature ?? null, max_tokens: payload.max_completion_tokens ?? payload.max_tokens,

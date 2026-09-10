@@ -56,7 +56,8 @@
 #     8192 tokens x 64 heads x 512 x 4 B is 1 GiB of accumulator alone.
 #     4096 halves that. Raise it back only with a measured profile run.
 #
-# usage: launch-glm53big-dcp.sh <rank 0-3> [dflash|none]   (default dflash)
+# usage: launch-glm53big-dcp.sh <rank 0-3> [dflash|mtp|none]   (default dflash; mtp is the
+#        experiment packager's lane and needs $DCP_DIR/mtp_speculator.py)
 set -uo pipefail
 
 NODE_RANK="${1:?usage: launch-glm53big-dcp.sh <0|1|2|3> [dflash|none]}"
@@ -127,7 +128,8 @@ DCP_FILES=(flashmla_sparse.py sparse_attn_indexer.py sparse_utils.py indexer.py
   block_table.py gpu_input_batch.py gpu_model_runner.py cp_utils.py
   flash_attn.py
   scheduler.py b12x_sparse_helpers.py adaptive.py model_runner.py cudagraph_utils.py
-  v2_block_table.py v2_async_utils.py v1_outputs.py confidence_trace.py)
+  v2_block_table.py v2_async_utils.py v1_outputs.py confidence_trace.py
+  v2_rejection_sampler_utils.py v2_rejection_sampler.py v2_sample_states.py)
 for f in "${DCP_FILES[@]}"; do
   [ -f "$DCP_DIR/$f" ] || { echo "DCP overlay missing: $DCP_DIR/$f" >&2; exit 4; }
 done
@@ -194,9 +196,19 @@ case "$SPEC_MODE" in
     DRAFT_MOUNT=(-v /var/tmp/models/GLM-5.3-DFlash2-draft:/models/dflash2-draft:ro)
     SPEC=(--speculative-config '{"method":"dflash","model":"/models/dflash2-draft","num_speculative_tokens":'"$DFLASH_K"',"draft_tensor_parallel_size":1}') ;;
   mtp)
-    echo "MTP was dropped from this launcher (operator decision 2026-09-04); use dflash or none." >&2
-    exit 2 ;;
-  *) echo "spec must be dflash|none" >&2; exit 2 ;;
+    # Experimental prose lane (docs/SPEED-ARCHITECTURE-OPTIONS.md B): the
+    # checkpoint's own next-token layer, K tokens per cycle. Needs the pinned
+    # DeepSeekMTPModel tuple-contract overlay (experiments/mtp/speculator.py,
+    # staged as mtp_speculator.py by the experiment packager) and a smaller KV
+    # pool: the MTP layer adds ~2.8 GB per rank at TP4 (SPEED-NEXT.md).
+    MTP_K="${MTP_K:-2}"
+    [ -f "$DCP_DIR/mtp_speculator.py" ] || {
+      echo "SPEC_MODE=mtp needs $DCP_DIR/mtp_speculator.py (the pinned MTP caller contract fix)" >&2; exit 7; }
+    grep -q "model_returns_tuple" "$DCP_DIR/mtp_speculator.py" || {
+      echo "$DCP_DIR/mtp_speculator.py is not the MTP contract overlay" >&2; exit 5; }
+    DRAFT_MOUNT=(-v "$DCP_DIR/mtp_speculator.py:$VLLM/v1/worker/gpu/spec_decode/mtp/speculator.py:ro")
+    SPEC=(--speculative-config '{"method":"mtp","num_speculative_tokens":'"$MTP_K"'}') ;;
+  *) echo "spec must be dflash|mtp|none" >&2; exit 2 ;;
 esac
 # Same concurrency rule as the selected launcher: speculative modes batch
 # more sequences to amortise the fixed per-step cost; plain decode does not.
@@ -274,6 +286,9 @@ run_docker run -d --name "$NAME" \
   -v "$DCP_DIR/v1_outputs.py:$VLLM/v1/outputs.py:ro" \
   -v "$DCP_DIR/confidence_trace.py:$VLLM/v1/spec_decode/confidence_trace.py:ro" \
   -v "$DCP_DIR/cudagraph_utils.py:$VLLM/v1/worker/gpu/cudagraph_utils.py:ro" \
+  -v "$DCP_DIR/v2_rejection_sampler_utils.py:$VLLM/v1/worker/gpu/spec_decode/rejection_sampler_utils.py:ro" \
+  -v "$DCP_DIR/v2_rejection_sampler.py:$VLLM/v1/worker/gpu/spec_decode/rejection_sampler.py:ro" \
+  -v "$DCP_DIR/v2_sample_states.py:$VLLM/v1/worker/gpu/sample/states.py:ro" \
   "${KVTIER_MOUNTS[@]}" \
   "${DRAFT_MOUNT[@]}" \
   "${HOTPLUG_MOUNTS[@]}" \
@@ -287,12 +302,16 @@ run_docker run -d --name "$NAME" \
   -e VLLM_DEBUG_WORKSPACE=1 \
   -e "GLM_DCP_Q_PREGATHER=${DCP_Q_PREGATHER:-0}" \
   -e "GLM_DCP_COMPACT=${DCP_COMPACT:-1}" \
+  -e "GLM_DCP_LSE_FOLD=${DCP_LSE_FOLD:-0}" \
   -e "GLM_SPEC_POLICY=${GLM_SPEC_POLICY:-off}" \
   -e "GLM_SPEC_VERIFY_CAP=${GLM_SPEC_VERIFY_CAP:-7}" \
   -e "GLM_SPEC_TRACE=${GLM_SPEC_TRACE:-}" \
   -e "GLM_SPEC_COSTS=${GLM_SPEC_COSTS:-}" \
   -e "GLM_SPEC_HINT_PRIORS=${GLM_SPEC_HINT_PRIORS:-}" \
   -e "GLM_SPEC_CONFIDENCE_TRACE=${GLM_SPEC_CONFIDENCE_TRACE:-0}" \
+  -e "GLM_SPEC_LOSSY=${GLM_SPEC_LOSSY:-0}" \
+  -e "GLM_SPEC_LOSSY_CHECK=${GLM_SPEC_LOSSY_CHECK:-0}" \
+  -e "GLM_SPEC_LOSSY_STOP_IDS=${GLM_SPEC_LOSSY_STOP_IDS:-154820,154827,154829,154841,154842,154828}" \
   --label "glm.spec.experiment=${GLM_SPEC_EXPERIMENT:-}" \
   "${KVTIER_ENV[@]}" \
   -e GLM52_BIND_HOST_TRITON=1 \
@@ -317,7 +336,7 @@ run_docker run -d --name "$NAME" \
   -e NCCL_GIN_ENABLE=0 \
   -e NCCL_MIN_CTAS=1 -e NCCL_MAX_CTAS=1 \
   -e NCCL_MAX_NCHANNELS=1 -e NCCL_MIN_NCHANNELS=1 \
-  -e NCCL_IB_QPS_PER_CONNECTION=1 \
+  -e "NCCL_IB_QPS_PER_CONNECTION=${NCCL_IB_QPS_PER_CONNECTION:-1}" \
   -e NCCL_CUMEM_ENABLE=1 \
   -e NCCL_IGNORE_CPU_AFFINITY=1 -e NCCL_DEBUG=INFO -e NCCL_DEBUG_SUBSYS=INIT,NET \
   -e TORCH_NCCL_ASYNC_ERROR_HANDLING=1 \
@@ -347,7 +366,7 @@ run_docker run -d --name "$NAME" \
     --master-addr "$HEAD_IP" --master-port "$MASTER_PORT" \
     $( [ "$HEADLESS" = 1 ] && echo --headless )
 
-echo "launched $NAME rank=$NODE_RANK host=$HOST_IP nccl_hotplug=$NCCL_HOTPLUG spec=$SPEC_MODE $( [ "$SPEC_MODE" = dflash ] && echo "k=$DFLASH_K" ) tp4 dcp$DCP_SIZE maxlen=$MAXLEN maxseqs=$MAXSEQS kvtier=$KVTIER/$KVTIER_MODE image=$IMAGE"
+echo "launched $NAME rank=$NODE_RANK host=$HOST_IP nccl_hotplug=$NCCL_HOTPLUG spec=$SPEC_MODE $( [ "$SPEC_MODE" = dflash ] && echo "k=$DFLASH_K" ) $( [ "$SPEC_MODE" = mtp ] && echo "k=$MTP_K" ) tp4 dcp$DCP_SIZE maxlen=$MAXLEN maxseqs=$MAXSEQS kvtier=$KVTIER/$KVTIER_MODE image=$IMAGE"
 sleep 3
 docker ps --format '{{.Names}} {{.Status}}' | grep "$NAME" || {
   echo "$NAME exited immediately; docker logs $NAME" >&2; exit 1; }

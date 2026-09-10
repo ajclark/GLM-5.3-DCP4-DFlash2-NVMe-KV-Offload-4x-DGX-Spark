@@ -1,0 +1,106 @@
+--- a/vllm/v1/worker/gpu/spec_decode/rejection_sampler.py
++++ b/vllm/v1/worker/gpu/spec_decode/rejection_sampler.py
+@@ -1,5 +1,7 @@
+ # SPDX-License-Identifier: Apache-2.0
+ # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
++import os
++
+ import torch
+ 
+ from vllm.config import SpeculativeConfig
+@@ -40,6 +42,18 @@
+         tl.store(flat_sampled_ptr + start_idx + i, token_id)
+ 
+ 
++# GLM overlay: bounded-lossy greedy verification (docs/LOSSY-VERIFICATION-PLAN.md).
++# Token ids a relaxed accept may never emit or displace: EOS, role and think
++# markers of the served checkpoint; overridable per boot.
++DEFAULT_LOSSY_STOP_IDS = "154820,154827,154829,154841,154842,154828"
++
++
++def lossy_stop_ids(device: torch.device) -> torch.Tensor:
++    raw = os.environ.get("GLM_SPEC_LOSSY_STOP_IDS", DEFAULT_LOSSY_STOP_IDS)
++    ids = sorted({int(x) for x in raw.split(",") if x.strip()})
++    return torch.tensor(ids, dtype=torch.int64, device=device)
++
++
+ class RejectionSampler:
+     def __init__(
+         self,
+@@ -49,6 +63,11 @@
+     ):
+         self.sampler = sampler
+         self.num_speculative_steps = spec_config.num_speculative_tokens
++        self.lossy_stop_ids = lossy_stop_ids(device)
++        # Trial-only rank-agreement proof: every 64th call all-gathers the
++        # accepted counts across TP and fails loudly on any disagreement.
++        self.lossy_check = os.environ.get("GLM_SPEC_LOSSY_CHECK") == "1"
++        self.lossy_calls = 0
+         self.rejection_sample_method = spec_config.rejection_sample_method
+         self.synthetic_conditional_rates: torch.Tensor | None = None
+         if self.rejection_sample_method == "synthetic":
+@@ -115,7 +134,10 @@
+             draft_sampled,
+             input_batch.expanded_local_pos,
+         )
+-        sampled, num_sampled = rejection_sample(
++        states = self.sampler.sampling_states
++        lossy_margin = getattr(states, "lossy_margin", None)
++        lossy_min_logp = getattr(states, "lossy_min_logp", None)
++        sampled, num_sampled, num_relaxed = rejection_sample(
+             processed_logits,
+             draft_logits,
+             draft_sampled,
+@@ -124,12 +146,19 @@
+             input_batch.idx_mapping,
+             input_batch.expanded_idx_mapping,
+             input_batch.expanded_local_pos,
+-            self.sampler.sampling_states.temperature.gpu,
+-            self.sampler.sampling_states.seeds.gpu,
++            states.temperature.gpu,
++            states.seeds.gpu,
+             self.num_speculative_steps,
+             self.synthetic_conditional_rates,
+             use_fp64=self.sampler.use_fp64_gumbel,
+-        )
++            lossy_margin=None if lossy_margin is None else lossy_margin.gpu,
++            lossy_min_logp=None if lossy_min_logp is None else lossy_min_logp.gpu,
++            stop_ids=self.lossy_stop_ids,
++        )
++        if self.lossy_check:
++            self.lossy_calls += 1
++            if self.lossy_calls % 64 == 0:
++                self._assert_rank_agreement(num_sampled)
+         logprobs_tensors = self._get_logprobs_tensors(
+             input_batch,
+             sampled,
+@@ -147,10 +176,28 @@
+             self.sampler.req_states.prefill_len.gpu,
+         )
+ 
+-        return SamplerOutput(
++        output = SamplerOutput(
+             sampled_token_ids=sampled,
+             logprobs_tensors=logprobs_tensors,
+             num_nans=num_nans,
+             num_sampled=num_sampled,
+             num_rejected=num_rejected,
+         )
++        # Per-request relaxed accepts; carried to the scheduler's verify rows
++        # by AsyncOutput. Optional attribute: the stock dataclass is unchanged.
++        output.num_relaxed = num_relaxed
++        return output
++
++    @staticmethod
++    def _assert_rank_agreement(num_sampled: torch.Tensor) -> None:
++        from vllm.distributed.parallel_state import get_tp_group
++
++        group = get_tp_group()
++        if group.world_size == 1:
++            return
++        gathered = group.all_gather(num_sampled.unsqueeze(0), dim=0)
++        if not bool((gathered == gathered[0]).all()):
++            raise RuntimeError(
++                "lossy verification rank disagreement: "
++                f"{gathered.tolist()} (GLM_SPEC_LOSSY_CHECK)"
++            )

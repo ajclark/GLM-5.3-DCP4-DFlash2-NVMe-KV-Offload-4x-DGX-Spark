@@ -1,0 +1,783 @@
+{
+  "prose_check_heat": {
+    "prompt": "Write a practical proposal for a fictional neighborhood facing hot afternoons. Explain one low-cost first step and one maintenance tradeoff. Write 120-180 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Alder Square; Mina; shade. Do not use these words or phrases anywhere: air conditioning; miracle. Use exactly these level-two Markdown headings, once each in this order: ## Situation; ## Proposal; ## Tradeoff. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 120,
+        "max": 180
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Alder Square",
+          "Mina",
+          "shade"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "air conditioning",
+          "miracle"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Situation",
+          "Proposal",
+          "Tradeoff"
+        ]
+      }
+    ]
+  },
+  "prose_check_library": {
+    "prompt": "Write a small story in which a librarian and a reader repair a misunderstanding about a returned book. Resolve the conflict through a practical action. Write 130-190 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Nora; Eli; Harbor Library. Do not use these words or phrases anywhere: ghost; magic. Use exactly these level-two Markdown headings, once each in this order: ## Arrival; ## Discovery; ## Repair. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 130,
+        "max": 190
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Nora",
+          "Eli",
+          "Harbor Library"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "ghost",
+          "magic"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Arrival",
+          "Discovery",
+          "Repair"
+        ]
+      }
+    ]
+  },
+  "prose_check_water": {
+    "prompt": "Explain water pressure to a curious resident using a fictional town, an elevated tank, and a pump. Include an ordinary maintenance interruption. Write 110-170 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Cedar Hill; tank; pump. Do not use these words or phrases anywhere: perpetual motion; guaranteed. Use exactly these level-two Markdown headings, once each in this order: ## Storage; ## Delivery; ## Maintenance. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 110,
+        "max": 170
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Cedar Hill",
+          "tank",
+          "pump"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "perpetual motion",
+          "guaranteed"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Storage",
+          "Delivery",
+          "Maintenance"
+        ]
+      }
+    ]
+  },
+  "prose_check_station": {
+    "prompt": "Write a balanced note about renovating a town station. Include access for residents without cars and an uncertainty that a trial could resolve. Write 120-180 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): West Station; bus stop; trial. Do not use these words or phrases anywhere: obviously; everyone agrees. Use exactly these level-two Markdown headings, once each in this order: ## Options; ## Access; ## Decision. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 120,
+        "max": 180
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "West Station",
+          "bus stop",
+          "trial"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "obviously",
+          "everyone agrees"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Options",
+          "Access",
+          "Decision"
+        ]
+      }
+    ]
+  },
+  "prose_check_meeting": {
+    "prompt": "Rewrite this idea with a concrete workplace example: a useful meeting can end with a clear disagreement and a plan to collect evidence. Write 100-160 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Iris; Jon; Friday. Do not use these words or phrases anywhere: synergy; leverage. Use exactly these level-two Markdown headings, once each in this order: ## Disagreement; ## Evidence; ## Next Steps. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 100,
+        "max": 160
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Iris",
+          "Jon",
+          "Friday"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "synergy",
+          "leverage"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Disagreement",
+          "Evidence",
+          "Next Steps"
+        ]
+      }
+    ]
+  },
+  "prose_check_bakery": {
+    "prompt": "Write a fictional incident note about an overnight refrigerator failure. Describe observations before causes and propose a preventive action without blaming a person. Write 120-180 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Dawn Bakery; Rafi; thermometer. Do not use these words or phrases anywhere: negligent; incompetent. Use exactly these level-two Markdown headings, once each in this order: ## Observation; ## Response; ## Prevention. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 120,
+        "max": 180
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Dawn Bakery",
+          "Rafi",
+          "thermometer"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "negligent",
+          "incompetent"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Observation",
+          "Response",
+          "Prevention"
+        ]
+      }
+    ]
+  },
+  "prose_check_bridge": {
+    "prompt": "Explain a fictional bridge inspection decision to residents. Distinguish an observation from an uncertain interpretation and acknowledge disruption. Write 110-170 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Stone Bridge; inspection; detour. Do not use these words or phrases anywhere: perfectly safe; zero risk. Use exactly these level-two Markdown headings, once each in this order: ## Evidence; ## Uncertainty; ## Plan. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 110,
+        "max": 170
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Stone Bridge",
+          "inspection",
+          "detour"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "perfectly safe",
+          "zero risk"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Evidence",
+          "Uncertainty",
+          "Plan"
+        ]
+      }
+    ]
+  },
+  "prose_check_map": {
+    "prompt": "Explain how two maps of a fictional area can serve different purposes. Use a walking route and a transit journey as examples. Write 100-160 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Maple Park; River Line; scale. Do not use these words or phrases anywhere: Google; GPS. Use exactly these level-two Markdown headings, once each in this order: ## Walking; ## Transit; ## Limits. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 100,
+        "max": 160
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Maple Park",
+          "River Line",
+          "scale"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "Google",
+          "GPS"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Walking",
+          "Transit",
+          "Limits"
+        ]
+      }
+    ]
+  },
+  "prose_check_repair": {
+    "prompt": "Write a note about deciding whether to repair a fictional washing machine with a cheap broken latch. Discuss access and labor as well as the part. Write 120-180 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Lena; latch; service manual. Do not use these words or phrases anywhere: buy now; best ever. Use exactly these level-two Markdown headings, once each in this order: ## Symptom; ## Investigation; ## Choice. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 120,
+        "max": 180
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Lena",
+          "latch",
+          "service manual"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "buy now",
+          "best ever"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Symptom",
+          "Investigation",
+          "Choice"
+        ]
+      }
+    ]
+  },
+  "prose_check_orchard": {
+    "prompt": "Propose a modest first season for a community orchard. Explain responsibility for watering and what volunteers will observe before expanding. Write 110-170 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Oak Field; Samir; watering rota. Do not use these words or phrases anywhere: instant harvest; effortless. Use exactly these level-two Markdown headings, once each in this order: ## Preparation; ## Care; ## Review. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 110,
+        "max": 170
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Oak Field",
+          "Samir",
+          "watering rota"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "instant harvest",
+          "effortless"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Preparation",
+          "Care",
+          "Review"
+        ]
+      }
+    ]
+  },
+  "prose_check_radio": {
+    "prompt": "Write a story about two neighbors discussing a late-night radio program. Start with an ordinary misunderstanding and end with a small shared action. Write 140-200 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Ada; Tomas; Night Window. Do not use these words or phrases anywhere: murder; telepathy. Use exactly these level-two Markdown headings, once each in this order: ## Misunderstanding; ## Conversation; ## Gesture. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 140,
+        "max": 200
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Ada",
+          "Tomas",
+          "Night Window"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "murder",
+          "telepathy"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Misunderstanding",
+          "Conversation",
+          "Gesture"
+        ]
+      }
+    ]
+  },
+  "prose_check_ferry": {
+    "prompt": "Write a quiet story on the last ferry. A passenger mistakes an ordinary wrapped object for something valuable, then revises that assumption. Write 130-190 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): June; North Ferry; teapot. Do not use these words or phrases anywhere: heist; supernatural. Use exactly these level-two Markdown headings, once each in this order: ## Boarding; ## Mistake; ## Landing. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 130,
+        "max": 190
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "June",
+          "North Ferry",
+          "teapot"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "heist",
+          "supernatural"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Boarding",
+          "Mistake",
+          "Landing"
+        ]
+      }
+    ]
+  },
+  "prose_check_tailor": {
+    "prompt": "Write a scene about altering a family coat. Reveal a little family history through the work and leave one practical question unresolved. Write 130-190 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Mara; Theo; blue coat. Do not use these words or phrases anywhere: destiny; soulmate. Use exactly these level-two Markdown headings, once each in this order: ## Fitting; ## Work; ## Question. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 130,
+        "max": 190
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Mara",
+          "Theo",
+          "blue coat"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "destiny",
+          "soulmate"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Fitting",
+          "Work",
+          "Question"
+        ]
+      }
+    ]
+  },
+  "prose_check_garden": {
+    "prompt": "Write a balanced account of a school caretaker finding seedlings beside a planned path. Give the caretaker and the gardener understandable reasons. Write 120-180 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Bea; School Lane; seedlings. Do not use these words or phrases anywhere: villain; evil. Use exactly these level-two Markdown headings, once each in this order: ## Discovery; ## Reasons; ## Compromise. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 120,
+        "max": 180
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Bea",
+          "School Lane",
+          "seedlings"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "villain",
+          "evil"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Discovery",
+          "Reasons",
+          "Compromise"
+        ]
+      }
+    ]
+  },
+  "prose_check_camera": {
+    "prompt": "Write a story about an old camera failing during a neighborhood event. Show how someone helps the photographer adapt. Write 130-190 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Owen; Market Day; shutter. Do not use these words or phrases anywhere: disaster; flawless. Use exactly these level-two Markdown headings, once each in this order: ## Expectation; ## Failure; ## Collaboration. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 130,
+        "max": 190
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Owen",
+          "Market Day",
+          "shutter"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "disaster",
+          "flawless"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Expectation",
+          "Failure",
+          "Collaboration"
+        ]
+      }
+    ]
+  },
+  "prose_check_workshop": {
+    "prompt": "Write advice about asking a useful question in a busy workshop. Distinguish interrupting a dangerous action from interrupting a harmless experiment. Write 110-170 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Priya; workbench; test piece. Do not use these words or phrases anywhere: move fast and break things; always right. Use exactly these level-two Markdown headings, once each in this order: ## Observe; ## Ask; ## Try. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 110,
+        "max": 170
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Priya",
+          "workbench",
+          "test piece"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "move fast and break things",
+          "always right"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Observe",
+          "Ask",
+          "Try"
+        ]
+      }
+    ]
+  },
+  "prose_check_museum": {
+    "prompt": "Write a small museum proposal using fewer objects and more context. Include a seating need and a realistic volunteer limitation. Write 120-180 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Canal Museum; oral history; bench. Do not use these words or phrases anywhere: immersive screens; unlimited budget. Use exactly these level-two Markdown headings, once each in this order: ## Display; ## Access; ## Staffing. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 120,
+        "max": 180
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Canal Museum",
+          "oral history",
+          "bench"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "immersive screens",
+          "unlimited budget"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Display",
+          "Access",
+          "Staffing"
+        ]
+      }
+    ]
+  },
+  "prose_check_market": {
+    "prompt": "Write a balanced proposal for moving a Saturday market. Consider stallholders and people walking from a bus stop, and specify an observation for a trial. Write 110-170 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): South Market; bus stop; six weeks. Do not use these words or phrases anywhere: no downsides; guaranteed success. Use exactly these level-two Markdown headings, once each in this order: ## Reasons; ## Concerns; ## Trial. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 110,
+        "max": 170
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "South Market",
+          "bus stop",
+          "six weeks"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "no downsides",
+          "guaranteed success"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Reasons",
+          "Concerns",
+          "Trial"
+        ]
+      }
+    ]
+  },
+  "prose_check_archive": {
+    "prompt": "Explain a family archive disagreement using a photograph and an ordinary receipt. Give two people different but understandable reasons for keeping objects. Write 120-180 words in total, including headings. Count words as letter/digit/underscore runs, keeping internal apostrophes and hyphens in the same word. Include these exact named items (case-insensitive): Anika; Ben; receipt. Do not use these words or phrases anywhere: priceless treasure; forever. Use exactly these level-two Markdown headings, once each in this order: ## Objects; ## Meanings; ## Decision. Write connected prose under each heading.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 120,
+        "max": 180
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Anika",
+          "Ben",
+          "receipt"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "priceless treasure",
+          "forever"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Objects",
+          "Meanings",
+          "Decision"
+        ]
+      }
+    ]
+  },
+  "prose_check_list_table_json": {
+    "prompt": "Write a practical note about opening the fictional Elm Reading Room. Write 180-260 words in total, including headings, list, table, and JSON (count letter/digit/underscore runs, keeping internal apostrophes and hyphens together). Include Elm Reading Room, Nia, and Tomas. Do not use guaranteed or effortless anywhere. Use exactly these level-two Markdown headings once each, in order: ## Plan; ## Supplies; ## Record. Under Plan, explain volunteer responsibilities in prose and include exactly these three dash-list lines in this order, with no other bullet list: \"- Check the door\", \"- Set out chairs\", \"- Welcome readers\". Under Supplies, include prose and exactly one Markdown pipe table with columns Item and Count, a standard dash separator, and exactly these data rows in order: Chairs | 12; Lamps | 2. Under Record, explain how the record helps and include exactly one fenced json block containing the object {\"room\":\"Elm Reading Room\",\"open\":true,\"volunteers\":[\"Nia\",\"Tomas\"],\"chairs\":12,\"lamps\":2}. Use those exact JSON keys and typed values and no extra keys.",
+    "constraints": [
+      {
+        "id": "length",
+        "type": "word_count",
+        "min": 180,
+        "max": 260
+      },
+      {
+        "id": "named_items",
+        "type": "required_items",
+        "items": [
+          "Elm Reading Room",
+          "Nia",
+          "Tomas"
+        ]
+      },
+      {
+        "id": "forbidden_items",
+        "type": "forbidden_items",
+        "items": [
+          "guaranteed",
+          "effortless"
+        ]
+      },
+      {
+        "id": "sections",
+        "type": "ordered_headings",
+        "items": [
+          "Plan",
+          "Supplies",
+          "Record"
+        ]
+      },
+      {
+        "id": "list",
+        "type": "bullet_list",
+        "items": [
+          "Check the door",
+          "Set out chairs",
+          "Welcome readers"
+        ]
+      },
+      {
+        "id": "table",
+        "type": "table",
+        "columns": [
+          "Item",
+          "Count"
+        ],
+        "rows": [
+          [
+            "Chairs",
+            "12"
+          ],
+          [
+            "Lamps",
+            "2"
+          ]
+        ]
+      },
+      {
+        "id": "json",
+        "type": "embedded_json",
+        "value": {
+          "room": "Elm Reading Room",
+          "open": true,
+          "volunteers": [
+            "Nia",
+            "Tomas"
+          ],
+          "chairs": 12,
+          "lamps": 2
+        }
+      }
+    ]
+  }
+}

@@ -69,9 +69,8 @@
              cp_size=self.dcp_size,
              cp_rank=self.dcp_rank,
              cp_interleave=self.cp_interleave,
--        )
 +            cp_sizes=cp_sizes,
-+        )
+         )
 +        for i, table in enumerate(self.block_tables.input_block_tables):
 +            logger.info(
 +                "DCP_BLOCK_TABLE group=%d cp=%d block=%d kernel_block=%d rows=%d cols=%d capacity=%d",
@@ -115,7 +114,7 @@
          if not dummy_run:
              # Common case.
              # Prepare all the inputs and copy to the input buffers.
-@@ -1391,12 +1426,15 @@
+@@ -1391,12 +1426,16 @@
              prompt_logprobs_dict=prompt_logprobs_dict,  # type: ignore[arg-type]
          )
          # Start async output copy here so that it can overlap with speculator proposal.
@@ -128,10 +127,11 @@
              main_stream=self.main_stream,
              copy_stream=self.output_copy_stream,
 +            confidence_packet=confidence_packet,
++            num_relaxed=getattr(sampler_output, "num_relaxed", None),
          )
  
          mm_inputs: tuple[list[torch.Tensor], torch.Tensor] | None = None
-@@ -1452,6 +1490,8 @@
+@@ -1452,6 +1491,8 @@
                  mm_inputs=mm_inputs,
              )
              self.req_states.draft_tokens[input_batch.idx_mapping] = draft_tokens

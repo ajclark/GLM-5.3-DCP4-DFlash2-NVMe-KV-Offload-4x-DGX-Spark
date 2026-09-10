@@ -24,15 +24,32 @@ export function classifyWorkload(messages = []) {
   return { workload, phase, strength: workload === "unknown" || workload === "mixed" ? "abstain" : "weak" };
 }
 
+// Bounded-lossy greedy verification controls (docs/LOSSY-VERIFICATION-PLAN.md):
+// flat numerics only; the server ignores them unless its boot enables the rule
+// and the request is greedy. Invalid values send nothing.
+export function lossyControls(lossy) {
+  if (!lossy || typeof lossy !== "object") return null;
+  const margin = Number(lossy.margin);
+  if (!Number.isFinite(margin) || margin <= 0 || margin > 5) return null;
+  const minP = lossy.minP == null ? 0 : Number(lossy.minP);
+  if (!Number.isFinite(minP) || minP < 0 || minP >= 0.5) return null;
+  return { spec_lossy_margin: margin, spec_lossy_rank: 2, spec_lossy_min_p: minP };
+}
+
 export function preparePayload(payload, options = {}) {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) return payload;
-  const { enabled = false, maxTokens = null, label = null } = options;
+  const { enabled = false, maxTokens = null, label = null, lossy = null } = options;
   let out = payload;
   const changes = {};
   if (enabled) {
     const hint = classifyWorkload(payload.messages);
     changes.vllm_xargs = { ...payload.vllm_xargs, spec_workload: hint.workload,
       spec_phase: hint.phase, spec_hint_strength: hint.strength };
+  }
+  const controls = lossyControls(lossy);
+  // Greedy only: a sampled request never carries the lossy fields.
+  if (controls && (payload.temperature === 0 || payload.temperature === 0.0)) {
+    changes.vllm_xargs = { ...(changes.vllm_xargs ?? payload.vllm_xargs), ...controls };
   }
   if (label) changes.vllm_xargs = { ...(changes.vllm_xargs ?? payload.vllm_xargs), spec_label: label.slice(0, 96) };
   if (Number.isInteger(maxTokens) && maxTokens > 0 && maxTokens <= 4096) {

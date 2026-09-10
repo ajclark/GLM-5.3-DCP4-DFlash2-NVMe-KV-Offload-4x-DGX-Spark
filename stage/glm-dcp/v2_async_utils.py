@@ -19,6 +19,7 @@ class AsyncOutput(AsyncModelRunnerOutput):
         main_stream: torch.cuda.Stream,
         copy_stream: torch.cuda.Stream,
         confidence_packet: dict | None = None,
+        num_relaxed: torch.Tensor | None = None,
     ):
         # NOTE(woosuk): We must retain references to the GPU tensors,
         # as the copy operations are performed on a different CUDA stream than
@@ -28,6 +29,9 @@ class AsyncOutput(AsyncModelRunnerOutput):
         self.num_sampled_tokens = num_sampled_tokens
         self.confidence_packet = confidence_packet
         self.confidence_cpu = None
+        # Bounded-lossy verification: relaxed accepts per request this step.
+        self.num_relaxed = num_relaxed
+        self.num_relaxed_np: np.ndarray | None = None
         self.copy_event = torch.cuda.Event()
 
         with stream(copy_stream, main_stream):
@@ -43,6 +47,8 @@ class AsyncOutput(AsyncModelRunnerOutput):
             if sampler_output.num_nans is not None:
                 self.num_nans = async_copy_to_np(sampler_output.num_nans)
             self.num_sampled_tokens_np = async_copy_to_np(num_sampled_tokens)
+            if num_relaxed is not None:
+                self.num_relaxed_np = async_copy_to_np(num_relaxed)
             self.prompt_logprobs_dict = {
                 k: v.to_cpu_nonblocking() if v is not None else None
                 for k, v in self.model_runner_output.prompt_logprobs_dict.items()
@@ -76,6 +82,10 @@ class AsyncOutput(AsyncModelRunnerOutput):
             self.model_runner_output.spec_confidence = finish_packet(self.confidence_cpu)
             self.confidence_packet = None
             self.confidence_cpu = None
+        if self.num_relaxed_np is not None:
+            self.model_runner_output.spec_relaxed = dict(
+                zip(self.model_runner_output.req_ids, self.num_relaxed_np.tolist())
+            )
         return self.model_runner_output
 
 

@@ -433,6 +433,7 @@ def test_formal_output_field_and_unmodified_baseline_are_portable():
     def fields(tree):
         cls=next(n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=="ModelRunnerOutput")
         return {n.target.id for n in cls.body if isinstance(n,ast.AnnAssign)}
-    assert fields(overlay)-fields(baseline)=={"spec_confidence"}
+    # spec_relaxed: bounded-lossy verification (docs/LOSSY-VERIFICATION-PLAN.md)
+    assert fields(overlay)-fields(baseline)=={"spec_confidence","spec_relaxed"}
     assert (BASELINE/"v1/worker/gpu/async_utils.py").read_bytes()==(
         ROOT/"tests/fixtures/spec_confidence/async_utils.py").read_bytes()
