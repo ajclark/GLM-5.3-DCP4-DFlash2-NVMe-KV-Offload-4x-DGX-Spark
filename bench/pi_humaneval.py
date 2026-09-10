@@ -148,7 +148,7 @@ async def solve(problem, folder, evidence, config, barrier=None):
                     break
         if barrier:
             await barrier.wait()
-        prompt = INSTRUCTION + problem['prompt']
+        prompt = INSTRUCTION + problem['prompt'] + os.environ.get('PI_HE_INSTRUCTION_SUFFIX', '')
         (evidence / 'prompt.txt').write_text(prompt)
         start = time.time()
         await send({'id': 'task', 'type': 'prompt', 'message': prompt})
