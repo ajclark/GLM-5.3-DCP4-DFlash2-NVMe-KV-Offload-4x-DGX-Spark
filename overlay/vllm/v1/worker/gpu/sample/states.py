@@ -23,6 +23,35 @@ LOSSY_ENABLED = os.environ.get("GLM_SPEC_LOSSY") == "1"
 LOSSY_OFF = -1.0
 LOSSY_MAX_MARGIN = 5.0
 LOSSY_MAX_MIN_P = 0.5
+LOSSY_SCOPES = {"all": 0, "think": 1}
+# <think> / </think> ids of the served checkpoint; a request whose committed
+# stream is inside a think span may relax under scope "think" only there.
+LOSSY_THINK_IDS = tuple(
+    int(x) for x in os.environ.get("GLM_SPEC_LOSSY_THINK_IDS", "154841,154842").split(",")
+)
+
+
+def lossy_scope(sampling_params: SamplingParams) -> int:
+    """0 = relax anywhere the margin allows, 1 = only inside think spans."""
+    xargs = getattr(sampling_params, "extra_args", None) or {}
+    return LOSSY_SCOPES.get(xargs.get("spec_lossy_scope", "all"), 0)
+
+
+def initial_think_state(token_ids, think_ids=LOSSY_THINK_IDS) -> int:
+    """1 if the last think marker among the trailing tokens is an opening one.
+
+    The chat template ends a thinking-enabled prompt with `<think>` and a
+    thinking-disabled one with `<think></think>`, so the generation starts
+    inside or outside a span accordingly; re-added requests carry their
+    generated tokens too.
+    """
+    open_id, close_id = think_ids
+    for tok in reversed(list(token_ids or [])[-64:]):
+        if tok == open_id:
+            return 1
+        if tok == close_id:
+            return 0
+    return 0
 
 
 def _number(value):
@@ -84,6 +113,12 @@ class SamplingStates:
         self.lossy_min_logp = UvaBackedTensor(max_num_reqs, dtype=torch.float32)
         self.lossy_min_logp.np.fill(float("-inf"))
         self.lossy_min_logp.copy_to_uva()
+        self.lossy_scope = UvaBackedTensor(max_num_reqs, dtype=torch.int32)
+        self.lossy_scope.copy_to_uva()
+        # Think-span state lives on the GPU (the rejection kernels update it);
+        # the host writes only the initial value from the prompt at admission.
+        self.think_state = UvaBackedTensor(max_num_reqs, dtype=torch.int32)
+        self.think_state.copy_to_uva()
 
         # Initialize top_k and top_p manually because 0 is an invalid value for them.
         self.top_k.np.fill(self.vocab_size)
@@ -114,6 +149,8 @@ class SamplingStates:
                             else (LOSSY_OFF, float("-inf")))
         self.lossy_margin.np[req_idx] = margin
         self.lossy_min_logp.np[req_idx] = min_logp
+        self.lossy_scope.np[req_idx] = lossy_scope(sampling_params) if margin >= 0 else 0
+        self.think_state.np[req_idx] = 0
 
         num_logprobs = sampling_params.logprobs
         if num_logprobs is None:
@@ -130,6 +167,13 @@ class SamplingStates:
         self.seeds.copy_to_uva()
         self.lossy_margin.copy_to_uva()
         self.lossy_min_logp.copy_to_uva()
+        self.lossy_scope.copy_to_uva()
+        self.think_state.copy_to_uva()
+
+    def set_think_state(self, req_idx: int, token_ids) -> None:
+        """Initial think-span state for a newly admitted request (host side;
+        copied with the other staged writes)."""
+        self.think_state.np[req_idx] = initial_think_state(token_ids)
 
     def apply_temperature(
         self,

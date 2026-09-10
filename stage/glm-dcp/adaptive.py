@@ -146,6 +146,7 @@ def lossy_request_fields(xargs) -> dict:
     return {
         "lossy_margin": number(xargs.get("spec_lossy_margin")),
         "lossy_min_p": number(xargs.get("spec_lossy_min_p", 0)),
+        "lossy_scope": xargs.get("spec_lossy_scope", "all") if xargs.get("spec_lossy_scope", "all") in ("all", "think") else "invalid",
         "lossy_enabled": os.environ.get("GLM_SPEC_LOSSY") == "1",
     }
 

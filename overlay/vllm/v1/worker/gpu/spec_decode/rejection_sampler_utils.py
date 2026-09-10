@@ -244,6 +244,12 @@ def _rejection_kernel(
     lossy_min_logp_ptr,
     # [NUM_STOP_IDS] token ids never relaxed (EOS, role and think markers), -1 pad
     stop_ids_ptr,
+    # [max_num_reqs] 0 = relax anywhere, 1 = only inside a <think> span
+    lossy_scope_ptr,
+    # [max_num_reqs] 1 while the committed stream is inside a think span; updated here
+    think_state_ptr,
+    think_open_id,
+    think_close_id,
     vocab_num_blocks,
     PADDED_VOCAB_NUM_BLOCKS: tl.constexpr,
     HAS_DRAFT_LOGITS: tl.constexpr,
@@ -259,6 +265,8 @@ def _rejection_kernel(
     temp = tl.load(temp_ptr + req_state_idx).to(tl.float32)
     lossy_margin = tl.load(lossy_margin_ptr + req_state_idx).to(tl.float32)
     lossy_min_logp = tl.load(lossy_min_logp_ptr + req_state_idx).to(tl.float32)
+    lossy_scope = tl.load(lossy_scope_ptr + req_state_idx)
+    in_think = tl.load(think_state_ptr + req_state_idx)
 
     rejected_step = 0
     relaxed_step = 0
@@ -332,6 +340,7 @@ def _rejection_kernel(
                             & (target_max - target_logit <= lossy_margin)
                             & (draft_stops == 0)
                             & (argmax_stops == 0)
+                            & ((lossy_scope == 0) | (in_think == 1))
                         )
                         if lossy_min_logp > float("-inf"):
                             lse = _compute_global_lse(
@@ -346,6 +355,13 @@ def _rejection_kernel(
                             relaxed &= (target_logit - lse) >= lossy_min_logp
                     accepted &= exact | relaxed
                     relaxed_step += relaxed
+                    # Track think spans over the committed token (draft if
+                    # accepted, else the emitted argmax) for the scoped rule.
+                    committed = draft_sampled if accepted else target_argmax
+                    in_think = tl.where(
+                        committed == think_open_id, 1,
+                        tl.where(committed == think_close_id, 0, in_think),
+                    )
                 tl.store(
                     sampled_ptr + req_idx * sampled_stride + i,
                     draft_sampled if accepted else target_argmax,
@@ -398,6 +414,7 @@ def _rejection_kernel(
             rejected_step += accepted
     tl.store(rejected_steps_ptr + req_idx, rejected_step)
     tl.store(relaxed_steps_ptr + req_idx, relaxed_step)
+    tl.store(think_state_ptr + req_state_idx, in_think)
     tl.store(target_rejected_logsumexp_ptr + req_idx, target_lse)
     tl.store(draft_rejected_logsumexp_ptr + req_idx, draft_lse)
 
@@ -550,6 +567,10 @@ def _insert_resampled_kernel(
     expanded_idx_mapping_ptr,
     # [max_num_reqs]
     temp_ptr,
+    # [max_num_reqs] think-span state, updated by the bonus token
+    think_state_ptr,
+    think_open_id,
+    think_close_id,
     PADDED_RESAMPLE_NUM_BLOCKS: tl.constexpr,
 ):
     req_idx = tl.program_id(0)
@@ -587,6 +608,13 @@ def _insert_resampled_kernel(
         sampled_ptr + req_idx * sampled_stride + num_sampled,
         resampled,
     )
+    if is_bonus:
+        in_think = tl.load(think_state_ptr + req_state_idx)
+        in_think = tl.where(
+            resampled == think_open_id, 1,
+            tl.where(resampled == think_close_id, 0, in_think),
+        )
+        tl.store(think_state_ptr + req_state_idx, in_think)
 
 
 def rejection_sample(
@@ -620,6 +648,11 @@ def rejection_sample(
     lossy_min_logp: torch.Tensor | None = None,
     # [n] token ids never relaxed; padded to a power of two with -1
     stop_ids: torch.Tensor | None = None,
+    # [max_num_reqs] 0 = relax anywhere, 1 = only inside a think span
+    lossy_scope: torch.Tensor | None = None,
+    # [max_num_reqs] think-span state, read and updated in place
+    think_state: torch.Tensor | None = None,
+    think_ids: tuple[int, int] = (-1, -1),
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     num_reqs = cu_num_logits.shape[0] - 1
     num_logits, vocab_size = target_logits.shape
@@ -635,6 +668,11 @@ def rejection_sample(
             device=target_logits.device,
         )
     stop_ids = pad_stop_ids(stop_ids, target_logits.device)
+    if lossy_scope is None:
+        lossy_scope = torch.zeros((max_num_reqs,), dtype=torch.int32, device=target_logits.device)
+    if think_state is None:
+        think_state = torch.zeros((max_num_reqs,), dtype=torch.int32, device=target_logits.device)
+    think_open_id, think_close_id = int(think_ids[0]), int(think_ids[1])
 
     if draft_logits is None:
         # When draft_logits is None, create a dummy tensor so that Triton
@@ -737,6 +775,10 @@ def rejection_sample(
         lossy_margin,
         lossy_min_logp,
         stop_ids,
+        lossy_scope,
+        think_state,
+        think_open_id,
+        think_close_id,
         vocab_num_blocks,
         PADDED_VOCAB_NUM_BLOCKS=padded_vocab_num_blocks,
         HAS_DRAFT_LOGITS=has_draft_logits,
@@ -795,6 +837,9 @@ def rejection_sample(
         cu_num_logits,
         expanded_idx_mapping,
         temperature,
+        think_state,
+        think_open_id,
+        think_close_id,
         PADDED_RESAMPLE_NUM_BLOCKS=padded_resample_num_blocks,
     )
     return sampled, num_sampled, num_relaxed

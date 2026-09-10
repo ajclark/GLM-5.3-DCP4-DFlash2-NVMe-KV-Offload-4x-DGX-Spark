@@ -306,3 +306,94 @@ def test_request_controls_parse_numerics_and_fail_closed():
     src = (OVERLAY / "v1/worker/gpu/sample/states.py").read_text()
     assert 'os.environ.get("GLM_SPEC_LOSSY") == "1"' in src
     assert "lossy_controls(sampling_params) if LOSSY_ENABLED" in src
+
+
+def _think_batch(reqs, order=None, max_num_reqs=None):
+    return Batch(reqs, [0.0] * len(reqs), order=order, max_num_reqs=max_num_reqs)
+
+
+def run_scoped(overlay, batch, margins, scopes, think_state, think_ids=(900, 901)):
+    margin = torch.full((batch.max_num_reqs,), -1.0)
+    scope = torch.zeros((batch.max_num_reqs,), dtype=torch.int32)
+    for i, (m, sc) in enumerate(zip(margins, scopes)):
+        if m is not None:
+            margin[batch.idx[i]] = m
+        scope[batch.idx[i]] = sc
+    args = (batch.logits, None, batch.draft, batch.cu, batch.pos, batch.idx, batch.mapping,
+            batch.local, batch.temp, batch.seed, 7)
+    return overlay(*args, lossy_margin=margin, lossy_min_logp=torch.full((batch.max_num_reqs,), float("-inf")),
+                   stop_ids=torch.tensor([7, 8], dtype=torch.int64), lossy_scope=scope,
+                   think_state=think_state, think_ids=think_ids)
+
+
+def test_think_scope_relaxes_only_inside_a_span_and_tracks_state():
+    _, overlay, _ = kernels()
+    OPEN, CLOSE = 900, 901
+    # Positions: 0 exact accept of <think> (draft == argmax == OPEN), 1 runner-up
+    # within margin (inside span -> relaxed), 2 exact accept of </think>,
+    # 3 runner-up within margin (outside span -> rejected under scope think).
+    spec = [{OPEN: 10.0}, {200: 10.0, 100: 9.5}, {CLOSE: 10.0}, {203: 10.0, 103: 9.5}, {300: 10.0}]
+    req = {"anchor": 2, "draft": [OPEN, 100, CLOSE, 103], "rows": rows(4, spec)}
+    # scope all: both runner-ups relaxed -> full block, bonus 300
+    state = torch.zeros(1, dtype=torch.int32)
+    sampled, n, relaxed = run_scoped(overlay, _think_batch([req]), [2.0], [0], state)
+    assert n.tolist() == [5] and relaxed.tolist() == [2] and sampled[0, :5].tolist() == [OPEN, 100, CLOSE, 103, 300]
+    assert state.tolist() == [0]  # closed by </think> before the end
+    # scope think, starting outside: position 1 relaxed (span opened at 0),
+    # position 3 rejected (span closed at 2) -> emits argmax 203, num 4
+    state = torch.zeros(1, dtype=torch.int32)
+    sampled, n, relaxed = run_scoped(overlay, _think_batch([req]), [2.0], [1], state)
+    assert n.tolist() == [4] and relaxed.tolist() == [1] and sampled[0, :4].tolist() == [OPEN, 100, CLOSE, 203]
+    assert state.tolist() == [0]
+
+
+def test_think_scope_initial_state_from_prompt_and_persistence():
+    _, overlay, _ = kernels()
+    OPEN, CLOSE = 900, 901
+    # No think tokens in the block: relaxation depends purely on the initial state.
+    spec = [{200: 10.0, 100: 9.5}, {201: 10.0, 101: 9.5}, {300: 10.0}]
+    req = {"anchor": 2, "draft": [100, 101], "rows": rows(2, spec)}
+    for initial, want_n, want_relaxed in ((1, 3, 2), (0, 1, 0)):
+        state = torch.tensor([initial], dtype=torch.int32)
+        sampled, n, relaxed = run_scoped(overlay, _think_batch([req]), [2.0], [1], state)
+        assert n.tolist() == [want_n] and relaxed.tolist() == [want_relaxed], initial
+        assert state.tolist() == [initial]  # unchanged: no marker committed
+    # A rejected argmax that is </think> closes the span even though the draft was wrong.
+    spec = [{CLOSE: 10.0, 100: 5.0}, {300: 10.0}]
+    req = {"anchor": 2, "draft": [100], "rows": rows(1, spec)}
+    state = torch.tensor([1], dtype=torch.int32)
+    sampled, n, relaxed = run_scoped(overlay, _think_batch([req]), [2.0], [1], state)
+    assert n.tolist() == [1] and sampled[0, 0].item() == CLOSE and state.tolist() == [0]
+    # A bonus token that is <think> opens the span (insert kernel path).
+    spec = [{100: 10.0}, {OPEN: 10.0}]
+    req = {"anchor": 2, "draft": [100], "rows": rows(1, spec)}
+    state = torch.tensor([0], dtype=torch.int32)
+    sampled, n, relaxed = run_scoped(overlay, _think_batch([req]), [2.0], [1], state)
+    assert n.tolist() == [2] and sampled[0, :2].tolist() == [100, OPEN] and state.tolist() == [1]
+
+
+def test_think_scope_mixed_batch_and_permutation():
+    _, overlay, _ = kernels()
+    spec = [{200: 10.0, 100: 9.5}, {201: 10.0, 101: 9.5}, {300: 10.0}]
+    mk = lambda: {"anchor": 2, "draft": [100, 101], "rows": rows(2, spec)}
+    reqs = [mk(), mk(), mk()]
+    for order in (None, [2, 0, 1]):
+        batch = _think_batch(reqs, order=order, max_num_reqs=4)
+        state = torch.zeros(4, dtype=torch.int32)
+        state[batch.idx[1]] = 1  # request 1 starts inside a span
+        sampled, n, relaxed = run_scoped(overlay, batch, [2.0, 2.0, 2.0], [1, 1, 0], state)
+        assert n.tolist() == [1, 3, 3] and relaxed.tolist() == [0, 2, 2], order
+
+
+def test_scope_and_initial_state_parsing():
+    ns = extract(OVERLAY / "v1/worker/gpu/sample/states.py", ["lossy_scope", "initial_think_state"],
+                 {"LOSSY_SCOPES": {"all": 0, "think": 1}, "LOSSY_THINK_IDS": (154841, 154842)})
+    scope, initial = ns["lossy_scope"], ns["initial_think_state"]
+    assert scope(NS(extra_args={"spec_lossy_scope": "think"})) == 1
+    assert scope(NS(extra_args={"spec_lossy_scope": "all"})) == 0
+    assert scope(NS(extra_args={"spec_lossy_scope": "bogus"})) == 0 and scope(NS(extra_args=None)) == 0
+    assert initial([1, 2, 154828, 154841]) == 1            # thinking on: prompt ends <think>
+    assert initial([1, 2, 154828, 154841, 154842]) == 0    # thinking off: <think></think>
+    assert initial([1, 2, 3]) == 0 and initial([]) == 0
+    assert initial([154841] + [5] * 100) == 0               # marker beyond the trailing window is ignored
+    assert initial([154841] + [5] * 10) == 1

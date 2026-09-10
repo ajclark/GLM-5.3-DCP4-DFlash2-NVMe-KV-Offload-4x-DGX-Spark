@@ -99,7 +99,19 @@
              self.req_states.add_request(
                  req_id=req_id,
                  prompt_len=prompt_len,
-@@ -1156,6 +1183,14 @@
+@@ -804,6 +831,11 @@
+                 self.sampler.add_request(
+                     req_index, prompt_len, new_req_data.sampling_params
+                 )
++                # Bounded-lossy verification, scope "think": the prompt tail
++                # says whether generation starts inside a think span.
++                states = getattr(self.sampler, "sampling_states", None)
++                if states is not None and hasattr(states, "set_think_state"):
++                    states.set_think_state(req_index, new_req_data.prefill_token_ids)
+                 assert self.prompt_logprobs_worker is not None
+                 self.prompt_logprobs_worker.add_request(
+                     req_id, req_index, new_req_data.sampling_params
+@@ -1156,6 +1188,14 @@
              empty_output = self.kv_connector.no_forward(scheduler_output)
              return empty_output
  
@@ -114,7 +126,7 @@
          if not dummy_run:
              # Common case.
              # Prepare all the inputs and copy to the input buffers.
-@@ -1391,12 +1426,16 @@
+@@ -1391,12 +1431,16 @@
              prompt_logprobs_dict=prompt_logprobs_dict,  # type: ignore[arg-type]
          )
          # Start async output copy here so that it can overlap with speculator proposal.
@@ -131,7 +143,7 @@
          )
  
          mm_inputs: tuple[list[torch.Tensor], torch.Tensor] | None = None
-@@ -1452,6 +1491,8 @@
+@@ -1452,6 +1496,8 @@
                  mm_inputs=mm_inputs,
              )
              self.req_states.draft_tokens[input_batch.idx_mapping] = draft_tokens

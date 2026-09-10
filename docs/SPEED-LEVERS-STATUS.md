@@ -226,3 +226,24 @@ line for the user; experiment boots go through `bench/spec_experiment.py`).
   verified; safe for the user's `GLM_SPEC_LOSSY=1 ./rollout_dcp.sh
   lossy-prod2`.** Then: quality gates G3/G4/G6 against production, pi prose
   persona on, prefill glue overlay, and the long items (C, E).
+
+## Night 2 (2026-09-10 05:45 UTC onward): harness-study avenues
+
+User direction: work the avenues from the harness-study revival autonomously
+with codex; start with think-span-only lossy verification (#3); glm_best-style
+pi prompting is already in use; re-instrumentation (#1) goes last.
+
+- 06:20 UTC: **think-scoped lossy verification built**: `spec_lossy_scope =
+  "think"` relaxes only while the committed stream is inside a `<think>`
+  span. Kernel keeps a per-request think state (initialised from the prompt
+  tail at admission: thinking-on prompts end `<think>`, thinking-off
+  `<think></think>`; updated over committed tokens including the emitted
+  argmax on rejection and the bonus token in the insert kernel); scope and
+  state are UVA/GPU buffers in `SamplingStates`; rows echo `lossy_scope`.
+  Launcher env `GLM_SPEC_LOSSY_THINK_IDS`. Four new CPU tests (span
+  tracking, initial state and persistence incl. rejection-closed and
+  bonus-opened spans, mixed batch/permutation, parsing). Suite 943 green.
+  Codex: bench variants `lossy-think-m<M>`, report invariants (zero
+  relaxation when the span never opens), `spec_think_check.py`, hold recipe.
+  Codex's `research/HARNESS-STUDY-REVIVAL.md` ranks this avenue #6
+  (+6-7% decode on the 09-01 token mix); the user chose it first.

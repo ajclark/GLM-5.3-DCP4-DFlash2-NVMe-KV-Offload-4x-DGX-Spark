@@ -8,7 +8,7 @@
  import torch
  
  from vllm.config import SpeculativeConfig
-@@ -40,6 +42,18 @@
+@@ -40,6 +42,24 @@
          tl.store(flat_sampled_ptr + start_idx + i, token_id)
  
  
@@ -16,6 +16,12 @@
 +# Token ids a relaxed accept may never emit or displace: EOS, role and think
 +# markers of the served checkpoint; overridable per boot.
 +DEFAULT_LOSSY_STOP_IDS = "154820,154827,154829,154841,154842,154828"
++
++
++def lossy_think_ids() -> tuple[int, int]:
++    raw = os.environ.get("GLM_SPEC_LOSSY_THINK_IDS", "154841,154842")
++    a, b = (int(x) for x in raw.split(",")[:2])
++    return a, b
 +
 +
 +def lossy_stop_ids(device: torch.device) -> torch.Tensor:
@@ -27,11 +33,12 @@
  class RejectionSampler:
      def __init__(
          self,
-@@ -49,6 +63,11 @@
+@@ -49,6 +69,12 @@
      ):
          self.sampler = sampler
          self.num_speculative_steps = spec_config.num_speculative_tokens
 +        self.lossy_stop_ids = lossy_stop_ids(device)
++        self.lossy_think_ids = lossy_think_ids()
 +        # Trial-only rank-agreement proof: every 64th call all-gathers the
 +        # accepted counts across TP and fails loudly on any disagreement.
 +        self.lossy_check = os.environ.get("GLM_SPEC_LOSSY_CHECK") == "1"
@@ -39,7 +46,7 @@
          self.rejection_sample_method = spec_config.rejection_sample_method
          self.synthetic_conditional_rates: torch.Tensor | None = None
          if self.rejection_sample_method == "synthetic":
-@@ -115,7 +134,10 @@
+@@ -115,7 +141,10 @@
              draft_sampled,
              input_batch.expanded_local_pos,
          )
@@ -51,7 +58,7 @@
              processed_logits,
              draft_logits,
              draft_sampled,
-@@ -124,12 +146,19 @@
+@@ -124,12 +153,22 @@
              input_batch.idx_mapping,
              input_batch.expanded_idx_mapping,
              input_batch.expanded_local_pos,
@@ -66,6 +73,9 @@
 +            lossy_margin=None if lossy_margin is None else lossy_margin.gpu,
 +            lossy_min_logp=None if lossy_min_logp is None else lossy_min_logp.gpu,
 +            stop_ids=self.lossy_stop_ids,
++            lossy_scope=getattr(getattr(states, "lossy_scope", None), "gpu", None),
++            think_state=getattr(getattr(states, "think_state", None), "gpu", None),
++            think_ids=self.lossy_think_ids,
 +        )
 +        if self.lossy_check:
 +            self.lossy_calls += 1
@@ -74,7 +84,7 @@
          logprobs_tensors = self._get_logprobs_tensors(
              input_batch,
              sampled,
-@@ -147,10 +176,28 @@
+@@ -147,10 +186,28 @@
              self.sampler.req_states.prefill_len.gpu,
          )
  

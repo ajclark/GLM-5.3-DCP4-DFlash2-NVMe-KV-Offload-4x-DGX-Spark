@@ -143,6 +143,7 @@ per 64 cycles; off in any promoted configuration).
 | `spec_lossy_rank` | int in {2} (v1) | 2 | runner-up only; other values -> off |
 | `spec_lossy_min_p` | float in [0, 0.5) | 0 | `p_min`; 0 disables the floor |
 | `spec_label` | str | existing | audit key already used by the trace |
+| `spec_lossy_scope` | `all` \| `think` | `all` | `think`: relax only inside `<think>` spans (state from the prompt tail, tracked over committed tokens); visible text stays exact |
 
 Server side: honoured only when the boot has `GLM_SPEC_LOSSY=1` (default 0, so the
 production launcher is unchanged even if a client sends the fields), the request is

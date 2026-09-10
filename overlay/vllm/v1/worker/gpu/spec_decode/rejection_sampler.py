@@ -48,6 +48,12 @@ def _flatten_sampled_kernel(
 DEFAULT_LOSSY_STOP_IDS = "154820,154827,154829,154841,154842,154828"
 
 
+def lossy_think_ids() -> tuple[int, int]:
+    raw = os.environ.get("GLM_SPEC_LOSSY_THINK_IDS", "154841,154842")
+    a, b = (int(x) for x in raw.split(",")[:2])
+    return a, b
+
+
 def lossy_stop_ids(device: torch.device) -> torch.Tensor:
     raw = os.environ.get("GLM_SPEC_LOSSY_STOP_IDS", DEFAULT_LOSSY_STOP_IDS)
     ids = sorted({int(x) for x in raw.split(",") if x.strip()})
@@ -64,6 +70,7 @@ class RejectionSampler:
         self.sampler = sampler
         self.num_speculative_steps = spec_config.num_speculative_tokens
         self.lossy_stop_ids = lossy_stop_ids(device)
+        self.lossy_think_ids = lossy_think_ids()
         # Trial-only rank-agreement proof: every 64th call all-gathers the
         # accepted counts across TP and fails loudly on any disagreement.
         self.lossy_check = os.environ.get("GLM_SPEC_LOSSY_CHECK") == "1"
@@ -154,6 +161,9 @@ class RejectionSampler:
             lossy_margin=None if lossy_margin is None else lossy_margin.gpu,
             lossy_min_logp=None if lossy_min_logp is None else lossy_min_logp.gpu,
             stop_ids=self.lossy_stop_ids,
+            lossy_scope=getattr(getattr(states, "lossy_scope", None), "gpu", None),
+            think_state=getattr(getattr(states, "think_state", None), "gpu", None),
+            think_ids=self.lossy_think_ids,
         )
         if self.lossy_check:
             self.lossy_calls += 1

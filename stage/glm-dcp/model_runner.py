@@ -831,6 +831,11 @@ class GPUModelRunner(LoRAModelRunnerMixin):
                 self.sampler.add_request(
                     req_index, prompt_len, new_req_data.sampling_params
                 )
+                # Bounded-lossy verification, scope "think": the prompt tail
+                # says whether generation starts inside a think span.
+                states = getattr(self.sampler, "sampling_states", None)
+                if states is not None and hasattr(states, "set_think_state"):
+                    states.set_think_state(req_index, new_req_data.prefill_token_ids)
                 assert self.prompt_logprobs_worker is not None
                 self.prompt_logprobs_worker.add_request(
                     req_id, req_index, new_req_data.sampling_params
