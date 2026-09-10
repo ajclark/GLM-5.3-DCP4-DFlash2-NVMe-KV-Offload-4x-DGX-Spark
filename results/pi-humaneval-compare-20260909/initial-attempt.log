@@ -1,0 +1,101 @@
+prepared and verified running source on all four ranks
+preflight headroom MiB {'spark-06c4.local': 2555, 'spark-a218.local': 4785, 'spark-365c.local': 4433, 'spark-ddbf.local': 4853}
+deployed-warmup C1 HumanEval/49 292 tokens 11.3s passed
+CELL {"lane": "deployed-warmup", "concurrency": 1, "tasks": 1, "passed": 1, "errors": 0, "output_tokens": 292, "reasoning_tokens": 0, "wall_s": 11.315083742141724, "aggregate_tok_s": 25.806260621163563, "request_tok_s": 26.119757251155413, "post_first_tok_s": 44.33399673660612, "server_decode_tok_s": 39.77163136889703, "median_task_s": 11.315083742141724, "median_ttft_s": 1.1425858736038208, "max_running": 1.0, "mean_running": 0.8333333333333334, "api_calls": 4, "validity_flags": []}
+deployed C1 HumanEval/154 417 tokens 13.6s passed
+deployed C1 HumanEval/75 222 tokens 7.1s passed
+deployed C1 HumanEval/132 1540 tokens 54.3s passed
+deployed C1 HumanEval/22 267 tokens 11.6s passed
+deployed C1 HumanEval/100 162 tokens 5.8s passed
+deployed C1 HumanEval/69 231 tokens 7.2s passed
+deployed C1 HumanEval/48 94 tokens 4.1s passed
+deployed C1 HumanEval/122 162 tokens 5.8s passed
+deployed C1 HumanEval/20 357 tokens 12.9s passed
+deployed C1 HumanEval/0 236 tokens 9.7s passed
+deployed C1 HumanEval/55 214 tokens 8.9s passed
+deployed C1 HumanEval/49 188 tokens 8.7s passed
+CELL {"lane": "deployed", "concurrency": 1, "tasks": 12, "passed": 12, "errors": 0, "output_tokens": 4090, "reasoning_tokens": 0, "wall_s": 154.1823616027832, "aggregate_tok_s": 26.527029145765592, "request_tok_s": 27.46313331180579, "post_first_tok_s": 39.00513507901706, "server_decode_tok_s": 36.53567750567524, "median_task_s": 8.828855037689209, "median_ttft_s": 1.1483299732208252, "max_running": 1.0, "mean_running": 0.9477124183006536, "api_calls": 38, "validity_flags": []}
+deployed C2 HumanEval/48 94 tokens 5.8s passed
+deployed C2 HumanEval/49 206 tokens 14.2s passed
+deployed C2 HumanEval/154 417 tokens 22.3s passed
+deployed C2 HumanEval/22 343 tokens 20.1s passed
+deployed C2 HumanEval/20 524 tokens 23.9s passed
+deployed C2 HumanEval/122 162 tokens 9.4s passed
+deployed C2 HumanEval/75 403 tokens 21.7s passed
+deployed C2 HumanEval/69 454 tokens 22.4s passed
+deployed C2 HumanEval/100 162 tokens 8.5s passed
+deployed C2 HumanEval/0 181 tokens 8.6s passed
+deployed C2 HumanEval/55 214 tokens 12.6s passed
+deployed C2 HumanEval/132 4252 tokens 215.7s passed
+CELL {"lane": "deployed", "concurrency": 2, "tasks": 12, "passed": 12, "errors": 0, "output_tokens": 7412, "reasoning_tokens": 0, "wall_s": 283.0177569389343, "aggregate_tok_s": 26.189169471791338, "request_tok_s": 19.277655435946365, "post_first_tok_s": 23.665123969106798, "server_decode_tok_s": 22.992777966317785, "median_task_s": 17.150890588760376, "median_ttft_s": 1.5188548564910889, "max_running": 2.0, "mean_running": 1.2821428571428573, "api_calls": 39, "validity_flags": []}
+deployed C3 HumanEval/75 222 tokens 11.7s passed
+deployed C3 HumanEval/154 277 tokens 19.4s passed
+deployed C3 HumanEval/100 162 tokens 11.8s passed
+deployed C3 HumanEval/69 478 tokens 27.0s passed
+deployed C3 HumanEval/20 357 tokens 23.7s passed
+deployed C3 HumanEval/48 94 tokens 8.0s passed
+deployed C3 HumanEval/55 249 tokens 18.9s passed
+deployed C3 HumanEval/49 178 tokens 15.9s passed
+deployed C3 HumanEval/22 381 tokens 27.8s passed
+deployed C3 HumanEval/0 181 tokens 10.7s passed
+deployed C3 HumanEval/122 162 tokens 12.0s passed
+  + Exception Group Traceback (most recent call last):
+  |   File "/home/napta2k/spark-cluster-mla-dcp/bench/pi_humaneval_compare.py", line 193, in <module>
+  |     if __name__ == '__main__': main()
+  |                                ~~~~^^
+  |   File "/home/napta2k/spark-cluster-mla-dcp/bench/pi_humaneval_compare.py", line 136, in main
+  |     asyncio.run(he.run_sweep('deployed', out, work, config, range(1,13), baseline_check))
+  |     ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+  |     return runner.run(main)
+  |            ~~~~~~~~~~^^^^^^
+  |   File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+  |     return self._loop.run_until_complete(task)
+  |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  |   File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+  |     return future.result()
+  |            ~~~~~~~~~~~~~^^
+  |   File "/home/napta2k/spark-cluster-mla-dcp/bench/pi_humaneval.py", line 306, in run_sweep
+  |     result = await run_cell(order, c, lane, out, work, config, check)
+  |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/home/napta2k/spark-cluster-mla-dcp/bench/pi_humaneval.py", line 261, in run_cell
+  |     async with asyncio.TaskGroup() as group:
+  |                ~~~~~~~~~~~~~~~~~^^
+  |   File "/usr/lib/python3.14/asyncio/taskgroups.py", line 72, in __aexit__
+  |     return await self._aexit(et, exc)
+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |   File "/usr/lib/python3.14/asyncio/taskgroups.py", line 174, in _aexit
+  |     raise BaseExceptionGroup(
+  |     ...<2 lines>...
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/home/napta2k/spark-cluster-mla-dcp/bench/pi_humaneval.py", line 157, in solve
+    |     event = await read()
+    |             ^^^^^^^^^^^^
+    |   File "/home/napta2k/spark-cluster-mla-dcp/bench/pi_humaneval.py", line 132, in read
+    |     line = await proc.stdout.readline()
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/usr/lib/python3.14/asyncio/streams.py", line 562, in readline
+    |     line = await self.readuntil(sep)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/usr/lib/python3.14/asyncio/streams.py", line 677, in readuntil
+    |     await self._wait_for_data('readuntil')
+    |   File "/usr/lib/python3.14/asyncio/streams.py", line 539, in _wait_for_data
+    |     await self._waiter
+    | asyncio.exceptions.CancelledError
+    | 
+    | The above exception was the direct cause of the following exception:
+    | 
+    | Traceback (most recent call last):
+    |   File "/home/napta2k/spark-cluster-mla-dcp/bench/pi_humaneval.py", line 256, in worker
+    |     row = await solve(p, folder, cell / tid, config, barrier if first else None)
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/napta2k/spark-cluster-mla-dcp/bench/pi_humaneval.py", line 155, in solve
+    |     async with asyncio.timeout(600):
+    |                ~~~~~~~~~~~~~~~^^^^^
+    |   File "/usr/lib/python3.14/asyncio/timeouts.py", line 114, in __aexit__
+    |     raise TimeoutError from exc_val
+    | TimeoutError
+    +------------------------------------

@@ -1,0 +1,62 @@
+{
+  "id": "ready",
+  "type": "response",
+  "command": "get_state",
+  "success": true,
+  "data": {
+    "model": {
+      "id": "glm-5.3",
+      "name": "glm-5.3",
+      "api": "openai-completions",
+      "provider": "glm53",
+      "baseUrl": "http://spark-06c4.local:8000/v1",
+      "reasoning": true,
+      "thinkingLevelMap": {
+        "off": null,
+        "minimal": "low",
+        "low": "low",
+        "medium": "high",
+        "high": "high",
+        "xhigh": "max",
+        "max": "max"
+      },
+      "input": [
+        "text"
+      ],
+      "cost": {
+        "input": 0,
+        "output": 0,
+        "cacheRead": 0,
+        "cacheWrite": 0
+      },
+      "contextWindow": 155648,
+      "maxTokens": 32768,
+      "samplingParams": {
+        "temperature": 0,
+        "top_p": 1
+      },
+      "compat": {
+        "supportsReasoningEffort": true,
+        "thinkingFormat": "chat-template",
+        "chatTemplateKwargs": {
+          "enable_thinking": {
+            "$var": "thinking.enabled"
+          },
+          "reasoning_effort": {
+            "$var": "thinking.effort",
+            "omitWhenOff": true
+          }
+        }
+      }
+    },
+    "thinkingLevel": "high",
+    "isStreaming": false,
+    "isCompacting": false,
+    "steeringMode": "one-at-a-time",
+    "followUpMode": "one-at-a-time",
+    "sessionId": "01a08792-38db-77d8-b827-07400a39ac43",
+    "autoCompactionEnabled": true,
+    "messageCount": 0,
+    "pendingMessageCount": 0
+  }
+}

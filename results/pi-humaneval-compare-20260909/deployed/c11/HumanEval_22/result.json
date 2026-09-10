@@ -1,0 +1,136 @@
+{
+  "task_id": "HumanEval/22",
+  "start": 1788981576.8830435,
+  "end": 1788981599.8807209,
+  "seconds": 22.997677326202393,
+  "requests": [
+    {
+      "start": 1788981576.9360683,
+      "payload": {
+        "event": "request",
+        "epoch_ms": 1788981576936.0684,
+        "model": "glm-5.3",
+        "provider": "glm53",
+        "thinking": "high",
+        "temperature": 0,
+        "top_p": 1,
+        "max_tokens": 32768,
+        "chat_template_kwargs": {
+          "enable_thinking": true,
+          "reasoning_effort": "high"
+        },
+        "stream_options": {
+          "include_usage": true
+        },
+        "tools": [
+          "read",
+          "bash",
+          "edit",
+          "write"
+        ],
+        "messages_sha256": "7b9197e4db58f3a8ba69da44913be8670efdff045596cf3fb3bc6c9754243981",
+        "message_count": 2
+      },
+      "delta_chars": {
+        "toolcall_delta": 373
+      },
+      "first_delta": 1788981585.8434176,
+      "first_text": 1788981585.8434176,
+      "last_delta": 1788981595.500878,
+      "statuses": [
+        200
+      ],
+      "end": 1788981595.5056593,
+      "usage": {
+        "input": 1087,
+        "output": 117,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "reasoning": 0,
+        "totalTokens": 1204,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "stop_reason": "toolUse",
+      "error": null,
+      "seconds": 18.56959104537964,
+      "ttft_s": 8.907349348068237,
+      "post_first_s": 9.662241697311401
+    },
+    {
+      "start": 1788981595.5151162,
+      "payload": {
+        "event": "request",
+        "epoch_ms": 1788981595515.1162,
+        "model": "glm-5.3",
+        "provider": "glm53",
+        "thinking": "high",
+        "temperature": 0,
+        "top_p": 1,
+        "max_tokens": 32768,
+        "chat_template_kwargs": {
+          "enable_thinking": true,
+          "reasoning_effort": "high"
+        },
+        "stream_options": {
+          "include_usage": true
+        },
+        "tools": [
+          "read",
+          "bash",
+          "edit",
+          "write"
+        ],
+        "messages_sha256": "49da5d5d39737f98c71f734cd6dd2dd25129632cf092c3e8aa51455219d8a407",
+        "message_count": 4
+      },
+      "delta_chars": {
+        "text_delta": 5
+      },
+      "first_delta": 1788981598.9383733,
+      "first_text": 1788981598.9383733,
+      "last_delta": 1788981599.875177,
+      "statuses": [
+        200
+      ],
+      "end": 1788981599.8772042,
+      "usage": {
+        "input": 1213,
+        "output": 4,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "reasoning": 0,
+        "totalTokens": 1217,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "stop_reason": "stop",
+      "error": null,
+      "seconds": 4.362087965011597,
+      "ttft_s": 3.4232571125030518,
+      "post_first_s": 0.9388308525085449
+    }
+  ],
+  "errors": [],
+  "output_tokens": 121,
+  "reasoning_tokens": 0,
+  "input_tokens": 2300,
+  "request_seconds": 22.931679010391235,
+  "post_first_seconds": 10.601072549819946,
+  "check": {
+    "passed": true,
+    "result": "passed",
+    "returncode": 0,
+    "output": ""
+  }
+}

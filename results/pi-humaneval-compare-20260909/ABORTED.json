@@ -1,0 +1,19 @@
+{
+  "requested_at_utc": "2026-09-09T20:10:54Z",
+  "reason": "User requested abort and analysis of completed results",
+  "action": "SIGTERM to owned comparison controller 552060; its finally block restores original containers and runs one native pi restoration probe",
+  "completed_cells": {
+    "deployed": 12,
+    "adaptive": 9
+  },
+  "excluded_incomplete_cell": "adaptive/c10",
+  "not_run": [
+    "adaptive/c11",
+    "adaptive/c12"
+  ],
+  "full_sweep_complete": false,
+  "restoration_complete": true,
+  "restoration_verified_at_utc": "2026-09-09T20:19:09Z",
+  "generation_probe": "restoration-probe-final/restored-probe-summary.json",
+  "benchmark_process_stopped": true
+}
