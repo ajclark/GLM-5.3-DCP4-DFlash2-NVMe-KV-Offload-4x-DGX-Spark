@@ -184,6 +184,7 @@ def launch(root, label, rank):
     # and /stop_profile, one file per rank under the isolated cache directory.
     env['PROFILER_DIR'] = '/kvcache/profiles' if (root/'profiler-enabled').exists() else ''
     env['DCP_LSE_FOLD'] = '1' if (root/'dcp-lse-fold-enabled').exists() else '0'
+    env['DCP_RS_HEADMAJOR'] = '1' if (root/'dcp-rs-headmajor-enabled').exists() else '0'
     # Optional lane overrides written by the controller's prepare (e.g. the MTP
     # prose lane: smaller KV pool, shorter window, policy off). Only the listed
     # keys may change; the image, DCP size, TP and batching stay the lane's.

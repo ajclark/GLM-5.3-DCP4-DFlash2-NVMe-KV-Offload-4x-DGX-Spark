@@ -156,7 +156,7 @@ teardown; sleep 5
 start_flushers || say "warning: flushers did not start (continuing; admission check is skipped with a fixed KV pool)"
 say "launching DCP ranks (worker-first)"
 say "adapters on and ring verified before launch (idempotent)"; ./spark-idle.sh --up --no-plugin >/dev/null 2>&1 || say "  note: spark-idle.sh --up reported a problem; the launch's own checks decide"
-launch_ranks "$DCPL" "MAXLEN=$MAXLEN MAXBATCHED=$MAXBATCHED KVBYTES=$KVBYTES KVTIER=$KVTIER KVTIER_MODE=${KVTIER_MODE:-slab} KVTIER_BOUNCE=${KVTIER_BOUNCE:-48} KVTIER_DISK_BYTES=${KVTIER_DISK_BYTES:-150000000000} PROFILER_DIR=${PROFILER_DIR:-} DCP_Q_PREGATHER=${DCP_Q_PREGATHER:-0} DCP_COMPACT=${DCP_COMPACT:-1} DCP_SIZE=${DCP_SIZE:-2} NCCL_HOTPLUG=${NCCL_HOTPLUG:-0} GLM_SPEC_LOSSY=${GLM_SPEC_LOSSY:-0} DCP_LSE_FOLD=${DCP_LSE_FOLD:-0}" || { restore_production; exit 2; }
+launch_ranks "$DCPL" "MAXLEN=$MAXLEN MAXBATCHED=$MAXBATCHED KVBYTES=$KVBYTES KVTIER=$KVTIER KVTIER_MODE=${KVTIER_MODE:-slab} KVTIER_BOUNCE=${KVTIER_BOUNCE:-48} KVTIER_DISK_BYTES=${KVTIER_DISK_BYTES:-150000000000} PROFILER_DIR=${PROFILER_DIR:-} DCP_Q_PREGATHER=${DCP_Q_PREGATHER:-0} DCP_COMPACT=${DCP_COMPACT:-1} DCP_SIZE=${DCP_SIZE:-2} NCCL_HOTPLUG=${NCCL_HOTPLUG:-0} GLM_SPEC_LOSSY=${GLM_SPEC_LOSSY:-0} DCP_LSE_FOLD=${DCP_LSE_FOLD:-0} DCP_RS_HEADMAJOR=${DCP_RS_HEADMAJOR:-0}" || { restore_production; exit 2; }
 
 # 5. wait with watchdog
 wait_healthy 1800; rc=$?

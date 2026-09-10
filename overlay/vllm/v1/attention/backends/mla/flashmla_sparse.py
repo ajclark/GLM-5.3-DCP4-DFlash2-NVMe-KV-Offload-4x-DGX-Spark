@@ -41,6 +41,11 @@ from vllm.v1.attention.backends.mla.sparse_utils import (
 # instead of masking all of them (23.8 ms of a 173 ms verify pass on the
 # Sparks was that kernel walking masked entries).
 DCP_COMPACT = os.environ.get("GLM_DCP_COMPACT", "0") == "1"
+# GLM overlay: with GLM_DCP_RS_HEADMAJOR=1 the DCP LSE merge kernel writes its
+# corrected output head-major and zeroes rows whose rescale factor is zero
+# itself, so the [T, H, D] masked_fill below is skipped (the -inf LSE mask is
+# what neutralises an empty row; see mla_attention.dcp_lse_ag_out_rs_headmajor).
+DCP_RS_HEADMAJOR = os.environ.get("GLM_DCP_RS_HEADMAJOR", "0") == "1"
 from vllm.v1.attention.backends.utils import (
     reshape_attn_output_for_spec_decode,
     reshape_query_for_spec_decode,
@@ -868,6 +873,7 @@ class FlashMLASparseImpl(SparseMLAAttentionImpl[FlashMLASparseMetadata]):
         The lse is only returned when DCP needs it, otherwise None.
         """
         topk_length = None
+        empty_rows = None
         if self.dcp_world_size > 1:
             # Under DCP the indexer emits GLOBAL token positions (its per-rank
             # local top-k lists were merged across the group). Keep this rank's
@@ -884,7 +890,9 @@ class FlashMLASparseImpl(SparseMLAAttentionImpl[FlashMLASparseMetadata]):
                 NUM_TOPK_TOKENS=topk_indices.shape[1],
             )
             if DCP_COMPACT:
-                topk_indices, topk_length = compact_dcp_candidates(topk_indices)
+                topk_indices, topk_length, empty_rows = compact_dcp_candidates(
+                    topk_indices, return_empty=True
+                )
         else:
             # Convert per-request indices to global slots (decode) or workspace
             # offsets (prefill).
@@ -923,8 +931,10 @@ class FlashMLASparseImpl(SparseMLAAttentionImpl[FlashMLASparseMetadata]):
         # already yields (0, -inf), b12x may not). (0, -inf) is the identity of
         # the cross-rank LSE merge, so force it: a NaN would otherwise survive
         # the merge even at zero weight (0 * NaN = NaN).
-        empty_rows = (topk_indices == -1).all(dim=-1)
-        out = out.masked_fill(empty_rows.view(-1, 1, 1), 0.0)
+        if empty_rows is None:
+            empty_rows = (topk_indices == -1).all(dim=-1)
+        if not DCP_RS_HEADMAJOR:
+            out = out.masked_fill(empty_rows.view(-1, 1, 1), 0.0)
         lse = lse.masked_fill(empty_rows.view(-1, 1), float("-inf"))
         # The head-padding slice below can leave `out` non-contiguous, and the
         # merge feeds it to reduce_scatter.

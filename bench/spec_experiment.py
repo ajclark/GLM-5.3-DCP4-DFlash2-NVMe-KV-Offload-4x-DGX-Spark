@@ -222,7 +222,7 @@ def package(no_marlin_atomic_add=False):
     return buf.getvalue()
 
 
-def prepare(label, out, reuse_cache_from=None, trace_off=False, costs=None, hint_priors=None, confidence_trace=False, no_marlin_atomic_add=False, lossy=False, lossy_check=False, profiler=False, dcp_lse_fold=False, lane=None):
+def prepare(label, out, reuse_cache_from=None, trace_off=False, costs=None, hint_priors=None, confidence_trace=False, no_marlin_atomic_add=False, lossy=False, lossy_check=False, profiler=False, dcp_lse_fold=False, dcp_rs_headmajor=False, lane=None):
     if no_marlin_atomic_add and reuse_cache_from:
         raise ValueError('the atomic control needs a fresh isolated cache')
     if lossy_check and not lossy:
@@ -230,6 +230,7 @@ def prepare(label, out, reuse_cache_from=None, trace_off=False, costs=None, hint
     data = package(no_marlin_atomic_add)
     (out/'experiment-options.json').write_text(json.dumps({'marlin_atomic_add': not no_marlin_atomic_add,
         'confidence_trace': confidence_trace, 'lossy': lossy, 'lossy_check': lossy_check,
+        'dcp_lse_fold': dcp_lse_fold, 'dcp_rs_headmajor': dcp_rs_headmajor,
         'package_sha256': hashlib.sha256(data).hexdigest(),
         'note': 'Atomic=0 modifies only the isolated launch copy; never reuse its persisted KV across settings.'}, indent=2)+'\n')
     def node(host):
@@ -267,6 +268,11 @@ def prepare(label, out, reuse_cache_from=None, trace_off=False, costs=None, hint
     if dcp_lse_fold:
         parallel(lambda host:ssh(host,shlex.join(['touch',f'glm-spec/{label}/dcp-lse-fold-enabled'])))
         (out/'dcp-lse-fold-enabled').touch()
+    if dcp_rs_headmajor:
+        if dcp_lse_fold:
+            raise ValueError('the head-major DCP merge and the LSE fold are exclusive')
+        parallel(lambda host:ssh(host,shlex.join(['touch',f'glm-spec/{label}/dcp-rs-headmajor-enabled'])))
+        (out/'dcp-rs-headmajor-enabled').touch()
     if lane:
         raw = json.dumps(validated_lane(lane)).encode()
         parallel(lambda host:ssh(host, shlex.join(['tee', f'glm-spec/{label}/lane.json']), raw))
@@ -464,6 +470,7 @@ def main():
     ap.add_argument('--lossy-check',action='store_true',help='With --lossy: all-gather accepted counts across TP every 64 steps and fail on disagreement (trial only)')
     ap.add_argument('--profiler',action='store_true',help='Arm the torch profiler (PROFILER_DIR=/kvcache/profiles); traces only between /start_profile and /stop_profile')
     ap.add_argument('--dcp-lse-fold',action='store_true',help='Boot with GLM_DCP_LSE_FOLD=1: fold the DCP LSE all-gather into the attention reduce-scatter')
+    ap.add_argument('--dcp-rs-headmajor',action='store_true',help='Boot with GLM_DCP_RS_HEADMAJOR=1: head-major DCP LSE merge, no reduce-scatter relayout copies')
     ap.add_argument('--mtp',type=int,help='Prepare the MTP prose lane with this many draft tokens (1..3); requires --kvbytes and --maxlen and sets the policy off')
     ap.add_argument('--kvbytes',type=int,help='Lane override: KV pool bytes per rank for the experiment boot')
     ap.add_argument('--maxlen',type=int,help='Lane override: max model length for the experiment boot')
@@ -493,6 +500,7 @@ def main():
         out.mkdir(exist_ok=False)
         prepare(args.label,out,args.reuse_cache_from,args.trace_off,args.costs,args.hint_priors,args.confidence_trace,args.no_marlin_atomic_add,
                 lossy=args.lossy,lossy_check=args.lossy_check,profiler=args.profiler,dcp_lse_fold=args.dcp_lse_fold,
+                dcp_rs_headmajor=args.dcp_rs_headmajor,
                 lane=lane_from_args(args))
     elif args.action == 'run':
         if not (out/'prepared.json').exists():

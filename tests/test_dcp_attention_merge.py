@@ -153,6 +153,7 @@ def _run_mixed_batch(dcp_world_size, topk_local, kernel_out, kernel_lse):
     g["triton_filter_and_convert_dcp_index"] = lambda *a, **k: topk_local
     g["triton_convert_req_index_to_global_index"] = lambda *a, **k: topk_local
     g.setdefault("DCP_COMPACT", False)  # module flag; compaction is covered by test_dcp_compact.py
+    g.setdefault("DCP_RS_HEADMAJOR", False)  # module flag; the head-major merge zeroes empty rows itself
     q = torch.zeros(num_tokens, num_heads, 4)
     return FMS["_forward_fp8_kv_mixed_batch"](
         impl, q, torch.zeros(0), topk_local, meta
@@ -228,3 +229,30 @@ def test_replicated_query_heads_merge_exactly(world):
     for rank in range(world):
         chunk = merged[:, rank * H : (rank + 1) * H]  # what reduce_scatter hands rank r
         torch.testing.assert_close(chunk, ref, atol=1e-5, rtol=1e-5)
+
+
+def test_head_major_merge_keeps_only_the_lse_mask():
+    """With GLM_DCP_RS_HEADMAJOR=1 the [T, H, D] masked_fill is skipped: the
+    merge kernel writes exact zeros wherever the rescale factor is zero, and
+    the -inf LSE is what makes that factor zero (test_dcp_rs_headmajor.py)."""
+    num_tokens, num_heads, dv = 3, 2, 1
+    topk_local = torch.tensor(
+        [[0, 1, -1, -1], [-1, -1, -1, -1], [2, -1, 3, -1]], dtype=torch.int32
+    )
+    out = torch.full((1, num_tokens, num_heads, dv), float("nan"))
+    lse = torch.full((1, num_heads, num_tokens), float("nan"))
+    for t in (0, 2):
+        out[0, t] = float(t + 1)
+        lse[0, :, t] = float(t + 1)
+    g = FMS["_forward_fp8_kv_mixed_batch"].__globals__
+    g["DCP_RS_HEADMAJOR"] = True
+    try:
+        got_out, got_lse = _run_mixed_batch(4, topk_local, out, lse)
+    finally:
+        g["DCP_RS_HEADMAJOR"] = False
+    assert got_out[1].isnan().all()  # left for the merge kernel to neutralise
+    assert torch.isneginf(got_lse[1]).all()
+    for t in (0, 2):
+        assert torch.equal(got_out[t], torch.full_like(got_out[t], t + 1))
+        assert torch.equal(got_lse[t], torch.full_like(got_lse[t], t + 1))
+    assert got_out.is_contiguous() and not got_lse.isnan().any()

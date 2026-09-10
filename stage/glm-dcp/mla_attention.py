@@ -269,6 +269,7 @@ from vllm.v1.attention.backends.utils import (
     get_dcp_local_seq_lens,
     split_decodes_and_prefills,
 )
+from vllm.triton_utils import tl, triton
 from vllm.v1.attention.ops.common import cp_lse_ag_out_rs
 from vllm.v1.attention.ops.dcp_alltoall import dcp_a2a_lse_reduce
 
@@ -289,6 +290,129 @@ DCP_Q_PREGATHER = os.environ.get("GLM_DCP_Q_PREGATHER", "0") == "1"
 # far below this for any sane head; the clamp only guards pathological rows.
 DCP_LSE_FOLD_MAX = 80.0
 DCP_LSE_FOLD_PAD = 8
+
+
+# GLM overlay: head-major DCP LSE merge (GLM_DCP_RS_HEADMAJOR=1). The stock
+# cp_lse_ag_out_rs corrects the [T, H, D] attention output in place and then
+# reduce-scatters it over dim 1, which costs two full relayout copies per
+# layer-chunk (movedim+contiguous before NCCL and again after: 468 x 1.6 ms of
+# a 4k-token prefill, docs/SPEED-LEVERS-STATUS.md 2026-09-10 03:00). Here the
+# correction kernel writes [H, T, D] directly, the reduce-scatter runs over
+# dim 0 with no relayout, and the V up-projection consumes the head-major
+# result as-is (its bmm wants [H, T, L] anyway). Same arithmetic as the stock
+# kernel; rows whose rescale factor is zero (empty shard, -inf LSE) are stored
+# as exact zeros, so NaN/garbage kernel output on those rows cannot survive
+# and the sparse backend skips its [T, H, D] masked_fill. Every rank must run
+# the same setting.
+
+
+@triton.jit
+def _glm_correct_attn_cp_out_hm_kernel(
+    outputs_ptr,
+    new_output_ptr,
+    lses_ptr,
+    vlse_ptr,
+    outputs_stride_B,
+    outputs_stride_H,
+    outputs_stride_D,
+    new_stride_H,
+    new_stride_B,
+    new_stride_D,
+    lses_stride_N,
+    lses_stride_B,
+    lses_stride_H,
+    lse_idx,
+    HEAD_DIM: tl.constexpr,
+    N_ROUNDED: tl.constexpr,
+):
+    """outputs [B, H, D] + all-gathered lses [N, B, H] -> new_output [H, B, D]
+    (this rank's rescaled partial), vlse [B, H] (the merged LSE)."""
+    batch_idx = tl.program_id(axis=0).to(tl.int64)
+    head_idx = tl.program_id(axis=1).to(tl.int64)
+    d_offsets = tl.arange(0, HEAD_DIM)
+    num_n_offsets = tl.arange(0, N_ROUNDED)
+
+    lse_offsets = (
+        num_n_offsets * lses_stride_N
+        + batch_idx * lses_stride_B
+        + head_idx * lses_stride_H
+    )
+    lse = tl.load(lses_ptr + lse_offsets).to(tl.float32)
+    lse = tl.where((lse != lse) | (lse == float("inf")), -float("inf"), lse)
+    lse_max = tl.max(lse, axis=0)
+    lse_max = tl.where(lse_max == -float("inf"), 0, lse_max)
+    lse -= lse_max
+    lse_exp = tl.exp(lse)
+    lse_acc = tl.sum(lse_exp, axis=0)
+    lse = tl.log(lse_acc)
+    lse += lse_max
+    tl.store(vlse_ptr + batch_idx * lses_stride_B + head_idx * lses_stride_H, lse)
+
+    in_offsets = (
+        batch_idx * outputs_stride_B
+        + head_idx * outputs_stride_H
+        + d_offsets * outputs_stride_D
+    )
+    out_offsets = (
+        head_idx * new_stride_H + batch_idx * new_stride_B + d_offsets * new_stride_D
+    )
+    lse_offset = (
+        lse_idx * lses_stride_N + batch_idx * lses_stride_B + head_idx * lses_stride_H
+    )
+    lse_tmp = tl.load(lses_ptr + lse_offset).to(tl.float32)
+    lse_finally = lse_tmp - lse
+    lse_finally = tl.where(
+        (lse_finally != lse_finally) | (lse_finally == float("inf")),
+        -float("inf"),
+        lse_finally,
+    )
+    factor = tl.exp(lse_finally)
+    output = tl.load(outputs_ptr + in_offsets)
+    output = output * factor
+    output = tl.where(factor == 0.0, 0.0, output)
+    tl.store(new_output_ptr + out_offsets, output)
+
+
+def dcp_lse_ag_out_rs_headmajor(
+    attn_out: torch.Tensor, lse: torch.Tensor, cp_group
+) -> torch.Tensor:
+    """attn_out [T, H, D] (this rank's partial softmax output over its KV
+    shard), lse [T, H] natural-log sum-exp of that shard -> the merged output
+    for this rank's H // dcp heads as a contiguous head-major [H // dcp, T, D].
+    Natural-log LSE only (is_lse_base_on_e)."""
+    world = cp_group.world_size
+    assert world > 1 and world & (world - 1) == 0, "DCP size must be a power of two"
+    tokens, heads, head_dim = attn_out.shape
+    assert heads % world == 0 and lse.shape == (tokens, heads)
+    lse = lse.contiguous()
+    lses = cp_group.all_gather(lse, dim=0).reshape((world,) + lse.shape)
+    out_hm = torch.empty(
+        (heads, tokens, head_dim), dtype=attn_out.dtype, device=attn_out.device
+    )
+    merged_lse = torch.empty((tokens, heads), dtype=lses.dtype, device=lses.device)
+    o_sb, o_sh, o_sd = attn_out.stride()
+    n_sh, n_sb, n_sd = out_hm.stride()
+    l_sn, l_sb, l_sh = lses.stride()
+    _glm_correct_attn_cp_out_hm_kernel[(tokens, heads, 1)](
+        attn_out,
+        out_hm,
+        lses,
+        merged_lse,
+        o_sb,
+        o_sh,
+        o_sd,
+        n_sh,
+        n_sb,
+        n_sd,
+        l_sn,
+        l_sb,
+        l_sh,
+        cp_group.rank_in_group,
+        HEAD_DIM=head_dim,
+        N_ROUNDED=world,
+    )
+    # dim 0 scatter: the communicator's movedim/contiguous are no-ops here.
+    return cp_group.reduce_scatter(out_hm, dim=0)
 
 
 def dcp_fold_pack(attn_out: torch.Tensor, lse: torch.Tensor) -> torch.Tensor:
@@ -578,6 +702,11 @@ class MLAAttention(nn.Module, AttentionLayerBase):
         # reduce-scatter (docs/SPEED-ARCHITECTURE-OPTIONS.md, lever H). Off by
         # default; every rank must run the same setting.
         self.dcp_lse_fold = os.environ.get("GLM_DCP_LSE_FOLD") == "1"
+        # GLM overlay: head-major DCP merge, no reduce-scatter relayout copies
+        # (dcp_lse_ag_out_rs_headmajor). Off by default; exclusive with the fold.
+        self.dcp_rs_headmajor = os.environ.get("GLM_DCP_RS_HEADMAJOR") == "1"
+        if self.dcp_rs_headmajor and self.dcp_lse_fold:
+            raise ValueError("GLM_DCP_RS_HEADMAJOR and GLM_DCP_LSE_FOLD are exclusive")
 
         # Initialize q/k/v range constants.
         self.q_range = torch.tensor(envs.Q_SCALE_CONSTANT, dtype=torch.float32)
@@ -912,6 +1041,7 @@ class MLAAttention(nn.Module, AttentionLayerBase):
             attn_out, lse = self.impl.forward_mqa(mqa_q, kv_cache, attn_metadata, self)  # type: ignore[attr-defined]
 
             # correct dcp attn_out with lse.
+            head_major = False
             if self.impl.dcp_world_size > 1:
                 assert lse is not None, (
                     "DCP needs a per-token softmax LSE from the decode "
@@ -928,6 +1058,11 @@ class MLAAttention(nn.Module, AttentionLayerBase):
                     )
                 elif self.dcp_lse_fold:
                     attn_out = dcp_fold_lse_rs(attn_out, lse, get_dcp_group())
+                elif self.dcp_rs_headmajor:
+                    attn_out = dcp_lse_ag_out_rs_headmajor(
+                        attn_out, lse, get_dcp_group()
+                    )
+                    head_major = True
                 else:
                     attn_out = cp_lse_ag_out_rs(
                         attn_out,
@@ -937,7 +1072,7 @@ class MLAAttention(nn.Module, AttentionLayerBase):
                     )
 
             # v_up projection
-            self._v_up_proj(attn_out, out=mqa_output_slice)
+            self._v_up_proj(attn_out, out=mqa_output_slice, head_major=head_major)
 
         if quant_key is not None:
             quant_idx = num_mqa_tokens if mha_use_quant_output else num_actual_toks
@@ -1129,9 +1264,13 @@ class MLAAttention(nn.Module, AttentionLayerBase):
             cache_dtype_str=vllm_config.cache_config.cache_dtype,
         )
 
-    def _v_up_proj(self, x: torch.Tensor, out: torch.Tensor):
-        # Convert from (B, N, L) to (N, B, L)
-        x = x.view(-1, self.num_heads, self.kv_lora_rank).transpose(0, 1)
+    def _v_up_proj(self, x: torch.Tensor, out: torch.Tensor, head_major: bool = False):
+        if head_major:
+            # Already (N, B, L) from the head-major DCP merge.
+            x = x.view(self.num_heads, -1, self.kv_lora_rank)
+        else:
+            # Convert from (B, N, L) to (N, B, L)
+            x = x.view(-1, self.num_heads, self.kv_lora_rank).transpose(0, 1)
         out = out.view(-1, self.num_heads, self.v_head_dim)
         if self.is_aiter_triton_fp4_bmm_enabled:
             out = rocm_aiter_ops.batched_gemm_a16wfp4(

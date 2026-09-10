@@ -54,7 +54,8 @@ def test_non_power_of_two_width():
 def test_backend_threads_the_length_to_both_kernels():
     src = (OVERLAY / "v1/attention/backends/mla/flashmla_sparse.py").read_text()
     assert 'os.environ.get("GLM_DCP_COMPACT", "0")' in src
-    assert "topk_indices, topk_length = compact_dcp_candidates(topk_indices)" in src
+    assert "topk_indices, topk_length, empty_rows = compact_dcp_candidates(" in src
+    assert "topk_indices, return_empty=True" in src
     assert src.count("topk_length=topk_length,") >= 3  # backend call, b12x helper, Triton fallback
     helper = (OVERLAY / "v1/attention/ops/deepseek_v4_ops/b12x_sparse_helpers.py").read_text()
     assert "DCP overlay: topk_length passthrough" in helper

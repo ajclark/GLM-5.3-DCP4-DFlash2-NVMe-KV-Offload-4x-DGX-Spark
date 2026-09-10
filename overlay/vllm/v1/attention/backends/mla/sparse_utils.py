@@ -238,14 +238,17 @@ def _compact_dcp_candidates_kernel(
 
 def compact_dcp_candidates(
     token_indices: torch.Tensor,  # int32 [num_tokens, NUM_TOPK_TOKENS], -1 = not ours
-) -> tuple[torch.Tensor, torch.Tensor]:
+    return_empty: bool = False,
+):
     """DCP overlay: candidate compaction. Return (compacted, lengths) where
     each row of `compacted` holds that token's valid candidates first, then
     -1, and `lengths[t] = max(1, number of valid candidates)`. The sparse
     kernels bound their candidate loop by `lengths`, so a rank only walks the
     top-k entries it owns (~1/dcp of them) instead of masking all of them.
     An empty row keeps a single -1 entry, which the kernels mask as before,
-    and the caller still neutralises all -1 rows in the LSE merge."""
+    and the caller still neutralises all -1 rows in the LSE merge. With
+    `return_empty` the raw count also yields the per-token "this rank owns no
+    candidate" mask, so the caller need not re-scan the [T, topk] table."""
     assert token_indices.dtype == torch.int32 and token_indices.dim() == 2
     num_tokens, num_topk = token_indices.shape
     src = token_indices.contiguous()
@@ -256,6 +259,9 @@ def compact_dcp_candidates(
         src, out, counts, src.stride(0), out.stride(0),
         NUM_TOPK_TOKENS=num_topk, BLOCK=block,
     )
+    if return_empty:
+        empty = counts == 0
+        return out, counts.clamp_(min=1), empty
     return out, counts.clamp_(min=1)
 
 

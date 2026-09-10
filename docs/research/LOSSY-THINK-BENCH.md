@@ -142,3 +142,64 @@ and budgets, usage/field/span counting, prefilled/truncated spans, echoed scope,
 armed-but-zero thinking-off traces, pooled denominators, paired settings, and
 actual bounded function checks on both visible answers. Run `.venv/bin/pytest -q tests/`
 and compile the four changed/added bench Python modules plus the new test file.
+
+## Task-level report
+
+Hold 9 evaluates the same 12 official HumanEval tasks in two passes, ordered
+control → m2.5 → m5.0 per pass, C1, pi thinking high. **The completion limit is
+8192 (`PI_HE_MAX_TOKENS`), reduced from production's 32768**; this is a protocol
+deviation, not a production-equivalent reasoning-budget experiment.
+
+After all six lane summaries exist, report entirely locally:
+
+```bash
+.venv/bin/python bench/spec_think_tasks_report.py \
+  results/lossy-think-tasks-20260910/ \
+  --trace /path/to/spec-trace.jsonl \
+  --out results/lossy-think-tasks-20260910/task-report
+```
+
+Add **`--allow-partial` before reading an experiment still being written**.
+It reports missing passes/tasks and an unfinished JSONL tail, uses available
+paired tasks, and never marks a partial snapshot promotion-ready. Without it,
+completion summaries are checked before private task/call files are opened.
+If no trace is available, explicitly substitute `--no-trace`; activation is
+then **unproven**. Output is `<prefix>.json` plus `<prefix>.md`. Exit 1 means a
+reportable validation failure; exit 2 means unusable input/CLI configuration.
+
+The tables include per-arm/pass and pooled official `check.passed` counts,
+tasks with errors, elapsed lane wall, task median, output/reasoning tokens,
+API and length-stop counts, proxy-pooled decode (`Σtokens/Σdecode_seconds`),
+and emitted/cycle (`1+Σaccepted/Σdrafts`, **including the bonus token**).
+Reasoning character share is a separate character-based measure. Task wall
+comes from `seconds`; pooled arm wall sums lane-summary elapsed times.
+Sources: `bench/pi_humaneval.py:evaluate,summarize` and
+`bench/spec_think_tasks_report.py:aggregate,compare`.
+
+Pair by `(task_id, pass)`, treatment/control. Report wall/reasoning/output
+ratios, pair medians, and the both-pass/control-only/treatment-only/both-fail
+matrix. Geometric means weight tasks equally; seeded percentile bootstrap
+resamples whole task IDs, retaining both paired passes together. Defaults:
+`--seed 20260910 --bootstrap-samples 10000`. Zero denominators are undefined
+and counted; zero numerators remain zero. Length-bound tasks have any proxy
+call ending `finish_reason=length`; differing or unknown paired completion
+budgets are flagged. Small task counts and budget-censored outcomes limit
+interpretation; faster completion alone is not a quality win.
+
+Activation requires matching treatment labels/margins, scope `think`, enabled
+lossy verification and positive relaxation; control rows require zero relaxed
+accepts and explicit null margin. Verify times use proxy **call-start** `t`
+and inclusive `[t,t+wall_s]` windows. A label in the wrong arm's window fails;
+rows outside every proxy window count as other traffic, even for a recognized
+label. Missing labels, overlapping arm windows, dropped/ineligible telemetry
+and writer errors fail proof. No trace is joined through private request text.
+
+Only whitelisted counts, public HumanEval IDs and fixed diagnostics are
+serialized. Private texts, tools/messages, check output, error payloads and
+trace request IDs never enter JSON, Markdown or stdout. Tests use synthetic
+fixture trees exclusively:
+
+```bash
+.venv/bin/pytest -q tests/test_spec_think_tasks_report.py
+python3 -m py_compile bench/spec_think_tasks_report.py tests/test_spec_think_tasks_report.py
+```
