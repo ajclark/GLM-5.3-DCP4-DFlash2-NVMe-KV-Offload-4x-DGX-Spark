@@ -65,14 +65,113 @@ def experiment_launcher(data, no_marlin_atomic_add=False):
     return data.replace(marker, b'-e VLLM_MARLIN_USE_ATOMIC_ADD=0 ')
 
 
+def validated_lane(lane):
+    """Experiment lane overrides: only the keys the node launch honours, in range.
+
+    The MTP prose lane loads the checkpoint's next-token layer (~2.8 GB/rank at
+    TP4), so it must give that memory back from the KV pool and keep the window
+    inside the pool: at DCP2 the daily 6e9 pool holds ~198k tokens, so a pool of
+    P bytes holds about P/30200 tokens and MAXLEN must stay below that.
+    """
+    allowed = {'SPEC_MODE','MTP_K','MAXLEN','KVBYTES','GLM_SPEC_POLICY','MAXBATCHED','NCCL_IB_QPS_PER_CONNECTION'}
+    unknown = set(lane) - allowed
+    if unknown:
+        raise ValueError('unsupported lane keys: '+', '.join(sorted(unknown)))
+    out = {}
+    mode = lane.get('SPEC_MODE','dflash')
+    if mode not in ('dflash','mtp'):
+        raise ValueError('SPEC_MODE must be dflash or mtp')
+    out['SPEC_MODE'] = mode
+    if mode == 'mtp':
+        k = lane.get('MTP_K', 2)
+        if type(k) is not int or not 1 <= k <= 3:
+            raise ValueError('MTP_K must be 1..3')
+        out['MTP_K'] = k
+        if 'KVBYTES' not in lane:
+            raise ValueError('the MTP lane must state KVBYTES (the MTP layer needs ~2.8 GB/rank back from the pool)')
+    if 'KVBYTES' in lane:
+        kv = lane['KVBYTES']
+        if type(kv) is not int or not 2_000_000_000 <= kv <= 6_000_000_000:
+            raise ValueError('KVBYTES must be an int in [2e9, 6e9]')
+        out['KVBYTES'] = kv
+    if 'MAXLEN' in lane:
+        maxlen = lane['MAXLEN']
+        if type(maxlen) is not int or not 16384 <= maxlen <= 180224:
+            raise ValueError('MAXLEN must be an int in [16384, 180224]')
+        out['MAXLEN'] = maxlen
+    capacity = out.get('KVBYTES', 6_000_000_000) // 30200
+    if out.get('MAXLEN', 180224) > capacity:
+        raise ValueError(f'MAXLEN exceeds the pool capacity (~{capacity} tokens at DCP2)')
+    if 'GLM_SPEC_POLICY' in lane:
+        if lane['GLM_SPEC_POLICY'] not in ('off','shadow','fixed','adaptive'):
+            raise ValueError('bad GLM_SPEC_POLICY')
+        out['GLM_SPEC_POLICY'] = lane['GLM_SPEC_POLICY']
+    if 'MAXBATCHED' in lane:
+        # Prefill chunk: 2048 is the validated DCP value; larger chunks grow the
+        # gathered-query/accumulator transients (DCP2: ~0.1 MB/token) and must
+        # boot under the memory watchdog with cold long prefills before promotion.
+        mb = lane['MAXBATCHED']
+        if type(mb) is not int or mb not in (2048, 4096, 8192):
+            raise ValueError('MAXBATCHED must be 2048, 4096 or 8192')
+        out['MAXBATCHED'] = mb
+    if 'NCCL_IB_QPS_PER_CONNECTION' in lane:
+        # Prefill link utilisation: one QP per connection reaches ~98 Gbit/s on
+        # the 200G ring links; more QPs stripe the same peer connection (no
+        # change to ring pairing or channel count). Measure decode latency too.
+        qps = lane['NCCL_IB_QPS_PER_CONNECTION']
+        if type(qps) is not int or qps not in (1, 2, 4):
+            raise ValueError('NCCL_IB_QPS_PER_CONNECTION must be 1, 2 or 4')
+        out['NCCL_IB_QPS_PER_CONNECTION'] = qps
+    return out
+
+
+def lane_from_args(args):
+    lane = {}
+    if args.mtp is not None:
+        lane.update(SPEC_MODE='mtp', MTP_K=args.mtp, GLM_SPEC_POLICY='off')
+        if args.kvbytes is None or args.maxlen is None:
+            raise SystemExit('--mtp requires --kvbytes and --maxlen')
+    if args.kvbytes is not None:
+        lane['KVBYTES'] = args.kvbytes
+    if args.maxlen is not None:
+        lane['MAXLEN'] = args.maxlen
+    if args.maxbatched is not None:
+        lane['MAXBATCHED'] = args.maxbatched
+    if args.ib_qps is not None:
+        lane['NCCL_IB_QPS_PER_CONNECTION'] = args.ib_qps
+    return lane or None
+
+
+def committed_stage_hashes():
+    """sha256 -> name for every stage/glm-dcp/*.py blob at HEAD (empty if no git)."""
+    try:
+        listing = subprocess.run(['git','ls-tree','HEAD','stage/glm-dcp/'],cwd=ROOT,
+                                 capture_output=True,text=True,check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return {}
+    out = {}
+    for line in listing.splitlines():
+        meta, path = line.split('\t')
+        if not path.endswith('.py'):
+            continue
+        blob = subprocess.run(['git','cat-file','blob',meta.split()[2]],cwd=ROOT,
+                              capture_output=True,check=True).stdout
+        out[hashlib.sha256(blob).hexdigest()] = Path(path).name
+    return out
+
+
 def package(no_marlin_atomic_add=False):
     files = {
         'spec_node.py':ROOT/'bench/spec_node.py', 'spec_memory.py':ROOT/'bench/spec_memory.py',
         'launch.sh':ROOT/'launch-glm53big-dcp.sh',
     }
     for name in ('scheduler.py','adaptive.py','model_runner.py','cudagraph_utils.py','v2_block_table.py',
-                 'v2_async_utils.py','v1_outputs.py','confidence_trace.py'):
+                 'v2_async_utils.py','v1_outputs.py','confidence_trace.py',
+                 'v2_rejection_sampler_utils.py','v2_rejection_sampler.py','v2_sample_states.py',
+                 'mla_attention.py'):
         files['changes/'+name] = ROOT/'stage/glm-dcp'/name
+    # The MTP lane's pinned caller-contract overlay; mounted only when SPEC_MODE=mtp.
+    files['changes/mtp_speculator.py'] = ROOT/'experiments/mtp/speculator.py'
     full_manifest = json.loads((ROOT/'results/adaptive-spec/inventory/python-sha256.json').read_text())
     relevant = ['v1/core/sched/scheduler.py','v1/core/sched/async_scheduler.py',
                 'config/vllm.py','config/speculative.py',
@@ -81,7 +180,8 @@ def package(no_marlin_atomic_add=False):
     relevant += [p for p in full_manifest if p.startswith('v1/worker/gpu/spec_decode/')]
     manifest = {p:full_manifest[p] for p in relevant}
     # Added after the original inventory; keep that historical manifest frozen.
-    for rel in ('v1/worker/gpu/block_table.py','v1/worker/gpu/async_utils.py','v1/outputs.py'):
+    for rel in ('v1/worker/gpu/block_table.py','v1/worker/gpu/async_utils.py','v1/outputs.py',
+                'v1/worker/gpu/sample/states.py'):
         manifest[rel] = hashlib.sha256((ROOT/'baseline/vllm'/rel).read_bytes()).hexdigest()
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf,mode='w') as tar:
@@ -98,15 +198,29 @@ def package(no_marlin_atomic_add=False):
         info = tarfile.TarInfo('expected-runtime.json')
         info.size = len(data)
         tar.addfile(info,io.BytesIO(data))
+        # Overlays production may already mount over the pristine files above:
+        # the staged tree now, and the last committed tree (what the latest
+        # rollout deployed) so an edited-but-undeployed overlay is not mistaken
+        # for the running one.
+        vetted = {hashlib.sha256(path.read_bytes()).hexdigest():path.name
+                  for path in sorted((ROOT/'stage/glm-dcp').glob('*.py'))}
+        vetted.update(committed_stage_hashes())
+        data = json.dumps(vetted).encode()
+        info = tarfile.TarInfo('vetted-overlays.json')
+        info.size = len(data)
+        tar.addfile(info,io.BytesIO(data))
     return buf.getvalue()
 
 
-def prepare(label, out, reuse_cache_from=None, trace_off=False, costs=None, hint_priors=None, confidence_trace=False, no_marlin_atomic_add=False):
+def prepare(label, out, reuse_cache_from=None, trace_off=False, costs=None, hint_priors=None, confidence_trace=False, no_marlin_atomic_add=False, lossy=False, lossy_check=False, profiler=False, dcp_lse_fold=False, lane=None):
     if no_marlin_atomic_add and reuse_cache_from:
         raise ValueError('the atomic control needs a fresh isolated cache')
+    if lossy_check and not lossy:
+        raise ValueError('the rank-agreement check is only meaningful with lossy verification enabled')
     data = package(no_marlin_atomic_add)
     (out/'experiment-options.json').write_text(json.dumps({'marlin_atomic_add': not no_marlin_atomic_add,
-        'confidence_trace': confidence_trace, 'package_sha256': hashlib.sha256(data).hexdigest(),
+        'confidence_trace': confidence_trace, 'lossy': lossy, 'lossy_check': lossy_check,
+        'package_sha256': hashlib.sha256(data).hexdigest(),
         'note': 'Atomic=0 modifies only the isolated launch copy; never reuse its persisted KV across settings.'}, indent=2)+'\n')
     def node(host):
         dest = 'glm-spec/'+label
@@ -129,6 +243,24 @@ def prepare(label, out, reuse_cache_from=None, trace_off=False, costs=None, hint
     if confidence_trace:
         parallel(lambda host:ssh(host,shlex.join(['touch',f'glm-spec/{label}/confidence-trace-enabled'])))
         (out/'confidence-trace-enabled').touch()
+    # Bounded-lossy verification is a boot switch (GLM_SPEC_LOSSY=1) plus per-request
+    # controls; the marker files make the node launch export it explicitly.
+    if lossy:
+        parallel(lambda host:ssh(host,shlex.join(['touch',f'glm-spec/{label}/lossy-enabled'])))
+        (out/'lossy-enabled').touch()
+    if lossy_check:
+        parallel(lambda host:ssh(host,shlex.join(['touch',f'glm-spec/{label}/lossy-check-enabled'])))
+        (out/'lossy-check-enabled').touch()
+    if profiler:
+        parallel(lambda host:ssh(host,shlex.join(['touch',f'glm-spec/{label}/profiler-enabled'])))
+        (out/'profiler-enabled').touch()
+    if dcp_lse_fold:
+        parallel(lambda host:ssh(host,shlex.join(['touch',f'glm-spec/{label}/dcp-lse-fold-enabled'])))
+        (out/'dcp-lse-fold-enabled').touch()
+    if lane:
+        raw = json.dumps(validated_lane(lane)).encode()
+        parallel(lambda host:ssh(host, shlex.join(['tee', f'glm-spec/{label}/lane.json']), raw))
+        (out/'lane.json').write_bytes(raw)
     if reuse_cache_from:
         reused = parallel(lambda host:ssh(host,shlex.join(['python3',f'glm-spec/{label}/spec_node.py',
             'reuse-cache',label,'--source-label',reuse_cache_from])))
@@ -318,6 +450,15 @@ def main():
     ap.add_argument('--hint-priors',type=Path,help='Prepare server-owned weak workload priors; requires --costs')
     ap.add_argument('--confidence-trace',action='store_true',help='Prepare bounded previous-proposal confidence diagnostics; policy unchanged')
     ap.add_argument('--no-marlin-atomic-add',action='store_true',help='Prepare an isolated atomic=0 numerical control with a fresh cache')
+    ap.add_argument('--lossy',action='store_true',help='Prepare a boot with GLM_SPEC_LOSSY=1 so greedy requests may opt in to bounded-lossy verification')
+    ap.add_argument('--lossy-check',action='store_true',help='With --lossy: all-gather accepted counts across TP every 64 steps and fail on disagreement (trial only)')
+    ap.add_argument('--profiler',action='store_true',help='Arm the torch profiler (PROFILER_DIR=/kvcache/profiles); traces only between /start_profile and /stop_profile')
+    ap.add_argument('--dcp-lse-fold',action='store_true',help='Boot with GLM_DCP_LSE_FOLD=1: fold the DCP LSE all-gather into the attention reduce-scatter')
+    ap.add_argument('--mtp',type=int,help='Prepare the MTP prose lane with this many draft tokens (1..3); requires --kvbytes and --maxlen and sets the policy off')
+    ap.add_argument('--kvbytes',type=int,help='Lane override: KV pool bytes per rank for the experiment boot')
+    ap.add_argument('--maxlen',type=int,help='Lane override: max model length for the experiment boot')
+    ap.add_argument('--maxbatched',type=int,choices=(2048,4096,8192),help='Lane override: prefill chunk (max-num-batched-tokens) for the experiment boot')
+    ap.add_argument('--ib-qps',type=int,choices=(1,2,4),help='Lane override: NCCL_IB_QPS_PER_CONNECTION for the experiment boot (prefill link utilisation)')
     args = ap.parse_args()
     if not re.fullmatch(r'[a-z0-9-]{1,48}',args.label):
         ap.error('invalid label')
@@ -340,7 +481,9 @@ def main():
     out = ROOT/'results/adaptive-spec'/args.label
     if args.action == 'prepare':
         out.mkdir(exist_ok=False)
-        prepare(args.label,out,args.reuse_cache_from,args.trace_off,args.costs,args.hint_priors,args.confidence_trace,args.no_marlin_atomic_add)
+        prepare(args.label,out,args.reuse_cache_from,args.trace_off,args.costs,args.hint_priors,args.confidence_trace,args.no_marlin_atomic_add,
+                lossy=args.lossy,lossy_check=args.lossy_check,profiler=args.profiler,dcp_lse_fold=args.dcp_lse_fold,
+                lane=lane_from_args(args))
     elif args.action == 'run':
         if not (out/'prepared.json').exists():
             ap.error('prepare this label first')

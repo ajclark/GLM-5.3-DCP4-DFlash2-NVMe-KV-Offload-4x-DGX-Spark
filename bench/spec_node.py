@@ -48,12 +48,26 @@ def prepare(root, label):
     if shutil.disk_usage(root).free < 200_000_000_000:
         raise RuntimeError("less than 200 GB free for isolated experiment cache")
     manifest = json.loads((root/'expected-runtime.json').read_text())
-    # Verify the source actually running on each rank before replacing any file.
+    vetted_path = root/'vetted-overlays.json'
+    vetted = json.loads(vetted_path.read_text()) if vetted_path.exists() else {}
+    mounted = {m['Destination']:m['Source'] for m in current['Mounts']}
+    overlays_running = {}
+    # Verify the source actually running on each rank before replacing any file:
+    # either the pristine runtime file, or one of the repository's vetted
+    # overlays bind-mounted over it (production has mounted the V2 runner set
+    # since dcp2-cachefix-prod).
     for rel, wanted in manifest.items():
-        result = command('docker','exec',NAME,'sha256sum',
-                         '/usr/local/lib/python3.12/dist-packages/vllm/'+rel)
-        if result.stdout.split()[0] != wanted:
-            raise RuntimeError('runtime source mismatch: '+rel)
+        dest = '/usr/local/lib/python3.12/dist-packages/vllm/'+rel
+        observed = command('docker','exec',NAME,'sha256sum',dest).stdout.split()[0]
+        if observed == wanted:
+            continue
+        source = mounted.get(dest)
+        if (source and Path(source).is_file()
+                and hashlib.sha256(Path(source).read_bytes()).hexdigest() == observed
+                and observed in vetted):
+            overlays_running[rel] = vetted[observed]
+            continue
+        raise RuntimeError('runtime source mismatch: '+rel)
     # All deployed overlays must match the vetted staging tree, including the
     # durable slab implementation (the repo's overlay copy is older than stage).
     mount_rows = []
@@ -71,7 +85,8 @@ def prepare(root, label):
     (root/'kvcache').mkdir()
     (root/'original.json').write_text(json.dumps(current))
     (root/'original.json').chmod(0o600)
-    print(json.dumps({'prepared':label, 'image':current['Image'], 'mounts':mount_rows}))
+    print(json.dumps({'prepared':label, 'image':current['Image'], 'mounts':mount_rows,
+                      'overlays_running':overlays_running}))
 
 
 def original(root):
@@ -164,12 +179,28 @@ def launch(root, label, rank):
                GLM_SPEC_TRACE='' if (root/'trace-disabled').exists() else '/kvcache/spec-trace.jsonl',
                GLM_SPEC_EXPERIMENT=label)
     env['GLM_SPEC_CONFIDENCE_TRACE'] = '1' if (root/'confidence-trace-enabled').exists() else '0'
+    env['GLM_SPEC_LOSSY'] = '1' if (root/'lossy-enabled').exists() else '0'
+    # Torch profiler armed only: traces are taken between POST /start_profile
+    # and /stop_profile, one file per rank under the isolated cache directory.
+    env['PROFILER_DIR'] = '/kvcache/profiles' if (root/'profiler-enabled').exists() else ''
+    env['DCP_LSE_FOLD'] = '1' if (root/'dcp-lse-fold-enabled').exists() else '0'
+    # Optional lane overrides written by the controller's prepare (e.g. the MTP
+    # prose lane: smaller KV pool, shorter window, policy off). Only the listed
+    # keys may change; the image, DCP size, TP and batching stay the lane's.
+    lane = json.loads((root/'lane.json').read_text()) if (root/'lane.json').exists() else {}
+    for key in ('MAXLEN','KVBYTES','MTP_K','GLM_SPEC_POLICY','MAXBATCHED','NCCL_IB_QPS_PER_CONNECTION'):
+        if key in lane:
+            env[key] = str(lane[key])
+    spec_mode = str(lane.get('SPEC_MODE','dflash'))
+    if spec_mode not in ('dflash','mtp'):
+        raise RuntimeError('unsupported experiment spec mode: '+spec_mode)
+    env['GLM_SPEC_LOSSY_CHECK'] = '1' if (root/'lossy-check-enabled').exists() else '0'
     if (root/'kvcache/boot-costs.json').exists():
         env.update(GLM_SPEC_POLICY='adaptive', GLM_SPEC_COSTS='/kvcache/boot-costs.json')
     if (root/'kvcache/hint-priors.json').exists():
         env['GLM_SPEC_HINT_PRIORS'] = '/kvcache/hint-priors.json'
     with (root/'launch.log').open('a') as out:
-        result = subprocess.run(['bash',str(root/'launch.sh'),str(rank),'dflash'],env=env,
+        result = subprocess.run(['bash',str(root/'launch.sh'),str(rank),spec_mode],env=env,
                                 stdout=out,stderr=out,timeout=60)
     if result.returncode:
         raise RuntimeError('launch failed; inspect launch.log')

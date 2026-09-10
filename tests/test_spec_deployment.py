@@ -63,7 +63,10 @@ def test_stage_matches_changes_and_checksums():
         ROOT/'stage/glm-dcp/v2_block_table.py').read_bytes()
     for rel, name in (('v1/worker/gpu/async_utils.py', 'v2_async_utils.py'),
                       ('v1/outputs.py', 'v1_outputs.py'),
-                      ('v1/spec_decode/confidence_trace.py', 'confidence_trace.py')):
+                      ('v1/spec_decode/confidence_trace.py', 'confidence_trace.py'),
+                      ('v1/worker/gpu/spec_decode/rejection_sampler_utils.py', 'v2_rejection_sampler_utils.py'),
+                      ('v1/worker/gpu/spec_decode/rejection_sampler.py', 'v2_rejection_sampler.py'),
+                      ('v1/worker/gpu/sample/states.py', 'v2_sample_states.py')):
         assert (ROOT/'overlay/vllm'/rel).read_bytes() == (ROOT/'stage/glm-dcp'/name).read_bytes()
     for line in (ROOT/'stage/SHA256SUMS').read_text().splitlines():
         digest,name = line.split(maxsplit=1)
@@ -198,3 +201,94 @@ def test_atomic_control_refuses_persisted_cache_reuse_before_packaging(tmp_path)
     from spec_experiment import prepare
     with pytest.raises(ValueError, match='fresh isolated cache'):
         prepare('control', tmp_path, reuse_cache_from='old', no_marlin_atomic_add=True)
+
+
+def test_prepare_accepts_vetted_mounted_overlays_and_rejects_unknown(tmp_path,monkeypatch):
+    """Production mounts the V2 overlay set; prepare must accept exactly those
+    files (by hash) over the pristine runtime and refuse anything else."""
+    import contextlib, hashlib, io
+    pristine, overlay = b'pristine\n', b'overlay\n'
+    src = tmp_path/'glm-dcp'; src.mkdir()
+    (src/'model_runner.py').write_bytes(overlay)
+    (src/'scheduler.py').write_bytes(overlay)
+    root = tmp_path/'exp'; root.mkdir()
+    (root/'changes').mkdir()
+    (root/'expected-runtime.json').write_text(json.dumps({
+        'v1/worker/gpu/model_runner.py': hashlib.sha256(pristine).hexdigest(),
+        'v1/core/sched/scheduler.py': hashlib.sha256(pristine).hexdigest(),
+        'v1/worker/gpu/sample/states.py': hashlib.sha256(pristine).hexdigest()}))
+    vetted = json.dumps({hashlib.sha256(overlay).hexdigest():'model_runner.py'})
+    (root/'vetted-overlays.json').write_text(vetted)
+    base = '/usr/local/lib/python3.12/dist-packages/vllm/'
+    cmd = ['--decode-context-parallel-size','2','--max-model-len','180224','--max-num-batched-tokens','2048',
+           '--kv-cache-memory-bytes','6000000000','--max-num-seqs','12','--tensor-parallel-size','4']
+    container = {'State':{'Running':True,'OOMKilled':False},'Config':{'Labels':{},'Cmd':cmd},'Image':'img',
+                 'Mounts':[{'Source':str(src/'model_runner.py'),'Destination':base+'v1/worker/gpu/model_runner.py'},
+                           {'Source':str(src/'scheduler.py'),'Destination':base+'v1/core/sched/scheduler.py'}]}
+    observed = {base+'v1/worker/gpu/model_runner.py': overlay}
+    def fake_command(*args, check=True):
+        path = args[-1]
+        return NS(stdout=hashlib.sha256(observed.get(path, pristine)).hexdigest()+'  '+path)
+    monkeypatch.setattr(N,'command',fake_command)
+    monkeypatch.setattr(N,'inspect',lambda name=None: container)
+    monkeypatch.setattr(N.shutil,'disk_usage',lambda p: NS(free=10**12))
+    monkeypatch.setattr(N.shutil,'copytree',lambda a,b,ignore=None: (root/'dcp').mkdir())
+    def run():
+        for leftover in ('original.json','mount-manifest.json'):
+            (root/leftover).unlink(missing_ok=True)
+        for d in ('kvcache','dcp'):
+            if (root/d).exists(): (root/d).rmdir()
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            N.prepare(root,'lbl')
+        return json.loads(out.getvalue())
+    # 1. vetted overlay mounted over model_runner: accepted and reported.
+    assert run()['overlays_running'] == {'v1/worker/gpu/model_runner.py':'model_runner.py'}
+    # 2. the same mounted bytes, but not in the vetted set: refused.
+    (root/'vetted-overlays.json').write_text('{}')
+    with pytest.raises(RuntimeError, match='runtime source mismatch'):
+        run()
+    # 3. a mismatching file whose mount source does not hash to what runs: refused.
+    (root/'vetted-overlays.json').write_text(vetted)
+    observed[base+'v1/core/sched/scheduler.py'] = b'edited in the container\n'
+    with pytest.raises(RuntimeError, match='scheduler'):
+        run()
+
+
+def test_lane_overrides_are_validated_and_reach_the_launch(tmp_path,monkeypatch):
+    import importlib.util, io, contextlib
+    spec = importlib.util.spec_from_file_location('spec_experiment_lane', ROOT/'bench/spec_experiment.py')
+    E = importlib.util.module_from_spec(spec); spec.loader.exec_module(E)
+    # validation
+    assert E.validated_lane({'SPEC_MODE':'mtp','MTP_K':2,'KVBYTES':3_200_000_000,'MAXLEN':90112,'GLM_SPEC_POLICY':'off'}) == {
+        'SPEC_MODE':'mtp','MTP_K':2,'KVBYTES':3_200_000_000,'MAXLEN':90112,'GLM_SPEC_POLICY':'off'}
+    assert E.validated_lane({'MAXBATCHED':4096}) == {'SPEC_MODE':'dflash','MAXBATCHED':4096}
+    assert E.validated_lane({'NCCL_IB_QPS_PER_CONNECTION':2}) == {'SPEC_MODE':'dflash','NCCL_IB_QPS_PER_CONNECTION':2}
+    for bad in ({'SPEC_MODE':'mtp'}, {'SPEC_MODE':'mtp','MTP_K':4,'KVBYTES':3_200_000_000}, {'MAXBATCHED':3000}, {'NCCL_IB_QPS_PER_CONNECTION':3},
+                {'SPEC_MODE':'mtp','MTP_K':2,'KVBYTES':3_200_000_000,'MAXLEN':180224},
+                {'KVBYTES':1_000_000_000}, {'FOO':1}, {'GLM_SPEC_POLICY':'lossy'}):
+        with pytest.raises(ValueError):
+            E.validated_lane(bad)
+    # launch honours lane.json and passes the spec mode to the launcher
+    root = tmp_path/'exp'; root.mkdir()
+    (root/'original.json').write_text(json.dumps({'Id':'orig','Image':'img'}))
+    (root/'lane.json').write_text(json.dumps({'SPEC_MODE':'mtp','MTP_K':2,'KVBYTES':3_200_000_000,'MAXLEN':90112,'GLM_SPEC_POLICY':'off'}))
+    (root/'launch.sh').write_text('#!/bin/bash\n')
+    monkeypatch.setattr(N,'inspect',lambda name=None: {'State':{'Running':False}} if name else None)
+    seen = {}
+    def fake_run(cmd, env=None, **kw):
+        seen['cmd'] = cmd; seen['env'] = dict(env)
+        return NS(returncode=0)
+    monkeypatch.setattr(N.subprocess,'run',fake_run)
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        N.launch(root,'lbl',0)
+    assert seen['cmd'][-1] == 'mtp'
+    assert seen['env']['MTP_K'] == '2' and seen['env']['KVBYTES'] == '3200000000'
+    assert seen['env']['MAXLEN'] == '90112' and seen['env']['GLM_SPEC_POLICY'] == 'off'
+    assert seen['env']['GLM_SPEC_LOSSY'] == '0'
+    # default lane unchanged
+    (root/'lane.json').unlink()
+    with contextlib.redirect_stdout(out):
+        N.launch(root,'lbl',0)
+    assert seen['cmd'][-1] == 'dflash' and seen['env']['KVBYTES'] == '6000000000' and seen['env']['GLM_SPEC_POLICY'] == 'shadow'
