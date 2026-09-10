@@ -1,0 +1,13 @@
+Create a file named solution.py in the current directory containing a complete, working implementation of the following. Keep the exact function name and signature. Do not create any other files.
+
+from typing import List, Any
+
+
+def filter_integers(values: List[Any]) -> List[int]:
+    """ Filter given list of any python values only for integers
+    >>> filter_integers(['a', 3.14, 5])
+    [5]
+    >>> filter_integers([1, 2, 3, 'abc', {}, []])
+    [1, 2, 3]
+    """
+ Before using any tool, reason carefully step by step in your thinking about the algorithm, edge cases and tests.

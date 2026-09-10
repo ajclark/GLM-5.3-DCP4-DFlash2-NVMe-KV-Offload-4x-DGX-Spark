@@ -1,0 +1,10 @@
+{"event":"request","epoch_ms":1789028190945.3193,"model":"glm-5.3","provider":"glm53","thinking":"high","temperature":0,"top_p":1,"max_tokens":8192,"chat_template_kwargs":{"enable_thinking":true,"reasoning_effort":"high"},"stream_options":{"include_usage":true},"tools":["read","bash","edit","write"],"messages_sha256":"c3288254ee19708a88fd24314117a803c6e8223ad526c874a8b17a81bb32578b","message_count":2}
+{"event":"response","epoch_ms":1789028190975.933,"status":200}
+{"event":"delta","epoch_ms":1789028192187.7207,"kind":"toolcall_delta","chars":12}
+{"event":"delta","epoch_ms":1789028193797.042,"kind":"toolcall_delta","chars":317}
+{"event":"completion","epoch_ms":1789028193798.5295,"usage":{"input":1065,"output":90,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":1155,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stop_reason":"toolUse","content_kinds":["toolCall"]}
+{"event":"request","epoch_ms":1789028193804.655,"model":"glm-5.3","provider":"glm53","thinking":"high","temperature":0,"top_p":1,"max_tokens":8192,"chat_template_kwargs":{"enable_thinking":true,"reasoning_effort":"high"},"stream_options":{"include_usage":true},"tools":["read","bash","edit","write"],"messages_sha256":"a389d8043deee4fc20bfb575f78f27e618b1d40613881f430ab74ad93935476d","message_count":4}
+{"event":"response","epoch_ms":1789028193822.7095,"status":200}
+{"event":"delta","epoch_ms":1789028194930.5,"kind":"text_delta","chars":4}
+{"event":"delta","epoch_ms":1789028195074.01,"kind":"text_delta","chars":1}
+{"event":"completion","epoch_ms":1789028195075.816,"usage":{"input":1164,"output":4,"cacheRead":0,"cacheWrite":0,"reasoning":0,"totalTokens":1168,"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0,"total":0}},"stop_reason":"stop","content_kinds":["text"]}

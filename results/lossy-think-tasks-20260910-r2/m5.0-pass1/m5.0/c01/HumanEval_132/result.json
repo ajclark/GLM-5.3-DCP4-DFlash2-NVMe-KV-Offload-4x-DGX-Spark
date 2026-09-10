@@ -1,0 +1,77 @@
+{
+  "task_id": "HumanEval/132",
+  "start": 1789030022.555323,
+  "end": 1789030273.0460355,
+  "seconds": 250.49071264266968,
+  "requests": [
+    {
+      "start": 1789030022.5690281,
+      "payload": {
+        "event": "request",
+        "epoch_ms": 1789030022569.028,
+        "model": "glm-5.3",
+        "provider": "glm53",
+        "thinking": "high",
+        "temperature": 0,
+        "top_p": 1,
+        "max_tokens": 8192,
+        "chat_template_kwargs": {
+          "enable_thinking": true,
+          "reasoning_effort": "high"
+        },
+        "stream_options": {
+          "include_usage": true
+        },
+        "tools": [
+          "read",
+          "bash",
+          "edit",
+          "write"
+        ],
+        "messages_sha256": "0188f339fbff0f11c608d421edbcee1e85bebedfe7dd97c9bec467a033f94ae7",
+        "message_count": 2
+      },
+      "delta_chars": {
+        "thinking_delta": 29894
+      },
+      "first_delta": 1789030023.5530279,
+      "first_text": null,
+      "last_delta": 1789030273.03887,
+      "statuses": [
+        200
+      ],
+      "end": 1789030273.043994,
+      "usage": {
+        "input": 1148,
+        "output": 8192,
+        "cacheRead": 0,
+        "cacheWrite": 0,
+        "reasoning": 0,
+        "totalTokens": 9340,
+        "cost": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        }
+      },
+      "stop_reason": "length",
+      "error": null,
+      "seconds": 250.47496581077576,
+      "ttft_s": 0.9839997291564941,
+      "post_first_s": 249.49096608161926
+    }
+  ],
+  "errors": [],
+  "truncated_calls": 1,
+  "output_tokens": 8192,
+  "reasoning_tokens": 0,
+  "input_tokens": 1148,
+  "request_seconds": 250.47496581077576,
+  "post_first_seconds": 249.49096608161926,
+  "check": {
+    "passed": false,
+    "result": "missing solution.py"
+  }
+}

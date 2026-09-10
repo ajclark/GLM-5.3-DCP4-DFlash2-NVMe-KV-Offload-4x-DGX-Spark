@@ -1,0 +1,27 @@
+control C1 HumanEval/20 622 tokens 51.4s passed
+control C1 HumanEval/49 198 tokens 9.7s passed
+CELL {"lane": "control", "concurrency": 1, "tasks": 2, "passed": 2, "errors": 0, "truncated_calls": 0, "output_tokens": 820, "reasoning_tokens": 0, "wall_s": 61.45206689834595, "aggregate_tok_s": 13.343733439534988, "request_tok_s": 13.490809788171692, "post_first_tok_s": 16.242824613968423, "server_decode_tok_s": 15.9633943072626, "median_task_s": 30.525564432144165, "median_ttft_s": 1.281488060951233, "max_running": 2.0, "mean_running": 1.3709677419354838, "api_calls": 8, "validity_flags": ["server/client request count mismatch"]}
+Traceback (most recent call last):
+  File "/home/napta2k/spark-cluster-mla-dcp/bench/pi_humaneval.py", line 357, in <module>
+    if __name__ == '__main__': main()
+                               ~~~~^^
+  File "/home/napta2k/spark-cluster-mla-dcp/bench/pi_humaneval.py", line 353, in main
+    asyncio.run(run_sweep(args.lane, args.out, Path(tmp)/'work', config,
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                         [int(x) for x in args.levels.split(',')], limit=args.limit))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 204, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/runners.py", line 127, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/napta2k/spark-cluster-mla-dcp/bench/pi_humaneval.py", line 334, in run_sweep
+    result = await run_cell(order, c, lane, out, work, config, check)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/napta2k/spark-cluster-mla-dcp/bench/pi_humaneval.py", line 278, in run_cell
+    raise RuntimeError('Invalid benchmark cell: ' + str(result['validity_flags']))
+RuntimeError: Invalid benchmark cell: ['server/client request count mismatch']

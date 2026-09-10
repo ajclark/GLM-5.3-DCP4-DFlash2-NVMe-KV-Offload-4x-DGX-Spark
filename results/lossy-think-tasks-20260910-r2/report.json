@@ -1,0 +1,1094 @@
+{
+  "status": "complete",
+  "promotion_ready": true,
+  "header": "Task protocol: lossy_scope=think; pi thinking high; PI_HE_MAX_TOKENS=8192, reduced from production 32768. Observed budget deviations are reported below.",
+  "scope": "think",
+  "labels": {
+    "m2.5": "think-tasks-m2.5",
+    "m5.0": "think-tasks-m5.0"
+  },
+  "window_slack_s": 2.0,
+  "include_extra_calls": false,
+  "extra_calls": {
+    "control": {
+      "output_tokens": 0,
+      "reasoning_tokens": 0,
+      "api_calls": 0,
+      "tasks": 0,
+      "passed": 0,
+      "errors": 0,
+      "wall_s": 0,
+      "wall_complete": true,
+      "median_task_s": null,
+      "proxy_calls": 8,
+      "proxy_api_calls": 12,
+      "length_calls": 0,
+      "length_bound_tasks": 0,
+      "pooled_decode_tok_s": 15.96351197263398,
+      "proxy_generation_tokens": 826,
+      "server_decode_s": 51.743,
+      "spec_drafts": 129,
+      "spec_accepted_tokens": 696,
+      "accepted_per_cycle": 6.395348837209302,
+      "reasoning_chars_share": 0.047619047619047616,
+      "completion_budgets": [
+        8192
+      ],
+      "unknown_budget_calls": 0,
+      "thinking_not_confirmed_calls": 0
+    },
+    "m2.5": {
+      "output_tokens": 0,
+      "reasoning_tokens": 0,
+      "api_calls": 0,
+      "tasks": 0,
+      "passed": 0,
+      "errors": 0,
+      "wall_s": 0,
+      "wall_complete": true,
+      "median_task_s": null,
+      "proxy_calls": 1,
+      "proxy_api_calls": 1,
+      "length_calls": 0,
+      "length_bound_tasks": 0,
+      "pooled_decode_tok_s": 38.288883020860844,
+      "proxy_generation_tokens": 145,
+      "server_decode_s": 3.787,
+      "spec_drafts": 26,
+      "spec_accepted_tokens": 119,
+      "accepted_per_cycle": 5.576923076923077,
+      "reasoning_chars_share": 0.18214285714285713,
+      "completion_budgets": [
+        200
+      ],
+      "unknown_budget_calls": 0,
+      "thinking_not_confirmed_calls": 0
+    },
+    "m5.0": {
+      "output_tokens": 0,
+      "reasoning_tokens": 0,
+      "api_calls": 0,
+      "tasks": 0,
+      "passed": 0,
+      "errors": 0,
+      "wall_s": 0,
+      "wall_complete": true,
+      "median_task_s": null,
+      "proxy_calls": 1,
+      "proxy_api_calls": 1,
+      "length_calls": 0,
+      "length_bound_tasks": 0,
+      "pooled_decode_tok_s": 40.72790294627384,
+      "proxy_generation_tokens": 94,
+      "server_decode_s": 2.308,
+      "spec_drafts": 16,
+      "spec_accepted_tokens": 77,
+      "accepted_per_cycle": 5.8125,
+      "reasoning_chars_share": 0.06629834254143646,
+      "completion_budgets": [
+        200
+      ],
+      "unknown_budget_calls": 0,
+      "thinking_not_confirmed_calls": 0
+    }
+  },
+  "expected_tasks_per_arm_pass": 12,
+  "passes": [
+    1,
+    2
+  ],
+  "allow_partial": false,
+  "pending_counts": {},
+  "issues": {},
+  "per_arm_pass": {
+    "control": {
+      "1": {
+        "output_tokens": 5236,
+        "reasoning_tokens": 0,
+        "api_calls": 45,
+        "tasks": 12,
+        "passed": 12,
+        "errors": 0,
+        "wall_s": 202.62360191345215,
+        "wall_complete": true,
+        "median_task_s": 12.890577673912048,
+        "proxy_calls": 45,
+        "proxy_api_calls": 45,
+        "length_calls": 0,
+        "length_bound_tasks": 0,
+        "pooled_decode_tok_s": 34.82378605585374,
+        "proxy_generation_tokens": 5236,
+        "server_decode_s": 150.357,
+        "spec_drafts": 953,
+        "spec_accepted_tokens": 4293,
+        "accepted_per_cycle": 5.504721930745016,
+        "reasoning_chars_share": 0.2531371700562527,
+        "completion_budgets": [
+          8192
+        ],
+        "unknown_budget_calls": 0,
+        "thinking_not_confirmed_calls": 0
+      },
+      "2": {
+        "output_tokens": 5554,
+        "reasoning_tokens": 0,
+        "api_calls": 47,
+        "tasks": 12,
+        "passed": 12,
+        "errors": 0,
+        "wall_s": 219.1675989627838,
+        "wall_complete": true,
+        "median_task_s": 12.37425148487091,
+        "proxy_calls": 47,
+        "proxy_api_calls": 47,
+        "length_calls": 0,
+        "length_bound_tasks": 0,
+        "pooled_decode_tok_s": 33.657138355442164,
+        "proxy_generation_tokens": 5554,
+        "server_decode_s": 165.017,
+        "spec_drafts": 1045,
+        "spec_accepted_tokens": 4528,
+        "accepted_per_cycle": 5.333014354066986,
+        "reasoning_chars_share": 0.2958946113224689,
+        "completion_budgets": [
+          8192
+        ],
+        "unknown_budget_calls": 0,
+        "thinking_not_confirmed_calls": 0
+      }
+    },
+    "m2.5": {
+      "1": {
+        "output_tokens": 5883,
+        "reasoning_tokens": 0,
+        "api_calls": 50,
+        "tasks": 12,
+        "passed": 11,
+        "errors": 0,
+        "wall_s": 203.3974609375,
+        "wall_complete": true,
+        "median_task_s": 14.929445147514343,
+        "proxy_calls": 50,
+        "proxy_api_calls": 50,
+        "length_calls": 0,
+        "length_bound_tasks": 0,
+        "pooled_decode_tok_s": 40.19128949615713,
+        "proxy_generation_tokens": 5883,
+        "server_decode_s": 146.375,
+        "spec_drafts": 923,
+        "spec_accepted_tokens": 4972,
+        "accepted_per_cycle": 6.386782231852655,
+        "reasoning_chars_share": 0.17395566690267414,
+        "completion_budgets": [
+          8192
+        ],
+        "unknown_budget_calls": 0,
+        "thinking_not_confirmed_calls": 0
+      },
+      "2": {
+        "output_tokens": 14719,
+        "reasoning_tokens": 0,
+        "api_calls": 50,
+        "tasks": 12,
+        "passed": 11,
+        "errors": 0,
+        "wall_s": 510.3405296802521,
+        "wall_complete": true,
+        "median_task_s": 15.833157420158386,
+        "proxy_calls": 50,
+        "proxy_api_calls": 50,
+        "length_calls": 1,
+        "length_bound_tasks": 1,
+        "pooled_decode_tok_s": 32.44936607003102,
+        "proxy_generation_tokens": 14719,
+        "server_decode_s": 453.599,
+        "spec_drafts": 2841,
+        "spec_accepted_tokens": 11898,
+        "accepted_per_cycle": 5.187961985216473,
+        "reasoning_chars_share": 0.6662057764902116,
+        "completion_budgets": [
+          8192
+        ],
+        "unknown_budget_calls": 0,
+        "thinking_not_confirmed_calls": 0
+      }
+    },
+    "m5.0": {
+      "1": {
+        "output_tokens": 13059,
+        "reasoning_tokens": 0,
+        "api_calls": 46,
+        "tasks": 12,
+        "passed": 11,
+        "errors": 0,
+        "wall_s": 418.68872904777527,
+        "wall_complete": true,
+        "median_task_s": 15.274828672409058,
+        "proxy_calls": 46,
+        "proxy_api_calls": 46,
+        "length_calls": 1,
+        "length_bound_tasks": 1,
+        "pooled_decode_tok_s": 35.6346648693341,
+        "proxy_generation_tokens": 13059,
+        "server_decode_s": 366.469,
+        "spec_drafts": 2288,
+        "spec_accepted_tokens": 10789,
+        "accepted_per_cycle": 5.715472027972028,
+        "reasoning_chars_share": 0.7168839928057554,
+        "completion_budgets": [
+          8192
+        ],
+        "unknown_budget_calls": 0,
+        "thinking_not_confirmed_calls": 0
+      },
+      "2": {
+        "output_tokens": 13059,
+        "reasoning_tokens": 0,
+        "api_calls": 47,
+        "tasks": 12,
+        "passed": 11,
+        "errors": 0,
+        "wall_s": 416.12270951271057,
+        "wall_complete": true,
+        "median_task_s": 13.649298191070557,
+        "proxy_calls": 47,
+        "proxy_api_calls": 47,
+        "length_calls": 1,
+        "length_bound_tasks": 1,
+        "pooled_decode_tok_s": 36.04172991471863,
+        "proxy_generation_tokens": 13059,
+        "server_decode_s": 362.33,
+        "spec_drafts": 2269,
+        "spec_accepted_tokens": 10810,
+        "accepted_per_cycle": 5.7642133098281185,
+        "reasoning_chars_share": 0.7001135757828616,
+        "completion_budgets": [
+          8192
+        ],
+        "unknown_budget_calls": 0,
+        "thinking_not_confirmed_calls": 0
+      }
+    }
+  },
+  "pooled_per_arm": {
+    "control": {
+      "output_tokens": 10790,
+      "reasoning_tokens": 0,
+      "api_calls": 92,
+      "tasks": 24,
+      "passed": 24,
+      "errors": 0,
+      "wall_s": 421.79120087623596,
+      "wall_complete": true,
+      "median_task_s": 12.890577673912048,
+      "proxy_calls": 92,
+      "proxy_api_calls": 92,
+      "length_calls": 0,
+      "length_bound_tasks": 0,
+      "pooled_decode_tok_s": 34.2133466931326,
+      "proxy_generation_tokens": 10790,
+      "server_decode_s": 315.37399999999997,
+      "spec_drafts": 1998,
+      "spec_accepted_tokens": 8821,
+      "accepted_per_cycle": 5.414914914914915,
+      "reasoning_chars_share": 0.2754232271812478,
+      "completion_budgets": [
+        8192
+      ],
+      "unknown_budget_calls": 0,
+      "thinking_not_confirmed_calls": 0
+    },
+    "m2.5": {
+      "output_tokens": 20602,
+      "reasoning_tokens": 0,
+      "api_calls": 100,
+      "tasks": 24,
+      "passed": 22,
+      "errors": 0,
+      "wall_s": 713.7379906177521,
+      "wall_complete": true,
+      "median_task_s": 15.628703355789185,
+      "proxy_calls": 100,
+      "proxy_api_calls": 100,
+      "length_calls": 1,
+      "length_bound_tasks": 1,
+      "pooled_decode_tok_s": 34.33815465336831,
+      "proxy_generation_tokens": 20602,
+      "server_decode_s": 599.974,
+      "spec_drafts": 3764,
+      "spec_accepted_tokens": 16870,
+      "accepted_per_cycle": 5.481934112646121,
+      "reasoning_chars_share": 0.5248181462651544,
+      "completion_budgets": [
+        8192
+      ],
+      "unknown_budget_calls": 0,
+      "thinking_not_confirmed_calls": 0
+    },
+    "m5.0": {
+      "output_tokens": 26118,
+      "reasoning_tokens": 0,
+      "api_calls": 93,
+      "tasks": 24,
+      "passed": 22,
+      "errors": 0,
+      "wall_s": 834.8114385604858,
+      "wall_complete": true,
+      "median_task_s": 14.421926379203796,
+      "proxy_calls": 93,
+      "proxy_api_calls": 93,
+      "length_calls": 2,
+      "length_bound_tasks": 2,
+      "pooled_decode_tok_s": 35.83704148880555,
+      "proxy_generation_tokens": 26118,
+      "server_decode_s": 728.799,
+      "spec_drafts": 4557,
+      "spec_accepted_tokens": 21599,
+      "accepted_per_cycle": 5.739741057713408,
+      "reasoning_chars_share": 0.7086267304246602,
+      "completion_budgets": [
+        8192
+      ],
+      "unknown_budget_calls": 0,
+      "thinking_not_confirmed_calls": 0
+    }
+  },
+  "comparisons": {
+    "m2.5": {
+      "treatment": "m2.5",
+      "control": "control",
+      "missing_pairs": 0,
+      "pairs": [
+        {
+          "task_id": "HumanEval/0",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 0.9547252162165665,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.04,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/100",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.2594262103205107,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.5610687022900764,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/122",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.4213413417624141,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.640117994100295,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/132",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": false,
+          "wall_ratio": 0.6320910793976998,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 0.7220689655172414,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/154",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 0.6868171456159663,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 0.9108108108108108,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/20",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 0.7568553154703201,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 0.6684027777777778,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/22",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.436390604149686,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.726530612244898,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/48",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.342426415669644,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.9154929577464788,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/49",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.2594928126577158,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.5757575757575757,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/55",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.061206272976941,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.0744186046511628,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/69",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.054509409040376,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.0796812749003983,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/75",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.8912531546476878,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 2.0594315245478034,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/0",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.6214364422516625,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 2.3521739130434782,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/100",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.2750579735534115,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.5148148148148148,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/122",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.583432090947148,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.6574307304785894,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/132",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": false,
+          "wall_ratio": 4.52040938342214,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 5.548571428571429,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": true
+        },
+        {
+          "task_id": "HumanEval/154",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.6535824633867644,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.6805111821086263,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/20",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 0.9083126035319226,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 0.9290322580645162,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/22",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.0147509556732155,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.1193181818181819,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/48",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.0663517934870037,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.0486111111111112,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/49",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.1364211306365923,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.4090909090909092,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/55",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 0.886869668389225,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 0.9051724137931034,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/69",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 0.8991474392929366,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 0.9003690036900369,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/75",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.4286258883922331,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.5355731225296443,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        }
+      ],
+      "pass_agreement": {
+        "both_pass": 22,
+        "control_only": 2,
+        "treatment_only": 0,
+        "both_fail": 0
+      },
+      "budget_mismatch_pairs": 0,
+      "budget_unknown_pairs": 0,
+      "ratios": {
+        "wall_ratio": {
+          "geomean": 1.2061484840287808,
+          "median": 1.1979236704785516,
+          "task_clusters": 12,
+          "pairs": 24,
+          "undefined_denominator_pairs": 0,
+          "bootstrap_95": [
+            1.0734320445321883,
+            1.3550351179090185
+          ]
+        },
+        "reasoning_token_ratio": {
+          "geomean": null,
+          "median": null,
+          "task_clusters": 0,
+          "pairs": 0,
+          "undefined_denominator_pairs": 24,
+          "bootstrap_95": null
+        },
+        "output_token_ratio": {
+          "geomean": 1.3578422149110818,
+          "median": 1.4619528619528621,
+          "task_clusters": 12,
+          "pairs": 24,
+          "undefined_denominator_pairs": 0,
+          "bootstrap_95": [
+            1.1640724907970983,
+            1.5621914353697475
+          ]
+        }
+      }
+    },
+    "m5.0": {
+      "treatment": "m5.0",
+      "control": "control",
+      "missing_pairs": 0,
+      "pairs": [
+        {
+          "task_id": "HumanEval/0",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.3633551050413335,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.518181818181818,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/100",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.2447484717614434,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.5572519083969465,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/122",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.0368177486835748,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.1386430678466077,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/132",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": false,
+          "wall_ratio": 4.493248419034047,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 5.649655172413793,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": true
+        },
+        {
+          "task_id": "HumanEval/154",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 0.9646588939962525,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.2216216216216216,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/20",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 0.9738926444895405,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.0,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/22",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.556900928446796,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.9469387755102041,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/48",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.019979179546139,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.1126760563380282,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/49",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.1985907100357047,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.52020202020202,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/55",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.0809023269258506,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.213953488372093,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/69",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 0.9734358197210204,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 0.9880478087649402,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/75",
+          "pass": 1,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.3073385314103163,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.3359173126614987,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/0",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.539287341777394,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 2.3043478260869565,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/100",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.257747690170597,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.5148148148148148,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/122",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.1308263240924474,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.1964735516372795,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/132",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": false,
+          "wall_ratio": 3.4633184256943093,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 4.930285714285715,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": true
+        },
+        {
+          "task_id": "HumanEval/154",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.089492991165926,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.1277955271565496,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/20",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 0.8637269881390779,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 0.7322580645161291,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/22",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 0.8073110863711978,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 0.7698863636363636,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/48",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.2625118484800624,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.5347222222222223,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/49",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.2490205101242589,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.5606060606060606,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/55",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.009593191305332,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.1508620689655173,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/69",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 0.8250687771231643,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 0.7841328413284133,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        },
+        {
+          "task_id": "HumanEval/75",
+          "pass": 2,
+          "control_passed": true,
+          "treatment_passed": true,
+          "wall_ratio": 1.373177199498124,
+          "reasoning_token_ratio": null,
+          "output_token_ratio": 1.41699604743083,
+          "budget_guard": "matched",
+          "control_length_bound": false,
+          "treatment_length_bound": false
+        }
+      ],
+      "pass_agreement": {
+        "both_pass": 22,
+        "control_only": 2,
+        "treatment_only": 0,
+        "both_fail": 0
+      },
+      "budget_mismatch_pairs": 0,
+      "budget_unknown_pairs": 0,
+      "ratios": {
+        "wall_ratio": {
+          "geomean": 1.2475576441681218,
+          "median": 1.164708517064076,
+          "task_clusters": 12,
+          "pairs": 24,
+          "undefined_denominator_pairs": 0,
+          "bootstrap_95": [
+            1.0580760643689289,
+            1.5863662284637694
+          ]
+        },
+        "reasoning_token_ratio": {
+          "geomean": null,
+          "median": null,
+          "task_clusters": 0,
+          "pairs": 0,
+          "undefined_denominator_pairs": 24,
+          "bootstrap_95": null
+        },
+        "output_token_ratio": {
+          "geomean": 1.4117950071427419,
+          "median": 1.2787694671415601,
+          "task_clusters": 12,
+          "pairs": 24,
+          "undefined_denominator_pairs": 0,
+          "bootstrap_95": [
+            1.138508945776138,
+            1.8827586170939221
+          ]
+        }
+      }
+    }
+  },
+  "activation": {
+    "status": "proven",
+    "arms": {
+      "control": {
+        "verify_rows": 1998,
+        "relaxed": 0,
+        "failures": {},
+        "proven": true
+      },
+      "m2.5": {
+        "verify_rows": 3764,
+        "relaxed": 1011,
+        "failures": {},
+        "proven": true
+      },
+      "m5.0": {
+        "verify_rows": 4557,
+        "relaxed": 1545,
+        "failures": {},
+        "proven": true
+      }
+    },
+    "other_traffic_verify_rows": 64,
+    "non_verify_rows": 1,
+    "invalid_time_rows": 0,
+    "overlapping_window_rows": 0,
+    "excluded_probe_trial_trace": {
+      "control": {
+        "verify_rows": 0,
+        "relaxed": 0
+      },
+      "m2.5": {
+        "verify_rows": 26,
+        "relaxed": 6
+      },
+      "m5.0": {
+        "verify_rows": 16,
+        "relaxed": 3
+      }
+    },
+    "window_slack_s": 2.0
+  },
+  "budget_deviation_arms": [],
+  "unassigned_proxy_calls": 0,
+  "bootstrap": {
+    "seed": 20260910,
+    "samples": 10000,
+    "unit": "task_id; paired passes remain clustered"
+  },
+  "notes": [
+    "Official check.passed only; check output, errors, request payloads and private texts are never copied.",
+    "Wall is summed lane-summary elapsed time; pooled median is over individual task times.",
+    "Pooled decode = sum proxy generation_tokens / sum proxy server_decode_s.",
+    "Accepted/cycle = 1 + sum spec_accepted_tokens / sum spec_drafts; includes the bonus token.",
+    "Reasoning character share uses saved counts; it is not a tokenizer-derived token share.",
+    "Ratios are treatment/control; below one means less time or fewer tokens, not necessarily better quality.",
+    "Geomean gives each task equal weight; 95% percentile bootstrap resamples task clusters with all available paired passes.",
+    "Zero denominators are undefined and counted; zero numerators produce zero ratios/geomeans.",
+    "Proxy t is recorded after forwarding/metrics; inferred windows are [t-wall_s,t], expanded by window_slack_s.",
+    "Treatment labels own rows; windows check consistency. Control-window relaxation or treatment labels always fail.",
+    "Calls outside selected arm/pass task spans are probes/trials, excluded by default and reported separately.",
+    "--include-extra-calls includes these calls in pooled proxy metrics and activation only; paired task metrics remain task-only.",
+    "Known treatment labels within selected pass spans must match their arm call windows; excluded probe/trial rows and other traffic are counted separately.",
+    "Length-bound tasks have at least one proxy finish_reason=length; budgets must match for each paired task.",
+    "Partial input may be an inconsistent live snapshot and is never promotion-ready."
+  ]
+}
