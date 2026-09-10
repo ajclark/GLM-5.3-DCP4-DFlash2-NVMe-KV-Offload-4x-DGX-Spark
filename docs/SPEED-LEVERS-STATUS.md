@@ -233,7 +233,7 @@ User direction: work the avenues from the harness-study revival autonomously
 with codex; start with think-span-only lossy verification (#3); glm_best-style
 pi prompting is already in use; re-instrumentation (#1) goes last.
 
-- 06:20 UTC: **think-scoped lossy verification built**: `spec_lossy_scope =
+- 05:55 UTC: **think-scoped lossy verification built**: `spec_lossy_scope =
   "think"` relaxes only while the committed stream is inside a `<think>`
   span. Kernel keeps a per-request think state (initialised from the prompt
   tail at admission: thinking-on prompts end `<think>`, thinking-off
@@ -247,3 +247,14 @@ pi prompting is already in use; re-instrumentation (#1) goes last.
   relaxation when the span never opens), `spec_think_check.py`, hold recipe.
   Codex's `research/HARNESS-STUDY-REVIVAL.md` ranks this avenue #6
   (+6-7% decode on the 09-01 token mix); the user chose it first.
+- 06:15 UTC: harness capture for avenues #4/#5 started against production
+  (no hold): `capture_proxy.py --per-call --record-text` on :8001 in front of
+  the cluster, `bench/pi_humaneval.py --levels 1 --limit 12` routed through it
+  (`PI_HE_BASE_URL`), two passes; per-call records carry texts, TTFT,
+  prefix-cache hit rate, accepted length by position. Private data
+  (`results/harness-capture-20260910/`, to be gitignored). Chain: capture ->
+  hold 8 (`lossythink-20260910-r1`: thinking-on dev corpus, arms fixed7 /
+  lossy-m2.5 / lossy-think-m2.5 / lossy-think-m5.0 at 1536 tokens, plus a
+  thinking-off control proving zero relaxation under scope think). Codex
+  queued: per-call attribution and the tool-argument copy screen on the
+  captured streams (offline; /tokenize only).

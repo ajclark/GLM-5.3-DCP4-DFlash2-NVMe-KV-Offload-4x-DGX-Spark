@@ -292,6 +292,10 @@ def prepare_config(directory):
     if os.environ.get('PI_HE_MAX_TOKENS'):
         for model in models['providers']['glm53']['models']:
             if model['id'] == 'glm-5.3': model['maxTokens'] = int(os.environ['PI_HE_MAX_TOKENS'])
+    if os.environ.get('PI_HE_BASE_URL'):
+        # Route the snapshot through a local recording proxy (capture_proxy.py);
+        # server counters are still read from the real endpoint.
+        models['providers']['glm53']['baseUrl'] = os.environ['PI_HE_BASE_URL']
     write_json(directory / 'models.json', models)
     settings = json.loads((directory / 'settings.json').read_text())
     settings['packages'] = []

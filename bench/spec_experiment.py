@@ -142,21 +142,31 @@ def lane_from_args(args):
     return lane or None
 
 
-def committed_stage_hashes():
-    """sha256 -> name for every stage/glm-dcp/*.py blob at HEAD (empty if no git)."""
+def committed_stage_hashes(depth=40):
+    """sha256 -> name for every stage/glm-dcp/*.py blob in the last `depth`
+    commits (empty if no git). Production runs whatever the latest rollout
+    staged, which may be older than HEAD when overlays were edited since."""
     try:
-        listing = subprocess.run(['git','ls-tree','HEAD','stage/glm-dcp/'],cwd=ROOT,
-                                 capture_output=True,text=True,check=True).stdout
+        commits = subprocess.run(['git','log',f'-{depth}','--format=%H','--','stage/glm-dcp'],cwd=ROOT,
+                                 capture_output=True,text=True,check=True).stdout.split()
     except (OSError, subprocess.CalledProcessError):
         return {}
     out = {}
-    for line in listing.splitlines():
-        meta, path = line.split('\t')
-        if not path.endswith('.py'):
-            continue
-        blob = subprocess.run(['git','cat-file','blob',meta.split()[2]],cwd=ROOT,
-                              capture_output=True,check=True).stdout
-        out[hashlib.sha256(blob).hexdigest()] = Path(path).name
+    seen = set()
+    for commit in commits:
+        listing = subprocess.run(['git','ls-tree',commit,'stage/glm-dcp/'],cwd=ROOT,
+                                 capture_output=True,text=True,check=True).stdout
+        for line in listing.splitlines():
+            meta, path = line.split('\t')
+            if not path.endswith('.py'):
+                continue
+            blob_id = meta.split()[2]
+            if blob_id in seen:
+                continue
+            seen.add(blob_id)
+            blob = subprocess.run(['git','cat-file','blob',blob_id],cwd=ROOT,
+                                  capture_output=True,check=True).stdout
+            out[hashlib.sha256(blob).hexdigest()] = Path(path).name
     return out
 
 
