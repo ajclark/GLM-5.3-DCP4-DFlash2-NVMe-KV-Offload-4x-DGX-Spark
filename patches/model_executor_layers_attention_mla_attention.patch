@@ -8,7 +8,7 @@
  from abc import abstractmethod
  from dataclasses import dataclass
  from enum import Enum
-@@ -270,6 +271,34 @@
+@@ -270,6 +271,83 @@
  )
  from vllm.v1.attention.ops.common import cp_lse_ag_out_rs
  from vllm.v1.attention.ops.dcp_alltoall import dcp_a2a_lse_reduce
@@ -23,6 +23,55 @@
 +# which cuts the largest per-layer collective by 2.25x for ~740 MB of
 +# extra weight per rank on GLM-5.3. Same bmm on the same bf16 inputs.
 +DCP_Q_PREGATHER = os.environ.get("GLM_DCP_Q_PREGATHER", "0") == "1"
++
++
++# Largest exponent the folded weights may carry: bf16 overflows past e^88, and
++# a sparse-attention LSE (max score plus log of at most 2048 candidates) sits
++# far below this for any sane head; the clamp only guards pathological rows.
++DCP_LSE_FOLD_MAX = 80.0
++DCP_LSE_FOLD_PAD = 8
++
++
++def dcp_fold_pack(attn_out: torch.Tensor, lse: torch.Tensor) -> torch.Tensor:
++    """[T, H, D] partial output and [T, H] LSE -> [T, H, D + pad] payload."""
++    T, H, D = attn_out.shape
++    lse32 = lse.to(torch.float32)
++    lse32 = torch.where(torch.isnan(lse32), torch.full_like(lse32, float("-inf")), lse32)
++    w = torch.exp(torch.clamp(lse32, max=DCP_LSE_FOLD_MAX))
++    packed = attn_out.new_zeros((T, H, D + DCP_LSE_FOLD_PAD))
++    packed[..., :D] = (attn_out.to(torch.float32) * w.unsqueeze(-1)).to(attn_out.dtype)
++    packed[..., D] = w.to(attn_out.dtype)
++    return packed
++
++
++def dcp_fold_unpack(reduced: torch.Tensor, head_dim: int, dtype: torch.dtype) -> torch.Tensor:
++    """Summed payload slice [T, H/N, D + pad] -> merged output [T, H/N, D]."""
++    total = reduced[..., head_dim].to(torch.float32)
++    weighted = reduced[..., :head_dim].to(torch.float32)
++    merged = weighted / torch.where(total > 0, total, torch.ones_like(total)).unsqueeze(-1)
++    return merged.to(dtype)
++
++
++def dcp_fold_lse_rs(
++    attn_out: torch.Tensor,
++    lse: torch.Tensor,
++    cp_group,
++) -> torch.Tensor:
++    """One reduce-scatter instead of an LSE all-gather plus a reduce-scatter.
++
++    Each rank r holds a softmax over its own candidate subset, ``attn_out_r``
++    [T, H, D] (already normalised) with log-sum-exp ``lse_r`` [T, H]. The exact
++    merge is ``sum_r out_r * w_r / sum_r w_r`` with ``w_r = exp(lse_r - c)`` for
++    any shared ``c``; using ``c = 0`` needs no communication, so the weights
++    travel inside the reduce-scatter payload: ``[out_r * w_r | w_r | 0...]`` in
++    the activation dtype, padded to a multiple of eight lanes. The receiver
++    divides its head slice by the summed weight. Empty rows (``lse = -inf`` or
++    NaN) contribute zero weight exactly as in ``cp_lse_ag_out_rs``; rows whose
++    every rank is empty return zeros rather than NaN.
++    """
++    packed = dcp_fold_pack(attn_out, lse)
++    reduced = cp_group.reduce_scatter(packed, dim=1)
++    return dcp_fold_unpack(reduced, attn_out.shape[-1], attn_out.dtype)
 +
 +
 +def dcp_pregather_expand(
@@ -43,7 +92,18 @@
  from vllm.v1.attention.ops.merge_attn_states import merge_attn_states
  from vllm.v1.attention.selector import get_attn_backend
  from vllm.v1.kv_cache_interface import (
-@@ -731,6 +760,7 @@
+@@ -496,6 +574,10 @@
+             and _vllm_config.parallel_config.decode_context_parallel_size > 1
+             and _vllm_config.parallel_config.dcp_comm_backend == "a2a"
+         )
++        # GLM overlay: fold the per-layer DCP LSE all-gather into the attention
++        # reduce-scatter (docs/SPEED-ARCHITECTURE-OPTIONS.md, lever H). Off by
++        # default; every rank must run the same setting.
++        self.dcp_lse_fold = os.environ.get("GLM_DCP_LSE_FOLD") == "1"
+ 
+         # Initialize q/k/v range constants.
+         self.q_range = torch.tensor(envs.Q_SCALE_CONSTANT, dtype=torch.float32)
+@@ -731,6 +813,7 @@
  
              # Convert from (B, N, P) to (N, B, P)
              mqa_q_nope = mqa_q_nope.transpose(0, 1)
@@ -51,7 +111,7 @@
  
              if self.q_pad_num_heads is not None:
                  B, N, L = mqa_q_pe.shape
-@@ -759,6 +789,23 @@
+@@ -759,6 +842,23 @@
                      group_size=128,
                      transpose_bm=True,
                  )
@@ -75,7 +135,7 @@
              else:
                  # Pads the head_dim if necessary (for the underlying kernel)
                  N, B, P = mqa_q_nope.shape
-@@ -776,7 +823,9 @@
+@@ -776,7 +876,9 @@
                  # Convert from (N, B, L) to (B, N, L)
                  mqa_ql_nope = mqa_ql_nope.transpose(0, 1)
  
@@ -86,7 +146,7 @@
                  assert mqa_ql_nope.shape[0] == mqa_q_pe.shape[0]
                  assert mqa_ql_nope.shape[1] == mqa_q_pe.shape[1]
                  mqa_q = self._decode_concat_quant_fp8_op(
-@@ -784,8 +833,21 @@
+@@ -784,8 +886,21 @@
                  )
              else:
                  mqa_q = (mqa_ql_nope, mqa_q_pe)
@@ -110,7 +170,7 @@
                  # concatenate mqa_ql_nope and mqa_q_pe -> (B, N, L + P)
                  mqa_q = torch.cat(mqa_q, dim=-1)
                  # mqa_q do allgather in head dim.
-@@ -798,6 +860,12 @@
+@@ -798,6 +913,12 @@
  
              # correct dcp attn_out with lse.
              if self.impl.dcp_world_size > 1:
@@ -123,7 +183,16 @@
                  if self.dcp_a2a:
                      attn_out = dcp_a2a_lse_reduce(
                          attn_out,
-@@ -945,6 +1013,18 @@
+@@ -805,6 +926,8 @@
+                         get_dcp_group(),
+                         is_lse_base_on_e=True,
+                     )
++                elif self.dcp_lse_fold:
++                    attn_out = dcp_fold_lse_rs(attn_out, lse, get_dcp_group())
+                 else:
+                     attn_out = cp_lse_ag_out_rs(
+                         attn_out,
+@@ -945,6 +1068,18 @@
              self.W_UV = W_UV.transpose(0, 1)
              # Convert from (L, N, P) to (N, P, L)
              self.W_UK_T = W_UK.permute(1, 2, 0)
