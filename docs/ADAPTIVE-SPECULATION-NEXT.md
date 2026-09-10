@@ -190,6 +190,12 @@ the diagnosed draft-cache defect beyond 90112 tokens; further long-context
 work requires deploying the committed repair. The repaired runtime was validated
 in isolated experiment deployments and is not permanently installed.
 
+**Update 2026-09-09 22:16 UTC:** the repair is now in production. The full
+V2-runner overlay set was rolled out through `rollout_dcp.sh` as
+`dcp2-cachefix-prod` with `GLM_SPEC_POLICY=off`; the 89k/92k boundary probe
+accepted 56/70 on both prompts at 44.0/42.6 tok/s and post-boot checks
+passed (`results/dcp2-cachefix-prod/`, `docs/HANDOVER.md`).
+
 The final C1-report integrity change adds three rejection cases; all eight
 targeted report tests pass. The runtime full-suite result remains the recorded
 787-test run at `f71eac0`. Ten follow-up request guards show no OOM, pressure

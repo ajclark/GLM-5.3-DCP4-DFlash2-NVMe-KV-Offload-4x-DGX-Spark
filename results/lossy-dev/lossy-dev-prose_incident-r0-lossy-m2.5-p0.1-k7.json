@@ -1,0 +1,2615 @@
+{
+  "started_at": 1789002248.4641442,
+  "token_ids": [
+    2,
+    68236,
+    8258,
+    25,
+    91691,
+    73582,
+    367,
+    32116,
+    1959,
+    15951,
+    20374,
+    6686,
+    89866,
+    271,
+    334,
+    10356,
+    3034,
+    66475,
+    431,
+    16663,
+    12,
+    115937,
+    19,
+    12,
+    15,
+    99419,
+    198,
+    334,
+    1916,
+    315,
+    68236,
+    66475,
+    5470,
+    220,
+    99367,
+    11,
+    220,
+    115937,
+    19,
+    198,
+    334,
+    1916,
+    315,
+    8258,
+    66475,
+    5470,
+    220,
+    99241,
+    11,
+    220,
+    115937,
+    19,
+    198,
+    334,
+    4703,
+    7212,
+    553,
+    66475,
+    24807,
+    10289,
+    7909,
+    198,
+    334,
+    61937,
+    66475,
+    25752,
+    11,
+    19318,
+    10562,
+    11,
+    64812,
+    85800,
+    11,
+    2009,
+    16932,
+    320,
+    1708,
+    692,
+    44107,
+    565,
+    21466,
+    271,
+    1655,
+    13179,
+    220,
+    98965,
+    25,
+    99698,
+    281,
+    744,
+    13,
+    389,
+    5470,
+    220,
+    99367,
+    11,
+    220,
+    115937,
+    19,
+    11,
+    279,
+    4227,
+    3419,
+    35642,
+    518,
+    15951,
+    20374,
+    6686,
+    89866,
+    5558,
+    2355,
+    2701,
+    264,
+    7130,
+    19697,
+    14517,
+    304,
+    279,
+    64668,
+    594,
+    28879,
+    2473,
+    6945,
+    13,
+    576,
+    7901,
+    3937,
+    2030,
+    295,
+    1569,
+    3080,
+    220,
+    19,
+    25,
+    99082,
+    264,
+    744,
+    13,
+    279,
+    1790,
+    6556,
+    11,
+    979,
+    279,
+    8567,
+    75225,
+    11460,
+    13,
+    15400,
+    35642,
+    19841,
+    33646,
+    6092,
+    55761,
+    369,
+    13179,
+    220,
+    19,
+    13,
+    20,
+    4115,
+    11,
+    12935,
+    304,
+    279,
+    4709,
+    315,
+    33219,
+    3871,
+    11,
+    16548,
+    2347,
+    11,
+    10025,
+    5155,
+    819,
+    11,
+    323,
+    9312,
+    56285,
+    15432,
+    32400,
+    518,
+    13179,
+    400,
+    18,
+    11,
+    103919,
+    13,
+    576,
+    64668,
+    22645,
+    8567,
+    553,
+    1378,
+    4115,
+    323,
+    5558,
+    458,
+    12936,
+    400,
+    16,
+    11,
+    98867,
+    304,
+    6556,
+    6625,
+    13,
+    2308,
+    51234,
+    1985,
+    8642,
+    6310,
+    382,
+    1986,
+    1895,
+    43577,
+    82,
+    279,
+    10450,
+    11,
+    35335,
+    28618,
+    9360,
+    11,
+    323,
+    39596,
+    90001,
+    10948,
+    13,
+    5633,
+    6358,
+    23432,
+    389,
+    45049,
+    4682,
+    4751,
+    1091,
+    3842,
+    1465,
+    11,
+    12959,
+    448,
+    279,
+    17484,
+    429,
+    1251,
+    1160,
+    2878,
+    279,
+    5942,
+    323,
+    16963,
+    807,
+    525,
+    2661
+  ],
+  "token_sha256": "f77a35038090b7f90adae56c8c459c134d2bf0f7d5cf8916ba7dff2a1ea57c8d",
+  "text": "# Incident Report: Overnight Refrigeration Failure \u2014 Rosemont Street Bakery\n\n**Report ID:** RSB-2024-017\n**Date of Incident:** March 14, 2024\n**Date of Report:** March 22, 2024\n**Prepared by:** Operations Review Team\n**Distribution:** Owner, Kitchen Manager, Facilities Contractor, All Staff (summary)\n\n---\n\n## Summary\n\nAt approximately 11:40 p.m. on March 14, 2024, the walk-in cooler at Rosemont Street Bakery lost power following a partial electrical fault in the bakery's aging service panel. The failure went undetected until 4:15 a.m. the next morning, when the opening baker arrived. Internal cooler temperatures exceeded safe thresholds for approximately 4.5 hours, resulting in the loss of dairy products, custards, prepared fillings, and temperature-sensitive inventory valued at approximately $3,800. The bakery delayed opening by two hours and lost an estimated $1,200 in morning sales. No contaminated product reached customers.\n\nThis report reconstructs the incident, identifies contributing factors, and recommends corrective measures. Our analysis focuses on systemic conditions rather than individual error, consistent with the principle that people act within the systems and constraints they are given",
+  "reasoning_text": "",
+  "usage": {
+    "prompt_tokens": 81,
+    "total_tokens": 337,
+    "completion_tokens": 256
+  },
+  "seconds": 12.917772071028594,
+  "ttft": 0.4957886330084875,
+  "decode_tps": 20.53028052525604,
+  "chunks": [
+    {
+      "seconds": 0.49567186704371125,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "role": "assistant",
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ],
+        "prompt_token_ids": [
+          154822,
+          154824,
+          154826,
+          25062,
+          287,
+          29905,
+          371,
+          25,
+          5124,
+          154827,
+          7984,
+          264,
+          43333,
+          10450,
+          1895,
+          911,
+          264,
+          12528,
+          64668,
+          13180,
+          29268,
+          367,
+          24325,
+          13,
+          29620,
+          264,
+          24732,
+          11,
+          1128,
+          5570,
+          13158,
+          11,
+          13913,
+          11176,
+          11,
+          3704,
+          11132,
+          11,
+          323,
+          4344,
+          429,
+          7948,
+          74600,
+          13,
+          81247,
+          279,
+          3738,
+          9360,
+          14129,
+          323,
+          5648,
+          58267,
+          458,
+          3842,
+          13,
+          13646,
+          279,
+          3565,
+          32910,
+          12959,
+          323,
+          3270,
+          911,
+          220,
+          103005,
+          15,
+          4244,
+          304,
+          264,
+          6514,
+          315,
+          63141,
+          42399,
+          323,
+          264,
+          2805,
+          24732,
+          13,
+          154828,
+          154841,
+          154842
+        ],
+        "prompt_text": null
+      }
+    },
+    {
+      "seconds": 0.4957886330084875,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "#",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              2
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 0.6367470580153167,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " Incident Report:",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              68236,
+              8258,
+              25
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 0.7775023400317878,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " Overnight Refrigeration Failure \u2014 Rose",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              91691,
+              73582,
+              367,
+              32116,
+              1959,
+              15951
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 0.9269321130122989,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "mont",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              20374
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 1.061228889040649,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " Street Bakery\n\n**Report",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              6686,
+              89866,
+              271,
+              334,
+              10356
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 1.1993254130356945,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " ID",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              3034
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 1.336882831004914,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ":** R",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              66475,
+              431
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 1.4747474290197715,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "SB-2024",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              16663,
+              12,
+              115937,
+              19
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 1.6169698890298605,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "-017",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              12,
+              15,
+              99419
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 1.7569388130214065,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "\n**Date of",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              198,
+              334,
+              1916,
+              315
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 1.90121518203523,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " Incident:** March 14",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              68236,
+              66475,
+              5470,
+              220,
+              99367
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 2.047186339041218,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ", 2024\n**Date",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              11,
+              220,
+              115937,
+              19,
+              198,
+              334,
+              1916
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 2.1937160220113583,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " of Report",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              315,
+              8258
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 2.341883007029537,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ":** March 22",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              66475,
+              5470,
+              220,
+              99241
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 2.49165472202003,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ", 2024\n**Prepared",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              11,
+              220,
+              115937,
+              19,
+              198,
+              334,
+              4703,
+              7212
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 2.6287680020323023,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " by",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              553
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 2.7647694650222547,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ":** Operations Review",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              66475,
+              24807,
+              10289
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 2.9068447210011072,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " Team\n**Distribution",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              7909,
+              198,
+              334,
+              61937
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 3.0469208600115962,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ":** Owner",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              66475,
+              25752
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 3.1782086900202557,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ", Kitchen",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              11,
+              19318
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 3.307245350035373,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " Manager, Facilities",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              10562,
+              11,
+              64812
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 3.450824976025615,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " Contractor",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              85800
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 3.596863166021649,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ", All Staff",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              11,
+              2009,
+              16932
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 3.7355341340298764,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " (",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              320
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 3.8772736050304957,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "summary",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              1708
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 4.016507540014572,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ")\n\n---\n\n## Summary\n\nAt",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              692,
+              44107,
+              565,
+              21466,
+              271,
+              1655
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 4.157138587033842,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " approximately 11",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              13179,
+              220,
+              98965
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 4.29699686501408,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ":40",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              25,
+              99698
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 4.4397784230532125,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " p.m. on",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              281,
+              744,
+              13,
+              389
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 4.586999991035555,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " March 14, 2024,",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              5470,
+              220,
+              99367,
+              11,
+              220,
+              115937,
+              19,
+              11
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 4.727890356036369,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " the walk-in cooler",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              279,
+              4227,
+              3419,
+              35642
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 4.873363430029713,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " at Rosemont Street Bakery lost power",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              518,
+              15951,
+              20374,
+              6686,
+              89866,
+              5558,
+              2355
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 5.011880876030773,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " following",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              2701
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 5.160020594019443,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " a partial",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              264,
+              7130
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 5.297782111039851,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " electrical",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              19697
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 5.427882591029629,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " fault in the bakery",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              14517,
+              304,
+              279,
+              64668
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 5.574158372008242,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "'s aging",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              594,
+              28879
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 5.718989858054556,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " service",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              2473
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 5.861791191040538,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " panel. The failure",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              6945,
+              13,
+              576,
+              7901
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 6.004392211034428,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " went",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              3937
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 6.1478555840440094,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " und",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              2030
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 6.291654118045699,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "etected until ",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              295,
+              1569,
+              3080,
+              220
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 6.436422303027939,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "4",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              19
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 6.581487558025401,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ":15 a.m.",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              25,
+              99082,
+              264,
+              744,
+              13
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 6.723202192049939,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " the next morning",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              279,
+              1790,
+              6556
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 6.86653010500595,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ", when the",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              11,
+              979,
+              279
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 7.008421114005614,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " opening baker arrived.",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              8567,
+              75225,
+              11460,
+              13
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 7.154885951022152,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " Internal",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              15400
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 7.2963602330419235,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " cooler",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              35642
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 7.437263700005133,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " temperatures exceeded",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              19841,
+              33646
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 7.577203724998981,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " safe",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              6092
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 7.719115567044355,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " thresholds",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              55761
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 7.86145247600507,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " for approximately 4",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              369,
+              13179,
+              220,
+              19
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 8.005023344012443,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ".5 hours, resulting in the",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              13,
+              20,
+              4115,
+              11,
+              12935,
+              304,
+              279
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 8.160993564000819,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " loss of dairy",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              4709,
+              315,
+              33219
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 8.29619977803668,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " products, cust",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              3871,
+              11,
+              16548
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 8.43286647205241,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "ards",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              2347
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 8.564858312020078,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ", prepared",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              11,
+              10025
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 8.708088178012986,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " fill",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              5155
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 8.85079796705395,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "ings, and temperature",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              819,
+              11,
+              323,
+              9312
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 9.000551434000954,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "-sensitive inventory",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              56285,
+              15432
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 9.144571320037358,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " valued",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              32400
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 9.288432072033174,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " at approximately $3",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              518,
+              13179,
+              400,
+              18
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 9.436059742001817,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ",800. The bakery delayed",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              11,
+              103919,
+              13,
+              576,
+              64668,
+              22645
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 9.576721674005967,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " opening",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              8567
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 9.719281081052031,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " by two",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              553,
+              1378
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 9.862232803017832,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " hours and lost",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              4115,
+              323,
+              5558
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 10.0056994970073,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " an",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              458
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 10.149880119017325,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " estimated $1",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              12936,
+              400,
+              16
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 10.298805396014359,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ",200 in morning",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              11,
+              98867,
+              304,
+              6556
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 10.455500006035436,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " sales. No contaminated",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              6625,
+              13,
+              2308,
+              51234
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 10.591899574035779,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " product",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              1985
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 10.740075615001842,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " reached customers",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              8642,
+              6310
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 10.888252245029435,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ".\n\nThis report reconstruct",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              382,
+              1986,
+              1895,
+              43577
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 11.030201904999558,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "s the incident, identifies contributing",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              82,
+              279,
+              10450,
+              11,
+              35335,
+              28618
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 11.174111714004539,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " factors, and recommends",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              9360,
+              11,
+              323,
+              39596
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 11.321510959998704,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " corrective measures. Our",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              90001,
+              10948,
+              13,
+              5633
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 11.47318313800497,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " analysis focuses",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              6358,
+              23432
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 11.606640067999251,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " on systemic conditions",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              389,
+              45049,
+              4682
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 11.75177725602407,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " rather than individual",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              4751,
+              1091,
+              3842
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 11.900560251029674,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " error, consistent",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              1465,
+              11,
+              12959
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 12.0424279270228,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " with the",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              448,
+              279
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 12.189687703037634,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " principle that people",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              17484,
+              429,
+              1251
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 12.331715259002522,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " act",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              1160
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 12.475709136051591,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " within the systems",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              2878,
+              279,
+              5942
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 12.624023028009105,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " and constraints",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              323,
+              16963
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 12.772351456049364,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " they are",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              807,
+              525
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 12.916466455033515,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " given",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "length",
+            "stop_reason": null,
+            "token_ids": [
+              2661
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 12.916580339020584,
+      "data": {
+        "id": "chatcmpl-88d71d56be22d9fd",
+        "object": "chat.completion.chunk",
+        "created": 1789002248,
+        "model": "glm-5.3",
+        "choices": [],
+        "usage": {
+          "prompt_tokens": 81,
+          "total_tokens": 337,
+          "completion_tokens": 256
+        },
+        "system_fingerprint": "vllm-0.23.1rc1.dev190+gab6660699.d20260830-tp4-791a48d8"
+      }
+    }
+  ],
+  "spec_metric_delta": {
+    "vllm:spec_decode_num_drafts_total{engine=\"0\",model_name=\"glm-5.3\"}": 87.0,
+    "vllm:spec_decode_num_draft_tokens_total{engine=\"0\",model_name=\"glm-5.3\"}": 609.0,
+    "vllm:spec_decode_num_accepted_tokens_total{engine=\"0\",model_name=\"glm-5.3\"}": 174.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total{engine=\"0\",model_name=\"glm-5.3\",position=\"0\"}": 64.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total{engine=\"0\",model_name=\"glm-5.3\",position=\"1\"}": 48.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total{engine=\"0\",model_name=\"glm-5.3\",position=\"2\"}": 31.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total{engine=\"0\",model_name=\"glm-5.3\",position=\"3\"}": 13.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total{engine=\"0\",model_name=\"glm-5.3\",position=\"4\"}": 10.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total{engine=\"0\",model_name=\"glm-5.3\",position=\"5\"}": 6.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total{engine=\"0\",model_name=\"glm-5.3\",position=\"6\"}": 2.0
+  },
+  "policy": "lossy-m2.5-p0.1",
+  "label": "lossy-dev-prose_incident-r0-lossy-m2.5-p0.1-k7",
+  "case": "prose_incident",
+  "cap": 7,
+  "repeat": 0,
+  "study": "lossy",
+  "variant": "lossy-m2.5-p0.1",
+  "experiment_xargs": {
+    "spec_policy": "fixed",
+    "spec_verify_cap": 7,
+    "spec_label": "lossy-dev-prose_incident-r0-lossy-m2.5-p0.1-k7",
+    "spec_lossy_margin": 2.5,
+    "spec_lossy_rank": 2,
+    "spec_lossy_min_p": 0.1
+  },
+  "message_sha256": "9fa09f03122db5ed327aa0bf1bd16f687323084fde084330d58b870e16e0a09f"
+}

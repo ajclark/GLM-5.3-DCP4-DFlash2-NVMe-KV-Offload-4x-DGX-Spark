@@ -1,0 +1,329 @@
+{
+ "dp0_pp0_tp0_dcp0_ep0_rank0.1789008446604371312.pt.trace.json.gz": {
+  "wall_ms": 8481.423057617187,
+  "gpu_busy_ms": 8299.994654000004,
+  "gpu_idle_ms": 181.428403617183,
+  "buckets": {
+   "MoE routed (marlin_moe)": {
+    "ms": 1531.0803089999995,
+    "count": 450
+   },
+   "copies/indexing": {
+    "ms": 1392.4070150000036,
+    "count": 8806
+   },
+   "nccl AllReduce (TP)": {
+    "ms": 1187.4306860000006,
+    "count": 510
+   },
+   "attention/indexer kernels": {
+    "ms": 1102.9508880000005,
+    "count": 435
+   },
+   "nccl AllGather": {
+    "ms": 891.4860539999999,
+    "count": 306
+   },
+   "dense marlin GEMM": {
+    "ms": 831.0072510000002,
+    "count": 2805
+   },
+   "nccl ReduceScatter": {
+    "ms": 685.0340199999996,
+    "count": 234
+   },
+   "dense GEMM (cutlass/cublas)": {
+    "ms": 225.8736830000001,
+    "count": 1059
+   },
+   "other kernels": {
+    "ms": 200.8811239999995,
+    "count": 1281
+   },
+   "norm/rope/activation": {
+    "ms": 156.17352800000012,
+    "count": 1119
+   },
+   "top-k": {
+    "ms": 75.58951399999981,
+    "count": 1323
+   },
+   "MoE glue": {
+    "ms": 10.422360999999993,
+    "count": 675
+   },
+   "quantize/dequantize": {
+    "ms": 9.658220999999994,
+    "count": 423
+   }
+  },
+  "longest_kernels_us": [
+   {
+    "name": "nvjet_sm121_tst_mma_192x176x64_2_48x88x64_tmaAB_bz_TNNN",
+    "us": 10746.076
+   },
+   {
+    "name": "nvjet_sm121_tst_mma_192x176x64_2_48x88x64_tmaAB_bz_TNNN",
+    "us": 10394.583
+   },
+   {
+    "name": "ncclDevKernel_AllReduce_bf16_RING(ncclDevKernelArgsStorage<4096ul>)",
+    "us": 8765.579
+   },
+   {
+    "name": "kernel_cutlass_kernel_b12xattentionmlaprefill_mgUnifiedPrefillMGKernel_object_at__tensorptrbf16gmemalign16oi64i641_tenso",
+    "us": 7786.275
+   },
+   {
+    "name": "kernel_cutlass_kernel_b12xattentionmlaprefill_mgUnifiedPrefillMGKernel_object_at__tensorptrbf16gmemalign16oi64i641_tenso",
+    "us": 7748.449
+   }
+  ]
+ },
+ "dp0_pp0_tp1_dcp1_ep1_rank1.1789008445565932951.pt.trace.json.gz": {
+  "wall_ms": 8475.111107421875,
+  "gpu_busy_ms": 8294.540668999996,
+  "gpu_idle_ms": 180.57043842187886,
+  "buckets": {
+   "MoE routed (marlin_moe)": {
+    "ms": 1533.0457410000006,
+    "count": 450
+   },
+   "copies/indexing": {
+    "ms": 1400.5177989999954,
+    "count": 8806
+   },
+   "nccl AllReduce (TP)": {
+    "ms": 1176.307217,
+    "count": 510
+   },
+   "attention/indexer kernels": {
+    "ms": 1108.6918610000018,
+    "count": 435
+   },
+   "nccl AllGather": {
+    "ms": 887.5470510000004,
+    "count": 306
+   },
+   "dense marlin GEMM": {
+    "ms": 834.055543,
+    "count": 2805
+   },
+   "nccl ReduceScatter": {
+    "ms": 674.0546559999995,
+    "count": 234
+   },
+   "dense GEMM (cutlass/cublas)": {
+    "ms": 226.44819799999982,
+    "count": 1059
+   },
+   "other kernels": {
+    "ms": 200.0510000000001,
+    "count": 1281
+   },
+   "norm/rope/activation": {
+    "ms": 156.3557819999998,
+    "count": 1119
+   },
+   "top-k": {
+    "ms": 77.34969499999967,
+    "count": 1323
+   },
+   "MoE glue": {
+    "ms": 10.253658999999974,
+    "count": 675
+   },
+   "quantize/dequantize": {
+    "ms": 9.862467,
+    "count": 423
+   }
+  },
+  "longest_kernels_us": [
+   {
+    "name": "nvjet_sm121_tst_mma_192x176x64_2_48x88x64_tmaAB_bz_TNNN",
+    "us": 11288.199
+   },
+   {
+    "name": "nvjet_sm121_tst_mma_192x176x64_2_48x88x64_tmaAB_bz_TNNN",
+    "us": 11100.359
+   },
+   {
+    "name": "kernel_cutlass_kernel_b12xattentionmlaprefill_mgUnifiedPrefillMGKernel_object_at__tensorptrbf16gmemalign16oi64i641_tenso",
+    "us": 8233.131
+   },
+   {
+    "name": "kernel_cutlass_kernel_b12xattentionmlaprefill_mgUnifiedPrefillMGKernel_object_at__tensorptrbf16gmemalign16oi64i641_tenso",
+    "us": 8177.931
+   },
+   {
+    "name": "kernel_cutlass_kernel_b12xattentionmlaprefill_mgUnifiedPrefillMGKernel_object_at__tensorptrbf16gmemalign16oi64i641_tenso",
+    "us": 8116.522
+   }
+  ]
+ },
+ "dp0_pp0_tp2_dcp0_ep2_rank2.1789008445657426429.pt.trace.json.gz": {
+  "wall_ms": 8473.726379882812,
+  "gpu_busy_ms": 8290.269589000009,
+  "gpu_idle_ms": 183.45679088280303,
+  "buckets": {
+   "MoE routed (marlin_moe)": {
+    "ms": 1526.0093060000006,
+    "count": 450
+   },
+   "copies/indexing": {
+    "ms": 1392.8376920000032,
+    "count": 8806
+   },
+   "nccl AllReduce (TP)": {
+    "ms": 1188.591123000001,
+    "count": 510
+   },
+   "attention/indexer kernels": {
+    "ms": 1099.8237150000011,
+    "count": 435
+   },
+   "nccl AllGather": {
+    "ms": 897.6074340000002,
+    "count": 306
+   },
+   "dense marlin GEMM": {
+    "ms": 831.9785960000027,
+    "count": 2805
+   },
+   "nccl ReduceScatter": {
+    "ms": 675.2862879999999,
+    "count": 234
+   },
+   "dense GEMM (cutlass/cublas)": {
+    "ms": 225.345495,
+    "count": 1059
+   },
+   "other kernels": {
+    "ms": 199.3898339999997,
+    "count": 1281
+   },
+   "norm/rope/activation": {
+    "ms": 156.0352700000001,
+    "count": 1119
+   },
+   "top-k": {
+    "ms": 76.21246999999958,
+    "count": 1323
+   },
+   "quantize/dequantize": {
+    "ms": 10.966196999999992,
+    "count": 423
+   },
+   "MoE glue": {
+    "ms": 10.186168999999975,
+    "count": 675
+   }
+  },
+  "longest_kernels_us": [
+   {
+    "name": "nvjet_sm121_tst_mma_192x176x64_2_48x88x64_tmaAB_bz_TNNN",
+    "us": 11002.646
+   },
+   {
+    "name": "nvjet_sm121_tst_mma_192x176x64_2_48x88x64_tmaAB_bz_TNNN",
+    "us": 10498.707
+   },
+   {
+    "name": "ncclDevKernel_AllReduce_bf16_RING(ncclDevKernelArgsStorage<4096ul>)",
+    "us": 8273.672
+   },
+   {
+    "name": "kernel_cutlass_kernel_b12xattentionmlaprefill_mgUnifiedPrefillMGKernel_object_at__tensorptrbf16gmemalign16oi64i641_tenso",
+    "us": 7764.614
+   },
+   {
+    "name": "ncclDevKernel_AllReduce_bf16_RING(ncclDevKernelArgsStorage<4096ul>)",
+    "us": 7746.917
+   }
+  ]
+ },
+ "dp0_pp0_tp3_dcp1_ep3_rank3.1789008445665973627.pt.trace.json.gz": {
+  "wall_ms": 8473.631716796875,
+  "gpu_busy_ms": 8295.391077,
+  "gpu_idle_ms": 178.24063979687526,
+  "buckets": {
+   "MoE routed (marlin_moe)": {
+    "ms": 1524.4993030000007,
+    "count": 450
+   },
+   "copies/indexing": {
+    "ms": 1395.833055999998,
+    "count": 8806
+   },
+   "nccl AllReduce (TP)": {
+    "ms": 1189.8349170000006,
+    "count": 510
+   },
+   "attention/indexer kernels": {
+    "ms": 1108.0279230000021,
+    "count": 435
+   },
+   "nccl AllGather": {
+    "ms": 897.8859040000003,
+    "count": 306
+   },
+   "dense marlin GEMM": {
+    "ms": 831.7266829999999,
+    "count": 2805
+   },
+   "nccl ReduceScatter": {
+    "ms": 670.9106639999993,
+    "count": 234
+   },
+   "dense GEMM (cutlass/cublas)": {
+    "ms": 225.9164820000001,
+    "count": 1059
+   },
+   "other kernels": {
+    "ms": 199.1985649999999,
+    "count": 1281
+   },
+   "norm/rope/activation": {
+    "ms": 154.87012199999998,
+    "count": 1119
+   },
+   "top-k": {
+    "ms": 75.80133099999975,
+    "count": 1323
+   },
+   "quantize/dequantize": {
+    "ms": 10.60351400000002,
+    "count": 423
+   },
+   "MoE glue": {
+    "ms": 10.282612999999992,
+    "count": 675
+   }
+  },
+  "longest_kernels_us": [
+   {
+    "name": "nvjet_sm121_tst_mma_192x176x64_2_48x88x64_tmaAB_bz_TNNN",
+    "us": 11262.554
+   },
+   {
+    "name": "nvjet_sm121_tst_mma_192x176x64_2_48x88x64_tmaAB_bz_TNNN",
+    "us": 10398.456
+   },
+   {
+    "name": "ncclDevKernel_AllReduce_bf16_RING(ncclDevKernelArgsStorage<4096ul>)",
+    "us": 8371.091
+   },
+   {
+    "name": "kernel_cutlass_kernel_b12xattentionmlaprefill_mgUnifiedPrefillMGKernel_object_at__tensorptrbf16gmemalign16oi64i641_tenso",
+    "us": 7945.33
+   },
+   {
+    "name": "kernel_cutlass_kernel_b12xattentionmlaprefill_mgUnifiedPrefillMGKernel_object_at__tensorptrbf16gmemalign16oi64i641_tenso",
+    "us": 7910.002
+   }
+  ]
+ },
+ "spark-06c4_1.async_llm.1789008443909384038.pt.trace.json.gz": {
+  "error": "no kernel events"
+ }
+}

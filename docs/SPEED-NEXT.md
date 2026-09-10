@@ -7,6 +7,11 @@ Memory-pressure checks, target correctness, serving capacity and exact rollback
 remain requirements. Report coding and prose separately, with decode tok/sec,
 time to first token, whole-request latency and streaming gaps.
 
+**2026-09-09 22:16 UTC:** the draft-cache repair (`8f684a4`) is deployed as
+`dcp2-cachefix-prod` (policy off); see `HANDOVER.md`. Architecture options
+beyond the controller are ranked in `SPEED-ARCHITECTURE-OPTIONS.md`, with the
+lever-A plan in `LOSSY-VERIFICATION-PLAN.md`.
+
 ## Priority and comparison order
 
 1. **Built-in MTP K=1/2/3 versus repaired DFlash.** Begin with K=2, then sweep

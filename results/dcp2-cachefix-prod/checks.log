@@ -1,0 +1,88 @@
+[22:17:59] == post-boot checks for dcp2-cachefix-prod
+  spark-06c4 avail=3713MiB swapfree=13621MiB
+  spark-365c avail=5107MiB swapfree=14153MiB
+  spark-ddbf avail=5042MiB swapfree=14139MiB
+  spark-a218 avail=4885MiB swapfree=14148MiB
+[22:18:02] log scan (boot):
+      4 WARNING 09-09 22:16:41 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to
+      4 INFO 09-09 22:15:42 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      2 WARNING 09-09 22:16:28 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      2 WARNING 09-09 22:16:17 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      1 INFO 09-09 22:08:02 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+[22:18:02] -- warmup sweep (inference-time JITs happen here, under observation)
+== dcp2-cachefix-prod @ http://spark-06c4.local:8000 phase=warmup
+  warmup     1 words -> 22 tok, 0.4s: 'OK'
+  warmup     4 words -> 25 tok, 0.6s: 'OK'
+  warmup    13 words -> 36 tok, 0.6s: 'OK'
+  warmup    70 words -> 94 tok, 0.7s: 'OK'
+  warmup   250 words -> 277 tok, 1.0s: 'OK'
+  warmup   700 words -> 747 tok, 1.7s: 'OK'
+  warmup  1400 words -> 1466 tok, 2.9s: 'OK'
+  warmup  2800 words -> 2949 tok, 5.6s: 'OK'
+  warmup 38500 words -> 40031 tok, 81.0s: 'OK'
+== done
+[22:19:37] log scan (warmup):
+      4 WARNING 09-09 22:16:41 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to
+      4 INFO 09-09 22:15:42 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      2 WARNING 09-09 22:16:28 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      2 WARNING 09-09 22:16:17 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      1 INFO 09-09 22:08:02 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+  spark-06c4 avail=3477MiB swapfree=13622MiB
+  spark-365c avail=4905MiB swapfree=14155MiB
+  spark-ddbf avail=4910MiB swapfree=14140MiB
+  spark-a218 avail=4755MiB swapfree=14150MiB
+[22:19:39] -- determinism vs baseline
+== dcp2-cachefix-prod @ http://spark-06c4.local:8000 phase=determinism
+  u512            431-> 128 tok  sha=0fbeea9b8222e3c8  7.6s  '# Summary\n\nThe text is a stream of technical vocab'
+  u1536          1247-> 128 tok  sha=25c1701d394de230  8.4s  '# Summary\n\nThe text is a long, repetitive sequence'
+  c1024-seed      824-> 128 tok  sha=d24e72b4df708739  8.9s  '# Summary\n\nThe text is a stream of technical vocab'
+  c1024+u1536    2017-> 128 tok  sha=cd8c3cd58278417c  10.1s  '# Summary\n\nThe text is a large collection of techn'
+== done
+[22:20:14] -- bench
+== dcp2-cachefix-prod @ http://spark-06c4.local:8000 phase=bench
+  count100  rep0 gen= 299 ttft=0.365s decode=54.06 tok/s acc/cycle=7.868 cycle=145.1ms sha=34a4f1e5bb080915
+  count100  rep1 gen= 299 ttft=0.399s decode=53.89 tok/s acc/cycle=7.868 cycle=145.5ms sha=34a4f1e5bb080915
+  prose     rep0 gen= 450 ttft=0.486s decode=18.47 tok/s acc/cycle=2.711 cycle=146.4ms sha=0d24cce516c91da7
+  prose     rep1 gen= 450 ttft=0.48s decode=17.33 tok/s acc/cycle=2.637 cycle=151.5ms sha=cd2f0374409936f9
+  code      rep0 gen= 251 ttft=0.522s decode=40.04 tok/s acc/cycle=6.098 cycle=152.3ms sha=e16a35411911848a
+  code      rep1 gen= 253 ttft=0.518s decode=38.08 tok/s acc/cycle=6.024 cycle=157.6ms sha=2e5385feaf7bc5a3
+== done
+baseline=results/dcp2-prod-postboot
+candidate=/home/napta2k/spark-cluster-mla-dcp/results/dcp2-cachefix-prod
+
+== bench (per prompt, mean over reps)
+  prompt              decode tok/s          acc/cycle           cycle ms           ttft s
+  count100            41.7 -> 54.0       5.45 -> 7.87      89.4 -> 145.3     2.78 -> 0.38
+  prose               20.6 -> 17.9       2.89 -> 2.67     140.4 -> 148.9     0.42 -> 0.48
+  code                44.4 -> 39.1       6.44 -> 6.06     144.5 -> 154.9     0.49 -> 0.52
+
+  count100  text hashes base=['34a4f1e5bb080915'] cand=['34a4f1e5bb080915'] IDENTICAL
+  prose     text hashes base=['2e7ea69f483c32ee', 'a9eeab929b211f3c'] cand=['0d24cce516c91da7', 'cd2f0374409936f9'] DIFFER
+  code      text hashes base=['0f61229643db0bdf', '78d8d6710e0a6f9b'] cand=['2e5385feaf7bc5a3', 'e16a35411911848a'] DIFFER
+[22:21:31] -- concurrent (mixed decode+prefill batches)
+== dcp2-cachefix-prod @ http://spark-06c4.local:8000 phase=concurrent
+  gen-prose     46-> 350 tok ttft=0.393s decode=8.99 tok/s  '# Tensor Parallelism in Transformer Attention\n\n## How Attent'
+  pf-3k       2935->  96 tok ttft=5.598s decode=5.31 tok/s  'The text is a long, repetitive sequence of single words draw'
+  pf-6k       5841->  20 tok ttft=14.445s decode=10.41 tok/s  'amber, attention, bandwidth, cache, canvas, context, decode,'
+  gen-code      52-> 225 tok ttft=12.793s decode=24.09 tok/s  '```python\ndef merge_intervals(intervals):\n    """Merge overl'
+  concurrent window: {'wall_s': 39.3, 'drafts': 200.0, 'accepted': 489.0, 'accepted_per_cycle': 3.445}
+== done
+[22:22:11] log scan (concurrent):
+      4 WARNING 09-09 22:21:33 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _build_prefill_chunk_metadata_kernel. This causes a latency spike; consider extending wa
+      4 WARNING 09-09 22:16:41 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to
+      4 INFO 09-09 22:15:42 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      2 WARNING 09-09 22:16:28 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      2 WARNING 09-09 22:16:17 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      1 INFO 09-09 22:08:02 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+  spark-06c4 avail=3028MiB swapfree=13624MiB
+  spark-365c avail=4510MiB swapfree=14157MiB
+  spark-ddbf avail=4897MiB swapfree=14141MiB
+  spark-a218 avail=4700MiB swapfree=14150MiB
+[22:22:12] log scan (final):
+      4 WARNING 09-09 22:21:33 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _build_prefill_chunk_metadata_kernel. This causes a latency spike; consider extending wa
+      4 WARNING 09-09 22:16:41 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _prepare_dflash_inputs_kernel. This causes a latency spike; consider extending warmup to
+      4 INFO 09-09 22:15:42 [jit_monitor.py:60] Kernel JIT monitor activated — Triton JIT compilations during inference will be logged as warnings.
+      2 WARNING 09-09 22:16:28 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      2 WARNING 09-09 22:16:17 [jit_monitor.py:106] Triton kernel JIT compilation during inference: _fp8_mqa_logits_kernel. This causes a latency spike; consider extending warmup to cover 
+      1 INFO 09-09 22:08:02 [core.py:114] Initializing a V1 LLM engine (v0.23.1rc1.dev190+gab6660699.d20260830) with config: model='/models/glm-5.3', speculative_config=SpeculativeConfig(m
+[22:22:13] == checks done; results in /home/napta2k/spark-cluster-mla-dcp/results/dcp2-cachefix-prod

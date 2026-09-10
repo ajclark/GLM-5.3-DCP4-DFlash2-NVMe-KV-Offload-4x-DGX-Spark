@@ -30,6 +30,27 @@ reasoning; this file is the operational summary.
   DCP1 at every concurrency, twice its KV; DCP4 loses 19% at C=12). Launcher
   and rollout defaults: `DCP_SIZE=2 MAXLEN=180224 KVBYTES=6e9 KVTIER=1`; the
   DCP4 lane is `DCP_SIZE=4 ./rollout_dcp.sh <label> 307200 2048 6000000000 1`.
+  **Serving label `lossy-prod` since 2026-09-10 02:22 UTC** (rollout
+  `results/rollout-lossy-prod-20260910-021209`): the same lane plus the three
+  bounded-lossy-verification overlays (`v2_rejection_sampler_utils.py`,
+  `v2_rejection_sampler.py`, `v2_sample_states.py`) and the fold-capable
+  `mla_attention.py`, all inert: `GLM_SPEC_LOSSY=0`, `GLM_DCP_LSE_FOLD=0`,
+  policy off. Enabling the per-request lossy switch needs
+  `GLM_SPEC_LOSSY=1 ./rollout_dcp.sh <label>`; it changes nothing for
+  requests that do not send `spec_lossy_margin` (see
+  `LOSSY-VERIFICATION-PLAN.md`, `SPEED-LEVERS-STATUS.md`). Previously:
+  **serving label `dcp2-cachefix-prod` since 2026-09-09 22:16 UTC** (rollout
+  `results/rollout-dcp2-cachefix-prod-20260909-220634`): the same lane, now
+  with the V2-runner overlay set (`v2_block_table.py`, `model_runner.py`,
+  `adaptive.py`, `cudagraph_utils.py`, `v2_async_utils.py`, `v1_outputs.py`,
+  `confidence_trace.py`, the hook-aware `scheduler.py`) and the extended
+  launcher; `GLM_SPEC_POLICY=off` (no adaptive caps, no extra graphs: capture
+  1.43 GiB, KV 198,551 tokens). This deploys the replicated-draft block-table
+  repair of `8f684a4`: `bench/spec_boundary.py` at 89,055 / 92,056 prompt
+  tokens accepted 56/70 drafted tokens at 44.0 / 42.6 tok/s (before: ~1%
+  first-position acceptance and ~6.5 tok/s past 90,112 tokens). Post-boot:
+  count100 54.0 tok/s at 145.3 ms, text identical; prose 17.9, code 39.1
+  (`results/dcp2-cachefix-prod/`).
   pi's glm-5.3 entry on the sandbox is a 155,648 context window with 32,768
   max tokens (270,336 for the DCP4 lane). The rule:
   vLLM rejects a request whose prompt plus max_tokens exceeds the window

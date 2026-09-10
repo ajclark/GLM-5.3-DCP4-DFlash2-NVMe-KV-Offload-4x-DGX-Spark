@@ -1,0 +1,25 @@
+{
+  "control": "fixed7",
+  "treatment": "lossy-m2.5",
+  "judgements": 60,
+  "completion_pairs": 30,
+  "prompts": 15,
+  "lossy_wins": 2,
+  "lossless_wins": 4,
+  "ties": 54,
+  "win_rate": 0.03333333333333333,
+  "wilson_95": [
+    0.009189319256197877,
+    0.113637742743086
+  ],
+  "tie_adjusted_score": 0.48333333333333334,
+  "win_or_tie_rate": 0.9333333333333333,
+  "decisive_win_rate": 0.3333333333333333,
+  "decisive_wilson_95": [
+    0.09677141110578041,
+    0.700006684861608
+  ],
+  "position_consistent_pairs": 30,
+  "method": "win_rate = lossy wins / all judgements (ties are not wins); Wilson uses this binary event. Tie-adjusted score gives ties half credit and has no binomial interval. Decisive win rate excludes ties. Unblind each swap before pooling; all expected judgements are mandatory.",
+  "precision_note": "n=60 detects only gross loss. At 60 independent, decisive judgements near 50%, the 95% Wilson half-width is about 12 percentage points. Position swaps reuse the same completions and repeats reuse prompts, so these nominal judgement-level intervals overstate independent evidence; they are not a promotion confidence bound."
+}
