@@ -311,8 +311,17 @@ pi prompting is already in use; re-instrumentation (#1) goes last.
 | 3 | Think-scope leak | 1–2% of tokens relaxed on tool-call-only outputs: first token after prefill bypassed the state machine (`</think>` missed) | fixed (28e9fc5), unmeasured |
 | 2/4 | Tool-argument copy / prompt-lookup drafting | every policy loses to DFlash on 67 real pi calls (−0.2…−1.3% all-token) | closed, negative |
 | 5 | Per-call TTFT | ~500 tok/s prefill + ~0.4 s floor; no hidden fixed cost; lever = prefill throughput | closed |
-| G | Prefill glue overlay (`GLM_DCP_RS_HEADMAJOR`) | head-major DCP LSE merge, removes two relayout copies + output masked_fill (~10% of a 4k prefill expected); codex-reviewed | **hold 10 running** |
+| G | Prefill glue overlay (`GLM_DCP_RS_HEADMAJOR`) | head-major DCP LSE merge: lossless (count identical), decode neutral, prefill +1.3% (4k) / +1.7% (40k) paired vs production — the copies were overlapped with NCCL, so 0.9 s of kernel time bought ~0.1 s of wall | measured; opt-in kept |
 | A | Unscoped lossy m2.5/m5.0, task level via pi, official tests | — | hold 11 queued after hold 10 |
 | 1 | Re-instrumentation | deferred last per instruction | not started |
 
 Ops notes for the morning: production is the user's `lossy-prod` (lossy overlays mounted, `GLM_SPEC_LOSSY=0`); every hold restored and was verified. `~/spark-cluster-experiments/capture_proxy.py` (separate dir, uncommitted) now injects `--force-xargs` on `/v1/chat/completions`. Lessons: one controller per hold; verify kills with `pgrep` (a `kill` on the `$!` of `nohup bash … &` hit a wrapper, not the script); never let a guard `pgrep -f` pattern be matchable by my own tool shell.
+
+### 2026-09-10 12:20 UTC — hold 10 (`hm-20260910-r1`, `GLM_DCP_RS_HEADMAJOR=1` + profiler): head-major DCP merge is lossless and worth ~1.5% of prefill, not 10%
+
+- Boot clean; count smokes byte-identical to all five stock-path holds today (the 256-token screens differ between *every* pair of boots, stock included — common prefixes 3–144 tokens from Marlin's nondeterministic MoE reductions — so they are not an identity gate). Decode screens within ±6% of the fold-lane reference with mixed signs: neutral.
+- **Prefill timing, same command on production immediately before the boot (uncached random prompts, thinking off):**
+  - 4096: production 539 tok/s (wall 8.21–8.38 s, n=3) → head-major 546 tok/s (wall 8.13–8.20 s, n=3): +1.3% throughput
+  - 40000: production 492 tok/s (wall 87.54–88.02 s, n=3) → head-major 500 tok/s (wall 86.22–87.13 s, n=3): +1.7% throughput
+- **Profiled 4k prefill** (rank 1): GPU busy 7.42 s vs 8.30 s in the hold-5 profile, copies/indexing bucket 0.42 s vs 1.40 s (3892 vs 8806 kernels): the relayout copies and the output masked_fill are gone as designed — but the hold-5 reference ran the LSE-fold lane, whose own casts/copies (~0.5 s, noted at 03:00) inflated that bucket, and the remaining copy time overlapped NCCL on another stream, so the wall gain is the ~1.5% above, not the 0.9 s of kernel time. Per-token: 545–547 tok/s head-major vs 538 production (4k), 500 vs 492 (40k).
+- Verdict: keep as an opt-in (`DCP_RS_HEADMAJOR=1` on the rollout) — lossless, codex-reviewed, ~1.5% prefill, decode neutral. Enabling it by default is a one-line launcher change once it has served a longer session; it is not a speed lever on its own. The 17% "torch glue" in the profile is largely overlapped; the true prefill critical path is NCCL (ring ceiling) + MoE, as the 03:00 entry already ordered them.
