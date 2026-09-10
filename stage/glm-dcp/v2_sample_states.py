@@ -37,6 +37,28 @@ def lossy_scope(sampling_params: SamplingParams) -> int:
     return LOSSY_SCOPES.get(xargs.get("spec_lossy_scope", "all"), 0)
 
 
+def advance_think_state(
+    think_state: torch.Tensor,        # [max_num_reqs + 1] int32, device view (slot -1 = scratch)
+    idx_mapping: torch.Tensor,        # [num_reqs] request slots, -1 for masked rows
+    sampled_token_ids: torch.Tensor,  # [num_reqs, 1]
+    think_ids=LOSSY_THINK_IDS,
+) -> None:
+    """Track think spans over tokens the plain sampler emitted. Batches with no
+    draft tokens (the first token after a prefill at C1, every step while the
+    drafter is idle) bypass the rejection kernels, whose bookkeeping otherwise
+    keeps the state; a `</think>` emitted there would leave the request
+    "inside" the template-opened span for its whole output, relaxing tool
+    calls and code under the think scope. No host sync: masked rows write the
+    scratch slot."""
+    open_id, close_id = think_ids
+    tok = sampled_token_ids[:, 0].to(torch.int64)
+    slot = torch.where(idx_mapping >= 0, idx_mapping, think_state.shape[0] - 1)
+    cur = think_state[slot]
+    new = torch.where(tok == open_id, torch.ones_like(cur),
+                      torch.where(tok == close_id, torch.zeros_like(cur), cur))
+    think_state[slot] = new
+
+
 def initial_think_state(token_ids, think_ids=LOSSY_THINK_IDS) -> int:
     """1 if the last think marker among the trailing tokens is an opening one.
 
@@ -117,7 +139,8 @@ class SamplingStates:
         self.lossy_scope.copy_to_uva()
         # Think-span state lives on the GPU (the rejection kernels update it);
         # the host writes only the initial value from the prompt at admission.
-        self.think_state = UvaBackedTensor(max_num_reqs, dtype=torch.int32)
+        # One extra scratch slot absorbs masked rows in advance_think_state.
+        self.think_state = UvaBackedTensor(max_num_reqs + 1, dtype=torch.int32)
         self.think_state.copy_to_uva()
 
         # Initialize top_k and top_p manually because 0 is an invalid value for them.
@@ -174,6 +197,15 @@ class SamplingStates:
         """Initial think-span state for a newly admitted request (host side;
         copied with the other staged writes)."""
         self.think_state.np[req_idx] = initial_think_state(token_ids)
+
+    def update_think_state_from_sampled(
+        self, idx_mapping: torch.Tensor, sampled_token_ids: torch.Tensor
+    ) -> None:
+        """Plain-sampler path (no draft tokens in the batch): keep the think
+        state in step with the emitted token. No-op unless lossy is enabled."""
+        if not LOSSY_ENABLED:
+            return
+        advance_think_state(self.think_state.gpu, idx_mapping, sampled_token_ids)
 
     def apply_temperature(
         self,

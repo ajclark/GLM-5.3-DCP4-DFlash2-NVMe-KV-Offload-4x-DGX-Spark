@@ -1088,6 +1088,15 @@ class GPUModelRunner(LoRAModelRunnerMixin):
         if input_batch.num_draft_tokens == 0 or self.rejection_sampler is None:
             assert self.sampler is not None
             sampler_output = self.sampler(logits, input_batch)
+            # GLM overlay: the rejection kernels keep the lossy think-span
+            # state; tokens sampled here (no drafts in the batch) must advance
+            # it too, or a `</think>` emitted as a request's first token is
+            # missed (see states.advance_think_state).
+            states = getattr(self.sampler, "sampling_states", None)
+            if states is not None and hasattr(states, "update_think_state_from_sampled"):
+                states.update_think_state_from_sampled(
+                    input_batch.idx_mapping, sampler_output.sampled_token_ids
+                )
         else:
             # Rejection sampling for spec decoding.
             assert self.rejection_sampler is not None

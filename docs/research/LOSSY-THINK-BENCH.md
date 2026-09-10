@@ -188,11 +188,26 @@ interpretation; faster completion alone is not a quality win.
 
 Activation requires matching treatment labels/margins, scope `think`, enabled
 lossy verification and positive relaxation; control rows require zero relaxed
-accepts and explicit null margin. Verify times use proxy **call-start** `t`
-and inclusive `[t,t+wall_s]` windows. A label in the wrong arm's window fails;
-rows outside every proxy window count as other traffic, even for a recognized
-label. Missing labels, overlapping arm windows, dropped/ineligible telemetry
-and writer errors fail proof. No trace is joined through private request text.
+accepts and explicit null margin. The captured proxy `t` is recorded **after
+completion and the final metrics scrape**, not at call start
+(`~/spark-cluster-experiments/capture_proxy.py:194–215`). Infer `[t-wall_s,t]`
+and allow `--window-slack 2` seconds (default) for scrape delay and clock skew.
+Treatment labels determine attribution; windows check consistency, so overlapping
+treatment tolerance windows do not duplicate rows or fail proof. Relaxation or
+a treatment label inside a control window still fails strictly. Missing labels,
+out-of-window treatment rows within selected pass spans, dropped/ineligible
+telemetry and writer errors also fail. No trace is joined through private text.
+
+By default, exclude proxy calls outside the selected arm/pass task spans, including
+pre-hold production trials and 200-token probes. Report their numeric counts,
+budgets and trace relaxation separately under `extra_calls` and
+`activation.excluded_probe_trial_trace`. `--include-extra-calls` includes them
+in pooled proxy metrics and activation, while paired task metrics remain task-only.
+Other trace traffic outside the selected spans is counted separately.
+The hold-9b diagnosis was a reversed timestamp convention: m2.5's 285.588-second
+call ended at 09:03:39.194 UTC, but `[t,t+wall_s]` falsely extended it to 09:08:24.782,
+inside m5.0's run. Its corrected interval starts at 08:58:53.606; the observed
+0.35-second clock skew cannot explain the original multi-minute overlap.
 
 Only whitelisted counts, public HumanEval IDs and fixed diagnostics are
 serialized. Private texts, tools/messages, check output, error payloads and

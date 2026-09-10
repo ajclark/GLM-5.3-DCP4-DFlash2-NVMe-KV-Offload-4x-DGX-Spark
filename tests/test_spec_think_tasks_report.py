@@ -46,7 +46,7 @@ def experiment(tmp_path):
                                   'returncode': 0 if passed else 1, 'output': SECRET}}
                 dump(cell / f'HumanEval_{n}' / 'result.json', task)
                 tasks.append(task)
-                call = {'t': start + 1, 'wall_s': 3., 'task': SECRET,
+                call = {'t': start + 4, 'wall_s': 3., 'task': SECRET,
                         'generation_tokens': task['output_tokens'], 'server_decode_s': 2. if n == 0 else 4.,
                         'api_calls': 1, 'spec_drafts': 10, 'spec_accepted_tokens': 50,
                         'reasoning_chars': 20, 'content_chars': 10, 'toolcall_chars': 70,
@@ -187,7 +187,8 @@ def test_partial_missing_pass_and_preflight_before_private_reads(experiment, mon
     assert r['promotion_ready'] is False
     assert r['comparisons']['m2.5']['missing_pairs'] == 3
     assert r['pooled_per_arm']['m2.5']['tasks'] == 3
-    assert r['unassigned_proxy_calls'] == 3
+    assert r['unassigned_proxy_calls'] == 0
+    assert r['extra_calls']['m2.5']['proxy_calls'] == 3
     assert r['pooled_per_arm']['m2.5']['wall_complete'] is False
 
 
@@ -274,3 +275,177 @@ def test_summary_validity_flag_text_not_exported(experiment):
     r = build(experiment)
     assert r['status'] == 'invalid'
     assert SECRET not in json.dumps(r) + report.markdown(r)
+
+
+@pytest.mark.parametrize('scope', ['think', 'all'])
+@pytest.mark.parametrize('custom_label', [None, 'all-tasks-m2.5'])
+def test_cli_scope_and_custom_labels(experiment, tmp_path, scope, custom_label):
+    def change(rows):
+        for row in rows:
+            if row['label']:
+                row['lossy_scope'] = scope
+                if custom_label:
+                    row['label'] = custom_label
+    mutate_trace(experiment, change)
+    prefix = tmp_path / 'configured-report'
+    args = [str(experiment[0]), '--trace', str(experiment[1]), '--out', str(prefix),
+            '--arms', 'control,m2.5', '--expected-tasks', '3', '--bootstrap-samples', '100',
+            '--scope', scope]
+    if custom_label:
+        args += ['--labels', f'm2.5={custom_label}']
+    assert report.main(args) == 0
+    result = json.loads(Path(str(prefix) + '.json').read_text())
+    assert result['activation']['status'] == 'proven'
+    assert result['scope'] == scope
+    assert result['labels'] == {'m2.5': custom_label or 'think-tasks-m2.5'}
+    assert f'lossy_scope={scope}' in Path(str(prefix) + '.md').read_text()
+    assert SECRET not in json.dumps(result)
+
+
+def test_configured_all_scope_rejects_think_rows(experiment):
+    result = build(experiment, scope='all')
+    assert result['status'] == 'invalid'
+    assert result['activation']['arms']['m2.5']['failures']['scope_mismatch'] == 6
+
+
+def test_custom_labels_still_check_control_relaxation(experiment):
+    def change(rows):
+        for row in rows:
+            if row['label']:
+                row.update(lossy_scope='all', label='all-tasks-m2.5')
+        rows[0]['relaxed'] = 1
+    mutate_trace(experiment, change)
+    result = build(experiment, scope='all', labels={'m2.5': 'all-tasks-m2.5'})
+    assert result['activation']['arms']['m2.5']['proven'] is True
+    assert result['activation']['arms']['control']['failures']['control_relaxed'] == 1
+    assert result['status'] == 'invalid'
+
+
+def test_label_overrides_default_unmentioned_arms():
+    overrides = report.parse_labels('m2.5=all-tasks-m2.5,m5.0=all-tasks-m5.0')
+    assert overrides == {'m2.5': 'all-tasks-m2.5', 'm5.0': 'all-tasks-m5.0'}
+    assert report.resolve_labels(('control', 'm2.5', 'm5.0'), {'m2.5': 'custom'}) == {
+        'm2.5': 'custom', 'm5.0': 'think-tasks-m5.0'}
+
+
+@pytest.mark.parametrize('value', ['m2.5', 'm2.5=', 'm2.5=a,m2.5=b'])
+def test_malformed_label_overrides_rejected(value):
+    with pytest.raises(report.InputError):
+        report.parse_labels(value)
+
+
+def test_control_label_cannot_be_overridden(experiment):
+    with pytest.raises(report.InputError, match='control stays unlabeled'):
+        build(experiment, labels={'control': 'custom-control'})
+
+
+def test_proxy_timestamp_is_completion_and_inferred_start_assigns_task(experiment):
+    for arm in ARMS:
+        path = experiment[0] / f'proxy-{arm}-calls.jsonl'
+        rows = [json.loads(s) for s in path.read_text().splitlines()]
+        duration = 10 if arm == 'control' else 5
+        for row in rows:
+            task_start = row['t'] - 4
+            row.update(t=task_start + duration + .005, wall_s=duration - 1)
+        jsonl(path, rows)
+    r = build(experiment)
+    assert r['status'] == 'complete'
+    assert r['unassigned_proxy_calls'] == 0
+    assert all(v['proxy_calls'] == 0 for v in r['extra_calls'].values())
+    assert r['pooled_per_arm']['control']['proxy_calls'] == 6
+
+
+def test_slack_handles_clock_skew_but_zero_slack_fails(experiment, tmp_path):
+    # Call ends at task_start+4; node clock is 0.35 s ahead.
+    mutate_trace(experiment, lambda rows: rows[3].update(time=1104.35))
+    r = build(experiment)
+    assert r['activation']['status'] == 'proven'
+    assert r['window_slack_s'] == 2
+    r = build(experiment, window_slack=0)
+    assert r['activation']['arms']['m2.5']['failures']['outside_arm_call_windows'] == 1
+    prefix = tmp_path / 'zero-slack'
+    assert report.main([str(experiment[0]), '--trace', str(experiment[1]), '--out', str(prefix),
+                        '--arms', 'control,m2.5', '--expected-tasks', '3', '--bootstrap-samples', '100',
+                        '--window-slack', '0']) == 1
+
+
+def trace_row(label, time, margin=None, relaxed=0):
+    return dict(event='verify', label=label, time=time, relaxed=relaxed, lossy_margin=margin,
+                lossy_scope='think', lossy_enabled=margin is not None,
+                eligible=True, dropped=0, writer_error=None)
+
+
+def test_long_completed_treatment_call_does_not_extend_into_control():
+    # Recorded t=180, wall=100 means [80,180], never [180,280].
+    calls = [{'arm': 'm2.5', 'start': 80, 'end': 180},
+             {'arm': 'control', 'start': 200, 'end': 205}]
+    events = [trace_row('think-tasks-m2.5', 120, 2.5, 2), trace_row('', 202)]
+    r = report.activation(events, calls, ARMS)
+    assert r['status'] == 'proven'
+    assert r['overlapping_window_rows'] == 0
+
+
+def test_treatment_labels_primary_when_treatment_windows_overlap():
+    calls = [{'arm': 'control', 'start': 10, 'end': 12},
+             {'arm': 'm2.5', 'start': 20, 'end': 25},
+             {'arm': 'm5.0', 'start': 24, 'end': 29}]
+    events = [trace_row('', 11), trace_row('think-tasks-m2.5', 24.5, 2.5, 1),
+              trace_row('think-tasks-m5.0', 24.5, 5., 2)]
+    r = report.activation(events, calls, ('control', 'm2.5', 'm5.0'))
+    assert r['status'] == 'proven'
+    assert r['overlapping_window_rows'] == 2
+    assert r['arms']['m2.5']['verify_rows'] == r['arms']['m5.0']['verify_rows'] == 1
+
+
+def test_treatment_label_inside_control_window_is_fatal_even_with_own_window():
+    calls = [{'arm': 'control', 'start': 10, 'end': 20},
+             {'arm': 'm2.5', 'start': 15, 'end': 25}]
+    r = report.activation([trace_row('', 11), trace_row('think-tasks-m2.5', 17, 2.5, 1)], calls, ARMS)
+    assert r['status'] == 'failed'
+    assert r['arms']['control']['failures']['treatment_label_in_control_window'] == 1
+    assert r['arms']['control']['failures']['control_relaxed'] == 1
+
+
+def test_control_relaxation_under_unknown_label_still_fails(experiment):
+    mutate_trace(experiment, lambda rows: rows[0].update(label='unknown', relaxed=1))
+    r = build(experiment)
+    assert r['activation']['arms']['control']['failures']['control_relaxed'] == 1
+
+
+def test_probes_and_trial_calls_excluded_and_reported_separately(experiment, tmp_path, capsys):
+    for arm in ARMS:
+        path = experiment[0] / f'proxy-{arm}-calls.jsonl'
+        rows = [json.loads(s) for s in path.read_text().splitlines()]
+        probe = copy.deepcopy(rows[0])
+        probe.update(t=900., wall_s=3.)
+        probe['request_params']['max_completion_tokens'] = 200 if arm != 'control' else 8192
+        # A second probe in an inter-pass gap must also be excluded.
+        gap = copy.deepcopy(probe)
+        gap['t'] = 1500.
+        jsonl(path, [probe, *rows, gap])
+    mutate_trace(experiment, lambda rows: rows.extend([trace_row('', 899), trace_row('think-tasks-m2.5', 899, 2.5, 3),
+                                                       trace_row('think-tasks-m2.5', 1499, 2.5, 4)]))
+    # The synthetic simultaneous probes are excluded from primary activation.
+    r = build(experiment)
+    assert r['status'] == 'complete'
+    assert r['extra_calls']['m2.5']['proxy_calls'] == 2
+    assert r['extra_calls']['m2.5']['completion_budgets'] == [200]
+    assert r['pooled_per_arm']['m2.5']['proxy_calls'] == 6
+    assert r['comparisons']['m2.5']['budget_mismatch_pairs'] == 0
+    assert r['activation']['arms']['m2.5']['relaxed'] == 12
+    assert r['activation']['excluded_probe_trial_trace']['m2.5']['relaxed'] == 7
+    prefix = tmp_path / 'extra-report'
+    assert report.main([str(experiment[0]), '--trace', str(experiment[1]), '--out', str(prefix),
+                        '--arms', 'control,m2.5', '--expected-tasks', '3', '--bootstrap-samples', '100',
+                        '--include-extra-calls']) == 1  # overlapping probes expose control contamination
+    included = json.loads(Path(str(prefix) + '.json').read_text())
+    assert included['pooled_per_arm']['m2.5']['proxy_calls'] == 8
+    assert included['activation']['arms']['m2.5']['relaxed'] == 19
+    assert included['comparisons']['m2.5']['budget_mismatch_pairs'] == 0
+    assert SECRET not in json.dumps(included) + report.markdown(included) + capsys.readouterr().out
+
+
+@pytest.mark.parametrize('slack', [-1, float('nan'), float('inf')])
+def test_invalid_window_slack_rejected(experiment, slack):
+    with pytest.raises(report.InputError):
+        build(experiment, window_slack=slack)

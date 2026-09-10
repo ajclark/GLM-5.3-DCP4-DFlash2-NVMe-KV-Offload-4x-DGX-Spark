@@ -397,3 +397,22 @@ def test_scope_and_initial_state_parsing():
     assert initial([1, 2, 3]) == 0 and initial([]) == 0
     assert initial([154841] + [5] * 100) == 0               # marker beyond the trailing window is ignored
     assert initial([154841] + [5] * 10) == 1
+
+
+def test_plain_sampler_tokens_advance_the_think_state():
+    """Hold 9b leak: at C1 the first token after a prefill is sampled without
+    drafts, so a `</think>` there never reached the kernel bookkeeping and the
+    request stayed inside the template-opened span for its whole output."""
+    ns = extract(OVERLAY / "v1/worker/gpu/sample/states.py", ["advance_think_state"],
+                 {"LOSSY_THINK_IDS": (154841, 154842)})
+    state = torch.tensor([1, 1, 0, 0, 7], dtype=torch.int32)  # last slot = scratch
+    idx = torch.tensor([0, 1, 2, -1, 3])
+    sampled = torch.tensor([[154842], [5], [154841], [154842], [9]]).view(-1, 1)
+    ns["advance_think_state"](state, idx, sampled)
+    assert state[:4].tolist() == [0, 1, 1, 0]   # closed, unchanged, opened, unchanged
+    assert state[4] == 0                         # masked row wrote the scratch slot only
+    runner = (OVERLAY / "v1/worker/gpu/model_runner.py").read_text()
+    assert "states.update_think_state_from_sampled(" in runner
+    assert "input_batch.num_draft_tokens == 0 or self.rejection_sampler is None" in runner
+    states_src = (OVERLAY / "v1/worker/gpu/sample/states.py").read_text()
+    assert "UvaBackedTensor(max_num_reqs + 1, dtype=torch.int32)" in states_src
