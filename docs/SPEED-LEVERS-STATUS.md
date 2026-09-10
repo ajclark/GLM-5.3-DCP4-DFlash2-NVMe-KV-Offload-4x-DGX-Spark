@@ -258,3 +258,19 @@ pi prompting is already in use; re-instrumentation (#1) goes last.
   thinking-off control proving zero relaxation under scope think). Codex
   queued: per-call attribution and the tool-argument copy screen on the
   captured streams (offline; /tokenize only).
+- 07:55 UTC: **hold 8 (`lossythink-20260910-r2`)** thinking-on dev corpus
+  (12 cases x 1 repeat, 1536-token budget): paired tok/s vs fixed7 — code
+  lossy-m2.5 1.195, lossy-think-m2.5 1.220, lossy-think-m5.0 1.276; prose
+  1.169 / 1.172 / 1.266; pooled 20.3 -> 24.0 / 24.4 / 25.8 tok/s; relaxed
+  0.25 / 0.24 / 0.35 per cycle. Thinking-off control under scope think:
+  **relaxed 0.0** (invariant holds), ratio 0.98 (noise). Reasoning token
+  count ratio 0.78 (m2.5) / 0.69 (m5.0) pooled, visible answers 1.12x /
+  1.19x longer within the fixed budget. Code checks uninformative: the dev
+  prompts do not match `spec_code_check`'s contract and most hit the budget
+  on both arms. Next: task-level quality (HumanEval-through-pi, official
+  tests) on a lossy boot with the proxy injecting the think-scoped fields.
+- 07:55 UTC: codex's `research/HARNESS-CAPTURE-20260910.md` (67 real pi calls):
+  not-length-limited mix is ~73% tool arguments (pure tool calls 6.79
+  emitted/cycle), ~26% reasoning, ~1% content; one runaway reasoning call
+  (32,768 tokens, 720 s) was 71% of all wall time — a harness-level issue.
+  Copy screen skipped pending a tokenize window; attribution tables written.

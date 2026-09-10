@@ -1,0 +1,2162 @@
+{
+  "started_at": 1789026428.3665779,
+  "token_ids": [
+    73022,
+    49235,
+    198,
+    322,
+    22624,
+    21239,
+    271,
+    1533,
+    3749,
+    78239,
+    3798,
+    341,
+    220,
+    4165,
+    26514,
+    1372,
+    315,
+    22624,
+    13544,
+    1283,
+    279,
+    2856,
+    1430,
+    13,
+    735,
+    220,
+    60178,
+    4820,
+    1372,
+    280,
+    220,
+    4165,
+    5351,
+    7626,
+    304,
+    30386,
+    369,
+    279,
+    1156,
+    22624,
+    13,
+    735,
+    220,
+    2856,
+    20000,
+    21582,
+    4820,
+    1372,
+    280,
+    220,
+    4165,
+    17416,
+    7875,
+    9248,
+    311,
+    279,
+    7626,
+    1283,
+    1817,
+    4774,
+    13,
+    735,
+    220,
+    8167,
+    4820,
+    1372,
+    280,
+    220,
+    4165,
+    30494,
+    6822,
+    320,
+    1011,
+    8,
+    369,
+    279,
+    24113,
+    7626,
+    1573,
+    83697,
+    374,
+    9248,
+    13,
+    735,
+    220,
+    1932,
+    20000,
+    21582,
+    4820,
+    1372,
+    280,
+    220,
+    4165,
+    619,
+    3248,
+    19382,
+    304,
+    508,
+    15,
+    11,
+    220,
+    16,
+    936,
+    220,
+    15,
+    284,
+    902,
+    83697,
+    11,
+    220,
+    16,
+    284,
+    2480,
+    83697,
+    13,
+    735,
+    220,
+    83697,
+    4820,
+    1372,
+    280,
+    220,
+    4165,
+    49509,
+    29023,
+    3425,
+    264,
+    14977,
+    1465,
+    1265,
+    387,
+    37535,
+    1122,
+    13,
+    735,
+    220,
+    374,
+    51221,
+    480,
+    4820,
+    320,
+    841,
+    25,
+    9783,
+    8,
+    589,
+    2710,
+    280,
+    220,
+    4165,
+    12250,
+    76343,
+    26724,
+    311,
+    9118,
+    60178,
+    13,
+    735,
+    220,
+    8285,
+    4820,
+    76343,
+    26724,
+    280,
+    220,
+    4165,
+    29404,
+    81868,
+    26,
+    16657,
+    311,
+    264,
+    11217,
+    5980,
+    14248,
+    13,
+    735,
+    220,
+    6084,
+    4820,
+    320,
+    1011,
+    25,
+    1372,
+    8,
+    589,
+    7303,
+    16939,
+    10128,
+    220,
+    4165,
+    29404,
+    4194,
+    2530,
+    26,
+    16657,
+    311,
+    4149,
+    7829,
+    13,
+    735,
+    220,
+    4194,
+    4820,
+    1719,
+    589,
+    1372,
+    280,
+    220,
+    4165,
+    21106,
+    1573,
+    1817,
+    3783,
+    448,
+    4774,
+    1372,
+    323,
+    7626,
+    13,
+    735,
+    220,
+    389,
+    51221,
+    4820,
+    320,
+    2733,
+    25,
+    314,
+    4774,
+    25,
+    1372,
+    26,
+    7626,
+    21582,
+    25,
+    1372,
+    26,
+    1465,
+    25,
+    9783,
+    6413,
+    589,
+    737,
+    280,
+    630,
+    1533,
+    536,
+    3680,
+    13586,
+    1454,
+    2239,
+    4600,
+    341,
+    220,
+    4692
+  ],
+  "token_sha256": "abe9c842dc8d5e2580d849069c873b8eed4821124dc58dfcda21270e72a9d896",
+  "text": "```typescript\n// retry.ts\n\nexport interface RetryOptions {\n  /** Maximum number of retry attempts after the initial try. */\n  retries?: number;\n  /** Base delay in milliseconds for the first retry. */\n  initialDelayMs?: number;\n  /** Multiplier applied to the delay after each attempt. */\n  factor?: number;\n  /** Upper bound (ms) for the computed delay before jitter is applied. */\n  maxDelayMs?: number;\n  /** Jitter fraction in [0, 1]. 0 = no jitter, 1 = full jitter. */\n  jitter?: number;\n  /** Predicate deciding whether a thrown error should be retried. */\n  isRetryable?: (error: unknown) => boolean;\n  /** Optional AbortSignal to cancel retries. */\n  signal?: AbortSignal;\n  /** Injectable sleeper; defaults to a promise-based setTimeout. */\n  sleep?: (ms: number) => Promise<void>;\n  /** Injectable random source; defaults to Math.random. */\n  random?: () => number;\n  /** Called before each wait with attempt number and delay. */\n  onRetry?: (info: { attempt: number; delayMs: number; error: unknown }) => void;\n}\n\nexport class AbortedError extends Error {\n  constructor",
+  "reasoning_text": "",
+  "usage": {
+    "prompt_tokens": 61,
+    "total_tokens": 317,
+    "completion_tokens": 256
+  },
+  "seconds": 10.384460366971325,
+  "ttft": 0.402463762962725,
+  "decode_tps": 25.54806207972446,
+  "chunks": [
+    {
+      "seconds": 0.4023629750008695,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "role": "assistant",
+              "content": ""
+            },
+            "logprobs": null,
+            "finish_reason": null
+          }
+        ],
+        "prompt_token_ids": [
+          154822,
+          154824,
+          154826,
+          25062,
+          287,
+          29905,
+          371,
+          25,
+          5124,
+          154827,
+          62535,
+          264,
+          86732,
+          22624,
+          15537,
+          369,
+          38797,
+          7525,
+          13,
+          9183,
+          58350,
+          1182,
+          1847,
+          11,
+          83697,
+          11,
+          458,
+          76343,
+          26724,
+          11,
+          458,
+          15539,
+          480,
+          81868,
+          323,
+          4194,
+          2530,
+          11,
+          323,
+          264,
+          24214,
+          429,
+          27535,
+          3425,
+          458,
+          1465,
+          374,
+          22624,
+          480,
+          13,
+          29620,
+          71794,
+          7032,
+          13,
+          3411,
+          2038,
+          1172,
+          13,
+          154828,
+          154841,
+          154842
+        ],
+        "prompt_text": null
+      }
+    },
+    {
+      "seconds": 0.402463762962725,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "```",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              73022
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 0.5472781750140712,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "typescript\n//",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              49235,
+              198,
+              322
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 0.6891048689722084,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " retry.ts\n\n",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              22624,
+              21239,
+              271
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 0.8327429000055417,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "export interface RetryOptions",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              1533,
+              3749,
+              78239,
+              3798
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 0.980622784991283,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " {\n  /**",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              341,
+              220,
+              4165
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 1.1269718710100278,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " Maximum number of retry",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              26514,
+              1372,
+              315,
+              22624
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 1.273488153994549,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " attempts after",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              13544,
+              1283
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 1.4235185139696114,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " the initial try",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              279,
+              2856,
+              1430
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 1.5764711080119014,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ". */\n  retries",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              13,
+              735,
+              220,
+              60178
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 1.7224828739999793,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "?:",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              4820
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 1.8690587899764068,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " number;\n  /** Base",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              1372,
+              280,
+              220,
+              4165,
+              5351
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 2.0133735690033063,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " delay in milliseconds for",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              7626,
+              304,
+              30386,
+              369
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 2.1598845279659145,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " the first retry",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              279,
+              1156,
+              22624
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 2.312978597008623,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ". */\n  initial",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              13,
+              735,
+              220,
+              2856
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 2.4596956860041246,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "DelayMs",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              20000,
+              21582
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 2.609572399989702,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "?: number;\n",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              4820,
+              1372,
+              280
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 2.7531145769753493,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "  /** Multi",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              220,
+              4165,
+              17416
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 2.9017076469608583,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "plier applied to the delay",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              7875,
+              9248,
+              311,
+              279,
+              7626
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 3.05037725600414,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " after",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              1283
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 3.2038612900068983,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " each attempt",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              1817,
+              4774
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 3.3576304519665428,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ". */\n  factor",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              13,
+              735,
+              220,
+              8167
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 3.506388840964064,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "?:",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              4820
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 3.6573525089770555,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " number;\n  /** Upper",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              1372,
+              280,
+              220,
+              4165,
+              30494
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 3.806206186010968,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " bound (",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              6822,
+              320
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 3.9536181850126013,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "ms",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              1011
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 4.097541297960561,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ") for the",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              8,
+              369,
+              279
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 4.249639659014065,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " computed delay before jitter is",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              24113,
+              7626,
+              1573,
+              83697,
+              374
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 4.403132476960309,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " applied. */\n  maxDelayMs?:",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              9248,
+              13,
+              735,
+              220,
+              1932,
+              20000,
+              21582,
+              4820
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 4.551828188996296,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " number;\n  /** Jitter fraction",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              1372,
+              280,
+              220,
+              4165,
+              619,
+              3248,
+              19382
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 4.697079361998476,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " in [0, 1].",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              304,
+              508,
+              15,
+              11,
+              220,
+              16,
+              936
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 4.843892378965393,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " 0 = no",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              220,
+              15,
+              284,
+              902
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 4.994546322966926,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " jitter, 1 = full jitter.",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              83697,
+              11,
+              220,
+              16,
+              284,
+              2480,
+              83697,
+              13
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 5.147632829961367,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " */\n  jitter?: number;\n",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              735,
+              220,
+              83697,
+              4820,
+              1372,
+              280
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 5.292463975958526,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "  /** Predicate",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              220,
+              4165,
+              49509
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 5.4393459419952706,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " deciding",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              29023
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 5.587899311969522,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " whether a",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              3425,
+              264
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 5.738433134974912,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " thrown error should",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              14977,
+              1465,
+              1265
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 5.889304617012385,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " be retried. */\n  is",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              387,
+              37535,
+              1122,
+              13,
+              735,
+              220,
+              374
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 6.036633362993598,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "Retryable?: (error: unknown",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              51221,
+              480,
+              4820,
+              320,
+              841,
+              25,
+              9783
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 6.1893673799932,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ") => boolean;\n  /** Optional",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              8,
+              589,
+              2710,
+              280,
+              220,
+              4165,
+              12250
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 6.334542824013624,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " AbortSignal to",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              76343,
+              26724,
+              311
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 6.486435978964437,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " cancel retries",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              9118,
+              60178
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 6.636874487972818,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ".",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              13
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 6.789450938988011,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " */\n  signal",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              735,
+              220,
+              8285
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 6.93847094400553,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "?: AbortSignal;\n",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              4820,
+              76343,
+              26724,
+              280
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 7.087849522999022,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "  /** Injectable sleeper",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              220,
+              4165,
+              29404,
+              81868
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 7.238289016007911,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ";",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              26
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 7.384419207985047,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " defaults to a",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              16657,
+              311,
+              264
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 7.535393636964727,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " promise-based setTimeout",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              11217,
+              5980,
+              14248
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 7.688204698963091,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ". */\n  sleep",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              13,
+              735,
+              220,
+              6084
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 7.8354835719801486,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "?: (ms",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              4820,
+              320,
+              1011
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 7.99230499000987,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ": number) => Promise",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              25,
+              1372,
+              8,
+              589,
+              7303
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 8.145643836993258,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "<void>;\n",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              16939,
+              10128
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 8.293814897013362,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "  /** Injectable random source; defaults to",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              220,
+              4165,
+              29404,
+              4194,
+              2530,
+              26,
+              16657,
+              311
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 8.446091490972321,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " Math.random. */\n  random?: ()",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              4149,
+              7829,
+              13,
+              735,
+              220,
+              4194,
+              4820,
+              1719
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 8.598204164998606,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " => number;\n",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              589,
+              1372,
+              280
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 8.745885399985127,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " ",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              220
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 8.892088305961806,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " /** Called",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              4165,
+              21106
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 9.039570048975293,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " before each wait",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              1573,
+              1817,
+              3783
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 9.190447360975668,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " with",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              448
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 9.341349373979028,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " attempt",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              4774
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 9.493465269973967,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " number and delay. */\n  on",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              1372,
+              323,
+              7626,
+              13,
+              735,
+              220,
+              389
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 9.642319021979347,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "Retry?: (info",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              51221,
+              4820,
+              320,
+              2733
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 9.789822953986004,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ": { attempt",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              25,
+              314,
+              4774
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 9.933595831971616,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ": number; delayMs",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              25,
+              1372,
+              26,
+              7626,
+              21582
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 10.087111981993075,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": ": number; error: unknown })",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              25,
+              1372,
+              26,
+              1465,
+              25,
+              9783,
+              6413
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 10.238604964979459,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": " => void;\n}\n\nexport class Ab",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": null,
+            "token_ids": [
+              589,
+              737,
+              280,
+              630,
+              1533,
+              536,
+              3680
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 10.383651345968246,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "delta": {
+              "content": "ortedError extends Error {\n  constructor",
+              "tool_calls": []
+            },
+            "logprobs": null,
+            "finish_reason": "length",
+            "stop_reason": null,
+            "token_ids": [
+              13586,
+              1454,
+              2239,
+              4600,
+              341,
+              220,
+              4692
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "seconds": 10.38373826496536,
+      "data": {
+        "id": "chatcmpl-8442ecebd071ac25",
+        "object": "chat.completion.chunk",
+        "created": 1789026428,
+        "model": "glm-5.3",
+        "choices": [],
+        "usage": {
+          "prompt_tokens": 61,
+          "total_tokens": 317,
+          "completion_tokens": 256
+        },
+        "system_fingerprint": "vllm-0.23.1rc1.dev190+gab6660699.d20260830-tp4-791a48d8"
+      }
+    }
+  ],
+  "thinking": false,
+  "max_tokens": 256,
+  "reasoning_field_present": false,
+  "reasoning_tokens": 0,
+  "reasoning_tokens_estimated": true,
+  "reasoning_tokens_source": "no_reasoning_observed",
+  "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+  "reasoning_words": 0,
+  "visible_answer_words": 128,
+  "visible_answer_tokens_estimate": 133,
+  "spec_metric_delta": {
+    "vllm:spec_decode_num_drafts_total{engine=\"0\",model_name=\"glm-5.3\"}": 67.0,
+    "vllm:spec_decode_num_draft_tokens_total{engine=\"0\",model_name=\"glm-5.3\"}": 469.0,
+    "vllm:spec_decode_num_accepted_tokens_total{engine=\"0\",model_name=\"glm-5.3\"}": 189.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total{engine=\"0\",model_name=\"glm-5.3\",position=\"0\"}": 57.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total{engine=\"0\",model_name=\"glm-5.3\",position=\"1\"}": 49.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total{engine=\"0\",model_name=\"glm-5.3\",position=\"2\"}": 31.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total{engine=\"0\",model_name=\"glm-5.3\",position=\"3\"}": 20.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total{engine=\"0\",model_name=\"glm-5.3\",position=\"4\"}": 14.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total{engine=\"0\",model_name=\"glm-5.3\",position=\"5\"}": 13.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total{engine=\"0\",model_name=\"glm-5.3\",position=\"6\"}": 5.0
+  },
+  "policy": "fixed",
+  "label": "lossy-think-off-code_retry-r0-fixed-k7",
+  "case": "code_retry",
+  "cap": 7,
+  "repeat": 0,
+  "study": "lossy",
+  "variant": "fixed7",
+  "experiment_xargs": {
+    "spec_policy": "fixed",
+    "spec_verify_cap": 7,
+    "spec_label": "lossy-think-off-code_retry-r0-fixed-k7"
+  },
+  "message_sha256": "2265ce39522d2e647677b690bb98cc8615fb8bab4e545423cb5a9e9dea549d6d"
+}

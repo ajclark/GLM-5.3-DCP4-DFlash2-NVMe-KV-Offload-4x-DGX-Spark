@@ -1,0 +1,538 @@
+{
+  "control": {
+    "variant": "fixed7",
+    "requests": 12,
+    "reasoning_tokens": 3938,
+    "reasoning_count_sources": {
+      "reasoning_field_word_estimate": 12
+    },
+    "estimated_reasoning_requests": 12,
+    "final_answer_words": 7964,
+    "final_answer_tokens_estimate": 8282,
+    "empty_visible_answers": 2,
+    "length_stopped_requests": 10,
+    "code_checks": {
+      "passed": 0,
+      "total": 6,
+      "applicable_passed": 0,
+      "applicable_total": 0
+    }
+  },
+  "treatment": {
+    "variant": "lossy-think-m2.5",
+    "requests": 12,
+    "reasoning_tokens": 3060,
+    "reasoning_count_sources": {
+      "reasoning_field_word_estimate": 12
+    },
+    "estimated_reasoning_requests": 12,
+    "final_answer_words": 8954,
+    "final_answer_tokens_estimate": 9311,
+    "empty_visible_answers": 1,
+    "length_stopped_requests": 11,
+    "code_checks": {
+      "passed": 0,
+      "total": 6,
+      "applicable_passed": 0,
+      "applicable_total": 0
+    }
+  },
+  "pairs": [
+    {
+      "case": "code_cache",
+      "repeat": 0,
+      "control": {
+        "reasoning_tokens": 47,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 45,
+        "visible_answer_words": 721,
+        "visible_answer_tokens_estimate": 750,
+        "source": "results/lossy-think-dev/lossy-think-dev-code_cache-r0-fixed-k7.json",
+        "source_sha256": "fc3158fe5e386cd0eaf90f3fd46d867a210c81b8098f8827f13f3ec862de5ecd",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ],
+        "code_check": {
+          "passed": false,
+          "detail": "'(' was never closed (<unknown>, line 209)",
+          "prompt_matches_checker_contract": false
+        }
+      },
+      "treatment": {
+        "reasoning_tokens": 34,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 33,
+        "visible_answer_words": 735,
+        "visible_answer_tokens_estimate": 764,
+        "source": "results/lossy-think-dev/lossy-think-dev-code_cache-r0-lossy-think-m2.5-k7.json",
+        "source_sha256": "8e038befde7bccbcfcbd2bc5e5aef93d78f0284901a0ffb5f8ee4af52514a764",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ],
+        "code_check": {
+          "passed": false,
+          "detail": "invalid syntax (<unknown>, line 109)",
+          "prompt_matches_checker_contract": false
+        }
+      },
+      "reasoning_token_count_ratio": 0.723404255319149,
+      "final_answer_length_ratio": 1.0194174757281553
+    },
+    {
+      "case": "code_csv",
+      "repeat": 0,
+      "control": {
+        "reasoning_tokens": 114,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 110,
+        "visible_answer_words": 643,
+        "visible_answer_tokens_estimate": 669,
+        "source": "results/lossy-think-dev/lossy-think-dev-code_csv-r0-fixed-k7.json",
+        "source_sha256": "3165bb245008295e558459717eb8d76d32561cf54c0454745212e56c659cf47c",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ],
+        "code_check": {
+          "passed": false,
+          "detail": "expected ':' (<unknown>, line 196)",
+          "prompt_matches_checker_contract": false
+        }
+      },
+      "treatment": {
+        "reasoning_tokens": 46,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 44,
+        "visible_answer_words": 703,
+        "visible_answer_tokens_estimate": 731,
+        "source": "results/lossy-think-dev/lossy-think-dev-code_csv-r0-lossy-think-m2.5-k7.json",
+        "source_sha256": "62d1562c910bc95c24c6dce52e55abee673af0ae1914b9e032a5cfa9c1194fe2",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ],
+        "code_check": {
+          "passed": false,
+          "detail": "'(' was never closed (<unknown>, line 243)",
+          "prompt_matches_checker_contract": false
+        }
+      },
+      "reasoning_token_count_ratio": 0.40350877192982454,
+      "final_answer_length_ratio": 1.0933125972006221
+    },
+    {
+      "case": "code_patch",
+      "repeat": 0,
+      "control": {
+        "reasoning_tokens": 37,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 36,
+        "visible_answer_words": 404,
+        "visible_answer_tokens_estimate": 420,
+        "source": "results/lossy-think-dev/lossy-think-dev-code_patch-r0-fixed-k7.json",
+        "source_sha256": "e2d3ba10677776bdeeea1a78fff78700a87745fe1e402be06bd44141a8588179",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "stop"
+        ],
+        "code_check": {
+          "passed": false,
+          "detail": "invalid character '\u2014' (U+2014) (<unknown>, line 96)",
+          "prompt_matches_checker_contract": false
+        }
+      },
+      "treatment": {
+        "reasoning_tokens": 36,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 35,
+        "visible_answer_words": 423,
+        "visible_answer_tokens_estimate": 440,
+        "source": "results/lossy-think-dev/lossy-think-dev-code_patch-r0-lossy-think-m2.5-k7.json",
+        "source_sha256": "3d1d95faea015e2d227232250c7fc7b22a5a3e9d8632138b10e20e520a04c15e",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "stop"
+        ],
+        "code_check": {
+          "passed": false,
+          "detail": "invalid syntax (<unknown>, line 1)",
+          "prompt_matches_checker_contract": false
+        }
+      },
+      "reasoning_token_count_ratio": 0.972972972972973,
+      "final_answer_length_ratio": 1.047029702970297
+    },
+    {
+      "case": "code_queue",
+      "repeat": 0,
+      "control": {
+        "reasoning_tokens": 973,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 936,
+        "visible_answer_words": 0,
+        "visible_answer_tokens_estimate": 0,
+        "source": "results/lossy-think-dev/lossy-think-dev-code_queue-r0-fixed-k7.json",
+        "source_sha256": "9501414f629575190af282c9de4fd1daadd0bc2e388b507ac9bda7258f3c5041",
+        "empty_visible_answer": true,
+        "finish_reasons": [
+          "length"
+        ],
+        "code_check": {
+          "passed": false,
+          "detail": "Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n    exec(compile(sys.stdin.read(),'<generated>','exec'),ns)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<generated>\", line 3, in <module>\nNameError: name 'lower_bound' is not defined\n",
+          "prompt_matches_checker_contract": false
+        }
+      },
+      "treatment": {
+        "reasoning_tokens": 988,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 950,
+        "visible_answer_words": 0,
+        "visible_answer_tokens_estimate": 0,
+        "source": "results/lossy-think-dev/lossy-think-dev-code_queue-r0-lossy-think-m2.5-k7.json",
+        "source_sha256": "c2f4703eb613b9fb2524f0077cab212365b7dbb2ba9b5b263107ef10be8fdfbd",
+        "empty_visible_answer": true,
+        "finish_reasons": [
+          "length"
+        ],
+        "code_check": {
+          "passed": false,
+          "detail": "Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n    exec(compile(sys.stdin.read(),'<generated>','exec'),ns)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<generated>\", line 3, in <module>\nNameError: name 'lower_bound' is not defined\n",
+          "prompt_matches_checker_contract": false
+        }
+      },
+      "reasoning_token_count_ratio": 1.0154162384378211,
+      "final_answer_length_ratio": null
+    },
+    {
+      "case": "code_retry",
+      "repeat": 0,
+      "control": {
+        "reasoning_tokens": 821,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 789,
+        "visible_answer_words": 0,
+        "visible_answer_tokens_estimate": 0,
+        "source": "results/lossy-think-dev/lossy-think-dev-code_retry-r0-fixed-k7.json",
+        "source_sha256": "fafc37495e16eba669808abb98c4f483098ab4cd292fd3fb8a4c599fa63017c9",
+        "empty_visible_answer": true,
+        "finish_reasons": [
+          "length"
+        ],
+        "code_check": {
+          "passed": false,
+          "detail": "Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n    exec(compile(sys.stdin.read(),'<generated>','exec'),ns)\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<generated>\", line 3, in <module>\nNameError: name 'lower_bound' is not defined\n",
+          "prompt_matches_checker_contract": false
+        }
+      },
+      "treatment": {
+        "reasoning_tokens": 813,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 782,
+        "visible_answer_words": 13,
+        "visible_answer_tokens_estimate": 14,
+        "source": "results/lossy-think-dev/lossy-think-dev-code_retry-r0-lossy-think-m2.5-k7.json",
+        "source_sha256": "11ba8833a3fbb7d53fae2079fc6fc88b8ae359adc51a95ea089cdb99fe79eaa8",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ],
+        "code_check": {
+          "passed": false,
+          "detail": "invalid syntax (<unknown>, line 1)",
+          "prompt_matches_checker_contract": false
+        }
+      },
+      "reasoning_token_count_ratio": 0.9902557856272838,
+      "final_answer_length_ratio": null
+    },
+    {
+      "case": "code_sql",
+      "repeat": 0,
+      "control": {
+        "reasoning_tokens": 666,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 640,
+        "visible_answer_words": 331,
+        "visible_answer_tokens_estimate": 344,
+        "source": "results/lossy-think-dev/lossy-think-dev-code_sql-r0-fixed-k7.json",
+        "source_sha256": "169a05440c16c5d93b3c1696fffe867c47a7b46fd6d9fab10b4e3a5ddbcba35a",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ],
+        "code_check": {
+          "passed": false,
+          "detail": "invalid character '\u2014' (U+2014) (<unknown>, line 3)",
+          "prompt_matches_checker_contract": false
+        }
+      },
+      "treatment": {
+        "reasoning_tokens": 698,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 671,
+        "visible_answer_words": 283,
+        "visible_answer_tokens_estimate": 294,
+        "source": "results/lossy-think-dev/lossy-think-dev-code_sql-r0-lossy-think-m2.5-k7.json",
+        "source_sha256": "06590434241a14e4afdc05ef3d62a14be59483d1776f1365911483154a4c9dc1",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ],
+        "code_check": {
+          "passed": false,
+          "detail": "invalid character '\u2014' (U+2014) (<unknown>, line 3)",
+          "prompt_matches_checker_contract": false
+        }
+      },
+      "reasoning_token_count_ratio": 1.048048048048048,
+      "final_answer_length_ratio": 0.8549848942598187
+    },
+    {
+      "case": "prose_argument",
+      "repeat": 0,
+      "control": {
+        "reasoning_tokens": 47,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 45,
+        "visible_answer_words": 1233,
+        "visible_answer_tokens_estimate": 1282,
+        "source": "results/lossy-think-dev/lossy-think-dev-prose_argument-r0-fixed-k7.json",
+        "source_sha256": "3c24a1d8c6785d3d0cb943a085db6d7a1d469fa6e99c37ce26a78f2a7d5ae1f3",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ]
+      },
+      "treatment": {
+        "reasoning_tokens": 53,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 51,
+        "visible_answer_words": 1218,
+        "visible_answer_tokens_estimate": 1267,
+        "source": "results/lossy-think-dev/lossy-think-dev-prose_argument-r0-lossy-think-m2.5-k7.json",
+        "source_sha256": "0d494d1ef905b67f50378d5aa7e95cccf4d595b60ffe6cb6182b40a599ff6c86",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ]
+      },
+      "reasoning_token_count_ratio": 1.127659574468085,
+      "final_answer_length_ratio": 0.9878345498783455
+    },
+    {
+      "case": "prose_edit",
+      "repeat": 0,
+      "control": {
+        "reasoning_tokens": 160,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 154,
+        "visible_answer_words": 1094,
+        "visible_answer_tokens_estimate": 1138,
+        "source": "results/lossy-think-dev/lossy-think-dev-prose_edit-r0-fixed-k7.json",
+        "source_sha256": "63a32163222661cf6a4504a464ad482bea4216f529a2059d554dd934d2d29ac6",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ]
+      },
+      "treatment": {
+        "reasoning_tokens": 54,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 52,
+        "visible_answer_words": 1211,
+        "visible_answer_tokens_estimate": 1259,
+        "source": "results/lossy-think-dev/lossy-think-dev-prose_edit-r0-lossy-think-m2.5-k7.json",
+        "source_sha256": "60d5c784bfb9adaadf086c95dd19f0703ce4ffaeb6438c4ae4f0f27e6d409228",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ]
+      },
+      "reasoning_token_count_ratio": 0.3375,
+      "final_answer_length_ratio": 1.106946983546618
+    },
+    {
+      "case": "prose_explain",
+      "repeat": 0,
+      "control": {
+        "reasoning_tokens": 790,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 760,
+        "visible_answer_words": 328,
+        "visible_answer_tokens_estimate": 341,
+        "source": "results/lossy-think-dev/lossy-think-dev-prose_explain-r0-fixed-k7.json",
+        "source_sha256": "92df925e24a37432d9cc01f742a709a84fbbf8c908a0a93d7b8668c2ae595114",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ]
+      },
+      "treatment": {
+        "reasoning_tokens": 105,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 101,
+        "visible_answer_words": 1100,
+        "visible_answer_tokens_estimate": 1144,
+        "source": "results/lossy-think-dev/lossy-think-dev-prose_explain-r0-lossy-think-m2.5-k7.json",
+        "source_sha256": "2da8b23f9f09a8fa9be1adec6404e5f99bf2e3bd2bf6a13b0be0c825b2c5300c",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ]
+      },
+      "reasoning_token_count_ratio": 0.13291139240506328,
+      "final_answer_length_ratio": 3.3536585365853657
+    },
+    {
+      "case": "prose_heat",
+      "repeat": 0,
+      "control": {
+        "reasoning_tokens": 107,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 103,
+        "visible_answer_words": 1110,
+        "visible_answer_tokens_estimate": 1154,
+        "source": "results/lossy-think-dev/lossy-think-dev-prose_heat-r0-fixed-k7.json",
+        "source_sha256": "78bc6e9b053a050f927d79b1e12412215decbf42a96a5b04b73121f997d4fb36",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ]
+      },
+      "treatment": {
+        "reasoning_tokens": 110,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 106,
+        "visible_answer_words": 1120,
+        "visible_answer_tokens_estimate": 1165,
+        "source": "results/lossy-think-dev/lossy-think-dev-prose_heat-r0-lossy-think-m2.5-k7.json",
+        "source_sha256": "b759f047e9c2696e8e3d446fd68f69a94b08d06bf19553f162fd5fa6afc91b13",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ]
+      },
+      "reasoning_token_count_ratio": 1.02803738317757,
+      "final_answer_length_ratio": 1.009009009009009
+    },
+    {
+      "case": "prose_incident",
+      "repeat": 0,
+      "control": {
+        "reasoning_tokens": 124,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 119,
+        "visible_answer_words": 967,
+        "visible_answer_tokens_estimate": 1006,
+        "source": "results/lossy-think-dev/lossy-think-dev-prose_incident-r0-fixed-k7.json",
+        "source_sha256": "a12acee2817685891f2e979b2c039bc42fac84959319c3266e4fc28e92a4ea25",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ]
+      },
+      "treatment": {
+        "reasoning_tokens": 42,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 40,
+        "visible_answer_words": 1062,
+        "visible_answer_tokens_estimate": 1104,
+        "source": "results/lossy-think-dev/lossy-think-dev-prose_incident-r0-lossy-think-m2.5-k7.json",
+        "source_sha256": "03fc17ee5ce2e9aea35e75b6517c5aa5a9d833da1f946a904c6a830e5e5c58dd",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ]
+      },
+      "reasoning_token_count_ratio": 0.3387096774193548,
+      "final_answer_length_ratio": 1.0982419855222336
+    },
+    {
+      "case": "prose_library",
+      "repeat": 0,
+      "control": {
+        "reasoning_tokens": 52,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 50,
+        "visible_answer_words": 1133,
+        "visible_answer_tokens_estimate": 1178,
+        "source": "results/lossy-think-dev/lossy-think-dev-prose_library-r0-fixed-k7.json",
+        "source_sha256": "4f8c061d8c73b2c2a7e4645fb839b7ad2e771bd55c9d36bcb424cb4a84acae28",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "stop"
+        ]
+      },
+      "treatment": {
+        "reasoning_tokens": 81,
+        "reasoning_tokens_estimated": true,
+        "reasoning_tokens_source": "reasoning_field_word_estimate",
+        "reasoning_token_heuristic": "round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+        "reasoning_words": 78,
+        "visible_answer_words": 1086,
+        "visible_answer_tokens_estimate": 1129,
+        "source": "results/lossy-think-dev/lossy-think-dev-prose_library-r0-lossy-think-m2.5-k7.json",
+        "source_sha256": "e5307bebfaf5d1f5f8e7991f4c8e1a534240ca0bfb15cdf2361a8d2cb760d041",
+        "empty_visible_answer": false,
+        "finish_reasons": [
+          "length"
+        ]
+      },
+      "reasoning_token_count_ratio": 1.5576923076923077,
+      "final_answer_length_ratio": 0.9585172109443955
+    }
+  ],
+  "reasoning_token_count_ratio": 0.7770441848654139,
+  "final_answer_length_ratio": 1.1243093922651934,
+  "method": "Ratios are treatment/control of pooled counts, not means of per-request ratios. Final-answer length is Unicode words. Zero control denominator yields null. round(1.04 * Unicode word count); tokenizer-free estimate, not exact tokens",
+  "limitations": "Provider reasoning-token usage is preferred; otherwise reasoning field or raw think spans use the word heuristic. Estimates are unsuitable for exact acceptance attribution, especially code/non-English text. Visible answers follow the final </think>, or use parsed content when reasoning is separate; an unclosed raw think span yields no answer. The existing code checker tests only lower_bound, merge_intervals, run_length and stable_unique as pure Python functions; other code prompts are still checked but their failures do not establish task incorrectness. This quality report does not replace trace activation proof."
+}

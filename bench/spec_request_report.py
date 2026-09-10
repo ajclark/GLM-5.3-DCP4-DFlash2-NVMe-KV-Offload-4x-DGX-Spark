@@ -11,6 +11,7 @@ import statistics
 from analyze_adaptive_spec import device_energy, gaps, paired_groups
 from adaptive_spec import lossy_xargs
 from spec_prose_results import read_results
+from spec_think_utils import thinking_enabled
 
 
 def prompt_digest(row):
@@ -176,6 +177,10 @@ def prove_lossy(row, rows):
     if not rows:
         raise ValueError('missing runtime control trace for ' + row['label'])
     expected = lossy_xargs(row['variant']) if row['variant'] != 'fixed7' else None
+    scope = expected.get('spec_lossy_scope', 'all') if expected else None
+    thinking = thinking_enabled(row)
+    if scope == 'think' and thinking is None:
+        raise ValueError('think-scoped proof requires explicit thinking metadata')
     for event in rows:
         if (event.get('eligible') is not True or event.get('dropped') != 0
                 or event.get('writer_error') is not None):
@@ -187,6 +192,8 @@ def prove_lossy(row, rows):
                 type(relaxed) is not int or not 0 <= relaxed <= accepted):
             raise ValueError('invalid accepted/relaxed cycle counts')
         if expected:
+            if event.get('lossy_scope', 'all') != scope:
+                raise ValueError('lossy trace does not echo requested lossy_scope')
             for field in ('lossy_margin', 'lossy_min_p'):
                 value = event.get(field)
                 if (type(value) not in (int, float) or not math.isfinite(value) or
@@ -194,16 +201,30 @@ def prove_lossy(row, rows):
                     raise ValueError('lossy trace does not echo requested ' + field)
             if event.get('lossy_enabled') != 1:
                 raise ValueError('lossy trace is not enabled')
+            if scope == 'think' and thinking is False and relaxed != 0:
+                raise ValueError('think-scoped thinking-off request unexpectedly relaxed')
         elif relaxed != 0:
             raise ValueError('lossless control unexpectedly relaxed')
-    if expected and not any(event.get('relaxed', 0) > 0 for event in rows):
+    if expected and not (scope == 'think' and thinking is False) and not any(event.get('relaxed', 0) > 0 for event in rows):
         raise ValueError('lossy request has no relaxed accepts')
 
 
 def performance(rows, samples):
     intervals = sorted(g for row in rows for g in gaps(row))
     energy = [v for row in rows if samples and (v := device_energy(row, samples)) is not None]
+    decode_tokens, decode_seconds, timed = 0, 0., 0
+    for row in rows:
+        chunks = [(c['seconds'], sum(len(v.get('token_ids') or []) for v in c['data'].get('choices', [])))
+                  for c in row['chunks'] if 'seconds' in c]
+        chunks = [(t, n) for t, n in chunks if n]
+        if len(chunks) >= 2 and chunks[-1][0] > chunks[0][0]:
+            decode_tokens += sum(n for _, n in chunks[1:])
+            decode_seconds += chunks[-1][0] - chunks[0][0]
+            timed += 1
     return {'requests': len(rows),
+            'pooled_decode_tps': decode_tokens / decode_seconds if decode_seconds else None,
+            'decode_tokens': decode_tokens, 'decode_seconds': decode_seconds,
+            'pooled_decode_excluded_requests': len(rows) - timed,
             'decode_tps': statistics.mean(row['decode_tps'] for row in rows),
             'ttft': statistics.mean(row['ttft'] for row in rows),
             'p95_emission_gap_s': intervals[math.ceil(.95 * len(intervals)) - 1] if intervals else None,
@@ -244,6 +265,7 @@ def summarize_lossy(runs, events, samples=None):
                 raise ValueError('duplicate verify cycle')
         prove_lossy(row, seq)
         details.append({**{k: row[k] for k in ('label', 'case', 'repeat', 'variant', 'token_sha256')},
+                        'thinking': thinking_enabled(row),
                         'prompt_token_sha256': prompt_digest(row),
                         **ending_statistics(row),
                         **performance([row], samples), **cycle_statistics([seq])})
@@ -254,6 +276,8 @@ def summarize_lossy(runs, events, samples=None):
         group = [indexed[case, repeat, v] for v in ['fixed7', *variants]]
         if len({prompt_digest(r) for r in group}) != 1 or len({r['message_sha256'] for r in group}) != 1:
             raise ValueError('paired requests have different prompts')
+        if len({thinking_enabled(r) for r in group}) != 1 or len({r.get('max_tokens', r.get('comparison_settings', {}).get('tokens')) for r in group}) != 1:
+            raise ValueError('paired requests have different thinking settings or completion budgets')
         base = group[0]
         for treatment in group[1:]:
             a, b = base['token_ids'], treatment['token_ids']
@@ -268,10 +292,14 @@ def summarize_lossy(runs, events, samples=None):
         return {**performance(selected, samples),
                 **cycle_statistics([traces[row['label']] for row in selected])}
     summaries = {v: pooled([row for row in runs if row['variant'] == v]) for v in ['fixed7', *variants]}
+    thinking_splits = {v: {key: pooled(selected) if (selected := [r for r in runs
+                        if r['variant'] == v and thinking_enabled(r) is state]) else None
+                        for key, state in [('on', True), ('off', False), ('unknown', None)]}
+                       for v in ['fixed7', *variants]}
     cases = {case: {v: pooled([r for r in runs if r['case'] == case and r['variant'] == v])
                     for v in ['fixed7', *variants]} for case in sorted({r['case'] for r in runs})}
     return {'study': 'lossy', 'screening_only': True, 'summaries': summaries, 'cases': cases,
-            'requests': details, 'comparisons': comparisons,
+            'requests': details, 'comparisons': comparisons, 'thinking_splits': thinking_splits,
             'paired': paired_groups([{**r, 'policy': 'fixed' if r['variant'] == 'fixed7' else r['variant'], 'cap': 7} for r in runs]),
             'method': 'Activation uses every verify row; cycle statistics exclude terminal/nonlearnable rows. Following-cycle curves join adjacent rows within each request in scheduling order, without bridging excluded rows. Curves are accepted-prefix survival over scheduled positions; pooled rates use sums of counts, not averages of request rates.',
             'limitations': 'Scalar relaxed counts cannot generally identify individual relaxed positions; per-position exact counts are null when ambiguous, with sharp count bounds. Relaxed per scheduled position is total relaxed / total scheduled positions. SSE gaps measure emitted blocks, not individual GPU tokens. Token agreement is with the paired greedy completion, not target-logit top-1 agreement on the divergent prefix. First divergence is zero-based. Four-gram repetition is (all token 4-grams minus distinct token 4-grams) / all token 4-grams, including reasoning when present. Finish reasons distinguish server stop/length, not whether prose is semantically finished. Prompt-clustered speed intervals do not alone establish quality or promotion; device energy is not wall energy.'}
@@ -293,7 +321,9 @@ def main():
         # Do not silently shrink a screen when both arms of a configured prompt
         # or repeat are absent. Legacy Pi studies have a different declaration.
         config = json.loads((args.directory / 'config.json').read_text())
-        read_results(args.directory, prose_only=config.get('prose_only', False))
+        loaded = read_results(args.directory, prose_only=config.get('prose_only', False))
+        for row in runs:
+            row['comparison_settings'] = loaded[row['case'], row['repeat'], row['variant']]['comparison_settings']
         configured = config.get('variants')
         if configured and set(configured.split(',')) != {row['variant'] for row in runs}:
             raise ValueError('incomplete configured variant set')

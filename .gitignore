@@ -24,6 +24,10 @@ docs/notes/
 # Read-only runtime inventory; curated manifests and results are retained.
 results/adaptive-spec/inventory/runtime/
 
+# Private harness request/response captures and per-run agent artifacts.
+results/harness-capture-*/proxy_*.jsonl
+results/harness-capture-*/run*/
+
 # New adaptive experiments: raw machine captures stay local until publication.
 results/adaptive-next/
 results/adaptive-spec/inventory/runtime.tar

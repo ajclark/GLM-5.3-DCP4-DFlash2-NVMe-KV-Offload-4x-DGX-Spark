@@ -18,6 +18,7 @@ import urllib.request
 from pathlib import Path
 
 from spec_memory import MemoryGuard
+from spec_think_utils import completion_accounting
 
 PROMPTS = {
     "prose": "Write a detailed, engaging essay about how cities can make summer heat more bearable. Discuss trees, street design, housing, public transit, and the tradeoffs residents face. Use specific examples and connected prose. Aim for 1500 words.",
@@ -37,13 +38,16 @@ def request_body(prompt, cap, label, max_tokens):
 def lossy_xargs(name):
     """Parse the bounded rank-two family; never silently disable a bad request."""
     number = r'(?:\d+(?:\.\d+)?|\.\d+)'
-    match = re.fullmatch(rf'lossy-m({number})(?:-p({number}))?', name)
+    match = re.fullmatch(rf'lossy-(think-)?m({number})(?:-p({number}))?', name)
     if not match:
         raise ValueError('invalid lossy variant')
-    margin, min_p = float(match[1]), float(match[2] or 0)
+    margin, min_p = float(match[2]), float(match[3] or 0)
     if not 0 < margin <= 5 or not 0 <= min_p < .5:
         raise ValueError('lossy margin must be in (0,5]; min_p in [0,0.5)')
-    return dict(spec_lossy_margin=margin, spec_lossy_rank=2, spec_lossy_min_p=min_p)
+    fields = dict(spec_lossy_margin=margin, spec_lossy_rank=2, spec_lossy_min_p=min_p)
+    if match[1]:
+        fields['spec_lossy_scope'] = 'think'
+    return fields
 
 
 def parse_variants(names):
@@ -148,6 +152,7 @@ def generate(base, body, guard, deadline_seconds=300):
     if errors:
         raise RuntimeError(errors[0])
     ids, text, reasoning, token_chunks, usage = [], "", "", [], None
+    reasoning_field_present = False
     for row in chunks:
         data = row["data"]
         if "error" in data:
@@ -155,6 +160,7 @@ def generate(base, body, guard, deadline_seconds=300):
         if data.get("usage"):
             usage = data["usage"]
         for choice in data.get("choices", []):
+            reasoning_field_present |= any(field in choice.get('delta', {}) for field in ('reasoning', 'reasoning_content'))
             new_ids = choice.get("token_ids") or []
             ids.extend(new_ids)
             text += choice.get("delta", {}).get("content") or ""
@@ -168,7 +174,13 @@ def generate(base, body, guard, deadline_seconds=300):
     rate = (len(ids)-token_chunks[0][1])/elapsed if elapsed > 0 else None
     return {"started_at":started_at,"token_ids":ids, "token_sha256":hashlib.sha256(json.dumps(ids).encode()).hexdigest(),
             "text":text, "reasoning_text":reasoning, "usage":usage, "seconds":time.monotonic()-start,
-            "ttft":token_chunks[0][0], "decode_tps":rate, "chunks":chunks}
+            "ttft":token_chunks[0][0], "decode_tps":rate, "chunks":chunks,
+            "thinking":bool(body.get('chat_template_kwargs', {}).get('enable_thinking')),
+            "max_tokens":body.get('max_completion_tokens', body.get('max_tokens')),
+            "reasoning_field_present":reasoning_field_present,
+            **completion_accounting(text, reasoning, usage,
+                                   thinking=bool(body.get('chat_template_kwargs', {}).get('enable_thinking')),
+                                   reasoning_field_present=reasoning_field_present)}
 
 
 def main():
@@ -188,8 +200,8 @@ def main():
     ap.add_argument("--context-smoke",action="store_true",help="Guarded 32k and 100k cold/warm verification checks")
     ap.add_argument("--code-smoke",action="store_true",help="Generate small complete functions and execute bounded sandbox checks")
     ap.add_argument("--deadline-seconds",type=int,default=300,help="Per-request bound; up to 900 seconds for cold long prompts")
-    ap.add_argument("--thinking",action="store_true",help="Enable the serving model's configured reasoning mode for both variants")
-    ap.add_argument("--thinking-repeat",action="append",type=int,default=[],help="Enable thinking for both variants in this zero-based repeat (repeatable)")
+    ap.add_argument("--thinking",action="store_true",help="Enable reasoning for every arm, sharing the --tokens completion budget")
+    ap.add_argument("--thinking-repeat",action="append",type=int,default=[],help="Enable thinking for every arm in this zero-based repeat (repeatable), sharing --tokens")
     ap.add_argument("--repo-context",type=int,choices=[4000,32000,100000,170000],help="Token-counted repository reference with code/prose tasks")
     args = ap.parse_args()
     corpus = json.loads(args.corpus.read_text()) if args.corpus else PROMPTS
@@ -265,7 +277,8 @@ def main():
                     after = spec_metrics(args.base)
                     result['spec_metric_delta'] = {k:after[k]-v for k,v in before.items() if k in after}
                     result['policy'] = mode
-                    result.update(label=label, case=case, cap=cap, repeat=repeat)
+                    result.update(label=label, case=case, cap=cap, repeat=repeat,
+                                  thinking=body['chat_template_kwargs']['enable_thinking'], max_tokens=args.tokens)
                     if lossy_study:
                         result.update(study='lossy', variant='fixed7' if mode == 'fixed' else mode,
                                       experiment_xargs=body['vllm_xargs'],
