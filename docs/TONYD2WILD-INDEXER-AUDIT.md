@@ -5,6 +5,9 @@ DCP**, when mixed scheduled lengths enter the flattening path. This is establish
 from its published patch chain and execution of the actual image source, not by
 assuming our DCP overlay behaves like the original.
 
+Reported as [GLM-5.3 issue #6](https://github.com/tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark/issues/6),
+with the reproduction, inherited-patch provenance, scope limitations and repair.
+
 ## Provenance
 
 - GLM-5.3 recipe at `a1806cb82493aa6f28709f77acf59c1937bdf756`:
