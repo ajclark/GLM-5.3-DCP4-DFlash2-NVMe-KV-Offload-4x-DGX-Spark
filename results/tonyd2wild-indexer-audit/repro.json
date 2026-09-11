@@ -1,0 +1,70 @@
+{
+  "source_sha256": "2aa896c467f44c3a65e7d04b07ada866dfa23fb23ee8ec245e5d8c89780cef6b",
+  "torch": "2.14.0+cpu",
+  "triton": "3.8.0",
+  "cp_size": 1,
+  "block_size": 64,
+  "decode_lengths": [
+    5,
+    8,
+    8
+  ],
+  "configurations": [
+    {
+      "max_model_len": 80000,
+      "runner_width": 1250,
+      "indexer_width": 1251,
+      "original_error": "The expanded size of the tensor (1251) must match the existing size (1250) at non-singleton dimension 1.  Target sizes: [21, 1251].  Tensor sizes: [21, 1250]",
+      "fixed_passed": true
+    },
+    {
+      "max_model_len": 80064,
+      "runner_width": 1252,
+      "indexer_width": 1252,
+      "original_error": null,
+      "fixed_passed": true
+    },
+    {
+      "max_model_len": 180224,
+      "runner_width": 2816,
+      "indexer_width": 2817,
+      "original_error": "The expanded size of the tensor (2817) must match the existing size (2816) at non-singleton dimension 1.  Target sizes: [21, 2817].  Tensor sizes: [21, 2816]",
+      "fixed_passed": true
+    },
+    {
+      "max_model_len": 270000,
+      "runner_width": 4220,
+      "indexer_width": 4220,
+      "original_error": null,
+      "fixed_passed": true
+    }
+  ],
+  "uniform_slack_values": [
+    1350,
+    1350,
+    1350,
+    1350,
+    1350,
+    1350,
+    1350,
+    1350,
+    2600,
+    2600,
+    2600,
+    2600,
+    2600,
+    2600,
+    2600,
+    2600,
+    3850,
+    3850,
+    3850,
+    3850,
+    3850,
+    3850,
+    3850,
+    3850
+  ],
+  "guard_row_first_value": 3850,
+  "fixed_uniform_passed": true
+}
