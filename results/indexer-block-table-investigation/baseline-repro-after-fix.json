@@ -1,0 +1,53 @@
+{
+  "torch": "2.14.0+cpu",
+  "triton": "3.8.0",
+  "execution": "CPU Torch + real source Triton interpreter; not a full vLLM/GPU run",
+  "baseline_overlay_definitions_equal": null,
+  "reports": [
+    {
+      "source": "baseline/vllm/v1/attention/backends/mla/indexer.py",
+      "sha256": "2aa896c467f44c3a65e7d04b07ada866dfa23fb23ee8ec245e5d8c89780cef6b",
+      "mixed_failures": [
+        {
+          "cp": 1,
+          "source_width": 2816,
+          "error": "The expanded size of the tensor (2817) must match the existing size (2816) at non-singleton dimension 1.  Target sizes: [21, 2817].  Tensor sizes: [21, 2816]"
+        },
+        {
+          "cp": 2,
+          "source_width": 1408,
+          "error": "The expanded size of the tensor (1409) must match the existing size (1408) at non-singleton dimension 1.  Target sizes: [21, 1409].  Tensor sizes: [21, 1408]"
+        },
+        {
+          "cp": 4,
+          "source_width": 704,
+          "error": "The expanded size of the tensor (705) must match the existing size (704) at non-singleton dimension 1.  Target sizes: [21, 705].  Tensor sizes: [21, 704]"
+        }
+      ],
+      "uniform_cross_row_reads": [
+        104,
+        104,
+        108,
+        108,
+        112,
+        112
+      ],
+      "logical_end_guard": 112,
+      "width_one_broadcast": [
+        [
+          100,
+          100
+        ],
+        [
+          101,
+          101
+        ],
+        [
+          101,
+          101
+        ]
+      ],
+      "candidate_checks_passed": 162
+    }
+  ]
+}

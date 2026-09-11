@@ -1,0 +1,129 @@
+{
+  "ok": true,
+  "injections": [
+    {
+      "suffix_tokens": 5,
+      "shared_prefix_tokens": 0,
+      "pending_long_streams": 2,
+      "response": {
+        "id": "cmpl-8b784184807ec233",
+        "object": "text_completion",
+        "created": 1789106278,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "text": "",
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "prompt_logprobs": null,
+            "prompt_token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.23.1rc1.dev190+gab6660699.d20260830-tp4-791a48d8",
+        "usage": {
+          "prompt_tokens": 5,
+          "total_tokens": 6,
+          "completion_tokens": 1,
+          "prompt_tokens_details": null
+        },
+        "kv_transfer_params": null
+      },
+      "wall_s": 0.6105384380007308
+    },
+    {
+      "suffix_tokens": 3,
+      "shared_prefix_tokens": 0,
+      "pending_long_streams": 2,
+      "response": {
+        "id": "cmpl-a73f43912acab96c",
+        "object": "text_completion",
+        "created": 1789106278,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "text": "",
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "prompt_logprobs": null,
+            "prompt_token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.23.1rc1.dev190+gab6660699.d20260830-tp4-791a48d8",
+        "usage": {
+          "prompt_tokens": 3,
+          "total_tokens": 4,
+          "completion_tokens": 1,
+          "prompt_tokens_details": null
+        },
+        "kv_transfer_params": null
+      },
+      "wall_s": 0.6648540329988464
+    },
+    {
+      "suffix_tokens": 7,
+      "shared_prefix_tokens": 0,
+      "pending_long_streams": 2,
+      "response": {
+        "id": "cmpl-ae7e0879e7d16874",
+        "object": "text_completion",
+        "created": 1789106279,
+        "model": "glm-5.3",
+        "choices": [
+          {
+            "index": 0,
+            "text": "",
+            "logprobs": null,
+            "finish_reason": "stop",
+            "stop_reason": null,
+            "token_ids": null,
+            "prompt_logprobs": null,
+            "prompt_token_ids": null,
+            "routed_experts": null
+          }
+        ],
+        "service_tier": null,
+        "system_fingerprint": "vllm-0.23.1rc1.dev190+gab6660699.d20260830-tp4-791a48d8",
+        "usage": {
+          "prompt_tokens": 7,
+          "total_tokens": 8,
+          "completion_tokens": 1,
+          "prompt_tokens_details": null
+        },
+        "kv_transfer_params": null
+      },
+      "wall_s": 0.65728353600025
+    }
+  ],
+  "streams": [
+    {
+      "stream": 0,
+      "usage": {
+        "prompt_tokens": 27,
+        "total_tokens": 994,
+        "completion_tokens": 967
+      },
+      "done": true,
+      "wall_s": 24.049509518999912
+    },
+    {
+      "stream": 1,
+      "usage": {
+        "prompt_tokens": 27,
+        "total_tokens": 994,
+        "completion_tokens": 967
+      },
+      "done": true,
+      "wall_s": 23.69788549400073
+    }
+  ]
+}

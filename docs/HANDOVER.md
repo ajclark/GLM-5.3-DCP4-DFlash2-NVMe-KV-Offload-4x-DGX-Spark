@@ -1,7 +1,23 @@
-# Handover: GLM-5.3 DCP, 2026-09-04
+# Handover: GLM-5.3 DCP, updated 2026-09-11
 
 What exists, what was verified, what to do next. `docs/DESIGN.md` has the
 reasoning; this file is the operational summary.
+
+## Current deployment, 2026-09-11
+
+Serving label **`indexer-width-fix-20260911`**, rollout completed 05:57 UTC.
+All four Sparks run the repaired DSA indexer on the existing
+`vllm-glm52-b12x:dflash2-port2` runtime: TP4/DCP2, DFlash2 K=7, 180224-token
+window, 6 GB KV per rank, NVMe tier on. The mixed Torch copy and uniform Triton
+source bounds are both fixed. Exact count100 token parity, live mixed decoding,
+50k-context concurrent generation, and CUDA memcheck passed. The upgrade audit
+found a newer image requires a port of the mixed DCP/draft and cache patches;
+this repair is a backport. The overlay change rotates the NVMe cache namespace.
+
+See [deployment and validation](INDEXER-BLOCK-TABLE-DEPLOYMENT.md) for source
+hashes, release provenance, evidence and rollback, and
+[independent investigation](INDEXER-BLOCK-TABLE-INVESTIGATION.md) for corrections
+to the initial incident report. The dated entries below describe earlier states.
 
 ## State
 

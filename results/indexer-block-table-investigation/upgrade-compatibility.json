@@ -1,0 +1,122 @@
+[
+  {
+    "patch": "distributed_kv_transfer_kv_connector_v1_offloading_scheduler.patch",
+    "applies": false,
+    "detail": "can't find file to patch at input line 3\nPerhaps you used the wrong -p or --strip option?\nThe text leading up to this was:\n--------------------------\n|--- a/vllm/distributed/kv_transfer/kv_connector/v1/offloading/scheduler.py\n|+++ b/vllm/distributed/kv_transfer/kv_connector/v1/offloading/scheduler.py\n--------------------------\nNo file to patch.  Skipping patch.\n4 out of 4 hunks ignored\n"
+  },
+  {
+    "patch": "model_executor_layers_attention_mla_attention.patch",
+    "applies": false,
+    "detail": "checking file vllm/model_executor/layers/attention/mla_attention.py\nHunk #1 FAILED at 188.\nHunk #2 FAILED at 270.\nHunk #3 succeeded at 614 with fuzz 2 (offset 118 lines).\nHunk #4 succeeded at 878 (offset 143 lines).\nHunk #5 succeeded at 907 (offset 143 lines).\nHunk #6 succeeded at 943 (offset 145 lines).\nHunk #7 FAILED at 808.\nHunk #8 FAILED at 822.\nHunk #9 FAILED at 829.\nHunk #10 FAILED at 969.\n6 out of 10 hunks FAILED\n"
+  },
+  {
+    "patch": "model_executor_layers_sparse_attn_indexer.patch",
+    "applies": false,
+    "detail": "checking file vllm/model_executor/layers/sparse_attn_indexer.py\nHunk #1 FAILED at 8.\nHunk #2 FAILED at 21.\nHunk #3 succeeded at 124 with fuzz 1 (offset 77 lines).\nHunk #4 FAILED at 380.\nHunk #5 succeeded at 508 with fuzz 2 (offset 86 lines).\nHunk #6 FAILED at 477.\nHunk #7 FAILED at 527.\nHunk #8 succeeded at 677 with fuzz 1 (offset 135 lines).\nHunk #9 succeeded at 760 (offset 142 lines).\nHunk #10 succeeded at 770 with fuzz 2 (offset 142 lines).\nHunk #11 succeeded at 801 with fuzz 2 (offset 156 lines).\nHunk #12 succeeded at 838 with fuzz 1 (offset 179 lines).\nHunk #13 FAILED at 700.\nHunk #14 FAILED at 750.\nHunk #15 FAILED at 803.\n8 out of 15 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_attention_backends_flash_attn.patch",
+    "applies": true,
+    "detail": "checking file vllm/v1/attention/backends/flash_attn.py\nHunk #1 succeeded at 462 with fuzz 2 (offset 102 lines).\nHunk #2 succeeded at 907 (offset 195 lines).\n"
+  },
+  {
+    "patch": "v1_attention_backends_mla_flashmla_sparse.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/attention/backends/mla/flashmla_sparse.py\nHunk #1 FAILED at 3.\nHunk #2 succeeded at 27 with fuzz 1 (offset -1 lines).\nHunk #3 succeeded at 166 with fuzz 2 (offset -5 lines).\nHunk #4 FAILED at 264.\nHunk #5 FAILED at 527.\nHunk #6 FAILED at 545.\nHunk #7 FAILED at 553.\nHunk #8 succeeded at 567 (offset -46 lines).\nHunk #9 succeeded at 589 (offset -46 lines).\nHunk #10 succeeded at 651 (offset -45 lines).\nHunk #11 FAILED at 808.\nHunk #12 succeeded at 789 (offset -42 lines).\nHunk #13 succeeded at 823 (offset -42 lines).\nHunk #14 FAILED at 893.\nHunk #15 FAILED at 911.\nHunk #16 succeeded at 922 (offset -59 lines).\nHunk #17 succeeded at 937 (offset -59 lines).\n8 out of 17 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_attention_backends_mla_indexer.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/attention/backends/mla/indexer.py\nHunk #1 FAILED at 6.\nHunk #2 FAILED at 24.\nHunk #3 succeeded at 84 (offset 12 lines).\nHunk #4 succeeded at 114 (offset 12 lines).\nHunk #5 FAILED at 184.\nHunk #6 FAILED at 211.\nHunk #7 succeeded at 651 (offset 417 lines).\nHunk #8 FAILED at 267.\nHunk #9 FAILED at 355.\nHunk #10 succeeded at 883 with fuzz 2 (offset 511 lines).\nHunk #11 succeeded at 1170 (offset 583 lines).\nHunk #12 FAILED at 619.\nHunk #13 FAILED at 658.\nHunk #14 FAILED at 696.\nHunk #15 FAILED at 725.\nHunk #16 FAILED at 760.\nHunk #17 FAILED at 792.\nHunk #18 FAILED at 817.\nHunk #19 FAILED at 831.\n14 out of 19 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_attention_backends_mla_sparse_utils.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/attention/backends/mla/sparse_utils.py\nHunk #1 FAILED at 23.\nHunk #2 FAILED at 52.\nHunk #3 FAILED at 176.\n3 out of 3 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_attention_ops_deepseek_v4_ops_b12x_sparse_helpers.patch",
+    "applies": false,
+    "detail": "can't find file to patch at input line 3\nPerhaps you used the wrong -p or --strip option?\nThe text leading up to this was:\n--------------------------\n|--- a/vllm/v1/attention/ops/deepseek_v4_ops/b12x_sparse_helpers.py\n|+++ b/vllm/v1/attention/ops/deepseek_v4_ops/b12x_sparse_helpers.py\n--------------------------\nNo file to patch.  Skipping patch.\n3 out of 3 hunks ignored\n"
+  },
+  {
+    "patch": "v1_core_kv_cache_coordinator.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/core/kv_cache_coordinator.py\nHunk #1 succeeded at 20 with fuzz 1.\nHunk #2 succeeded at 110 (offset 5 lines).\nHunk #3 succeeded at 121 with fuzz 1 (offset 5 lines).\nHunk #4 FAILED at 547.\nHunk #5 FAILED at 648.\nHunk #6 FAILED at 677.\nHunk #7 FAILED at 693.\nHunk #8 FAILED at 725.\nHunk #9 FAILED at 748.\nHunk #10 FAILED at 760.\n7 out of 10 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_core_kv_cache_utils.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/core/kv_cache_utils.py\nHunk #1 succeeded at 34 (offset 2 lines).\nHunk #2 FAILED at 618.\nHunk #3 FAILED at 1275.\n2 out of 3 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_core_sched_scheduler.patch",
+    "applies": true,
+    "detail": "checking file vllm/v1/core/sched/scheduler.py\nHunk #1 succeeded at 59 with fuzz 2 (offset 1 line).\nHunk #2 succeeded at 286 (offset 10 lines).\nHunk #3 succeeded at 443 (offset 52 lines).\nHunk #4 succeeded at 524 (offset 59 lines).\nHunk #5 succeeded at 1256 with fuzz 1 (offset 165 lines).\nHunk #6 succeeded at 1704 (offset 218 lines).\nHunk #7 succeeded at 2854 (offset 346 lines).\n"
+  },
+  {
+    "patch": "v1_kv_cache_interface.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/kv_cache_interface.py\nHunk #1 FAILED at 520.\nHunk #2 FAILED at 890.\n2 out of 2 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_outputs.patch",
+    "applies": true,
+    "detail": "checking file vllm/v1/outputs.py\nHunk #1 succeeded at 307 (offset 27 lines).\n"
+  },
+  {
+    "patch": "v1_worker_block_table.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/worker/block_table.py\nHunk #1 FAILED at 26.\nHunk #2 FAILED at 38.\nHunk #3 succeeded at 132 with fuzz 2 (offset 35 lines).\nHunk #4 FAILED at 248.\nHunk #5 FAILED at 288.\n4 out of 5 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_worker_cp_utils.patch",
+    "applies": true,
+    "detail": "checking file vllm/v1/worker/cp_utils.py\nHunk #1 succeeded at 42 (offset 15 lines).\n"
+  },
+  {
+    "patch": "v1_worker_gpu_async_utils.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/worker/gpu/async_utils.py\nHunk #1 FAILED at 7.\nHunk #2 succeeded at 204 with fuzz 2 (offset 187 lines).\nHunk #3 FAILED at 26.\nHunk #4 FAILED at 41.\nHunk #5 FAILED at 68.\n4 out of 5 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_worker_gpu_block_table.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/worker/gpu/block_table.py\nHunk #5 FAILED at 196.\nHunk #6 succeeded at 270 (offset 22 lines).\nHunk #7 succeeded at 292 (offset 22 lines).\nHunk #8 succeeded at 321 (offset 22 lines).\nHunk #9 succeeded at 334 (offset 22 lines).\n1 out of 9 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_worker_gpu_cudagraph_utils.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/worker/gpu/cudagraph_utils.py\nHunk #1 succeeded at 32 with fuzz 2 (offset 4 lines).\nHunk #2 succeeded at 179 (offset -8 lines).\nHunk #3 FAILED at 204.\n1 out of 3 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_worker_gpu_input_batch.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/worker/gpu_input_batch.py\nHunk #1 FAILED at 106.\nHunk #2 FAILED at 178.\n2 out of 2 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_worker_gpu_model_runner.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/worker/gpu_model_runner.py\nHunk #1 FAILED at 151.\nHunk #2 FAILED at 658.\nHunk #3 FAILED at 6966.\nHunk #4 FAILED at 6986.\nHunk #5 FAILED at 7004.\n5 out of 5 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_worker_gpu_model_runner_v2.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/worker/gpu/model_runner.py\nHunk #1 FAILED at 33.\nHunk #2 FAILED at 49.\nHunk #3 FAILED at 103.\nHunk #4 succeeded at 231 (offset 44 lines).\nHunk #5 succeeded at 504 with fuzz 2 (offset 82 lines).\nHunk #6 FAILED at 460.\nHunk #7 succeeded at 1025 (offset 285 lines).\nHunk #8 succeeded at 1081 (offset 290 lines).\nHunk #9 succeeded at 1117 (offset 301 lines).\nHunk #10 succeeded at 1582 (offset 409 lines).\nHunk #11 FAILED at 1416.\nHunk #12 FAILED at 1477.\n6 out of 12 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_worker_gpu_sample_states.patch",
+    "applies": true,
+    "detail": "checking file vllm/v1/worker/gpu/sample/states.py\n"
+  },
+  {
+    "patch": "v1_worker_gpu_spec_decode_rejection_sampler.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/worker/gpu/spec_decode/rejection_sampler.py\nHunk #1 FAILED at 1.\nHunk #2 succeeded at 72 (offset 32 lines).\nHunk #3 FAILED at 67.\nHunk #4 succeeded at 170 with fuzz 2 (offset 37 lines).\nHunk #5 FAILED at 145.\nHunk #6 succeeded at 302 (offset 134 lines).\n3 out of 6 hunks FAILED\n"
+  },
+  {
+    "patch": "v1_worker_gpu_spec_decode_rejection_sampler_utils.patch",
+    "applies": false,
+    "detail": "checking file vllm/v1/worker/gpu/spec_decode/rejection_sampler_utils.py\nHunk #1 succeeded at 5 with fuzz 2.\nHunk #2 succeeded at 225 (offset 145 lines).\nHunk #3 succeeded at 268 (offset 145 lines).\nHunk #4 FAILED at 233.\nHunk #5 FAILED at 245.\nHunk #6 FAILED at 280.\nHunk #7 FAILED at 332.\nHunk #8 succeeded at 905 (offset 421 lines).\nHunk #9 succeeded at 954 (offset 429 lines).\nHunk #10 FAILED at 559.\nHunk #11 FAILED at 591.\nHunk #12 succeeded at 1045 (offset 435 lines).\nHunk #13 succeeded at 1137 (offset 512 lines).\nHunk #14 FAILED at 656.\nHunk #15 succeeded at 1231 (offset 518 lines).\n7 out of 15 hunks FAILED\n"
+  }
+]

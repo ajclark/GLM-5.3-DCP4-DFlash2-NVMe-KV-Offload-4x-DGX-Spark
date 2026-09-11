@@ -1,0 +1,11 @@
+--- upstream@ab6660699/indexer.py
++++ fork-baseline/indexer.py
+@@ -311,7 +311,7 @@
+         max_num_blocks_per_req = cdiv(
+             self.vllm_config.model_config.max_model_len,
+             self.kv_cache_spec.block_size * get_total_cp_world_size(),
+-        )
++        ) + 1  # MTP spec tokens can extend a request one block past max_model_len
+         self.expanded_block_table_buffer = torch.zeros(
+             (
+                 scheduler_config.max_num_batched_tokens,

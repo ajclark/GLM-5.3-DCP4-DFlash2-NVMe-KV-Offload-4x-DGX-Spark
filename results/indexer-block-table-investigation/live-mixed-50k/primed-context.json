@@ -1,0 +1,43 @@
+{
+  "prompt_tokens": 50038,
+  "shared_prefix_tokens": 49920,
+  "prompt_sha256": "2568694df6d769ac6624f95c8f2dffa1a9625fad2a83fe47c01aaf30c8b7ad70",
+  "response": {
+    "id": "chatcmpl-9d68629e45946129",
+    "object": "chat.completion",
+    "created": 1789106313,
+    "model": "glm-5.3",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "1",
+          "refusal": null,
+          "annotations": null,
+          "audio": null,
+          "function_call": null,
+          "tool_calls": [],
+          "reasoning": null
+        },
+        "logprobs": null,
+        "finish_reason": "length",
+        "stop_reason": null,
+        "token_ids": null,
+        "routed_experts": null
+      }
+    ],
+    "service_tier": null,
+    "system_fingerprint": "vllm-0.23.1rc1.dev190+gab6660699.d20260830-tp4-791a48d8",
+    "usage": {
+      "prompt_tokens": 50038,
+      "total_tokens": 50039,
+      "completion_tokens": 1,
+      "prompt_tokens_details": null
+    },
+    "prompt_logprobs": null,
+    "prompt_token_ids": null,
+    "prompt_text": null,
+    "kv_transfer_params": null
+  }
+}

@@ -1,5 +1,13 @@
 # DSA indexer: expanded block-table buffer is one column wider than the runner's block table
 
+> Independent follow-up: [source-executed reproduction and corrected analysis](INDEXER-BLOCK-TABLE-INVESTIGATION.md).
+> The immediate Torch failure is confirmed, but the uniform kernel also reads past
+> source rows. Several claims below, including the uniform-path safety, universal
+> one-column gap, upstream attribution, downstream consumer, and sufficiency of the proposed fix, are
+> superseded by that investigation. This initial report is retained for provenance.
+> In particular, the extra `+1` is a fork addition, absent from its exact upstream
+> base commit. See the [deployment record](INDEXER-BLOCK-TABLE-DEPLOYMENT.md) for the repair.
+
 **2026-09-11. Engine-killing crash, reproduced once in production, root-caused, fix proposed, not yet applied.**
 Written for a reader who was not present. Everything below is from the crashed
 container's logs and from source comparison against `baseline/` (the pristine fork

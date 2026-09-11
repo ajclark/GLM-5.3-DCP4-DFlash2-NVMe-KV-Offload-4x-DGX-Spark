@@ -1,0 +1,60 @@
+--- a/overlay/vllm/v1/attention/backends/mla/indexer.py
++++ b/overlay/vllm/v1/attention/backends/mla/indexer.py
+@@ -40,6 +40,7 @@
+     decode_seq_lens_ptr,
+     block_table_ptr,
+     block_table_stride,
++    num_block_table_cols,
+     expanded_block_table_ptr,
+     expanded_bt_stride,
+     decode_lens_ptr,
+@@ -61,7 +62,9 @@
+     for i in tl.range(0, expanded_bt_stride, BLOCK_SIZE):
+         off = i + tl.arange(0, BLOCK_SIZE)
+         mask = off < expanded_bt_stride
+-        src_block = tl.load(src + off, mask=mask)
++        src_block = tl.load(
++            src + off, mask=mask & (off < num_block_table_cols), other=0
++        )
+         tl.store(dst + off, src_block, mask=mask)
+
+     # All reqs now have decode_len = 1.
+@@ -483,6 +486,13 @@
+         """
+         min_decode_len = int(decode_lens_cpu.min().item())
+         if not use_native and max_decode_len > 1:
++            num_blocks = block_table.shape[1]
++            if num_blocks > self.expanded_block_table_buffer.shape[1]:
++                raise ValueError(
++                    "Indexer expanded block table is narrower than the input"
++                )
++            if block_table.stride(1) != 1:
++                raise ValueError("Indexer block table columns must have stride 1")
+             assert self.decode_seq_lens_buffer.dim() == 1
+             if min_decode_len == max_decode_len:
+                 # Uniform decode lengths.
+@@ -492,6 +502,7 @@
+                     self.decode_seq_lens_buffer,
+                     block_table,
+                     block_table.stride(0),
++                    num_blocks,
+                     self.expanded_block_table_buffer,
+                     self.expanded_block_table_buffer.stride(0),
+                     self.decode_lens_buffer,
+@@ -535,13 +546,14 @@
+
+                 # Give each of the flattened entries the same block table row as the
+                 # original request.
+-                self.expanded_block_table_buffer[:actual_expanded] = (
++                self.expanded_block_table_buffer[:actual_expanded, :num_blocks] = (
+                     torch.repeat_interleave(
+                         block_table, decode_lens, dim=0, output_size=actual_expanded
+                     )
+                 )
++                self.expanded_block_table_buffer[:actual_expanded, num_blocks:] = 0
+                 if actual_expanded < num_decode_tokens:
+                     self.expanded_block_table_buffer[
+-                        actual_expanded:num_decode_tokens, 0
++                        actual_expanded:num_decode_tokens, :
+                     ] = 0
+                 block_table = self.expanded_block_table_buffer[:num_decode_tokens]
