@@ -11,8 +11,7 @@ durable across evictions, engine restarts, and a full machine reboot.
 
 - **Decode context parallelism for GLM-5.3's sparse MLA, with speculative decoding kept.** One KV cache shared across the four Sparks instead of four copies: 4.00x the KV tokens at the same window (131k → 524k), a 262k window with 462k tokens, a 500k-token prompt served. DFlash2 (K=7) runs alongside it through a replicated drafter group; acceptance is unchanged and greedy output is byte-identical to the stock lane.
 - **NVMe-durable KV cache, across a reboot.** A multi-node slab tier on each node's disk: a 100k-token prefix reloads in ~2.5 s instead of a ~217 s recompute, and survives evictions, engine restarts, and a full cold reboot of all four nodes (measured: 9,640 blocks recovered from on-disk headers, 99.7% served). Each slot is self-describing (magic, token-hash key, epoch, length, payload CRC) and sealed header-last, so a torn or reordered write is detected on read and never served; recovery is a header scan, gated on the run config plus a content identity (weight fingerprints, dtype/quantization/RoPE, the overlay digest), since the key names the input tokens, not the KV bytes; toggleable (`persist_across_reboot`, default on). Fixed-size ring buffer, no janitor needed.
-- **Idle power, in a sibling repo.** Switching the ConnectX-7 off with the cables attached takes four idle nodes from 202 W to 120 W: [dgx-spark-idle-power](https://github.com/ajclark/dgx-spark-idle-power).
-
+- **NVMe-durable KV cache, across a reboot.**
 Deployed and serving on the author's cluster since 2026-09-04 (GLM-5.3
 Int4-Int8Mix, TP4 over a switchless RoCE ring). Measured against the
 production DCP1 lane of the same image:
@@ -92,7 +91,7 @@ DFlash2's trained block of eight and seven draft tokens. On the current
 TP4/DCP2 lane, the held-out prose benchmark improved 15.8%; the expanded
 coding follow-up measured +1.14% with a 95% interval of -1.30% to +3.64%.
 NVIDIA-device energy per prose token fell 17.4%. Whole-system energy remains
-unmeasured in this experiment, and CX-7 cycling remains paused.
+unmeasured in this experiment.
 
 `GLM_SPEC_POLICY` defaults to `off`. The experiment preserves the 180224-token
 window, 12 sequences and 6 GB/rank KV allocation. See the
@@ -173,16 +172,6 @@ That bug is in the fused NVIDIA DeepSeek-V3.2 norm/RoPE kernel, in a directory
 this fork does not have, so its fix (#54908) is a no-op here. The fork's actual
 gap is that the sparse indexer and the sparse attention backend have no DCP
 support at all. `docs/DESIGN.md` section 2 has the details.
-
-## Idle power
-
-`spark-idle.sh --down` powers the ConnectX-7 off on every node with the cables
-attached (202 -> 120 W measured for the four idle nodes); `--up` powers it back
-on and verifies the ring. One script, mirrored from
-[ajclark/dgx-spark-idle-power](https://github.com/ajclark/dgx-spark-idle-power).
-Stop the serving stack before `--down`, relaunch after `--up` with
-`SKIP_PREFLIGHT=1 ./rollout_dcp.sh <label>`. Background: `docs/CX7-POWER.md`,
-`docs/IDLE-POWER.md`.
 
 ## Incident write-up
 
