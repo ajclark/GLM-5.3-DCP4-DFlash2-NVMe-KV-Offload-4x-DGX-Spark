@@ -83,35 +83,6 @@ tier, `docs/HANDOVER.md` the operating notes. Upstream vLLM has since
 gained DCP for sparse MLA on newer code; these patches are for the June
 2026 base the Spark images pin.
 
-## Adaptive C1 verification experiment (2026-09-09)
-
-An opt-in controller chooses target verification caps 1/3/5/7 while retaining
-DFlash2's trained block of eight and seven draft tokens. On the current
-TP4/DCP2 lane, the held-out prose benchmark improved 15.8%; the expanded
-coding follow-up measured +1.14% with a 95% interval of -1.30% to +3.64%.
-NVIDIA-device energy per prose token fell 17.4%. Whole-system energy remains
-unmeasured in this experiment.
-
-`GLM_SPEC_POLICY` defaults to `off`. The experiment preserves the 180224-token
-window, 12 sequences and 6 GB/rank KV allocation. See the
-[benchmark report and reproducible commands](results/adaptive-spec/README.md),
-[completion audit](results/adaptive-spec/COMPLETION-AUDIT.md), and
-[design](docs/ADAPTIVE-SPECULATION-PLAN.md). Broad promotion remains gated.
-
-The [follow-up experiments](docs/ADAPTIVE-SPECULATION-NEXT.md) repair a replicated
-draft-cache table defect, validate real Pi text/tool hints through herdr, reject
-the tested lagged-confidence predictor, and measure active/idle GPU-clock
-tradeoffs. Loaded-idle device power falls from about 32 W across four GPUs to
-22.14 W at 600 MHz, with no permanent clock policy installed. Target-output
-repeatability remains unresolved after an isolated atomic-reduction control.
-The [curated evidence](results/adaptive-next/README.md) preserves all outcomes,
-invalid controls, privacy transformations and exact restoration checks.
-
-The [current priority is C1 speed](docs/SPEED-NEXT.md): compare short built-in
-MTP with repaired adaptive DFlash, then address communication and verification
-costs. Power optimization is deferred. An MTP model/proposer contract mismatch
-has a CPU-tested experimental fix; no new MTP Spark speed result is claimed.
-
 ## Layout
 
 | path | what it is |
@@ -122,7 +93,7 @@ has a CPU-tested experimental fix; no new MTP Spark speed result is claimed.
 | `patches/*.patch` | `baseline` to `overlay` diffs, plus `apply.sh` |
 | `stage/glm-dcp/` | deployed sources flattened for bind-mounting, with `SHA256SUMS` |
 | `launch-glm53big-dcp.sh` | TP4 + DCP4 + DFlash launcher, derived from the selected one |
-| `tests/` | Local tests of real patched kernels, NVMe tier, adaptive verification, API controls and guarded experiments; validation counts are recorded with each experiment |
+| `tests/` | Local tests of real patched kernels and the NVMe tier; validation counts are recorded with each experiment |
 | `upstream-vllm/` | an upstream clone, used to locate the fork's base commit |
 
 `baseline` is what the image runs: for `flashmla_sparse.py` and
@@ -162,22 +133,6 @@ Keep `~/glm-triton/` in place: eight of its ten overlays are still mounted from
 there, and the DFlash draft weights are mounted exactly as the production
 launcher does. Hostnames, paths and the image tag are the author's; they are
 variables at the top of the launcher and the scripts.
-
-## The GitHub issue
-
-The task started from
-[vllm-project/vllm#54907](https://github.com/vllm-project/vllm/issues/54907).
-That bug is in the fused NVIDIA DeepSeek-V3.2 norm/RoPE kernel, in a directory
-this fork does not have, so its fix (#54908) is a no-op here. The fork's actual
-gap is that the sparse indexer and the sparse attention backend have no DCP
-support at all. `docs/DESIGN.md` section 2 has the details.
-
-## Incident write-up
-
-`docs/INCIDENT-SHIELD-REMOTE.md`: a Bluetooth NVIDIA SHIELD Remote that had once
-been paired with two of the Sparks powered them off from another room (its power
-key is a HID power key; logind's default for any power key is poweroff). Evidence,
-mechanism, the GID-index fragility it exposed on relaunch, and fixes.
 
 ## Credits
 
