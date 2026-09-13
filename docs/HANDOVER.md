@@ -5,6 +5,24 @@ reasoning; this file is the operational summary.
 
 ## Current deployment, 2026-09-11
 
+Serving label **`upgrade-029-r8`** on all four Sparks, using **vLLM 0.29.0**,
+Torch 2.13.0 and FlashInfer 0.6.18. The pinned release image and verified source
+port live in `runtime/vllm029/`; the root launcher and rollout now select it by
+default. TP4/DCP2, DFlash2 K=7, the 180224-token window, 6 GB KV and 150 GB NVMe
+slab per rank are retained. GPU KV capacity is 208,125 tokens.
+
+The sandbox suite passed 1066 tests. Native configuration and CUDA checks,
+both CUDA memcheck suites, count100 token parity, tools, reasoning and concurrent
+50k-context generation passed. Retrieval from a 100,736-token prompt passed
+cold in 180.83 seconds to first token, then in 2.70 seconds after an engine
+restart, with 99.87% external prefix hits. See
+[upgrade scope, validation and rollback](VLLM-029-UPGRADE.md) for evidence and
+performance. Original containers remain stopped under
+`vllm_glm53big_pre_upgrade-029-r8`; restore with
+`./restore_production.sh upgrade-029-r8`.
+
+## Previous deployment, 2026-09-11 05:57 UTC
+
 Serving label **`indexer-width-fix-20260911`**, rollout completed 05:57 UTC.
 All four Sparks run the repaired DSA indexer on the existing
 `vllm-glm52-b12x:dflash2-port2` runtime: TP4/DCP2, DFlash2 K=7, 180224-token
@@ -19,7 +37,7 @@ hashes, release provenance, evidence and rollback, and
 [independent investigation](INDEXER-BLOCK-TABLE-INVESTIGATION.md) for corrections
 to the initial incident report. The dated entries below describe earlier states.
 
-## State
+## Historical state
 
 - **Deployed (2026-09-04).** The DCP lane lives beside production on every
   node: overlays in `~/glm-dcp/` (SHA-verified) and

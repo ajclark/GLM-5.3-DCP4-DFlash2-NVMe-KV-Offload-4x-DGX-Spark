@@ -1,0 +1,319 @@
+{
+  "generation": "nvme-stream-1789318252",
+  "status": "offline arithmetic and synthetic int32 equality; not a new activation",
+  "baseline_seconds": {
+    "healthy": 131.27308953201282,
+    "target_stream": 59.09820238605607,
+    "draft_stream": 1.3352784870075993,
+    "remaining_model_load": 14.122995126936331,
+    "engine_initialization": 19.06,
+    "outside_reported_model_and_engine": 37.65661353201281,
+    "counterfactual_zero_target_stream": 72.17488714595675
+  },
+  "ideal_tp4_target_bytes_per_rank": {
+    "full_local_reads": 405220014976,
+    "cooperative_reads": 101305003744.0,
+    "full_tensor_broadcast_receive": 303915011232.0,
+    "slice_scatter_send_and_receive_each": 75978752808.0,
+    "neighbor_forwarding_each_direction_balanced_shortest_paths": 50652501872.0,
+    "neighbor_forwarding_single_direction_ring": 151957505616.0,
+    "notes": "excludes replication, forwarding, protocol overhead, and draft"
+  },
+  "illustrative_local_selective_target_plus_draft_bytes": 218447693696.0,
+  "disk_only_seconds_at_supplied_rates": {
+    "4000000000": {
+      "full_target": 101.305003744,
+      "cooperative_target": 25.326250936
+    },
+    "5000000000": {
+      "full_target": 81.0440029952,
+      "cooperative_target": 20.2610007488
+    }
+  },
+  "slice_examples": [
+    {
+      "projection": "gate_proj",
+      "shape": [
+        2048,
+        768
+      ],
+      "source_slice_axis_assumption": 0,
+      "ranks": [
+        {
+          "rank": 0,
+          "logical_slice_bytes": 1572864,
+          "uncoalesced_ranges": 1,
+          "physical_4k_bytes_tensor_aligned": 1572864,
+          "physical_4k_bytes_tensor_offset_123": 1576960,
+          "transpose_then_slice_equals_slice_then_transpose": true,
+          "old_transpose_storage_bytes": 6291456,
+          "new_transpose_storage_bytes": 1572864
+        },
+        {
+          "rank": 1,
+          "logical_slice_bytes": 1572864,
+          "uncoalesced_ranges": 1,
+          "physical_4k_bytes_tensor_aligned": 1572864,
+          "physical_4k_bytes_tensor_offset_123": 1576960,
+          "transpose_then_slice_equals_slice_then_transpose": true,
+          "old_transpose_storage_bytes": 6291456,
+          "new_transpose_storage_bytes": 1572864
+        },
+        {
+          "rank": 2,
+          "logical_slice_bytes": 1572864,
+          "uncoalesced_ranges": 1,
+          "physical_4k_bytes_tensor_aligned": 1572864,
+          "physical_4k_bytes_tensor_offset_123": 1576960,
+          "transpose_then_slice_equals_slice_then_transpose": true,
+          "old_transpose_storage_bytes": 6291456,
+          "new_transpose_storage_bytes": 1572864
+        },
+        {
+          "rank": 3,
+          "logical_slice_bytes": 1572864,
+          "uncoalesced_ranges": 1,
+          "physical_4k_bytes_tensor_aligned": 1572864,
+          "physical_4k_bytes_tensor_offset_123": 1576960,
+          "transpose_then_slice_equals_slice_then_transpose": true,
+          "old_transpose_storage_bytes": 6291456,
+          "new_transpose_storage_bytes": 1572864
+        }
+      ]
+    },
+    {
+      "projection": "up_proj",
+      "shape": [
+        2048,
+        768
+      ],
+      "source_slice_axis_assumption": 0,
+      "ranks": [
+        {
+          "rank": 0,
+          "logical_slice_bytes": 1572864,
+          "uncoalesced_ranges": 1,
+          "physical_4k_bytes_tensor_aligned": 1572864,
+          "physical_4k_bytes_tensor_offset_123": 1576960,
+          "transpose_then_slice_equals_slice_then_transpose": true,
+          "old_transpose_storage_bytes": 6291456,
+          "new_transpose_storage_bytes": 1572864
+        },
+        {
+          "rank": 1,
+          "logical_slice_bytes": 1572864,
+          "uncoalesced_ranges": 1,
+          "physical_4k_bytes_tensor_aligned": 1572864,
+          "physical_4k_bytes_tensor_offset_123": 1576960,
+          "transpose_then_slice_equals_slice_then_transpose": true,
+          "old_transpose_storage_bytes": 6291456,
+          "new_transpose_storage_bytes": 1572864
+        },
+        {
+          "rank": 2,
+          "logical_slice_bytes": 1572864,
+          "uncoalesced_ranges": 1,
+          "physical_4k_bytes_tensor_aligned": 1572864,
+          "physical_4k_bytes_tensor_offset_123": 1576960,
+          "transpose_then_slice_equals_slice_then_transpose": true,
+          "old_transpose_storage_bytes": 6291456,
+          "new_transpose_storage_bytes": 1572864
+        },
+        {
+          "rank": 3,
+          "logical_slice_bytes": 1572864,
+          "uncoalesced_ranges": 1,
+          "physical_4k_bytes_tensor_aligned": 1572864,
+          "physical_4k_bytes_tensor_offset_123": 1576960,
+          "transpose_then_slice_equals_slice_then_transpose": true,
+          "old_transpose_storage_bytes": 6291456,
+          "new_transpose_storage_bytes": 1572864
+        }
+      ]
+    },
+    {
+      "projection": "down_proj",
+      "shape": [
+        6144,
+        256
+      ],
+      "source_slice_axis_assumption": 1,
+      "ranks": [
+        {
+          "rank": 0,
+          "logical_slice_bytes": 1572864,
+          "uncoalesced_ranges": 6144,
+          "physical_4k_bytes_tensor_aligned": 6291456,
+          "physical_4k_bytes_tensor_offset_123": 6291456,
+          "transpose_then_slice_equals_slice_then_transpose": true,
+          "old_transpose_storage_bytes": 6291456,
+          "new_transpose_storage_bytes": 1572864
+        },
+        {
+          "rank": 1,
+          "logical_slice_bytes": 1572864,
+          "uncoalesced_ranges": 6144,
+          "physical_4k_bytes_tensor_aligned": 6291456,
+          "physical_4k_bytes_tensor_offset_123": 6291456,
+          "transpose_then_slice_equals_slice_then_transpose": true,
+          "old_transpose_storage_bytes": 6291456,
+          "new_transpose_storage_bytes": 1572864
+        },
+        {
+          "rank": 2,
+          "logical_slice_bytes": 1572864,
+          "uncoalesced_ranges": 6144,
+          "physical_4k_bytes_tensor_aligned": 6291456,
+          "physical_4k_bytes_tensor_offset_123": 6291456,
+          "transpose_then_slice_equals_slice_then_transpose": true,
+          "old_transpose_storage_bytes": 6291456,
+          "new_transpose_storage_bytes": 1572864
+        },
+        {
+          "rank": 3,
+          "logical_slice_bytes": 1572864,
+          "uncoalesced_ranges": 6144,
+          "physical_4k_bytes_tensor_aligned": 6291456,
+          "physical_4k_bytes_tensor_offset_123": 6295552,
+          "transpose_then_slice_equals_slice_then_transpose": true,
+          "old_transpose_storage_bytes": 6291456,
+          "new_transpose_storage_bytes": 1572864
+        }
+      ]
+    }
+  ],
+  "marlin_batched_permutation_checks": [
+    {
+      "experts": 1,
+      "group_size": 128,
+      "int8_activation": false,
+      "noncontiguous": false,
+      "equal": true
+    },
+    {
+      "experts": 1,
+      "group_size": 128,
+      "int8_activation": false,
+      "noncontiguous": true,
+      "equal": true
+    },
+    {
+      "experts": 1,
+      "group_size": -1,
+      "int8_activation": false,
+      "noncontiguous": false,
+      "equal": true
+    },
+    {
+      "experts": 1,
+      "group_size": -1,
+      "int8_activation": false,
+      "noncontiguous": true,
+      "equal": true
+    },
+    {
+      "experts": 1,
+      "group_size": 128,
+      "int8_activation": true,
+      "noncontiguous": false,
+      "equal": true
+    },
+    {
+      "experts": 1,
+      "group_size": 128,
+      "int8_activation": true,
+      "noncontiguous": true,
+      "equal": true
+    },
+    {
+      "experts": 7,
+      "group_size": 128,
+      "int8_activation": false,
+      "noncontiguous": false,
+      "equal": true
+    },
+    {
+      "experts": 7,
+      "group_size": 128,
+      "int8_activation": false,
+      "noncontiguous": true,
+      "equal": true
+    },
+    {
+      "experts": 7,
+      "group_size": -1,
+      "int8_activation": false,
+      "noncontiguous": false,
+      "equal": true
+    },
+    {
+      "experts": 7,
+      "group_size": -1,
+      "int8_activation": false,
+      "noncontiguous": true,
+      "equal": true
+    },
+    {
+      "experts": 7,
+      "group_size": 128,
+      "int8_activation": true,
+      "noncontiguous": false,
+      "equal": true
+    },
+    {
+      "experts": 7,
+      "group_size": 128,
+      "int8_activation": true,
+      "noncontiguous": true,
+      "equal": true
+    },
+    {
+      "experts": 256,
+      "group_size": 128,
+      "int8_activation": false,
+      "noncontiguous": false,
+      "equal": true
+    },
+    {
+      "experts": 256,
+      "group_size": 128,
+      "int8_activation": false,
+      "noncontiguous": true,
+      "equal": true
+    },
+    {
+      "experts": 256,
+      "group_size": -1,
+      "int8_activation": false,
+      "noncontiguous": false,
+      "equal": true
+    },
+    {
+      "experts": 256,
+      "group_size": -1,
+      "int8_activation": false,
+      "noncontiguous": true,
+      "equal": true
+    },
+    {
+      "experts": 256,
+      "group_size": 128,
+      "int8_activation": true,
+      "noncontiguous": false,
+      "equal": true
+    },
+    {
+      "experts": 256,
+      "group_size": 128,
+      "int8_activation": true,
+      "noncontiguous": true,
+      "equal": true
+    }
+  ],
+  "limitations": [
+    "No physical storage or GPU measurement was performed.",
+    "4 KiB touched pages are a read-amplification model, not observed device IO.",
+    "Equality checks exclude quantizer packing, scales, padding, aliases, and native side effects.",
+    "Timings are rank-0 arithmetic, not a synchronized dependency trace."
+  ]
+}

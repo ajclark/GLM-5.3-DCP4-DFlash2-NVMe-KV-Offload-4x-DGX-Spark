@@ -1,0 +1,40 @@
+[
+  {
+    "model": "tiny-llama",
+    "tensors": 21,
+    "shards": 5,
+    "configured_stream_buffer_bytes": 1048576,
+    "payload_bytes": 4985856,
+    "concurrency": 32,
+    "retained_clone_equality": true,
+    "complete": true,
+    "missing_tensors": [],
+    "device": "cpu"
+  },
+  {
+    "model": "tiny-gpt2",
+    "tensors": 28,
+    "shards": 5,
+    "configured_stream_buffer_bytes": 524288,
+    "payload_bytes": 1718272,
+    "concurrency": 32,
+    "retained_clone_equality": true,
+    "complete": true,
+    "missing_tensors": [],
+    "device": "cpu"
+  },
+  {
+    "model": "mixed-dtypes",
+    "tensors": 4,
+    "shards": 5,
+    "configured_stream_buffer_bytes": 2097152,
+    "payload_bytes": 1081364,
+    "concurrency": 32,
+    "retained_clone_equality": true,
+    "complete": false,
+    "missing_tensors": [
+      "empty"
+    ],
+    "device": "cpu"
+  }
+]

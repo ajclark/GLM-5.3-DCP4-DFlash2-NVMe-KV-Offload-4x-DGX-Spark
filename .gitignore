@@ -66,3 +66,15 @@ results/adaptive-spec/**
 results/adaptive-spec/inventory/runtime/
 results/lossy-*-tasks-*/proxy-*.jsonl
 results/lossy-*-tasks-*/*/*/c01/*/metrics.jsonl
+
+# Engine-upgrade inventories may include environment configuration; keep local.
+results/vllm029-upgrade/**/*.private.json
+results/vllm029-upgrade/**/*.log
+results/vllm029-upgrade/**/memory.jsonl
+runtime/vllm029/__pycache__/
+results/nvme-loader/**/*.private.json
+results/nvme-loader/*.private.json
+results/nvme-loader/inventory/
+results/nvme-loader/fixtures/
+results/nvme-loader/*-memory.jsonl
+runtime/nvme_loader/__pycache__/

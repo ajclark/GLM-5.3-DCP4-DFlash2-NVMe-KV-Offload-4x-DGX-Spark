@@ -8,6 +8,8 @@
 #      index rebuilt from slot headers).
 # Usage: ./deploy_slab.sh <label> [MAXLEN] [MAXBATCHED] [KVBYTES] [tokens]
 set -uo pipefail
+# Historical cache experiment; the release workflow is runtime/vllm029/validate.py.
+export VLLM_RUNTIME=legacy
 LABEL="${1:?label}"; MAXLEN="${2:-307200}"; MAXBATCHED="${3:-2048}"; KVBYTES="${4:-6000000000}"; TOK="${5:-100000}"
 CAP_A="${KVTIER_DISK_BYTES_A:-4500000000}"; CAP="${KVTIER_DISK_BYTES:-150000000000}"
 WS="$(cd "$(dirname "$0")" && pwd)"; cd "$WS"

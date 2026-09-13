@@ -1,4 +1,40 @@
-# GLM-5.3 on 4x DGX Spark: TP4 + DCP4 + DFlash2, with an NVMe-durable KV cache
+# GLM-5.3 on four DGX Sparks: vLLM, DCP and durable NVMe KV
+
+> **Startup highlight: target weights in ~42 seconds, serving in ~115 seconds.**
+> Deployed across all four Sparks, the coalesced NVMe loader reads original
+> checkpoint tensors in concurrent 128 MiB batches and overlaps reads with GPU
+> uploads, without preparing a model-specific artifact in advance. Target-weight
+> loading fell from 59–61 s to **41.8–42.4 s**, API readiness from 131 s to
+> **114.7 s**, and first output arrived **115.2 s** after launch. These are fresh
+> serving-process starts with warm hosts and compiler caches, not cold-machine
+> boots. Validation includes 37 sandbox tests, CUDA correctness checks, exact
+> Llama/GPT-2 loading parity, and same-model durable-KV recovery; Fable reviewed
+> the implementation. See the [implementation and measured results](docs/COALESCED-LOADER-IMPLEMENTATION.md)
+> and [loader usage](runtime/nvme_loader/README.md).
+
+The current runtime targets **[vLLM 0.29.0](https://github.com/vllm-project/vllm/releases/tag/v0.29.0)**,
+using the official CUDA 13 ARM64 image pinned by digest. It retains TP4/DCP2,
+DFlash2 K=7, the 180224-token window, 12 sequences, 6 GB KV per rank and
+150 GB NVMe slab per rank. Native release model, indexer and speculative-decoding
+code replace the old engine overlays; a smaller port preserves replicated draft
+caches, GB10 sparse-attention DCP, and durable worker-local offload.
+
+The release baseline is `upgrade-029-r8`; the loader deployment above builds on it.
+See the [upgrade and validation report](docs/VLLM-029-UPGRADE.md)
+and [runtime scope, build, regression and rollback instructions](runtime/vllm029/README.md).
+The root launcher and rollout default to this release. `VLLM_RUNTIME=legacy`
+selects the historical engine for the experiments and measurements below.
+
+```bash
+./rollout_dcp.sh <unique-label>       # build, verify, deploy, test, automatic rollback
+.venv/bin/python runtime/vllm029/validate.py <unique-label>  # API, long context, restart/reload
+./restore_production.sh <unique-label>                    # exact pre-rollout containers
+```
+
+## Historical engine and measurements
+
+The following design history and performance numbers describe the earlier
+custom engine. They are retained as baselines, not measurements of vLLM 0.29.0.
 
 A patch set for [tonyd2wild's GLM-5.3 Int4-Int8Mix TP4 recipe for 4x DGX Spark](https://github.com/tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark), whose vLLM image, sparse-MLA kernels and DFlash2 speculative decoding this work builds on, that keeps **one copy of
 the KV cache across the four ranks instead of four**, so the context window
@@ -88,15 +124,16 @@ gained DCP for sparse MLA on newer code; these patches are for the June
 | path | what it is |
 |---|---|
 | `docs/DESIGN.md` | the design, the cost analysis, and the validation plan |
-| `baseline/vllm/…` | sixteen files exactly as the running image has them |
+| `runtime/vllm029/` | pinned release image, ported sources, launcher, guarded rollout and real runtime regressions |
+| `baseline/vllm/…` | historical custom-image source files |
 | `overlay/vllm/…` | the same sixteen files patched (thirteen for DCP: target sharded, DFlash drafter replicated, top-k candidates compacted per rank; the engine scheduler's invalid-block recovery; the offloading connector's store progress; the b12x attention helper's candidate-count passthrough) plus the new `v1/kv_offload/tiering/multinode.py` NVMe tier |
 | `patches/*.patch` | `baseline` to `overlay` diffs, plus `apply.sh` |
 | `stage/glm-dcp/` | deployed sources flattened for bind-mounting, with `SHA256SUMS` |
-| `launch-glm53big-dcp.sh` | TP4 + DCP4 + DFlash launcher, derived from the selected one |
+| `launch-glm53big-dcp.sh` | current release launcher; `VLLM_RUNTIME=legacy` selects the preserved historical implementation |
 | `tests/` | Local tests of real patched kernels and the NVMe tier; validation counts are recorded with each experiment |
 | `upstream-vllm/` | an upstream clone, used to locate the fork's base commit |
 
-`baseline` is what the image runs: for `flashmla_sparse.py` and
+`baseline` records what the historical image ran: for `flashmla_sparse.py` and
 `sparse_attn_indexer.py` that is the `glm-triton` overlay the launcher already
 bind-mounts, and for the other eleven the pristine file from the image's
 `dist-packages`.
@@ -114,9 +151,10 @@ tier tests import the fork's own connector modules from a source tree at
 `~/lmcache-mg/spark-src/vllm` (the image's vLLM at commit ab666069); point
 `SRC` in `tests/nvme_harness.py` at any checkout of that commit.
 
-## Deploying
+## Historical deployment
 
-The image is not rebuilt: the sixteen files in `stage/glm-dcp/` are
+These commands require `export VLLM_RUNTIME=legacy`; use the release rollout
+above for current deployment. The historical image is not rebuilt: the sixteen files in `stage/glm-dcp/` are
 bind-mounted over the installed vLLM by `launch-glm53big-dcp.sh`, which
 preflights every file and refuses to start otherwise. `docs/HANDOVER.md` has
 the state, the rules learned the hard way, and the recovery paths.

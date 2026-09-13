@@ -1,0 +1,178 @@
+{
+  "ok": true,
+  "version": "0.29.0",
+  "label": "upgrade-029-r8",
+  "sandbox_pytest": {
+    "passed": 1066,
+    "warnings": 2,
+    "seconds": 26.44,
+    "log_sha256": "59b7ad65df5affa933ea3de29d8030035ee27879aa75025c9ede50058180b966"
+  },
+  "cluster_gates": {
+    "config-regression.log": {
+      "sha256": "df80174c5e306e6e8ec91286b6c7ffb6684a5a2f66b258eb72b20792367eb162",
+      "passed": true
+    },
+    "model-config-regression.log": {
+      "sha256": "a88a96a3607ccbe7c62cc3fdcf245e5706e6422b3601f6bc6b9cff7a449474f4",
+      "passed": true
+    },
+    "cuda-regression.log": {
+      "sha256": "705380cf89d9cee9242688ab9cf80d5a0aed7b4c3b931d13834d3d751ea410aa",
+      "passed": true
+    },
+    "indexer-regression.log": {
+      "sha256": "02e03f1f45fa3fd45a8319a306bcc813a53908d8c033b58248f102b1716f0ab0",
+      "passed": true
+    },
+    "extended/memcheck.log": {
+      "sha256": "8b2fcf41eb2b12cd056283818699ae27b01aa7e49291f25369dc27e48bd1b5a8",
+      "passed": true,
+      "memcheck_errors": 0
+    },
+    "extended/indexer-memcheck.log": {
+      "sha256": "dd31d6f267ce6b31f1508b0381122b6b980fc1281f6b730f2713401e2d725edb",
+      "passed": true,
+      "memcheck_errors": 0
+    }
+  },
+  "final_count100_parity": {
+    "text_equal": true,
+    "token_ids_equal": true,
+    "tokens": 200
+  },
+  "cold": {
+    "content": "QUARTZ-7294",
+    "completion_tokens": 8,
+    "prompt_tokens": 100736,
+    "wall_s": 181.15445884800283,
+    "ttft_s": 180.8250737460039,
+    "decode_s": 0.32924228799674893,
+    "chunks": 4,
+    "metrics_delta": {
+      "vllm:prefix_cache_queries_total": 100736.0,
+      "vllm:prefix_cache_queries_created": 0.0,
+      "vllm:prefix_cache_hits_total": 0.0,
+      "vllm:prefix_cache_hits_created": 0.0,
+      "vllm:external_prefix_cache_queries_total": 100736.0,
+      "vllm:external_prefix_cache_queries_created": 0.0,
+      "vllm:external_prefix_cache_hits_total": 0.0,
+      "vllm:external_prefix_cache_hits_created": 0.0,
+      "vllm:mm_cache_queries_total": 0.0,
+      "vllm:mm_cache_queries_created": 0.0,
+      "vllm:mm_cache_hits_total": 0.0,
+      "vllm:mm_cache_hits_created": 0.0
+    }
+  },
+  "reload": {
+    "content": "QUARTZ-7294",
+    "completion_tokens": 8,
+    "prompt_tokens": 100736,
+    "wall_s": 3.05097441199905,
+    "ttft_s": 2.703033052996034,
+    "decode_s": 0.3477340110039222,
+    "chunks": 4,
+    "metrics_delta": {
+      "vllm:prefix_cache_queries_total": 100736.0,
+      "vllm:prefix_cache_queries_created": 0.0,
+      "vllm:prefix_cache_hits_total": 0.0,
+      "vllm:prefix_cache_hits_created": 0.0,
+      "vllm:external_prefix_cache_queries_total": 100736.0,
+      "vllm:external_prefix_cache_queries_created": 0.0,
+      "vllm:external_prefix_cache_hits_total": 100608.0,
+      "vllm:external_prefix_cache_hits_created": 0.0,
+      "vllm:mm_cache_queries_total": 0.0,
+      "vllm:mm_cache_queries_created": 0.0,
+      "vllm:mm_cache_hits_total": 0.0,
+      "vllm:mm_cache_hits_created": 0.0
+    }
+  },
+  "benchmark": {
+    "count100": {
+      "baseline_decode_tok_s": 54.334999999999994,
+      "release_decode_tok_s": 55.965,
+      "change_percent": 2.9999079782828897,
+      "baseline_generated_tokens": [
+        299,
+        299
+      ],
+      "release_generated_tokens": [
+        299,
+        299
+      ]
+    },
+    "prose": {
+      "baseline_decode_tok_s": 18.855,
+      "release_decode_tok_s": 20.305,
+      "change_percent": 7.690267833465914,
+      "baseline_generated_tokens": [
+        450,
+        450
+      ],
+      "release_generated_tokens": [
+        450,
+        450
+      ]
+    },
+    "code": {
+      "baseline_decode_tok_s": 46.239999999999995,
+      "release_decode_tok_s": 42.084999999999994,
+      "change_percent": -8.985726643598625,
+      "baseline_generated_tokens": [
+        189,
+        189
+      ],
+      "release_generated_tokens": [
+        249,
+        249
+      ]
+    }
+  },
+  "benchmark_caveat": "Two repetitions; prose and code output can vary. Code output differs: 189 baseline vs 249 release tokens.",
+  "memory": {
+    "memory.jsonl": {
+      "spark-06c4.local": {
+        "min_available_mib": 4024.61328125,
+        "oom_kill_delta": 0,
+        "alarms": []
+      },
+      "spark-365c.local": {
+        "min_available_mib": 5124.2890625,
+        "oom_kill_delta": 0,
+        "alarms": []
+      },
+      "spark-a218.local": {
+        "min_available_mib": 4952.80078125,
+        "oom_kill_delta": 0,
+        "alarms": []
+      },
+      "spark-ddbf.local": {
+        "min_available_mib": 5327.40234375,
+        "oom_kill_delta": 0,
+        "alarms": []
+      }
+    },
+    "extended/memory.jsonl": {
+      "spark-06c4.local": {
+        "min_available_mib": 2648.578125,
+        "oom_kill_delta": 0,
+        "alarms": []
+      },
+      "spark-365c.local": {
+        "min_available_mib": 4179.90234375,
+        "oom_kill_delta": 0,
+        "alarms": []
+      },
+      "spark-a218.local": {
+        "min_available_mib": 4238.40625,
+        "oom_kill_delta": 0,
+        "alarms": []
+      },
+      "spark-ddbf.local": {
+        "min_available_mib": 4224.26953125,
+        "oom_kill_delta": 0,
+        "alarms": []
+      }
+    }
+  }
+}

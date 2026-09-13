@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spark-nvme-loader"
+version = "0.1.0"
+description = "Bounded concurrent local NVMe loading for vLLM"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.exclude-package-data]
+"*" = ["__pycache__/*", "*.pyc"]
+
+[project.entry-points."vllm.general_plugins"]
+spark_nvme = "spark_nvme:register"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["spark_nvme*"]

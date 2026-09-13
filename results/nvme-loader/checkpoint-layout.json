@@ -1,0 +1,282 @@
+[
+  {
+    "directory": "/var/tmp/models/GLM-5.3-Int4-Int8Mix",
+    "shards": 282,
+    "file_bytes": 405241870672,
+    "header_bytes_read": 21855696,
+    "tensors": 177569,
+    "tensor_bytes": 405220014976,
+    "shard_bytes_min": 149112104,
+    "shard_bytes_max": 4990458584,
+    "dtype_bytes": {
+      "I64": 943872,
+      "I32": 388244963328,
+      "BF16": 16974029952,
+      "F32": 77824
+    },
+    "expert_named_tensors": 175104,
+    "expert_named_bytes": 383382339584,
+    "expert_examples": {
+      "down_proj.weight_shape": {
+        "name": "model.layers.10.mlp.experts.0.down_proj.weight_shape",
+        "shape": [
+          2
+        ],
+        "dtype": "I64",
+        "bytes": 16
+      },
+      "gate_proj.weight_shape": {
+        "name": "model.layers.10.mlp.experts.0.gate_proj.weight_shape",
+        "shape": [
+          2
+        ],
+        "dtype": "I64",
+        "bytes": 16
+      },
+      "up_proj.weight_shape": {
+        "name": "model.layers.10.mlp.experts.0.up_proj.weight_shape",
+        "shape": [
+          2
+        ],
+        "dtype": "I64",
+        "bytes": 16
+      },
+      "down_proj.weight_packed": {
+        "name": "model.layers.10.mlp.experts.0.down_proj.weight_packed",
+        "shape": [
+          6144,
+          256
+        ],
+        "dtype": "I32",
+        "bytes": 6291456
+      },
+      "gate_proj.weight_packed": {
+        "name": "model.layers.10.mlp.experts.0.gate_proj.weight_packed",
+        "shape": [
+          2048,
+          768
+        ],
+        "dtype": "I32",
+        "bytes": 6291456
+      },
+      "up_proj.weight_packed": {
+        "name": "model.layers.10.mlp.experts.0.up_proj.weight_packed",
+        "shape": [
+          2048,
+          768
+        ],
+        "dtype": "I32",
+        "bytes": 6291456
+      },
+      "down_proj.weight_scale": {
+        "name": "model.layers.10.mlp.experts.0.down_proj.weight_scale",
+        "shape": [
+          6144,
+          16
+        ],
+        "dtype": "BF16",
+        "bytes": 196608
+      },
+      "gate_proj.weight_scale": {
+        "name": "model.layers.10.mlp.experts.0.gate_proj.weight_scale",
+        "shape": [
+          2048,
+          48
+        ],
+        "dtype": "BF16",
+        "bytes": 196608
+      },
+      "up_proj.weight_scale": {
+        "name": "model.layers.10.mlp.experts.0.up_proj.weight_scale",
+        "shape": [
+          2048,
+          48
+        ],
+        "dtype": "BF16",
+        "bytes": 196608
+      }
+    },
+    "largest_tensors": [
+      {
+        "bytes": 1903165440,
+        "name": "model.embed_tokens.weight",
+        "file": "model-00001-of-00282.safetensors",
+        "shape": [
+          154880,
+          6144
+        ],
+        "dtype": "BF16"
+      },
+      {
+        "bytes": 1903165440,
+        "name": "lm_head.weight",
+        "file": "model-00001-of-00282.safetensors",
+        "shape": [
+          154880,
+          6144
+        ],
+        "dtype": "BF16"
+      },
+      {
+        "bytes": 201326592,
+        "name": "model.layers.0.self_attn.o_proj.weight",
+        "file": "model-00001-of-00282.safetensors",
+        "shape": [
+          6144,
+          16384
+        ],
+        "dtype": "BF16"
+      },
+      {
+        "bytes": 150994944,
+        "name": "model.layers.78.eh_proj.weight",
+        "file": "model-00270-of-00282.safetensors",
+        "shape": [
+          6144,
+          12288
+        ],
+        "dtype": "BF16"
+      },
+      {
+        "bytes": 150994944,
+        "name": "model.layers.0.mlp.up_proj.weight",
+        "file": "model-00001-of-00282.safetensors",
+        "shape": [
+          12288,
+          6144
+        ],
+        "dtype": "BF16"
+      },
+      {
+        "bytes": 150994944,
+        "name": "model.layers.0.mlp.gate_proj.weight",
+        "file": "model-00001-of-00282.safetensors",
+        "shape": [
+          12288,
+          6144
+        ],
+        "dtype": "BF16"
+      },
+      {
+        "bytes": 150994944,
+        "name": "model.layers.0.mlp.down_proj.weight",
+        "file": "model-00001-of-00282.safetensors",
+        "shape": [
+          6144,
+          12288
+        ],
+        "dtype": "BF16"
+      },
+      {
+        "bytes": 100663296,
+        "name": "model.layers.9.self_attn.o_proj.weight_packed",
+        "file": "model-00282-of-00282.safetensors",
+        "shape": [
+          6144,
+          4096
+        ],
+        "dtype": "I32"
+      }
+    ],
+    "payload_read": false
+  },
+  {
+    "directory": "/var/tmp/models/GLM-5.3-DFlash2-draft",
+    "shards": 1,
+    "file_bytes": 4918859112,
+    "header_bytes_read": 10600,
+    "tensors": 96,
+    "tensor_bytes": 4918848512,
+    "shard_bytes_min": 4918859112,
+    "shard_bytes_max": 4918859112,
+    "dtype_bytes": {
+      "BF16": 4918848512
+    },
+    "expert_named_tensors": 0,
+    "expert_named_bytes": 0,
+    "expert_examples": {},
+    "largest_tensors": [
+      {
+        "bytes": 452984832,
+        "name": "fc.weight",
+        "file": "model.safetensors",
+        "shape": [
+          6144,
+          36864
+        ],
+        "dtype": "BF16"
+      },
+      {
+        "bytes": 150994944,
+        "name": "layers.5.mlp.up_proj.weight",
+        "file": "model.safetensors",
+        "shape": [
+          12288,
+          6144
+        ],
+        "dtype": "BF16"
+      },
+      {
+        "bytes": 150994944,
+        "name": "layers.5.mlp.gate_proj.weight",
+        "file": "model.safetensors",
+        "shape": [
+          12288,
+          6144
+        ],
+        "dtype": "BF16"
+      },
+      {
+        "bytes": 150994944,
+        "name": "layers.5.mlp.down_proj.weight",
+        "file": "model.safetensors",
+        "shape": [
+          6144,
+          12288
+        ],
+        "dtype": "BF16"
+      },
+      {
+        "bytes": 150994944,
+        "name": "layers.4.mlp.up_proj.weight",
+        "file": "model.safetensors",
+        "shape": [
+          12288,
+          6144
+        ],
+        "dtype": "BF16"
+      },
+      {
+        "bytes": 150994944,
+        "name": "layers.4.mlp.gate_proj.weight",
+        "file": "model.safetensors",
+        "shape": [
+          12288,
+          6144
+        ],
+        "dtype": "BF16"
+      },
+      {
+        "bytes": 150994944,
+        "name": "layers.4.mlp.down_proj.weight",
+        "file": "model.safetensors",
+        "shape": [
+          6144,
+          12288
+        ],
+        "dtype": "BF16"
+      },
+      {
+        "bytes": 150994944,
+        "name": "layers.3.mlp.up_proj.weight",
+        "file": "model.safetensors",
+        "shape": [
+          12288,
+          6144
+        ],
+        "dtype": "BF16"
+      }
+    ],
+    "payload_read": false
+  }
+]

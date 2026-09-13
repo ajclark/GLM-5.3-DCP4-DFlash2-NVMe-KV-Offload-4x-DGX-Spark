@@ -172,7 +172,7 @@ def launch(root, label, rank):
     if inspect():
         raise RuntimeError('container name occupied')
     env = os.environ.copy()
-    env.update(DCP_IMAGE=old['Image'], DCP_DIR=str(root/'dcp'),
+    env.update(VLLM_RUNTIME='legacy', DCP_IMAGE=old['Image'], DCP_DIR=str(root/'dcp'),
                KVTIER_DIR=str(root/'kvcache'), DCP_SIZE='2', MAXLEN='180224',
                KVBYTES='6000000000', MAXBATCHED='2048', MAXSEQS='12',
                NCCL_HOTPLUG='0', GLM_SPEC_POLICY='shadow',

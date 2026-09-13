@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+# Current release entry point; historical implementation follows for reproductions.
+case "${VLLM_RUNTIME:-0.29.0}" in
+  0.29.0)
+    _runtime_dir="$(cd "$(dirname "$0")" && pwd)/runtime/vllm029"
+    [ -f "$_runtime_dir/launch.sh" ] || _runtime_dir="${VLLM029_DIR:-$HOME/glm-vllm029-build}"
+    exec bash "$_runtime_dir/launch.sh" "$@"
+    ;;
+  legacy) ;;
+  *) echo "VLLM_RUNTIME must be 0.29.0 or legacy" >&2; exit 2 ;;
+esac
+
 #
 # GLM-5.3 (743B) Int4-Int8Mix, TP=4 + DCP=4 over the 200G RoCE ring.
 #

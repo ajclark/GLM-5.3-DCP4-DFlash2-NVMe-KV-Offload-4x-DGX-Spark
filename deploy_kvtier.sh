@@ -6,6 +6,8 @@
 #   4. relaunch the same stack and re-send the prefix: durable across restarts
 # Usage: ./deploy_kvtier.sh <label> [MAXLEN] [MAXBATCHED] [KVBYTES] [tokens]
 set -uo pipefail
+# Historical cache experiment; the release workflow is runtime/vllm029/validate.py.
+export VLLM_RUNTIME=legacy
 LABEL="${1:?label}"; MAXLEN="${2:-307200}"; MAXBATCHED="${3:-2048}"; KVBYTES="${4:-6000000000}"; TOK="${5:-100000}"
 WS="$(cd "$(dirname "$0")" && pwd)"; cd "$WS"
 LOG="results/deploy-$LABEL.log"; say() { echo "[$(date '+%H:%M:%S')] $*" | tee -a "$LOG"; }

@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+# Restore the exact runtime retained by a release rollout.
+case "${VLLM_RUNTIME:-0.29.0}" in
+  0.29.0)
+    _restore_root="$(cd "$(dirname "$0")" && pwd)"
+    _restore_label="${1:?usage: restore_production.sh <release-rollout-label>}"
+    exec "${PYTHON:-$_restore_root/.venv/bin/python}" "$_restore_root/runtime/vllm029/rollout.py" "$_restore_label" --restore
+    ;;
+  legacy) ;;
+  *) echo "VLLM_RUNTIME must be 0.29.0 or legacy" >&2; exit 2 ;;
+esac
+
 # Standalone: tear down whatever vllm_glm53big is running on the four Sparks
 # and bring the PRODUCTION launcher back, worker-first, with flushers and a
 # real-generation verify. Same steps as rollout_dcp.sh's restore_production;

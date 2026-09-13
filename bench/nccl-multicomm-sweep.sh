@@ -3,6 +3,8 @@
 # in the requested variants on all four nodes, collect rank 0's results, and
 # roll the compaction stack back. Usage: ./bench/nccl-multicomm-sweep.sh [variants...]
 set -uo pipefail
+# This historical benchmark restores the old compaction runtime.
+export VLLM_RUNTIME=legacy
 WS="$(cd "$(dirname "$0")/.." && pwd)"; cd "$WS"
 VARIANTS=("${@:-default}"); [ $# -eq 0 ] && VARIANTS=(default ll)
 OUT="$WS/results/nccl-multicomm"; mkdir -p "$OUT"

@@ -1,4 +1,19 @@
 #!/usr/bin/env bash
+# Default release rollout builds immutable images before stopping any service.
+case "${VLLM_RUNTIME:-0.29.0}" in
+  0.29.0)
+    set -euo pipefail
+    _runtime_root="$(cd "$(dirname "$0")" && pwd)"
+    _runtime_label="${1:?usage: rollout_dcp.sh <label> [MAXLEN] [MAXBATCHED] [KVBYTES] [KVTIER]}"
+    export MAXLEN="${2:-${MAXLEN:-180224}}" MAXBATCHED="${3:-${MAXBATCHED:-2048}}"
+    export KVBYTES="${4:-${KVBYTES:-6000000000}}" KVTIER="${5:-${KVTIER:-1}}"
+    "$_runtime_root/runtime/vllm029/build.sh"
+    exec "${PYTHON:-$_runtime_root/.venv/bin/python}" "$_runtime_root/runtime/vllm029/rollout.py" "$_runtime_label"
+    ;;
+  legacy) ;;
+  *) echo "VLLM_RUNTIME must be 0.29.0 or legacy" >&2; exit 2 ;;
+esac
+
 # Roll the DCP overlay + launcher onto the four Sparks, bring the stack up with
 # a memory watchdog, verify a real generation, and on ANY failure restore the
 # production launcher automatically. Never leaves the cluster down.
@@ -57,7 +72,7 @@ start_flushers() {
 launch_ranks() {  # $1 = launcher path, $2 = extra env
   for i in 3 2 1 0; do
     say "  launching rank $i on ${HOSTS[$i]}"
-    sshq "${HOSTS[$i]}" "cd ~/glm53big && $2 $1 $i dflash" >> "$LOG" 2>&1 || { say "launch command failed on ${HOSTS[$i]}"; return 1; }
+    sshq "${HOSTS[$i]}" "cd ~/glm53big && VLLM_RUNTIME=legacy $2 $1 $i dflash" >> "$LOG" 2>&1 || { say "launch command failed on ${HOSTS[$i]}"; return 1; }
     sleep 3
   done
 }

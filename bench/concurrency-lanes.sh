@@ -2,6 +2,8 @@
 # Concurrency sweep on the DCP=2 lane and the DCP=1 production launcher, then
 # back to the DCP=4 default. Usage: ./bench/concurrency-lanes.sh
 set -uo pipefail
+# Historical lane comparison uses the old launcher and rollout log contract.
+export VLLM_RUNTIME=legacy
 WS="$(cd "$(dirname "$0")/.." && pwd)"; cd "$WS"
 OUT="$WS/results"; LOG="$OUT/concurrency-lanes.log"
 say() { echo "[$(date '+%H:%M:%S')] $*" | tee -a "$LOG"; }

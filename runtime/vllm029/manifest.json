@@ -1,0 +1,84 @@
+{
+  "version": "0.29.0",
+  "commit": "98dff2a81d747d1dba01a47f939f48c3526d4206",
+  "base_image": "vllm/vllm-openai@sha256:18372a7224938643461b846fb64c5c9d3d6e9727e82caf2dc3043e620c9d4d7a",
+  "files": {
+    "v1/kv_cache_interface.py": {
+      "upstream_sha256": "5d0470fff3c10ab5eadbae56302d36cb6a07c6b5617e4ad4b5e8f4f1dc21423c",
+      "sha256": "fe7daba7894c1ed07d8aac54291b9663b836961e52dfcfd0adc2f026a1a4cc84"
+    },
+    "distributed/kv_transfer/kv_connector/v1/offloading/config.py": {
+      "upstream_sha256": "46e3aa96c3608c69ef06f5cead43eacc9abd810557fd1dc7a1312ec256b853f4",
+      "sha256": "4985f5bb9936cf4fb3f42b485922af8e87fc221fb0080bb7f9a7b1e947608973"
+    },
+    "v1/core/kv_cache_utils.py": {
+      "upstream_sha256": "5294bef00c2f127f672a37eda9acbe440418f01622ef49b9be57761c54ebd7f6",
+      "sha256": "0a015f57e48ec8b46c93fc106cf88a6c03c8078ca6c353c625aedcc3a56aeb4d"
+    },
+    "v1/core/kv_cache_coordinator.py": {
+      "upstream_sha256": "43883199a6230b4d9efd98b9702007862e2cfa5466a2dc0326bfd1e69b3e7617",
+      "sha256": "864f7182f6adf0407833fcd8047cbef34dd49651d69f28913e579754e56e3831"
+    },
+    "v1/attention/backends/flash_attn.py": {
+      "upstream_sha256": "5d9c676d8d03ec4e583183f9f42fac33c223768fdc3d6088dff97b5ac0cd4c3a",
+      "sha256": "2c8eb4881769f9e37d547de4cb2abbef363267c64b8bbbc660969474864cddc6"
+    },
+    "v1/attention/backends/mla/flashinfer_mla_sparse_sm120.py": {
+      "upstream_sha256": "a0023f72125cb0d5599b5bf940c86be1f0c9985bd62b0919f243a8fda76f4449",
+      "sha256": "2d4efd7146cc17227eb199b8d853b5b063d8d676835b38214a83aaf047350925"
+    },
+    "v1/kv_offload/tiering/multinode.py": {
+      "upstream_sha256": null,
+      "sha256": "0c64167dc09500b8a411a5e09d8edcb761d6247b4ac9ec70b2fb6aa77a17efe2"
+    },
+    "v1/worker/gpu/model_runner.py": {
+      "upstream_sha256": "d7bae5b05a2a9f02c1ba29f0b4b32434cee43c3b369d3985505d3f8ed89b461b",
+      "sha256": "6983f65bb4e3505833774e0fc9f50941dd0eb55f1173d22370bb6b3115b27130"
+    },
+    "v1/worker/gpu/block_table.py": {
+      "upstream_sha256": "61c004315d5af7e7eae4e2a9e6be92ea82c520327690a7f55a73bb9ce95f520a",
+      "sha256": "60dff669d456a4a338299ca2db2f1cd402c191a6b396098ca05711342181b93a"
+    },
+    "v1/worker/gpu/spec_decode/dflash/speculator.py": {
+      "upstream_sha256": "4a6b86232fa98eeb62143c469f2f5789c94d3af0f80851f623ddaa8c78e23f7b",
+      "sha256": "157d2b7cfa522e749d4ab0a4742a51c19eddb634e2f33808aba591b08126c551"
+    },
+    "platforms/interface.py": {
+      "upstream_sha256": "0a32e16fefe1e53ec721b06cfa8cbaba92310cf1c6a45a746d477fd45e041d10",
+      "sha256": "7f9de58d0eaff11514f288d75c13662e64a308a6df6167c6ef969a8a41244fde"
+    },
+    "config/vllm.py": {
+      "upstream_sha256": "788430b9211a5b0ccda0be565ad2a0f27e9069370f35d2b1f6a333a6ca135186",
+      "sha256": "3f718eb1bd30651d3e8fe04d17a0dc557718ca28c7f9fca2e6e268abba452015"
+    },
+    "model_executor/layers/attention/attention.py": {
+      "upstream_sha256": "64a1b218f04a7178d9d41c12fc6ae08f6cff648031bf118216019a48d15572c7",
+      "sha256": "5b93cff87fe9a559acc7ce941cb60f202786092bf53fc081ee6a9e5d6ca8819d"
+    },
+    "v1/worker/cp_utils.py": {
+      "upstream_sha256": "6e519640429d8c5a147db7c6b1df7c6fb1f5e22c1c86f525aea15622e1d47c14",
+      "sha256": "9a1ec77681843c957210c8b2bcead0d9800f9ffadbe7837b2134f264135ca541"
+    },
+    "models/deepseek_v32/common/kernels.py": {
+      "upstream_sha256": "f0336ad018744b7251045271b699ff634d4c6efbd3ce9557d1bd0f8906ce0214",
+      "sha256": "a3725c1a71ebb11916092a25c4176f5f07e0318f71a00ca7830d59877a776db6"
+    }
+  },
+  "dependency_versions": {
+    "flashinfer-python": "0.6.18"
+  },
+  "dependency_files": {
+    "flashinfer/data/include/flashinfer/attention/sparse_mla_sm120/common/kv_cache_io.cuh": {
+      "upstream_sha256": "f4c589ef931e311349f259e4e98f23093d71f2eae1f59485c02b8acd5931d365",
+      "sha256": "ea71d94ceb44577ce0198e6b71cd199aaa46a845093d98ef3ebc121d52633a5f"
+    },
+    "flashinfer/data/include/flashinfer/attention/sparse_mla_sm120/prefill_kernel.cuh": {
+      "upstream_sha256": "5f005980cff1606fc1a239faeb93d1d697710c92014d549e4425e9db04f675e0",
+      "sha256": "9e5d7c0fb400f04617734854991cd33c9bfaa418048ba70b71a8c1000703ff27"
+    },
+    "flashinfer/jit/mla.py": {
+      "upstream_sha256": "c5262e152a05fdf13ba0d57224adced8c1b38bf35bc43216ba22252ad7d47eb5",
+      "sha256": "1bc31bc7455fd8ec5a0dcd24dff50bf4249bd3f94045277a3602ea62437f856d"
+    }
+  }
+}
