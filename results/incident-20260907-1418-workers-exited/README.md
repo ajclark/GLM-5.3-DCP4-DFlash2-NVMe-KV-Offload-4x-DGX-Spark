@@ -11,7 +11,7 @@ Not the hot-plug plugin and not the idle logic: no prepare/commit/resume ran bet
 
 Watcher observation: between 13:59:30 and 14:18:10 it logged nothing because its status line did not change (the NCCL proxy kept retrying, so `idle=` stayed 0). A hung stack therefore looks like "busy" to the watcher; only the process exit made it visible. Recovery: relaunch (`dcp2-hotplug-3`).
 
-## Root cause (Codex review `results/codex-review-triton-crash.md`, upstream vllm-project/vllm#52877)
+## Root cause (independent review and upstream vllm-project/vllm#52877)
 
 Two levels.
 
@@ -56,7 +56,8 @@ Two levels.
 - `bench/repro/cuda_module_load_stress.py`: 60,000 module loads in one process, no failure.
   Module count alone is not it.
 - `bench/repro/indexer_kernel_specialization_stress.py` (the real kernel, real
-  specializations) needs a node without the serving stack; scheduled for the next window.
+  specializations) stopped at its memory guard with the serving stack resident;
+  that run did not establish a reproduction.
 - The fix does not change results (count100 hash identical) and, contrary to my first
   reading, does not change decode speed either: the broad version (all strides runtime) and
   the narrowed one (per-request arguments only, 487b91f, lane `dcp2-hotplug-5`) both measure

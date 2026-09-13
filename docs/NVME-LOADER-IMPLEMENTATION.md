@@ -7,9 +7,9 @@ the final deployed build took **87.07 seconds**, including shutdown and
 readiness polling. **The 30–60 second end-to-end target
 has not yet been reached.** Weight I/O is now a small part of startup.
 
-For first loads without prepared artifacts, see the subsequent
-[dynamic checkpoint ingestion investigation](DYNAMIC-CHECKPOINT-INGESTION.md).
-That path is now [implemented and deployed](DYNAMIC-INGESTION-IMPLEMENTATION.md):
+For first loads without prepared artifacts, the
+[dynamic ingestion implementation](DYNAMIC-INGESTION-IMPLEMENTATION.md) consumes
+original checkpoint shards directly:
 original-shard target streaming takes 59–61 seconds, with a 131-second serving
 activation. The results below describe the earlier prepared-artifact path.
 
@@ -39,7 +39,7 @@ was needed to build the implementation.
 
 The one-time full preparation took 673.08 seconds to health: a native load,
 writing the target and draft artifacts, and normal engine initialization.
-Canonical content hashing was a separate preparation step. Future switches to
+Canonical content hashing was a separate preparation step. Subsequent loads of
 a prepared model do not repeat either operation.
 
 ## What was built
@@ -132,16 +132,11 @@ graph warmups remain enabled.
 
 The cache-enabled run spent about 39 seconds before model loading began, then
 about 20 seconds constructing/restoring/postprocessing the model, followed by
-16–17 seconds of engine initialization and final API readiness. The next priorities
-are a supported persistent CPU/control-process lifecycle, followed by explicit
-postprocessed-state adapters that eliminate Marlin repacking. A cache-completeness
-permit could also remove a small redundant autotune pass.
+16–17 seconds of engine initialization and final API readiness.
 
 A simple preloaded-fork supervisor was checked but not deployed: importing the
 serving modules starts a native CUDA driver thread even while PyTorch reports
-CUDA as uninitialized. A production supervisor needs a lifecycle that accounts
-for that state. MicroVM/GPU snapshots and layer-by-layer serve-while-loading
-remain design work.
+CUDA as uninitialized. The deployed loader uses fresh worker processes.
 
 ## Reproduce and operate
 

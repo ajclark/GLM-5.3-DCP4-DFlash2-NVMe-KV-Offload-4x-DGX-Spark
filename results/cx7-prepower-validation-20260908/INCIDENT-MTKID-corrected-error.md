@@ -56,8 +56,3 @@ This platform exposes no memory-ECC counters, so RAM is not independently verifi
 ## Decision
 - The GPIO pre-power route is STOPPED. `spark-idle.sh` was reverted to the pre-GPIO version.
 - The idle-power feature stays paused; the hot-plug throughput throttle remains unresolved.
-- Watch item: if the MTKID BERT record ever reappears on a normal boot with no hot-plug
-  cycling, that changes the picture and should go to NVIDIA immediately.
-- The right path for the throttle is the NVIDIA bug report (root cause: their hot-plug driver
-  releases PERST#/trains the link before the CX-7 main firmware image is up); not further
-  userspace manipulation of the card's power line on this platform.

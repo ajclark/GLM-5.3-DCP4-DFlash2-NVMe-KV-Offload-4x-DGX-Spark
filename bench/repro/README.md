@@ -26,9 +26,9 @@ trigger.
 The faithful path: the pre-fix kernel file, thousands of distinct (num_q, seq_len_kv) shapes in
 one process, each a compile plus a lazy first load of a new binary. Needs the node to itself:
 with the serving stack resident it stops at its memory guard after 25 shapes (about 0.1 s of
-compile per shape, so 7,000 shapes take a quarter of an hour). Planned for the next window
-with the stack down, then again under `--pressure` (pinned host memory) to test the memory
-correlation both crashes showed (MemAvailable under 1 GB and 2.5 GB, swap in use).
+compile per shape, so 7,000 shapes take a quarter of an hour). This run did not reproduce
+the failure. Both incidents occurred with limited available memory (under 1 GB and
+2.5 GB, swap in use); the reproduction does not establish a causal relationship.
 
 Both scripts run inside the serving image:
 ```

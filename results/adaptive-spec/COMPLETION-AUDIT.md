@@ -1,7 +1,7 @@
 # Adaptive speculation completion audit
 
-2026-09-09, experimental phase complete. Broad promotion is withheld. Requirements
-come from `docs/ADAPTIVE-SPECULATION-PLAN.md` and the active objective.
+2026-09-09, experimental phase complete. Broad promotion is withheld. The table records the evaluation requirements, completed evidence, and
+remaining measurement limitations.
 
 | Requirement | Current evidence | Result / limitations |
 |---|---|---|
@@ -31,7 +31,7 @@ come from `docs/ADAPTIVE-SPECULATION-PLAN.md` and the active objective.
 | Active whole-cluster wall J/token | NVIDIA-reported device energy available; no wall source found in repo, related experiment repos or running node containers | Unmeasured; device energy cannot satisfy this gate |
 | Idle power considered separately | Telemetry idle wakeup removed; NIC cycling remains paused | No measured hardware idle-watt improvement claimed |
 | Safe rollback, isolated caches, preserved cache identity | Exact original IDs restored repeatedly; reuse guard checks full source salt | R6/R7 exact originals restored and generation verified; all controllers/samplers stopped |
-| Final report, reproducible commands, conservative default | README/plan/bench tools present; policy defaults off | Complete:README,completion-decision.json,reproducible drivers,defaultoff |
+| Final report, reproducible commands, conservative default | README and benchmark tools present; policy defaults off | Complete:README,completion-decision.json,reproducible drivers,defaultoff |
 
 The R6 policy changes only the API encoding from R5: a bounded JSON string
 replaces an API-rejected nested object. Acceptance rules and calibration are

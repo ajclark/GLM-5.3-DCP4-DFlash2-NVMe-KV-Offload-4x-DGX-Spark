@@ -1,21 +1,12 @@
-**Verdict:** the streaming path is structurally sound: owned copies before Run:ai can reuse its buffer, storage-level lifetime tracking, complete-stream assertion, empty-tensor synthesis, and the salted separate slab root are all correct. Four concrete bugs, one of which will fail the production profile on the first stream run, plus two smaller items.
+# Fable streaming implementation review: completed disposition
 
-**1. The owned-byte budget will abort the DFlash draft load.**
-`OwnedStorageBudget.reserve` at `runtime/nvme_loader/spark_nvme/streaming.py:111` raises `MemoryError` once live owned bytes exceed 4 GiB. The draft's `load_weights` collects every streamed tensor into a dict before placing any of them, then hands the dict to `AutoWeightsLoader`; that is the upstream `Qwen3DFlash.load_weights` pattern and the installed `DFlash2Qwen3ForCausalLM` is the same family. The draft checkpoint is 4.92 GB, so live reaches the limit at roughly the 87th percentile of the file and the worker fails with no fallback, because stream mode has none after the first yield. Retention is legitimate native behaviour, not a leak, so the budget cannot be a hard failure at 4 GiB. Fix: make the soft limit `max(owned_limit, total_bytes_of_this_source)` when the source total is below a hard cap, and make the hard cap a fraction of free device memory measured at stream start, for example 25 percent of `torch.cuda.mem_get_info()[0]`. Log at the soft limit, raise only at the hard cap. Until that lands, `NVME_STREAM_OWNED_BYTES` must be at least 5 GB for this profile.
+The review identified retained-storage accounting, mixed CPU/GPU yields, and
+validation after the native-fallback boundary as correctness concerns in the
+initial implementation. The deployed stream path charges owning storage, places
+all CUDA-mode tensors on the selected device, and performs supported-format and
+budget validation before consumption. Unknown retention patterns remain bounded
+and can fail activation; generic model compatibility is limited by the native
+loader contract.
 
-**2. Mixed-device yields in `cuda` mode break any loader that combines two streamed tensors.**
-`own()` at line 166 puts tensors at or above 1 MiB on the GPU and clones smaller ones on the CPU. Loaders that combine a weight with its scale operate on both: `_try_load_fp8_indexer_wk` calls `scaled_dequantize(weight_fp8, scale_inv)`, and shared-expert fusion concatenates streamed tensors. GLM is not affected today because the layout scan shows no FP8 tensors, but the mode is meant to be generic and the failure is a device-mismatch error mid-stream with no fallback. Fix: in `cuda` mode place every tensor on the device, including scalars, and drop `gpu_min_bytes`. The per-tensor cost for the 100k small tensors is a few seconds of copy latency and removes the entire class of error. The `torch.empty` for synthesized empties at line 222 should follow the same device rule.
-
-**3. Two failure points sit after the fallback boundary but before any weight is consumed.**
-`_get_weights_iterator` at `runtime/nvme_loader/spark_nvme/loader.py:172` only catches `UnsupportedStream` from `checkpoint_metadata`. The Run:ai import at `streaming.py:147` and the budget validation at lines 139 to 145, including "largest tensor exceeds memory_limit", run on the first `next()` and raise plain `ValueError` or `ImportError` inside `model.load_weights`, which fails the worker even though nothing has been consumed. Fix: split `stream_weights` into an eager `prepare_stream()` that imports the streamer, validates budgets, and raises `UnsupportedStream`, called before the first yield inside the same `except` block; then return the generator. Also raise `memory_limit` automatically to the largest tensor instead of rejecting, since a 2.5 GB embedding on some other model should stream rather than fall back.
-
-**4. Expert-parallel skipping happens after the bytes are read.**
-`skip(name)` at `streaming.py:197` runs on tensors Run:ai has already fetched, so unlike the installed native iterator, which skips before reading, EP filtering saves no I/O and only saves placement. Harmless on this TP-only cluster; for a DP+EP deployment the stream request itself would need to exclude those chunks, which the wrapper's per-file `tensor_sizes` list does allow. Note it in the module docstring so nobody expects the native saving.
-
-**5. Run:ai buffer behaviour with 282 files is unverified, and the progress log cannot show it.**
-The fixtures used five files. Whether the C++ side bounds the 2 GiB `RUNAI_STREAMER_MEMORY_LIMIT` across all files in one `stream_files` request or allocates per file is not visible from the wrapper. The 15-second progress line at line 212 reports the configured limit, not actual usage. Add resident set size from `/proc/self/statm` and `torch.cuda.mem_get_info()` to that line so the first real run answers the question, and keep `.to(copy=True)` as the ownership boundary regardless of the answer.
-
-**6. Smaller items.**
-`compatibility_id` at `loader.py:241` canonicalizes `hf_config.to_dict()` without `default=str`; it works for GLM and the fixtures, but a config carrying a non-JSON value would turn into an activation error on every rank rather than a fallback. `container.py:93` hard-requires `--kv-transfer-config`, which is right for this profile but will raise on a container without KV tiering. The stream slab inherits the 150 GB per-rank cap on the same NVMe as the production slab, models, artifacts and caches; set a smaller `disk_bytes_per_rank` in the experimental config so an experiment cannot crowd the production store.
-
-Everything else checked out: the salt derivation and separate `/kvcache` bind give two independent layers of isolation from the production store, the generation-per-activation fallback is correct when either source identity is missing or stale, `_stream_receipts` is reset per load and the loader instance is fresh per `get_model` call so target and draft receipts do not mix, the stamp re-check covers change-during-stream, and closing the generator restores the environment and releases the weak references.
+The [implementation report](../../docs/DYNAMIC-INGESTION-IMPLEMENTATION.md) records
+the final behavior, failure handling, and completed fixture and Spark checks.

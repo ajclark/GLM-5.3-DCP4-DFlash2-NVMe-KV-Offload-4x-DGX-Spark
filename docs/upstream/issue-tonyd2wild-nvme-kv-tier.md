@@ -30,9 +30,3 @@ A 4.5 GB cap held exactly on all four nodes with eviction doing its job; at the 
 
 - Block hashes are chained from a seed the engine draws from `os.urandom` unless `PYTHONHASHSEED` is set. Without pinning it, nothing matches after a restart. The launcher pins it in the container.
 - Two bugs on this base bite anyone who uses vLLM's KV offloading with DFlash2 or MTP: the engine scheduler's invalid-block recovery assumes a single KV-cache group and crashes with the drafter's second group, and the offloading connector's store progress skipped one block per prefill step for "eagle" groups (with DFlash2, every group), so a prefix stored once could never be reloaded past its first hole. Both are fixed in the patch set; upstream has since fixed the second on newer code.
-
-## Applies to the Flash recipes as-is
-
-Untested there, but the tier does not care about the model: your 4x Flash README's cold first prefill (about 467 tok/s) would become the same 3-8 s reload for anything that has been seen once. It needs the pinned hash seed, the two fixes above, and a directory on each node's NVMe.
-
-Same offer as #4: a lane PR in your format, or a link. And thanks again.

@@ -181,16 +181,12 @@ controller explicitly selects coalesced/128 MiB. Select the prior transport
 with `sparkctl.py stream --stream-backend runai`. Prepared-artifact mode remains
 a separate path, and streaming does not automatically create those artifacts.
 
-## Remaining work
+## Current startup limits
 
 Native placement, quantizer finalization, and engine warmup still run. The final
-budget leaves roughly 72 seconds outside target streaming, so deleting target
-I/O entirely would still not establish a sub-minute total. All four nodes also
-still read the whole 405 GB target. The next substantial advances are startup
-overlap and fewer physical source bytes through declared TP placement or
-ring-compatible cooperative transport. Indexed expert dispatch and vectorized
-Marlin scale preparation remain planned, not deployed. See the
-[ranked advancement plan](BOOT-ROOFLINE-ADVANCEMENTS.md).
+activation spends roughly 72 seconds outside target streaming. All four nodes
+still read the whole 405 GB target; this implementation does not establish a
+sub-minute total startup time.
 
 Evidence: [final activation and resource analysis](../results/nvme-loader/nvme-stream-1789323352-analysis.json),
 [64 MiB async analysis](../results/nvme-loader/nvme-stream-1789323058-analysis.json),

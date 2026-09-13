@@ -25,6 +25,5 @@ Frozen before the held-out set: `FROZEN-VARIANT` = `lossy-m2.5` (highest
 ratio; the following-cycle acceptance shows no selector-interaction penalty;
 the p_min floor never helped). First-divergence positions are early
 (8-19 tokens) and first-64 token agreement low, as expected once a relaxed
-token changes the trajectory; quality is judged by the gates in
-`docs/LOSSY-VERIFICATION-PLAN.md` §5, not by agreement. Single boot, one
+token changes the trajectory; token agreement alone does not establish quality. Single boot, one
 prompt set; device energy not sampled.

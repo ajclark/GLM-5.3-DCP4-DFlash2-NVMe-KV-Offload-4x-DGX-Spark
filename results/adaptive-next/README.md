@@ -3,8 +3,7 @@
 These are actual four-Spark measurements and separately labelled sandbox
 experiments from September 9, 2026. The goal is higher C1 coding/prose throughput
 and lower active/loaded-idle power without expanding the resident model or KV
-allocation. The [decision report](../../docs/ADAPTIVE-SPECULATION-NEXT.md) connects
-these results to the architecture choices. Historical V4 evaluation data under
+allocation. Historical V4 evaluation data under
 `results/adaptive-spec` remains frozen and is not replaced by these screens.
 
 All declared experiments are complete. The original containers are restored and

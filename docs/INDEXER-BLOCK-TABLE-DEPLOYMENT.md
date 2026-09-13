@@ -25,8 +25,7 @@ This audit is not a claim that upgrading is impossible. It establishes that a
 drop-in image replacement would not preserve the validated serving configuration.
 
 Upstream v0.27.0 first includes the general shared-width repair in
-[PR #50302](https://github.com/vllm-project/vllm/pull/50302). It should inform the
-eventual runtime port. The separate grouped-spec DCP fix #50823 is not an ancestor
+[PR #50302](https://github.com/vllm-project/vllm/pull/50302). The subsequent vLLM 0.29.0 runtime uses native shared-width sizing. The separate grouped-spec DCP fix #50823 is not an ancestor
 of that tag; merging a fix before a release's publication date does not prove the
 release contains it. This deployment does not claim an upstream upgrade.
 

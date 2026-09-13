@@ -141,36 +141,7 @@ Serving configuration for this phase, chosen 2026-09-04 with the user:
 max-model-len 307,200, KV pool 6 GB per rank (~396k tokens, 1.29x),
 boot-4 overlay (local workspace 405 MB at 300k, global logits budget),
 leaving about 2 GB per rank over the 512k configuration for a 1 GB tier
-plus margin on rank 0. To be confirmed by the soak before the tier goes on.
-
-## 4. Behaviour to validate on the cluster
-
-1. Store path: after a 200k cold prefill, files appear under each node's
-   `_r<rank>` directory, count and size match `blocks x 3.94 MB`, memory
-   flat (guard), decode unaffected.
-2. Warm path in-process: same prefix again is a GPU prefix hit (control).
-3. Evicted path: fill the pool with other contexts until the first prefix
-   is evicted from GPU (and from the CPU tier), re-send it: TTFT must be
-   NVMe reload time, not prefill. Target: well under a minute for 200k
-   (4.7 GB per rank at 1-2 GB/s), against 12 minutes of prefill.
-4. Durable path: restart the engine (rollout), re-send: same as 3.
-5. Failure path: delete one rank's file for a block, re-send: the block is
-   recomputed (invalid_block_ids), the answer is still correct.
-6. Concurrency and the drafter: mixed batches during stores/loads; DFlash
-   acceptance unchanged on reloaded contexts.
-
-## 5. Order of work
-
-1. Serve the 300k configuration; run the check sequence and the soak
-   (`dcp_soak.py`): cold TTFT, warm TTFT, concurrency, decode, memory per
-   iteration. That is the baseline the tier must beat and the headroom it
-   may use.
-2. Implement 2.1-2.2 as overlay files (new modules plus the two hooks),
-   with CPU tests: a fake worker pool exercising store/load/lookup through
-   real `FileMapper` paths on a temp dir, the connector hooks with a fake
-   scheduler output, and failure injection.
-3. Stage, deploy with `rollout_dcp.sh` (new `--kv-transfer-config` lane in
-   the launcher, `KVTIER=1`), run 4.1-4.6 with the memory guard.
+plus margin on rank 0. This was the configuration for the initial validation phase.
 
 ## 6. Implementation notes (2026-09-04, `overlay/vllm/v1/kv_offload/tiering/multinode.py`)
 
@@ -285,14 +256,13 @@ seed) invalidates the on-disk cache the same way; the run-config digest
 does not cover those, so a cache directory should be wiped when they change.
 No size or age management exists yet: `/var/tmp/kvcache` grows by ~7.7 GB
 per rank per 400k tokens of distinct prefill (652 GB free on the NVMe at
-deployment); add a janitor before it matters.
+deployment). The subsequent slab implementation enforces a fixed storage cap.
 
 ## 9. Slab store (fixed-size ring buffer), the shipped design
 
 The per-block-file tier grows without bound; the user wanted a hard cap
-enforced by the store itself. `docs/SLAB-DESIGN.md` has the proposal, two
-prior reviews' findings, the lean revision, and the Codex review that led
-to the final fixes. What ships (`KVTIER_MODE=slab`, the default):
+enforced by the store itself. The deployed implementation includes the reviewed
+failure handling and fixed-size allocation. What ships (`KVTIER_MODE=slab`, the default):
 
 - Two slab files per rank (`g0.slab` target rows, `g1.slab` drafter rows),
   fixed 4 KB-aligned slots, counts from `disk_bytes_per_rank` (default
@@ -413,7 +383,7 @@ restart, the never-reloaded eviction prompt 3.85 s, all 99,328 tokens hit;
 on disk 389 of 390 target rows per prompt instead of 339. Full table in
 `docs/DESIGN.md` section 7.
 
-**Rule for future probes:** a tier probe that puts a warm step between the
+**Probe interpretation:** a tier probe that puts a warm step between the
 cold prefill and the reload does not test the first-time store. Use
 `--no-warm` (and fresh seeds with `--seed-base`) whenever the store path
 changes.

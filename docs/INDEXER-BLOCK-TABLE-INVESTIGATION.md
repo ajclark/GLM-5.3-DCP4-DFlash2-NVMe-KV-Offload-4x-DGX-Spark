@@ -181,9 +181,9 @@ once-per-process mixed-branch diagnostic; see the deployment record.
 These checks cover the implicated metadata routines, not full builder construction,
 CUDA compilation, graph replay, model output, or a stock vLLM server.
 
-## Suggested fix
+## Checked backport
 
-For a small backport to the pinned Spark stack, fix **both** copying paths:
+The checked backport repairs **both** copying paths:
 
 1. In the variable path, copy into `[:actual_expanded, :source_width]`, then zero
    the remaining destination columns. Zero complete padding rows on reuse.
@@ -199,11 +199,6 @@ This is what the checked candidate implements. It introduces no new tensor
 allocation beyond the existing `repeat_interleave` temporaries, but clearing the
 tail may add a Torch kernel launch on the mixed path; GPU overhead is unmeasured.
 It does not prohibit legitimate mixed scheduling or reduce the draft count.
-
-For the durable fix, make the builder use the runner's authoritative per-group,
-post-alignment, post-kernel-splitting width at initialization, before CUDA graph
-capture. Keep logical copy width distinct from row stride in kernels. Do not
-independently rederive two supposedly equal capacities or globally add/remove one.
 
 Upstream **v0.27.0**, published 2026-08-10, contains the shared-sizing fix
 [PR #50302](https://github.com/vllm-project/vllm/pull/50302), commit
@@ -225,12 +220,6 @@ The old fork baseline remains demonstrably affected. The uniform kernel still
 assumes matching widths; the upstream fix establishes that invariant through sizing
 rather than introducing the explicit source-width load mask used by our backport.
 
-Before deployment, run this metadata repro in the serving image on CUDA, add a
-compute-sanitizer run with an exactly sized source allocation, and check graph
-capture/replay. Then run an isolated integration gate with instrumented branch
-coverage: two or more requests with different scheduled decode lengths, plus
-uniform/speculative and context-boundary cases. Confirm actual mixed-path execution,
-completion, and deterministic output against a known-good control. Concurrent API
-requests alone do not guarantee the scheduler will form the triggering batch.
 The initial investigation performed no production crash attempt or rollout. The
-subsequently authorized deployment and its results are recorded separately.
+completed deployment and CUDA validation are recorded in the
+[deployment report](INDEXER-BLOCK-TABLE-DEPLOYMENT.md).

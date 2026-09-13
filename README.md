@@ -123,7 +123,7 @@ gained DCP for sparse MLA on newer code; these patches are for the June
 
 | path | what it is |
 |---|---|
-| `docs/DESIGN.md` | the design, the cost analysis, and the validation plan |
+| `docs/DESIGN.md` | the implemented design, cost analysis, and validation results |
 | `runtime/vllm029/` | pinned release image, ported sources, launcher, guarded rollout and real runtime regressions |
 | `baseline/vllm/…` | historical custom-image source files |
 | `overlay/vllm/…` | the same sixteen files patched (thirteen for DCP: target sharded, DFlash drafter replicated, top-k candidates compacted per rank; the engine scheduler's invalid-block recovery; the offloading connector's store progress; the b12x attention helper's candidate-count passthrough) plus the new `v1/kv_offload/tiering/multinode.py` NVMe tier |

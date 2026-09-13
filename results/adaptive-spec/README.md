@@ -280,6 +280,5 @@ development boundaries, zero across 77 repository boundaries at 32k, and
 boundaries. This limited screen does not establish a broad coding benefit
 or predict live throughput. Copy retrieval has not been added to the GPU path.
 
-The gate decisions and execution state are in
-[STATUS.md](STATUS.md); the design and predeclared promotion thresholds are in
-[the plan](../../docs/ADAPTIVE-SPECULATION-PLAN.md).
+The gate decisions, completed validation, and execution state are in
+[STATUS.md](STATUS.md) and [COMPLETION-AUDIT.md](COMPLETION-AUDIT.md).

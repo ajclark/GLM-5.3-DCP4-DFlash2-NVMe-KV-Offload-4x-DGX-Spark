@@ -1,6 +1,6 @@
 # Handover: GLM-5.3 DCP, updated 2026-09-11
 
-What exists, what was verified, what to do next. `docs/DESIGN.md` has the
+What exists, what was verified, and how to operate it. `docs/DESIGN.md` has the
 reasoning; this file is the operational summary.
 
 ## Current deployment, 2026-09-11
@@ -71,8 +71,8 @@ to the initial incident report. The dated entries below describe earlier states.
   `mla_attention.py`, all inert: `GLM_SPEC_LOSSY=0`, `GLM_DCP_LSE_FOLD=0`,
   policy off. Enabling the per-request lossy switch needs
   `GLM_SPEC_LOSSY=1 ./rollout_dcp.sh <label>`; it changes nothing for
-  requests that do not send `spec_lossy_margin` (see
-  `LOSSY-VERIFICATION-PLAN.md`, `SPEED-LEVERS-STATUS.md`). Previously:
+  requests that do not send `spec_lossy_margin`. The completed evaluation is in
+  `results/lossy-dev/README.md`. Previously:
   **serving label `dcp2-cachefix-prod` since 2026-09-09 22:16 UTC** (rollout
   `results/rollout-dcp2-cachefix-prod-20260909-220634`): the same lane, now
   with the V2-runner overlay set (`v2_block_table.py`, `model_runner.py`,
@@ -172,8 +172,7 @@ layout it already has) while the target shards.
    per cycle (four extra collectives per layer across 78 layers, sized from
    the measured `nccl-latency-results.md` table), paid once per DFlash cycle
    on the verify pass: ~145 ms becomes ~161 ms, about 11%. The drafter adds
-   nothing. Query replication would recover about a third of that and is
-   listed as follow-up work.
+   nothing.
 
 5. **Raising max-model-len is nearly memory-neutral only because of one
    deliberate change.** The sparse bf16 prefill workspace grows as
@@ -293,46 +292,3 @@ the input batch is no longer rebuilt once for nothing at DCP1; and the
 flash-attn builder now applies the GQA-DCP head rule to token-sharded groups,
 so a drafter layer without a sliding window fails at startup instead of
 gathering queries across ranks that hold different KV-head shards.
-
-## Follow-up work, in the order I would do it
-
-DFlash under DCP is built and deployed (2026-09-04). `docs/DESIGN.md`
-sections 3.2, 5.6, 6 and 7 have the mechanics, the reasoning and the numbers.
-
-1. (Measured 2026-09-05, DESIGN.md §8.) The +36 ms per cycle was a third
-   attention kernel walking masked candidates and two thirds collectives.
-   Candidate compaction (`GLM_DCP_COMPACT=1`) recovered 22 ms; the query
-   gather before expansion (`GLM_DCP_Q_PREGATHER=1`, ~740 MB/rank) is worth
-   only what the payload halving buys at ~105 us per all-gather. What is
-   left is ~13 ms of ring collectives; the switch's single all-to-all merge
-   (`dcp_a2a_lse_reduce`, disabled on the ring in `flashmla_sparse.py`) is
-   the next lever, then full query replication if memory ever allows.
-2. (Done in boot 3.) The indexer workspace and prefill splitter now budget on
-   local lengths under DCP, which is what makes max-model-len 524,288 fit.
-3. Long-prompt TTFT: ~290 tok/s at 92k. Profile one 2048-token chunk at 100k+
-   context before touching anything; the gather workspace and the sparse
-   indexer dominate, not the attention kernel.
-4. (Done 2026-09-05.) Candidate compaction with the kernel's `topk_length`
-   is in and measured: the attention kernel went from 309 to 37 us per
-   layer under DCP4. The profile is in `results/dcp-profile-comparison.md`;
-   `dcp_profile.py` / `analyze_trace.py` / `measure_variant.sh` reproduce it
-   (launch with `PROFILER_DIR=/kvcache/profiles`, tier on so the traces land
-   on the host).
-5. Pool vs context: `KVBYTES` trades KV tokens for host headroom (the indexer
-   gather workspace is 40 x max_model_len x 132 B). Rank 0 is the constraint
-   (API server + scheduler); read its `MemAvailable` after a full check
-   sequence before raising either knob.
-6. `_build_prefill_chunk_metadata_kernel` still compiles a second variant on
-   the first mixed decode+prefill batch (pointer-alignment specialization of
-   the `uncompressed_seq_lens[num_decodes:]` view). Add
-   `do_not_specialize_on_alignment=["uncompressed_seq_lens_ptr"]` to its
-   `@triton.jit` and boot-test it; until then `post_boot_checks.sh`'s
-   concurrent phase triggers that compile while someone is watching.
-7. MTP can be re-added as a launcher lane in one line if ever wanted; nothing
-   in the patch prevents it.
-8. Report the offloading-connector store-progress bug (NVME-DESIGN.md §10)
-   to the fork; upstream has since moved to chunk-based progress
-   (`storable_chunks`), so check whether it still applies there. A related
-   refinement: flag only the drafter's KV group as `is_eagle_group` (the fork
-   flags none, so every group is treated as eagle) and the target group's
-   final block would be stored too, one more 256-token block per hit.

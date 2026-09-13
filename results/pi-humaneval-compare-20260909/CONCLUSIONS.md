@@ -48,10 +48,6 @@ engine speedup. Sequential lane order, naturally warming prefix caches, the
 preserved/retried initial C3 timeout, and the absence of repeated batches add
 uncertainty.
 
-A future capacity measurement would need repeated batches that keep each
-concurrency level occupied, with an explicit generation budget and identical
-pi profiles on both stacks. No further sweep is being run here.
-
 The full tables, metric definitions and source provenance are in [REPORT.md](REPORT.md).
 Machine-readable measurements are in [summary.csv](summary.csv), with checks in
 [audit.json](audit.json). The [chart](throughput.png) plots the completed cells.

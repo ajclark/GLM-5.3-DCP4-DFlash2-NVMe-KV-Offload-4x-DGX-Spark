@@ -5,7 +5,7 @@ Restoration evidence is recorded in abort-status.json. No fresh K=7 control was 
 
 The earlier high-K sweep measured K=7 at 36.93 decode tokens/second. The best average here, K=6 at 37.10, differs by +0.47% from that earlier control. This comparison spans separate runs; small differences do not demonstrate a performance advantage.
 
-Planned order: K=6, K=5, K=4, K=3, K=2, K=1, K=7. K counts speculative tokens, excluding the bonus token.
+The sweep was configured with order: K=6, K=5, K=4, K=3, K=2, K=1, K=7. K counts speculative tokens, excluding the bonus token.
 TP4/DCP2, vLLM 0.29.0, DFlash2, C1, greedy decoding, thinking off. Three coding tasks, one warmup each and 3 measured repetitions each; 1200-token output limit. Other serving arguments are held fixed.
 
 | K | Merge tok/s | LRU tok/s | Toposort tok/s | Geomean tok/s | vs K7 | Tokens/cycle | Cycle ms (est.) | Acceptance | Correct |

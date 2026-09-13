@@ -9,17 +9,12 @@ The `nvme` vLLM loader now has a `stream` mode that consumes original checkpoint
 shards without a prior full-content hashing pass, prepared rank files, or
 artifact export. It is implemented as a default-loader iterator extension,
 preserving native model construction, placement, quantization processing, and
-engine warmup. This is the implementation of the
-[dynamic ingestion investigation](DYNAMIC-CHECKPOINT-INGESTION.md).
+engine warmup.
 
 **The Run:ai build was deployed on all four Sparks.** It reached a healthy API in
 **131.27 seconds**, streamed target weights in **59–61 seconds per rank**, and
 passed generation and durable-KV recovery. It requires no prepared weight files.
 The complete report below distinguishes first and final builds.
-
-The next optimization investigation is the
-[boot roofline advancement plan](BOOT-ROOFLINE-ADVANCEMENTS.md), covering
-redundant reads, placement traffic, startup overlap, and first-request readiness.
 
 ## Completed validation
 
@@ -109,8 +104,8 @@ native/CPU/GPU comparisons. The [upload-stream fixture log](../results/nvme-load
 records the final CUDA placement comparison. Fable reviewed the
 [implementation](../results/nvme-loader/fable-stream-implementation-review.md)
 and [producer lifetime/cancellation](../results/nvme-loader/fable-stream-pump-review.md).
-Reviews contain proposals as well as findings; observed results above take
-precedence over their unmeasured timing or memory estimates.
+The review summaries record the implemented corrections; observed results above
+define the validated scope.
 
 ## How the implementation works
 

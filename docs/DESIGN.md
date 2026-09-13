@@ -47,7 +47,7 @@ that date:
 |---|---|---|---|
 | #46076 | 07-01 | indexer under DCP: per-rank local top-k, cross-rank merge, localized causal bounds | yes, re-implemented without the CuteDSL dependency |
 | #46514 | 08-19 | FlashMLA sparse: filter global top-k to local slots, return LSE on the fp8 mixed-batch path, neutralize empty rows | yes, adapted to the sm12x Triton backend |
-| #50382 | 08-21 | query replication and a2a as GLM defaults | no: a2a is impossible on this cluster, q-replication is a follow-up |
+| #50382 | 08-21 | query replication and a2a as GLM defaults | no: a2a is impossible on this cluster, q-replication is not implemented |
 | #52377 | 08-25 | fix-ups after the MLADCPManager refactor | no: the fork predates that manager |
 | #54908 | 09-02 | the fix for issue 54907 | **not applicable**, see below |
 
@@ -364,38 +364,10 @@ higher-ceiling drafter. The target-side verify machinery is the same for
 both, so nothing MTP-specific remains in the code; the `mtp` lane is refused
 by the launcher with a message.
 
-### 6.1 What the data says about MTP vs DFlash on GLM-5.3
+### 6.1 Measured DFlash costs on GLM-5.3
 
-Inco's published evaluation of the exact DFlash2 draft in use (from
-`PLAN-40-TOKS.md`), accepted length per cycle, 7 draft tokens:
-
-| task | native MTP | DFlash2 |
-|---|---:|---:|
-| HumanEval | 4.85 | 5.48 |
-| MBPP | 4.34 | 4.95 |
-| GSM8K | 5.12 | 5.94 |
-| MT-Bench | 3.81 | 4.19 |
-
-So DFlash accepts ~10-13% more per cycle, and on this cluster the DFlash draft
-measured 4.01 pooled on the Pi coding suite (below its own spec, for reasons
-that plan investigates). But MTP drafts with one extra MLA+indexer layer run K
-times sequentially, while DFlash drafts all K in one pass of six dense layers,
-and MTP's verify batch is smaller (K=4 caps a cycle at 5 tokens; DFlash K=7 at
-8). For a batch-1 MoE decode, verify cost grows with verified tokens (each
-token activates its own experts, and the step is expert-weight-bandwidth
-bound), so a shorter MTP cycle offsets its lower acceptance. Back of the
-envelope under DCP4, both including the ~16 ms/step DCP collective cost:
-
-| | cycle | accepted/cycle | tok/s |
-|---|---:|---:|---:|
-| DFlash K=7 under DCP | ~155 ms (139 today + 16) | ~4.0 (measured today) | ~26 |
-| MTP K=4 under DCP | ~130 ms (verify 5 + 4 draft passes + 16) | ~3.6 (vendor -10%, cap 5) | ~28 |
-
-Treat these as +/-30%. They say the two are close, which matches the operator's
-recollection, and that the decision has to come from the cluster. They also
-say MTP is not a fallback here: it is the cheaper experiment and may win.
-
-Three measured facts from `PLAN-40-TOKS.md` that frame the comparison:
+The completed profiling established the following properties of the DFlash
+serving path:
 
 - **The DFlash drafter is cheap; verifying is what costs.** The K=7 cycle floor
   is MoE 64.3 ms (verify, grows ~0.9 ms per expert slot, i.e. with verified
@@ -408,17 +380,9 @@ Three measured facts from `PLAN-40-TOKS.md` that frame the comparison:
   from the K-independent terms plus one token's MoE and attention is ~65-75
   ms.)
 - **DCP's cost is fixed per cycle, so speculation amortizes it.** ~17 ms is
-  about 12% of a 145 ms speculative cycle but about 25% of a plain step, which
-  is a second reason MTP belongs in the design rather than after it.
+  about 12% of a 145 ms speculative cycle but about 25% of a plain step, which explains the retained speculative serving path.
 - **DFlash's K is not a knob; MTP's is.** The drafter's `block_size: 8` is
-  trained in, so DFlash runs at K=7 or degrades; MTP's K can be swept (6.2).
-
-### 6.2 If MTP is ever wanted back
-
-Nothing in the patch prevents it: the MTP head shares the target's KV specs,
-so it stays one group, and the verify-side pieces in 3.1 serve it unchanged.
-Re-adding the launcher lane is a one-line change; K would be worth sweeping
-in {4, 6, 8} since, unlike DFlash's trained-in block size, MTP's K is free.
+  trained in, so DFlash runs at K=7 or degrades; MTP's K is configurable.
 
 ### 6.3 DFlash under DCP: what was built
 
@@ -467,20 +431,11 @@ It came to 297 lines over eight files, with CPU tests driving the real
 patched block tables and slot-mapping kernel under a faked 4-rank DCP group,
 the block-size resolution, the compatibility check, and the decision helper.
 
-### 6.4 Other items deliberately left out
+### 6.4 Configuration boundaries
 
-- **Query replication.** Removes the 5.5 ms/step q all-gather at the cost of
-  replicating `q_b_proj` and `W_UK_T` on every rank (~1.2 GB). The fork has
-  neither the config field nor `DCPGroupColumnParallelLinear`; new work, and
-  it applies equally under 2a or 2b.
-- **Candidate compaction.** Under DCP ~3 in 4 of each row's 2048 candidates
-  are `-1`; the decode kernel masks them (no wasted memory traffic) but its
-  loop bound is still the full width. Compact to a prefix, pass the count as
-  `topk_length`, bound the kernel loop by it. Sub-millisecond by the estimate
-  in section 4.
-- **LMCache connector under DCP.** Each rank would store and retrieve its own
-  shard. Orthogonal to the multi-group work in `lmcache-mg`.
-- **`cp_kv_cache_interleave_size > 1`.** Rejected at startup.
+Query replication and an LMCache connector are not part of this patch set.
+`cp_kv_cache_interleave_size > 1` is rejected at startup. Candidate compaction
+was subsequently implemented and measured; section 8 records the results.
 
 ## 7. Validation
 
@@ -594,15 +549,14 @@ and rate, all of which held.
   prefill): `uncompressed_seq_lens[num_decodes:]` is then a 4-byte-offset
   view, which is Triton's other specialization axis (16-byte pointer
   alignment). Two variants in total, both pre-existing behaviour in
-  production; `do_not_specialize_on_alignment=["uncompressed_seq_lens_ptr"]`
-  would make it one, left as a follow-up because it was not boot-tested. (The splitter uses the
+  production. (The splitter uses the
   global length even though DCP logits are 4x smaller; harmless, just more
   slices than needed.)
 
 **Boot 2, `dcp4-dflash-262k`**: max-model-len 262144, KV pool 7 GB per rank.
 The indexer gather workspace is 40 x max_model_len x 132 B (+0.7 GB at 262k
 over 131k) and rank 0 ended boot 1 with 0.69 GB, so the pool was cut 1 GB to
-keep that headroom. Results are appended below when the run completes.
+keep that headroom. The completed run is recorded below.
 
 Boot 2 came up HEALTHY after 511 s: `GPU KV cache size: 462,308 tokens`,
 `Maximum concurrency for 262,144 tokens per request: 1.76x`. The workspace
@@ -864,13 +818,8 @@ floor, not bytes, is what remains. Kept as an off-by-default flag.
 
 What is left of the DCP penalty is ~13 ms per cycle of ring collectives:
 78 query all-gathers, 78 LSE all-gathers, 76 output reduce-scatters and
-~20 indexer merges, each at its latency floor. Fewer collectives, not
-smaller ones, is the next lever: the fork's single all-to-all merge
-(`dcp_a2a_lse_reduce`, disabled on the ring by the overlay) replaces two of
-the four per layer once a switch is in place, and overlapping the indexer
-merge with the query gather on the top-k layers is worth ~2 ms on the ring.
-Full query replication would remove the query gather entirely for
-~2.6 GB/rank of int8 `q_b_proj`, which the memory budget does not have.
+~20 indexer merges, each at its latency floor. The all-to-all merge is disabled
+on the switchless ring; full query replication is not enabled.
 
 **Same-clock baseline.** The DCP1 production numbers above were taken at
 the 2418 MHz application clock, before the 2000 MHz lock. Re-taken at the
@@ -921,4 +870,3 @@ profiler and pre-gather off), briefly (2026-09-05 16:24-17:00) the DCP2 lane
 again (`dcp4-dflash-300k-compact-prod5/6`) while the user evaluated it, and
 after the concurrency sweep the DCP2 lane as the default from 17:50
 (`dcp2-dflash-180k-prod2`); both lanes stay one launcher env apart.
-

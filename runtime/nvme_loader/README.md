@@ -133,7 +133,7 @@ python runtime/nvme_loader/sparkctl.py stream
 The GPU fixture harness stops the retained stack, automatically restores it on
 failure, and leaves workers stopped on success for the full activation above.
 The image defaults to `spark-vllm:0.29.0-nvme4`; `NVME_IMAGE` overrides it.
-See [dynamic ingestion design](../../docs/DYNAMIC-CHECKPOINT-INGESTION.md).
+See the [dynamic ingestion implementation](../../docs/DYNAMIC-INGESTION-IMPLEMENTATION.md).
 
 ### Prepared artifact loading
 
