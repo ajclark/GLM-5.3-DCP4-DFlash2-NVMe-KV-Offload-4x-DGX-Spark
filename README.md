@@ -1,183 +1,113 @@
-# GLM-5.3 on four DGX Sparks: vLLM, DCP and durable NVMe KV
+# GLM-5.3 on four DGX Sparks
 
-> **Startup highlight: target weights in ~42 seconds, serving in ~115 seconds.**
-> Deployed across all four Sparks, the coalesced NVMe loader reads original
-> checkpoint tensors in concurrent 128 MiB batches and overlaps reads with GPU
-> uploads, without preparing a model-specific artifact in advance. Target-weight
-> loading fell from 59–61 s to **41.8–42.4 s**, API readiness from 131 s to
-> **114.7 s**, and first output arrived **115.2 s** after launch. These are fresh
-> serving-process starts with warm hosts and compiler caches, not cold-machine
-> boots. Validation includes 37 sandbox tests, CUDA correctness checks, exact
-> Llama/GPT-2 loading parity, and same-model durable-KV recovery; Fable reviewed
-> the implementation. See the [implementation and measured results](docs/COALESCED-LOADER-IMPLEMENTATION.md)
-> and [loader usage](runtime/nvme_loader/README.md).
-
-The current runtime targets **[vLLM 0.29.0](https://github.com/vllm-project/vllm/releases/tag/v0.29.0)**,
-using the official CUDA 13 ARM64 image pinned by digest. It retains TP4/DCP2,
-DFlash2 K=7, the 180224-token window, 12 sequences, 6 GB KV per rank and
-150 GB NVMe slab per rank. Native release model, indexer and speculative-decoding
-code replace the old engine overlays; a smaller port preserves replicated draft
-caches, GB10 sparse-attention DCP, and durable worker-local offload.
-
-The release baseline is `upgrade-029-r8`; the loader deployment above builds on it.
-See the [upgrade and validation report](docs/VLLM-029-UPGRADE.md)
-and [runtime scope, build, regression and rollback instructions](runtime/vllm029/README.md).
-The root launcher and rollout default to this release. `VLLM_RUNTIME=legacy`
-selects the historical engine for the experiments and measurements below.
-
-```bash
-./rollout_dcp.sh <unique-label>       # build, verify, deploy, test, automatic rollback
-.venv/bin/python runtime/vllm029/validate.py <unique-label>  # API, long context, restart/reload
-./restore_production.sh <unique-label>                    # exact pre-rollout containers
-```
-
-## Historical engine and measurements
-
-The following design history and performance numbers describe the earlier
-custom engine. They are retained as baselines, not measurements of vLLM 0.29.0.
-
-A patch set for [tonyd2wild's GLM-5.3 Int4-Int8Mix TP4 recipe for 4x DGX Spark](https://github.com/tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark), whose vLLM image, sparse-MLA kernels and DFlash2 speculative decoding this work builds on, that keeps **one copy of
-the KV cache across the four ranks instead of four**, so the context window
-grows with the group instead of being replicated across it, while keeping
-DFlash2 speculative decoding. On top of that, a **multi-node NVMe KV tier**
-(a fixed-size slab ring buffer on each node's disk) makes long cold prefills
-durable across evictions, engine restarts, and a full machine reboot.
+Run GLM-5.3 Int4-Int8Mix across four DGX Sparks with **concurrent NVMe model
+loading, a sharded KV cache, and durable prefix reuse**. The stack runs
+vLLM 0.29.0 with DFlash2 speculative decoding over a switchless RoCE ring.
 
 ## Highlights
 
-- **Decode context parallelism for GLM-5.3's sparse MLA, with speculative decoding kept.** One KV cache shared across the four Sparks instead of four copies: 4.00x the KV tokens at the same window (131k → 524k), a 262k window with 462k tokens, a 500k-token prompt served. DFlash2 (K=7) runs alongside it through a replicated drafter group; acceptance is unchanged and greedy output is byte-identical to the stock lane.
-- **NVMe-durable KV cache, across a reboot.** A multi-node slab tier on each node's disk: a 100k-token prefix reloads in ~2.5 s instead of a ~217 s recompute, and survives evictions, engine restarts, and a full cold reboot of all four nodes (measured: 9,640 blocks recovered from on-disk headers, 99.7% served). Each slot is self-describing (magic, token-hash key, epoch, length, payload CRC) and sealed header-last, so a torn or reordered write is detected on read and never served; recovery is a header scan, gated on the run config plus a content identity (weight fingerprints, dtype/quantization/RoPE, the overlay digest), since the key names the input tokens, not the KV bytes; toggleable (`persist_across_reboot`, default on). Fixed-size ring buffer, no janitor needed.
-Deployed and serving on the author's cluster since 2026-09-04 (GLM-5.3
-Int4-Int8Mix, TP4 over a switchless RoCE ring). Measured against the
-production DCP1 lane of the same image:
+### Faster startup from original model files
 
-| | production (DCP1) | this work (DCP4 + DFlash2 K=7) |
-|---|---|---|
-| KV pool at a 131k window, 8 GB/rank | 131k tokens | 524,288 tokens (4.00x) |
-| KV pool at a 262k window, 7 GB/rank | n/a | 462,308 tokens (1.76x) |
-| largest window booted | 120k | 524,288 (served a 500k-token prompt, no headroom left) |
-| decode, count100 greedy (GPU clocks locked at 2000 MHz) | 56.5 tok/s, 139 ms/cycle | 50.5 tok/s, 155 ms/cycle (-11%) with candidate compaction; acceptance unchanged |
-| 250k-token prompt | n/a | 893 s |
-| 100k prefix, cold prefill | 335 s | 335 s |
-| 100k prefix after eviction, engine restart, or **a full reboot** | 335 s (recompute) | **~2.5 s from NVMe**, 99.7% of tokens served |
+The coalesced loader reads checkpoint tensors concurrently and overlaps NVMe
+reads with GPU uploads. It uses 128 MiB batches on the Sparks and requires no
+advance conversion into model-specific loading artifacts.
 
-Decode by lane, single stream, greedy, thinking off, GPU clocks locked at
-2000 MHz, DFlash2 K=7 (`docs/DESIGN.md` §8; DCP=4 with candidate compaction):
+| Startup milestone | Previous Run:ai loader | Coalesced loader |
+|---|---:|---:|
+| Target weights loaded, per rank | 59–61 s | **41.8–42.4 s** |
+| API healthy, from launch | 131.3 s | **114.7 s** |
+| First streamed output, from launch | Not recorded | **115.2 s** |
 
-| lane | count100 | prose | code | verify cycle | aggregate at C=12 | KV tokens at 6 GB/rank |
-|---|---|---|---|---|---|---|
-| DCP=1 (production launcher) | 56.5 tok/s | 19.6 | 48.0 | 139 ms | 245.7 tok/s | 99k |
-| DCP=2 (pairs on adjacent ring links) | 54.5 | 18.1 | 41.5 | 144 ms | 232.7 | ~198k |
-| DCP=4 (serving) | 50.5 | 17.5 | 38.6 | 155 ms | 198.8 | 396k |
+These measurements start with the serving workers stopped on already booted
+hosts, with compiler and driver caches present. They exclude shutdown time;
+**they are not cold-machine boot times**. Each configuration has one full
+activation measurement.
 
-Accepted tokens per cycle are the same across lanes (7.87 of 8 on count100,
-~2.7 on prose, ~6.5 on code); count100 output is byte-identical. Prose and
-code vary run to run at greedy on every lane, so treat those two columns as
-±5%.
+Validation passed sandbox tests, CUDA transport checks, exact Llama/GPT-2
+loading comparisons, full-model generation, and same-model durable-KV recovery.
+See the [loader implementation and results](docs/COALESCED-LOADER-IMPLEMENTATION.md).
 
-Aggregate decode throughput under concurrency (count-to-400 prompts, C
-simultaneous streams, the engine's own cycle metrics; `results/concurrency-sweeps.md`):
+### More context from the same KV memory
 
-| C | DCP=1 | DCP=2 | DCP=4 | DCP=2 vs 1 | DCP=4 vs 1 |
-|---:|---:|---:|---:|---:|---:|
-| 1 | 54.0 tok/s | 49.9 | 46.9 | -8% | -13% |
-| 2 | 82.6 | 77.3 | 71.3 | -6% | -14% |
-| 4 | 136.4 | 125.3 | 114.6 | -8% | -16% |
-| 8 | 192.1 | 187.7 | 167.2 | -2% | -13% |
-| 12 | 245.7 | 232.7 | 198.8 | -5% | -19% |
+Decode context parallelism (DCP) distributes the target model's KV cache across
+GPUs. The serving profile uses **DCP2**, doubling target KV capacity relative to
+DCP1; DCP4 provides four times the capacity. DFlash2 retains its replicated draft
+cache and runs alongside either configuration.
 
-Single-stream, DCP costs a fixed per-cycle collective floor. Under load the
-per-step payloads grow (the query gather carries ~7 MB at 96 tokens per
-step), so DCP=4's three-hop ring collectives become bandwidth-bound: its
-marginal cost stays ~2.9 ms per token while DCP=1 and DCP=2 fall to
-1.9-2.1 ms, and its penalty widens from 11% to 19%. DCP=2, whose DCP groups
-sit on adjacent ring links, stays within 5-8% of DCP=1 at every concurrency
-with twice its KV. For multi-session use DCP=2 is the better lane unless one
-session needs more than its 180k window; DCP=4 is the lane for the largest
-single contexts.
+The earlier custom engine served a **500k-token prompt** under DCP4. That was a
+separate capacity test with almost no memory headroom; the current serving
+window is 180,224 tokens. Detailed capacity and throughput comparisons are in
+the [DCP implementation report](docs/DESIGN.md) and
+[historical concurrency measurements](results/concurrency-sweeps.md).
 
-The serving default is the DCP=2 lane: a 180,224-token window with a
-6 GB/rank pool (~198k KV tokens, two copies) and a 150 GB/rank slab store,
-within 5-8% of production's decode speed at every concurrency. The DCP=4
-lane (307,200 window, 396k tokens, one copy) is one launcher env away
-(`DCP_SIZE=4 MAXLEN=307200`) for the largest single contexts; 512k works at
-DCP=4 but leaves no host memory for the tier. The DCP cost was +36 ms per verify cycle; a profiler trace showed a third
-of it was the sparse attention kernel walking masked candidates, which
-compaction removed, leaving ~13 ms of ring collectives (`docs/DESIGN.md`
-§8). The drafter is untouched, so acceptance is too.
+### Reuse long prefixes after a restart
 
-What is in the patches, briefly: the sparse-MLA indexer and attention
-backend learn to work on a sharded KV cache (top-k merged across ranks,
-local-length workspaces, chunk metadata that does not recompile per
-prompt); the DFlash drafter's sliding-window KV group stays replicated
-under DCP through one helper that decides per group; the engine
-scheduler's invalid-block recovery and the offloading connector's store
-progress get two bug fixes; and a new module, `multinode.py`, implements the
-NVMe tier, because vLLM's own tiering assumes every rank shares one host.
-`docs/DESIGN.md` is the design and the numbers, `docs/NVME-DESIGN.md` the
-tier, `docs/HANDOVER.md` the operating notes. Upstream vLLM has since
-gained DCP for sparse MLA on newer code; these patches are for the June
-2026 base the Spark images pin.
+Each worker stores KV blocks in a fixed-size NVMe slab. Cache identity, epochs,
+and checksums protect reuse; incompatible or damaged entries become cache misses.
+**KV belongs to the model that created it and is not shared between unrelated models.**
 
-## Layout
+In the vLLM 0.29.0 validation, a 100,736-token retrieval request reached its first
+token in **180.83 seconds** without cache hits. After an engine restart, it
+recovered **99.87%** of the prefix from NVMe and reached its first token in
+**2.70 seconds**, with zero GPU prefix-cache hits. These are request latencies
+once the engine is serving. Full-machine reboot recovery was also validated on
+the earlier custom engine.
 
-| path | what it is |
+See the [release validation](docs/VLLM-029-UPGRADE.md) and
+[durable KV implementation](docs/NVME-DESIGN.md).
+
+## Current serving configuration
+
+| Component | Configuration |
 |---|---|
-| `docs/DESIGN.md` | the implemented design, cost analysis, and validation results |
-| `runtime/vllm029/` | pinned release image, ported sources, launcher, guarded rollout and real runtime regressions |
-| `baseline/vllm/…` | historical custom-image source files |
-| `overlay/vllm/…` | the same sixteen files patched (thirteen for DCP: target sharded, DFlash drafter replicated, top-k candidates compacted per rank; the engine scheduler's invalid-block recovery; the offloading connector's store progress; the b12x attention helper's candidate-count passthrough) plus the new `v1/kv_offload/tiering/multinode.py` NVMe tier |
-| `patches/*.patch` | `baseline` to `overlay` diffs, plus `apply.sh` |
-| `stage/glm-dcp/` | deployed sources flattened for bind-mounting, with `SHA256SUMS` |
-| `launch-glm53big-dcp.sh` | current release launcher; `VLLM_RUNTIME=legacy` selects the preserved historical implementation |
-| `tests/` | Local tests of real patched kernels and the NVMe tier; validation counts are recorded with each experiment |
-| `upstream-vllm/` | an upstream clone, used to locate the fork's base commit |
+| Model | GLM-5.3 Int4-Int8Mix |
+| Runtime | vLLM 0.29.0, CUDA 13 ARM64 base pinned by digest |
+| Parallelism | TP4 / DCP2 across four Sparks |
+| Speculative decoding | DFlash2, K=7 |
+| Context window | 180,224 tokens |
+| Maximum concurrent sequences | 12 |
+| GPU KV allocation | 6 GB per rank |
+| Durable KV storage | 30 GB per rank in the tested coalesced profile |
+| Loader image | `spark-vllm:0.29.0-nvme4` |
 
-`baseline` records what the historical image ran: for `flashmla_sparse.py` and
-`sparse_attn_indexer.py` that is the `glm-triton` overlay the launcher already
-bind-mounts, and for the other eleven the pristine file from the image's
-`dist-packages`.
+The coalesced deployment builds on the validated `upgrade-029-r8` release.
+The standard release rollout uses a 150 GB NVMe slab per rank; the loader
+controller selects its own 30 GB store. Historical benchmark configurations
+are identified in their reports.
 
-## Tests
+## Build and run
 
-```bash
-python3 -m venv .venv && .venv/bin/pip install pytest torch triton numpy pydantic==2.13.5
-PYTHONPATH=tests .venv/bin/python -m pytest tests/ -q
-```
-
-They run Triton in interpreter mode on CPU and extract the kernels straight out
-of `overlay/` by AST, so they cannot drift from the shipped source. The NVMe
-tier tests import the fork's own connector modules from a source tree at
-`~/lmcache-mg/spark-src/vllm` (the image's vLLM at commit ab666069); point
-`SRC` in `tests/nvme_harness.py` at any checkout of that commit.
-
-## Historical deployment
-
-These commands require `export VLLM_RUNTIME=legacy`; use the release rollout
-above for current deployment. The historical image is not rebuilt: the sixteen files in `stage/glm-dcp/` are
-bind-mounted over the installed vLLM by `launch-glm53big-dcp.sh`, which
-preflights every file and refuses to start otherwise. `docs/HANDOVER.md` has
-the state, the rules learned the hard way, and the recovery paths.
+On the configured four-Spark cluster, build the loader image and activate
+original-checkpoint streaming:
 
 ```bash
-./rollout_dcp.sh <label> [MAXLEN] [MAXBATCHED] [KVBYTES] [KVTIER]   # stage, verify, launch, watchdog, auto-restore
-./post_boot_checks.sh <label> results/baseline-dcp1-prod [longctx_tokens]
-./deploy_slab.sh <label>            # NVMe slab tier: small cap, real cap, restart (eviction + durability)
-./deploy_slab_fix.sh <label>        # first-time-store proof: no-warm probe, restart, reloads
-./restore_production.sh             # back to the production launcher
+.venv/bin/python runtime/nvme_loader/build.py
+.venv/bin/python runtime/nvme_loader/sparkctl.py stream --observe-boot
 ```
 
-Keep `~/glm-triton/` in place: eight of its ten overlays are still mounted from
-there, and the DFlash draft weights are mounted exactly as the production
-launcher does. Hostnames, paths and the image tag are the author's; they are
-variables at the top of the launcher and the scripts.
+The controller defaults to coalesced CUDA loading with 128 MiB batches. It
+retains the previous containers, monitors memory, validates generation, and
+restores the last tested service if activation fails. Hostnames, checkpoint
+paths, and mounts are specific to this cluster.
+
+For setup, loader options, tests, and rollback, use the
+[loader guide](runtime/nvme_loader/README.md). For engine builds and upgrades,
+use the [vLLM runtime guide](runtime/vllm029/README.md). The root rollout scripts
+select the vLLM 0.29.0 release; `VLLM_RUNTIME=legacy` selects the historical engine.
+
+## Repository guide
+
+| Location | Contents |
+|---|---|
+| [runtime/nvme_loader/](runtime/nvme_loader/) | Model loaders, deployment controller, and boot instrumentation |
+| [runtime/vllm029/](runtime/vllm029/) | Pinned release image, runtime port, and regression checks |
+| [tests/](tests/) | Loader, kernel, cache, and runtime correctness tests |
+| [docs/](docs/) | Implementation details, validation reports, and operating notes |
+| [results/](results/) | Recorded measurements and validation evidence |
+| [baseline/](baseline/), [overlay/](overlay/), [patches/](patches/) | Historical engine sources and patches |
 
 ## Credits
 
-Everything here starts from
-[tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark](https://github.com/tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark):
-the vLLM image these sixteen files are overlaid on, the sm12x sparse-MLA
-kernels, the DFlash2 drafter port and the launcher that made GLM-5.3 run on
-four Sparks in the first place. This repo adds decode context parallelism and
-the NVMe tier on top of that recipe; the "production" lane in every table above
-is that recipe unmodified.
+Built on [tonyd2wild's GLM-5.3 Int4-Int8Mix TP4 recipe for four DGX Sparks](https://github.com/tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark),
+including its quantization, sparse-MLA kernels, and DFlash2 port. This project
+adds the DCP integration, durable multi-node KV tier, and concurrent model loader.
