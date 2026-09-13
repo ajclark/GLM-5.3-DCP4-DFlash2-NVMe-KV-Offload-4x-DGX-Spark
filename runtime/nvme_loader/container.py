@@ -46,7 +46,9 @@ if __name__ == "__main__":
     original = call("GET", "/containers/" + quote(a.original, safe="") + "/json")
     cfg = original["Config"]
     cfg["Image"] = a.image
-    cfg["Env"] = [e for e in cfg["Env"] if not e.startswith(("NVME_", "CUDA_CACHE_PATH=", "CUDA_CACHE_MAXSIZE="))] + [
+    cfg["Env"] = [e for e in cfg["Env"] if not e.startswith(("NVME_", "CUDA_CACHE_PATH=", "CUDA_CACHE_MAXSIZE=",
+        "VLLM_NO_USAGE_STATS=", "VLLM_DO_NOT_TRACK=", "DO_NOT_TRACK="))] + [
+        "VLLM_NO_USAGE_STATS=1", "VLLM_DO_NOT_TRACK=1", "DO_NOT_TRACK=1",
         "NVME_ARTIFACT_ROOT=/nvme-artifacts", "NVME_LOADER_MODE=" + a.mode,
         "NVME_GENERATION=" + a.generation, "NVME_RUNTIME_ID=" + a.runtime_id,
         "CUDA_CACHE_PATH=/root/.nv/ComputeCache", "CUDA_CACHE_MAXSIZE=4294967296"]

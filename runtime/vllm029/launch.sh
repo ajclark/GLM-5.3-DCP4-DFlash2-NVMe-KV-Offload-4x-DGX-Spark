@@ -130,6 +130,7 @@ run_docker run -d --name "$NAME" \
   "${DRAFT_MOUNT[@]}" \
   "${HOTPLUG_MOUNTS[@]}" \
   -e VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS=1800 \
+  -e VLLM_NO_USAGE_STATS=1 -e VLLM_DO_NOT_TRACK=1 -e DO_NOT_TRACK=1 \
   -e VLLM_ENGINE_READY_TIMEOUT_S=3600 \
   -e HF_HOME=/cache/huggingface \
   -e TRITON_CACHE_DIR=/cache/huggingface/.tritoncache-vllm029 \

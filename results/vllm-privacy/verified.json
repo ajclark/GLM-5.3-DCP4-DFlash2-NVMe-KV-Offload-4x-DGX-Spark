@@ -1,0 +1,447 @@
+{
+  "spark-06c4.local": {
+    "installed_vllm": {
+      "usage_stats_enabled": false,
+      "config_root": "/root/.config/vllm"
+    },
+    "containers": [
+      {
+        "name": "/vllm_glm53big",
+        "running": true,
+        "environment_disabled": true,
+        "marker_present": false
+      },
+      {
+        "name": "/vllm_glm53big_nvme-stream-1789339710",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-stop-1789323338",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789322947",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789322392",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789318163",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789317578",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme_failed_1789275779",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-restore-1789275957",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-restore-1789274737",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-restore-1789273981",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-stop-1789272492",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      }
+    ],
+    "processes": [
+      {
+        "pid": 1723228,
+        "comm": "vllm",
+        "environment_disabled": true
+      },
+      {
+        "pid": 1724370,
+        "comm": "VLLM::EngineCor",
+        "environment_disabled": true
+      },
+      {
+        "pid": 1724625,
+        "comm": "VLLM::Worker_TP",
+        "environment_disabled": true
+      }
+    ],
+    "images": {
+      "spark-vllm:0.29.0-dcp1": {
+        "id": "sha256:6541bdb017d53810c3c43dd284a78fcd3a954b862762aacc2df9ce62e6adfad7",
+        "opt_out": {
+          "VLLM_NO_USAGE_STATS": "1",
+          "VLLM_DO_NOT_TRACK": "1",
+          "DO_NOT_TRACK": "1"
+        }
+      },
+      "spark-vllm:0.29.0-nvme4": {
+        "id": "sha256:edbbc3853873626d915983beae00cee770f026c0be4d82cf42fffe6160e0956d",
+        "opt_out": {
+          "VLLM_NO_USAGE_STATS": "1",
+          "VLLM_DO_NOT_TRACK": "1",
+          "DO_NOT_TRACK": "1"
+        }
+      }
+    }
+  },
+  "spark-365c.local": {
+    "installed_vllm": {
+      "usage_stats_enabled": false,
+      "config_root": "/root/.config/vllm"
+    },
+    "containers": [
+      {
+        "name": "/vllm_glm53big",
+        "running": true,
+        "environment_disabled": true,
+        "marker_present": false
+      },
+      {
+        "name": "/vllm_glm53big_nvme-stream-1789339710",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-stop-1789323338",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789322947",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789322392",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789318163",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789317578",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme_failed_1789275779",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-restore-1789275957",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-restore-1789274737",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-restore-1789273981",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-stop-1789272492",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      }
+    ],
+    "processes": [
+      {
+        "pid": 1572451,
+        "comm": "vllm",
+        "environment_disabled": true
+      },
+      {
+        "pid": 1573426,
+        "comm": "VLLM::Worker_TP",
+        "environment_disabled": true
+      }
+    ],
+    "images": {
+      "spark-vllm:0.29.0-dcp1": {
+        "id": "sha256:1ddfdffffa07baed39ebbac18865acb5a971bbeb164c9606e45beaeaae43b8ab",
+        "opt_out": {
+          "VLLM_NO_USAGE_STATS": "1",
+          "VLLM_DO_NOT_TRACK": "1",
+          "DO_NOT_TRACK": "1"
+        }
+      },
+      "spark-vllm:0.29.0-nvme4": {
+        "id": "sha256:5509f3ba1cb67c6ecf60899a3e2ca40877fcbafb0b9f9e59936843f181c5b5e3",
+        "opt_out": {
+          "VLLM_NO_USAGE_STATS": "1",
+          "VLLM_DO_NOT_TRACK": "1",
+          "DO_NOT_TRACK": "1"
+        }
+      }
+    }
+  },
+  "spark-ddbf.local": {
+    "installed_vllm": {
+      "usage_stats_enabled": false,
+      "config_root": "/root/.config/vllm"
+    },
+    "containers": [
+      {
+        "name": "/vllm_glm53big",
+        "running": true,
+        "environment_disabled": true,
+        "marker_present": false
+      },
+      {
+        "name": "/vllm_glm53big_nvme-stream-1789339710",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-stop-1789323338",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789322947",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789322392",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789318163",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789317578",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme_failed_1789275786",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-restore-1789275957",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-restore-1789274737",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-restore-1789273981",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-stop-1789272492",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      }
+    ],
+    "processes": [
+      {
+        "pid": 2042711,
+        "comm": "vllm",
+        "environment_disabled": true
+      },
+      {
+        "pid": 2043710,
+        "comm": "VLLM::Worker_TP",
+        "environment_disabled": true
+      }
+    ],
+    "images": {
+      "spark-vllm:0.29.0-dcp1": {
+        "id": "sha256:71297d31aaeeca8a15d00906ba4b3361f652064e44e82fdfebf2a5b8486d5771",
+        "opt_out": {
+          "VLLM_NO_USAGE_STATS": "1",
+          "VLLM_DO_NOT_TRACK": "1",
+          "DO_NOT_TRACK": "1"
+        }
+      },
+      "spark-vllm:0.29.0-nvme4": {
+        "id": "sha256:fa126a03d25e1978eb26158f62273c6715dd93d125e8b98d5dbb5ec787748897",
+        "opt_out": {
+          "VLLM_NO_USAGE_STATS": "1",
+          "VLLM_DO_NOT_TRACK": "1",
+          "DO_NOT_TRACK": "1"
+        }
+      }
+    }
+  },
+  "spark-a218.local": {
+    "installed_vllm": {
+      "usage_stats_enabled": false,
+      "config_root": "/root/.config/vllm"
+    },
+    "containers": [
+      {
+        "name": "/vllm_glm53big",
+        "running": true,
+        "environment_disabled": true,
+        "marker_present": false
+      },
+      {
+        "name": "/vllm_glm53big_nvme-stream-1789339710",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-stop-1789323338",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789322947",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789322392",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789318163",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_stream-fixtures-1789317578",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme_failed_1789275786",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-restore-1789275957",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-restore-1789274737",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-restore-1789273981",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      },
+      {
+        "name": "/vllm_glm53big_nvme-stop-1789272492",
+        "running": false,
+        "environment_disabled": false,
+        "marker_present": true
+      }
+    ],
+    "processes": [
+      {
+        "pid": 2026747,
+        "comm": "vllm",
+        "environment_disabled": true
+      },
+      {
+        "pid": 2027744,
+        "comm": "VLLM::Worker_TP",
+        "environment_disabled": true
+      }
+    ],
+    "images": {
+      "spark-vllm:0.29.0-dcp1": {
+        "id": "sha256:f30d4aef3f468d9dd17530382dd0fe2d166d51aa40843b93cf74bf659cba112e",
+        "opt_out": {
+          "VLLM_NO_USAGE_STATS": "1",
+          "VLLM_DO_NOT_TRACK": "1",
+          "DO_NOT_TRACK": "1"
+        }
+      },
+      "spark-vllm:0.29.0-nvme4": {
+        "id": "sha256:2b8294c44af00b4a8bb187fcd7ce7f44cc262da5095d3ddf506c7e8fd1fc1de9",
+        "opt_out": {
+          "VLLM_NO_USAGE_STATS": "1",
+          "VLLM_DO_NOT_TRACK": "1",
+          "DO_NOT_TRACK": "1"
+        }
+      }
+    }
+  }
+}

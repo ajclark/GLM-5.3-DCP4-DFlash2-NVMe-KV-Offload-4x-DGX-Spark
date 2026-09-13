@@ -43,6 +43,11 @@ new deployments and durable-cache validation.
 
 ## Build and test
 
+Usage reporting is disabled in the image and launcher with
+`VLLM_NO_USAGE_STATS=1`, `VLLM_DO_NOT_TRACK=1`, and `DO_NOT_TRACK=1`.
+The [privacy configuration](../../docs/VLLM-PRIVACY.md) also covers retained
+containers and host-side vLLM processes.
+
 From the repository root:
 
 ```bash

@@ -175,6 +175,10 @@ overrides require additional adapters; `auto` can use native loading.
 
 ## Spark rollout and validation
 
+The image and controller disable vLLM usage reporting with
+`VLLM_NO_USAGE_STATS=1`, `VLLM_DO_NOT_TRACK=1`, and `DO_NOT_TRACK=1`.
+See the [privacy configuration](../../docs/VLLM-PRIVACY.md).
+
 The test controller saves exact original containers and checks real generation:
 
 ```bash

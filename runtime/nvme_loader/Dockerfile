@@ -6,3 +6,4 @@ RUN mkdir -p /usr/local/lib/python3.12/dist-packages/spark_nvme_loader-0.1.0.dis
     printf '[vllm.general_plugins]\nspark_nvme = spark_nvme:register\n' > /usr/local/lib/python3.12/dist-packages/spark_nvme_loader-0.1.0.dist-info/entry_points.txt && \
     printf 'Metadata-Version: 2.1\nName: spark-nvme-loader\nVersion: 0.1.0\n' > /usr/local/lib/python3.12/dist-packages/spark_nvme_loader-0.1.0.dist-info/METADATA && \
     python3 -m compileall -q /usr/local/lib/python3.12/dist-packages/spark_nvme
+ENV VLLM_NO_USAGE_STATS=1 VLLM_DO_NOT_TRACK=1 DO_NOT_TRACK=1

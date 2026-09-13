@@ -8,3 +8,4 @@ RUN python3 /opt/verify-spark-vllm.py
 # A distinct module name bypasses the upstream wheel's unpatched JIT binary.
 # Build for GB10 without exposing a GPU or loading model weights.
 RUN FLASHINFER_CUDA_ARCH_LIST=12.1a MAX_JOBS=1 python3 -c "from flashinfer.jit.mla import gen_sparse_mla_sm120_module; gen_sparse_mla_sm120_module().build()"
+ENV VLLM_NO_USAGE_STATS=1 VLLM_DO_NOT_TRACK=1 DO_NOT_TRACK=1
