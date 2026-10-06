@@ -1,0 +1,146 @@
+{"case": "empty (16 B copy)", "T": 0, "KiB": 0, "blocks": 8, "us": 1.0, "GBps": 0.0}
+{"case": "stage dev->pin", "T": 1, "KiB": 12, "blocks": 8, "us": 1.22, "GBps": 20.1}
+{"case": "copy dev->dev", "T": 1, "KiB": 12, "blocks": 8, "us": 1.21, "GBps": 20.3}
+{"case": "copy pin->dev", "T": 1, "KiB": 12, "blocks": 8, "us": 1.64, "GBps": 15.0}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 1, "KiB": 12, "blocks": 8, "us": 1.8, "GBps": 34.1}
+{"case": "reduce peers=pin ld.global", "T": 1, "KiB": 12, "blocks": 8, "us": 1.81, "GBps": 34.0}
+{"case": "reduce peers=pin ld.volatile", "T": 1, "KiB": 12, "blocks": 8, "us": 1.83, "GBps": 33.7}
+{"case": "reduce peers=dev ld.sys", "T": 1, "KiB": 12, "blocks": 8, "us": 1.64, "GBps": 37.5}
+{"case": "reduce peers=dev ld.global", "T": 1, "KiB": 12, "blocks": 8, "us": 1.61, "GBps": 38.1}
+{"case": "stage dev->pin", "T": 1, "KiB": 12, "blocks": 16, "us": 1.35, "GBps": 18.2}
+{"case": "copy dev->dev", "T": 1, "KiB": 12, "blocks": 16, "us": 1.35, "GBps": 18.2}
+{"case": "copy pin->dev", "T": 1, "KiB": 12, "blocks": 16, "us": 1.63, "GBps": 15.0}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 1, "KiB": 12, "blocks": 16, "us": 1.8, "GBps": 34.1}
+{"case": "reduce peers=pin ld.global", "T": 1, "KiB": 12, "blocks": 16, "us": 1.81, "GBps": 34.0}
+{"case": "reduce peers=pin ld.volatile", "T": 1, "KiB": 12, "blocks": 16, "us": 1.83, "GBps": 33.7}
+{"case": "reduce peers=dev ld.sys", "T": 1, "KiB": 12, "blocks": 16, "us": 1.63, "GBps": 37.6}
+{"case": "reduce peers=dev ld.global", "T": 1, "KiB": 12, "blocks": 16, "us": 1.61, "GBps": 38.1}
+{"case": "stage dev->pin", "T": 1, "KiB": 12, "blocks": 48, "us": 1.36, "GBps": 18.1}
+{"case": "copy dev->dev", "T": 1, "KiB": 12, "blocks": 48, "us": 1.34, "GBps": 18.3}
+{"case": "copy pin->dev", "T": 1, "KiB": 12, "blocks": 48, "us": 1.63, "GBps": 15.1}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 1, "KiB": 12, "blocks": 48, "us": 1.8, "GBps": 34.1}
+{"case": "reduce peers=pin ld.global", "T": 1, "KiB": 12, "blocks": 48, "us": 1.81, "GBps": 34.0}
+{"case": "reduce peers=pin ld.volatile", "T": 1, "KiB": 12, "blocks": 48, "us": 1.83, "GBps": 33.7}
+{"case": "reduce peers=dev ld.sys", "T": 1, "KiB": 12, "blocks": 48, "us": 1.63, "GBps": 37.6}
+{"case": "reduce peers=dev ld.global", "T": 1, "KiB": 12, "blocks": 48, "us": 1.61, "GBps": 38.1}
+{"case": "stage dev->pin", "T": 2, "KiB": 24, "blocks": 8, "us": 1.42, "GBps": 34.7}
+{"case": "copy dev->dev", "T": 2, "KiB": 24, "blocks": 8, "us": 1.42, "GBps": 34.7}
+{"case": "copy pin->dev", "T": 2, "KiB": 24, "blocks": 8, "us": 1.73, "GBps": 28.4}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 2, "KiB": 24, "blocks": 8, "us": 1.93, "GBps": 63.5}
+{"case": "reduce peers=pin ld.global", "T": 2, "KiB": 24, "blocks": 8, "us": 1.91, "GBps": 64.3}
+{"case": "reduce peers=pin ld.volatile", "T": 2, "KiB": 24, "blocks": 8, "us": 1.95, "GBps": 63.1}
+{"case": "reduce peers=dev ld.sys", "T": 2, "KiB": 24, "blocks": 8, "us": 1.72, "GBps": 71.4}
+{"case": "reduce peers=dev ld.global", "T": 2, "KiB": 24, "blocks": 8, "us": 1.65, "GBps": 74.3}
+{"case": "stage dev->pin", "T": 2, "KiB": 24, "blocks": 16, "us": 1.42, "GBps": 34.7}
+{"case": "copy dev->dev", "T": 2, "KiB": 24, "blocks": 16, "us": 1.42, "GBps": 34.7}
+{"case": "copy pin->dev", "T": 2, "KiB": 24, "blocks": 16, "us": 1.72, "GBps": 28.6}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 2, "KiB": 24, "blocks": 16, "us": 1.93, "GBps": 63.5}
+{"case": "reduce peers=pin ld.global", "T": 2, "KiB": 24, "blocks": 16, "us": 1.93, "GBps": 63.6}
+{"case": "reduce peers=pin ld.volatile", "T": 2, "KiB": 24, "blocks": 16, "us": 1.93, "GBps": 63.5}
+{"case": "reduce peers=dev ld.sys", "T": 2, "KiB": 24, "blocks": 16, "us": 1.71, "GBps": 71.8}
+{"case": "reduce peers=dev ld.global", "T": 2, "KiB": 24, "blocks": 16, "us": 1.66, "GBps": 74.1}
+{"case": "stage dev->pin", "T": 2, "KiB": 24, "blocks": 48, "us": 1.42, "GBps": 34.7}
+{"case": "copy dev->dev", "T": 2, "KiB": 24, "blocks": 48, "us": 1.42, "GBps": 34.6}
+{"case": "copy pin->dev", "T": 2, "KiB": 24, "blocks": 48, "us": 1.72, "GBps": 28.5}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 2, "KiB": 24, "blocks": 48, "us": 1.95, "GBps": 63.2}
+{"case": "reduce peers=pin ld.global", "T": 2, "KiB": 24, "blocks": 48, "us": 1.93, "GBps": 63.5}
+{"case": "reduce peers=pin ld.volatile", "T": 2, "KiB": 24, "blocks": 48, "us": 1.94, "GBps": 63.4}
+{"case": "reduce peers=dev ld.sys", "T": 2, "KiB": 24, "blocks": 48, "us": 1.71, "GBps": 71.8}
+{"case": "reduce peers=dev ld.global", "T": 2, "KiB": 24, "blocks": 48, "us": 1.66, "GBps": 74.1}
+{"case": "stage dev->pin", "T": 4, "KiB": 48, "blocks": 8, "us": 1.42, "GBps": 69.4}
+{"case": "copy dev->dev", "T": 4, "KiB": 48, "blocks": 8, "us": 1.42, "GBps": 69.2}
+{"case": "copy pin->dev", "T": 4, "KiB": 48, "blocks": 8, "us": 1.8, "GBps": 54.7}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 4, "KiB": 48, "blocks": 8, "us": 2.19, "GBps": 112.0}
+{"case": "reduce peers=pin ld.global", "T": 4, "KiB": 48, "blocks": 8, "us": 2.18, "GBps": 112.7}
+{"case": "reduce peers=pin ld.volatile", "T": 4, "KiB": 48, "blocks": 8, "us": 2.21, "GBps": 111.2}
+{"case": "reduce peers=dev ld.sys", "T": 4, "KiB": 48, "blocks": 8, "us": 1.73, "GBps": 142.0}
+{"case": "reduce peers=dev ld.global", "T": 4, "KiB": 48, "blocks": 8, "us": 1.67, "GBps": 146.9}
+{"case": "stage dev->pin", "T": 4, "KiB": 48, "blocks": 16, "us": 1.42, "GBps": 69.1}
+{"case": "copy dev->dev", "T": 4, "KiB": 48, "blocks": 16, "us": 1.42, "GBps": 69.2}
+{"case": "copy pin->dev", "T": 4, "KiB": 48, "blocks": 16, "us": 1.8, "GBps": 54.7}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 4, "KiB": 48, "blocks": 16, "us": 2.19, "GBps": 112.2}
+{"case": "reduce peers=pin ld.global", "T": 4, "KiB": 48, "blocks": 16, "us": 2.19, "GBps": 112.3}
+{"case": "reduce peers=pin ld.volatile", "T": 4, "KiB": 48, "blocks": 16, "us": 2.21, "GBps": 111.2}
+{"case": "reduce peers=dev ld.sys", "T": 4, "KiB": 48, "blocks": 16, "us": 1.72, "GBps": 143.2}
+{"case": "reduce peers=dev ld.global", "T": 4, "KiB": 48, "blocks": 16, "us": 1.68, "GBps": 146.5}
+{"case": "stage dev->pin", "T": 4, "KiB": 48, "blocks": 48, "us": 1.44, "GBps": 68.5}
+{"case": "copy dev->dev", "T": 4, "KiB": 48, "blocks": 48, "us": 1.42, "GBps": 69.4}
+{"case": "copy pin->dev", "T": 4, "KiB": 48, "blocks": 48, "us": 1.79, "GBps": 55.0}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 4, "KiB": 48, "blocks": 48, "us": 2.19, "GBps": 112.3}
+{"case": "reduce peers=pin ld.global", "T": 4, "KiB": 48, "blocks": 48, "us": 2.2, "GBps": 111.6}
+{"case": "reduce peers=pin ld.volatile", "T": 4, "KiB": 48, "blocks": 48, "us": 2.2, "GBps": 111.7}
+{"case": "reduce peers=dev ld.sys", "T": 4, "KiB": 48, "blocks": 48, "us": 1.75, "GBps": 140.5}
+{"case": "reduce peers=dev ld.global", "T": 4, "KiB": 48, "blocks": 48, "us": 1.73, "GBps": 141.9}
+{"case": "stage dev->pin", "T": 8, "KiB": 96, "blocks": 8, "us": 1.72, "GBps": 114.2}
+{"case": "copy dev->dev", "T": 8, "KiB": 96, "blocks": 8, "us": 1.71, "GBps": 114.8}
+{"case": "copy pin->dev", "T": 8, "KiB": 96, "blocks": 8, "us": 2.39, "GBps": 82.1}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 8, "KiB": 96, "blocks": 8, "us": 3.26, "GBps": 150.9}
+{"case": "reduce peers=pin ld.global", "T": 8, "KiB": 96, "blocks": 8, "us": 3.24, "GBps": 151.8}
+{"case": "reduce peers=pin ld.volatile", "T": 8, "KiB": 96, "blocks": 8, "us": 3.28, "GBps": 149.9}
+{"case": "reduce peers=dev ld.sys", "T": 8, "KiB": 96, "blocks": 8, "us": 2.32, "GBps": 212.3}
+{"case": "reduce peers=dev ld.global", "T": 8, "KiB": 96, "blocks": 8, "us": 2.16, "GBps": 227.4}
+{"case": "stage dev->pin", "T": 8, "KiB": 96, "blocks": 16, "us": 1.42, "GBps": 138.1}
+{"case": "copy dev->dev", "T": 8, "KiB": 96, "blocks": 16, "us": 1.42, "GBps": 138.3}
+{"case": "copy pin->dev", "T": 8, "KiB": 96, "blocks": 16, "us": 1.97, "GBps": 99.6}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 8, "KiB": 96, "blocks": 16, "us": 2.95, "GBps": 166.5}
+{"case": "reduce peers=pin ld.global", "T": 8, "KiB": 96, "blocks": 16, "us": 2.94, "GBps": 167.4}
+{"case": "reduce peers=pin ld.volatile", "T": 8, "KiB": 96, "blocks": 16, "us": 2.96, "GBps": 166.1}
+{"case": "reduce peers=dev ld.sys", "T": 8, "KiB": 96, "blocks": 16, "us": 1.72, "GBps": 285.6}
+{"case": "reduce peers=dev ld.global", "T": 8, "KiB": 96, "blocks": 16, "us": 1.67, "GBps": 294.8}
+{"case": "stage dev->pin", "T": 8, "KiB": 96, "blocks": 48, "us": 1.61, "GBps": 122.0}
+{"case": "copy dev->dev", "T": 8, "KiB": 96, "blocks": 48, "us": 1.55, "GBps": 127.0}
+{"case": "copy pin->dev", "T": 8, "KiB": 96, "blocks": 48, "us": 2.0, "GBps": 98.4}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 8, "KiB": 96, "blocks": 48, "us": 2.96, "GBps": 166.2}
+{"case": "reduce peers=pin ld.global", "T": 8, "KiB": 96, "blocks": 48, "us": 2.94, "GBps": 166.9}
+{"case": "reduce peers=pin ld.volatile", "T": 8, "KiB": 96, "blocks": 48, "us": 2.96, "GBps": 166.2}
+{"case": "reduce peers=dev ld.sys", "T": 8, "KiB": 96, "blocks": 48, "us": 2.04, "GBps": 241.5}
+{"case": "reduce peers=dev ld.global", "T": 8, "KiB": 96, "blocks": 48, "us": 2.0, "GBps": 246.0}
+{"case": "stage dev->pin", "T": 16, "KiB": 192, "blocks": 8, "us": 2.02, "GBps": 194.8}
+{"case": "copy dev->dev", "T": 16, "KiB": 192, "blocks": 8, "us": 2.02, "GBps": 194.8}
+{"case": "copy pin->dev", "T": 16, "KiB": 192, "blocks": 8, "us": 3.1, "GBps": 127.0}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 16, "KiB": 192, "blocks": 8, "us": 4.73, "GBps": 208.0}
+{"case": "reduce peers=pin ld.global", "T": 16, "KiB": 192, "blocks": 8, "us": 4.71, "GBps": 208.9}
+{"case": "reduce peers=pin ld.volatile", "T": 16, "KiB": 192, "blocks": 8, "us": 4.7, "GBps": 209.3}
+{"case": "reduce peers=dev ld.sys", "T": 16, "KiB": 192, "blocks": 8, "us": 4.09, "GBps": 240.2}
+{"case": "reduce peers=dev ld.global", "T": 16, "KiB": 192, "blocks": 8, "us": 4.3, "GBps": 228.4}
+{"case": "stage dev->pin", "T": 16, "KiB": 192, "blocks": 16, "us": 1.74, "GBps": 225.7}
+{"case": "copy dev->dev", "T": 16, "KiB": 192, "blocks": 16, "us": 1.71, "GBps": 229.3}
+{"case": "copy pin->dev", "T": 16, "KiB": 192, "blocks": 16, "us": 2.79, "GBps": 141.0}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 16, "KiB": 192, "blocks": 16, "us": 4.53, "GBps": 216.9}
+{"case": "reduce peers=pin ld.global", "T": 16, "KiB": 192, "blocks": 16, "us": 4.49, "GBps": 218.8}
+{"case": "reduce peers=pin ld.volatile", "T": 16, "KiB": 192, "blocks": 16, "us": 4.54, "GBps": 216.7}
+{"case": "reduce peers=dev ld.sys", "T": 16, "KiB": 192, "blocks": 16, "us": 3.62, "GBps": 271.7}
+{"case": "reduce peers=dev ld.global", "T": 16, "KiB": 192, "blocks": 16, "us": 3.61, "GBps": 272.0}
+{"case": "stage dev->pin", "T": 16, "KiB": 192, "blocks": 48, "us": 1.66, "GBps": 237.3}
+{"case": "copy dev->dev", "T": 16, "KiB": 192, "blocks": 48, "us": 1.56, "GBps": 251.8}
+{"case": "copy pin->dev", "T": 16, "KiB": 192, "blocks": 48, "us": 2.55, "GBps": 154.0}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 16, "KiB": 192, "blocks": 48, "us": 4.36, "GBps": 225.3}
+{"case": "reduce peers=pin ld.global", "T": 16, "KiB": 192, "blocks": 48, "us": 4.33, "GBps": 227.3}
+{"case": "reduce peers=pin ld.volatile", "T": 16, "KiB": 192, "blocks": 48, "us": 4.36, "GBps": 225.3}
+{"case": "reduce peers=dev ld.sys", "T": 16, "KiB": 192, "blocks": 48, "us": 3.32, "GBps": 295.9}
+{"case": "reduce peers=dev ld.global", "T": 16, "KiB": 192, "blocks": 48, "us": 3.32, "GBps": 296.4}
+{"case": "stage dev->pin", "T": 32, "KiB": 384, "blocks": 8, "us": 2.93, "GBps": 268.8}
+{"case": "copy dev->dev", "T": 32, "KiB": 384, "blocks": 8, "us": 3.44, "GBps": 228.6}
+{"case": "copy pin->dev", "T": 32, "KiB": 384, "blocks": 8, "us": 5.45, "GBps": 144.3}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 32, "KiB": 384, "blocks": 8, "us": 8.95, "GBps": 219.8}
+{"case": "reduce peers=pin ld.global", "T": 32, "KiB": 384, "blocks": 8, "us": 8.94, "GBps": 219.9}
+{"case": "reduce peers=pin ld.volatile", "T": 32, "KiB": 384, "blocks": 8, "us": 9.19, "GBps": 214.0}
+{"case": "reduce peers=dev ld.sys", "T": 32, "KiB": 384, "blocks": 8, "us": 10.53, "GBps": 186.7}
+{"case": "reduce peers=dev ld.global", "T": 32, "KiB": 384, "blocks": 8, "us": 10.48, "GBps": 187.6}
+{"case": "stage dev->pin", "T": 32, "KiB": 384, "blocks": 16, "us": 2.66, "GBps": 295.7}
+{"case": "copy dev->dev", "T": 32, "KiB": 384, "blocks": 16, "us": 2.77, "GBps": 284.2}
+{"case": "copy pin->dev", "T": 32, "KiB": 384, "blocks": 16, "us": 4.72, "GBps": 166.7}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 32, "KiB": 384, "blocks": 16, "us": 8.85, "GBps": 222.2}
+{"case": "reduce peers=pin ld.global", "T": 32, "KiB": 384, "blocks": 16, "us": 8.82, "GBps": 222.8}
+{"case": "reduce peers=pin ld.volatile", "T": 32, "KiB": 384, "blocks": 16, "us": 8.59, "GBps": 228.9}
+{"case": "reduce peers=dev ld.sys", "T": 32, "KiB": 384, "blocks": 16, "us": 10.1, "GBps": 194.7}
+{"case": "reduce peers=dev ld.global", "T": 32, "KiB": 384, "blocks": 16, "us": 10.11, "GBps": 194.5}
+{"case": "stage dev->pin", "T": 32, "KiB": 384, "blocks": 48, "us": 2.58, "GBps": 305.3}
+{"case": "copy dev->dev", "T": 32, "KiB": 384, "blocks": 48, "us": 2.41, "GBps": 325.9}
+{"case": "copy pin->dev", "T": 32, "KiB": 384, "blocks": 48, "us": 4.52, "GBps": 174.1}
+{"case": "reduce peers=pin ld.sys (b12x)", "T": 32, "KiB": 384, "blocks": 48, "us": 8.86, "GBps": 222.0}
+{"case": "reduce peers=pin ld.global", "T": 32, "KiB": 384, "blocks": 48, "us": 8.9, "GBps": 220.9}
+{"case": "reduce peers=pin ld.volatile", "T": 32, "KiB": 384, "blocks": 48, "us": 8.94, "GBps": 219.8}
+{"case": "reduce peers=dev ld.sys", "T": 32, "KiB": 384, "blocks": 48, "us": 10.14, "GBps": 194.0}
+{"case": "reduce peers=dev ld.global", "T": 32, "KiB": 384, "blocks": 48, "us": 10.15, "GBps": 193.7}
+RESULT {"device": "NVIDIA GB10", "rows": [{"case": "empty (16 B copy)", "T": 0, "KiB": 0, "blocks": 8, "us": 1.0, "GBps": 0.0}, {"case": "stage dev->pin", "T": 1, "KiB": 12, "blocks": 8, "us": 1.22, "GBps": 20.1}, {"case": "copy dev->dev", "T": 1, "KiB": 12, "blocks": 8, "us": 1.21, "GBps": 20.3}, {"case": "copy pin->dev", "T": 1, "KiB": 12, "blocks": 8, "us": 1.64, "GBps": 15.0}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 1, "KiB": 12, "blocks": 8, "us": 1.8, "GBps": 34.1}, {"case": "reduce peers=pin ld.global", "T": 1, "KiB": 12, "blocks": 8, "us": 1.81, "GBps": 34.0}, {"case": "reduce peers=pin ld.volatile", "T": 1, "KiB": 12, "blocks": 8, "us": 1.83, "GBps": 33.7}, {"case": "reduce peers=dev ld.sys", "T": 1, "KiB": 12, "blocks": 8, "us": 1.64, "GBps": 37.5}, {"case": "reduce peers=dev ld.global", "T": 1, "KiB": 12, "blocks": 8, "us": 1.61, "GBps": 38.1}, {"case": "stage dev->pin", "T": 1, "KiB": 12, "blocks": 16, "us": 1.35, "GBps": 18.2}, {"case": "copy dev->dev", "T": 1, "KiB": 12, "blocks": 16, "us": 1.35, "GBps": 18.2}, {"case": "copy pin->dev", "T": 1, "KiB": 12, "blocks": 16, "us": 1.63, "GBps": 15.0}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 1, "KiB": 12, "blocks": 16, "us": 1.8, "GBps": 34.1}, {"case": "reduce peers=pin ld.global", "T": 1, "KiB": 12, "blocks": 16, "us": 1.81, "GBps": 34.0}, {"case": "reduce peers=pin ld.volatile", "T": 1, "KiB": 12, "blocks": 16, "us": 1.83, "GBps": 33.7}, {"case": "reduce peers=dev ld.sys", "T": 1, "KiB": 12, "blocks": 16, "us": 1.63, "GBps": 37.6}, {"case": "reduce peers=dev ld.global", "T": 1, "KiB": 12, "blocks": 16, "us": 1.61, "GBps": 38.1}, {"case": "stage dev->pin", "T": 1, "KiB": 12, "blocks": 48, "us": 1.36, "GBps": 18.1}, {"case": "copy dev->dev", "T": 1, "KiB": 12, "blocks": 48, "us": 1.34, "GBps": 18.3}, {"case": "copy pin->dev", "T": 1, "KiB": 12, "blocks": 48, "us": 1.63, "GBps": 15.1}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 1, "KiB": 12, "blocks": 48, "us": 1.8, "GBps": 34.1}, {"case": "reduce peers=pin ld.global", "T": 1, "KiB": 12, "blocks": 48, "us": 1.81, "GBps": 34.0}, {"case": "reduce peers=pin ld.volatile", "T": 1, "KiB": 12, "blocks": 48, "us": 1.83, "GBps": 33.7}, {"case": "reduce peers=dev ld.sys", "T": 1, "KiB": 12, "blocks": 48, "us": 1.63, "GBps": 37.6}, {"case": "reduce peers=dev ld.global", "T": 1, "KiB": 12, "blocks": 48, "us": 1.61, "GBps": 38.1}, {"case": "stage dev->pin", "T": 2, "KiB": 24, "blocks": 8, "us": 1.42, "GBps": 34.7}, {"case": "copy dev->dev", "T": 2, "KiB": 24, "blocks": 8, "us": 1.42, "GBps": 34.7}, {"case": "copy pin->dev", "T": 2, "KiB": 24, "blocks": 8, "us": 1.73, "GBps": 28.4}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 2, "KiB": 24, "blocks": 8, "us": 1.93, "GBps": 63.5}, {"case": "reduce peers=pin ld.global", "T": 2, "KiB": 24, "blocks": 8, "us": 1.91, "GBps": 64.3}, {"case": "reduce peers=pin ld.volatile", "T": 2, "KiB": 24, "blocks": 8, "us": 1.95, "GBps": 63.1}, {"case": "reduce peers=dev ld.sys", "T": 2, "KiB": 24, "blocks": 8, "us": 1.72, "GBps": 71.4}, {"case": "reduce peers=dev ld.global", "T": 2, "KiB": 24, "blocks": 8, "us": 1.65, "GBps": 74.3}, {"case": "stage dev->pin", "T": 2, "KiB": 24, "blocks": 16, "us": 1.42, "GBps": 34.7}, {"case": "copy dev->dev", "T": 2, "KiB": 24, "blocks": 16, "us": 1.42, "GBps": 34.7}, {"case": "copy pin->dev", "T": 2, "KiB": 24, "blocks": 16, "us": 1.72, "GBps": 28.6}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 2, "KiB": 24, "blocks": 16, "us": 1.93, "GBps": 63.5}, {"case": "reduce peers=pin ld.global", "T": 2, "KiB": 24, "blocks": 16, "us": 1.93, "GBps": 63.6}, {"case": "reduce peers=pin ld.volatile", "T": 2, "KiB": 24, "blocks": 16, "us": 1.93, "GBps": 63.5}, {"case": "reduce peers=dev ld.sys", "T": 2, "KiB": 24, "blocks": 16, "us": 1.71, "GBps": 71.8}, {"case": "reduce peers=dev ld.global", "T": 2, "KiB": 24, "blocks": 16, "us": 1.66, "GBps": 74.1}, {"case": "stage dev->pin", "T": 2, "KiB": 24, "blocks": 48, "us": 1.42, "GBps": 34.7}, {"case": "copy dev->dev", "T": 2, "KiB": 24, "blocks": 48, "us": 1.42, "GBps": 34.6}, {"case": "copy pin->dev", "T": 2, "KiB": 24, "blocks": 48, "us": 1.72, "GBps": 28.5}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 2, "KiB": 24, "blocks": 48, "us": 1.95, "GBps": 63.2}, {"case": "reduce peers=pin ld.global", "T": 2, "KiB": 24, "blocks": 48, "us": 1.93, "GBps": 63.5}, {"case": "reduce peers=pin ld.volatile", "T": 2, "KiB": 24, "blocks": 48, "us": 1.94, "GBps": 63.4}, {"case": "reduce peers=dev ld.sys", "T": 2, "KiB": 24, "blocks": 48, "us": 1.71, "GBps": 71.8}, {"case": "reduce peers=dev ld.global", "T": 2, "KiB": 24, "blocks": 48, "us": 1.66, "GBps": 74.1}, {"case": "stage dev->pin", "T": 4, "KiB": 48, "blocks": 8, "us": 1.42, "GBps": 69.4}, {"case": "copy dev->dev", "T": 4, "KiB": 48, "blocks": 8, "us": 1.42, "GBps": 69.2}, {"case": "copy pin->dev", "T": 4, "KiB": 48, "blocks": 8, "us": 1.8, "GBps": 54.7}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 4, "KiB": 48, "blocks": 8, "us": 2.19, "GBps": 112.0}, {"case": "reduce peers=pin ld.global", "T": 4, "KiB": 48, "blocks": 8, "us": 2.18, "GBps": 112.7}, {"case": "reduce peers=pin ld.volatile", "T": 4, "KiB": 48, "blocks": 8, "us": 2.21, "GBps": 111.2}, {"case": "reduce peers=dev ld.sys", "T": 4, "KiB": 48, "blocks": 8, "us": 1.73, "GBps": 142.0}, {"case": "reduce peers=dev ld.global", "T": 4, "KiB": 48, "blocks": 8, "us": 1.67, "GBps": 146.9}, {"case": "stage dev->pin", "T": 4, "KiB": 48, "blocks": 16, "us": 1.42, "GBps": 69.1}, {"case": "copy dev->dev", "T": 4, "KiB": 48, "blocks": 16, "us": 1.42, "GBps": 69.2}, {"case": "copy pin->dev", "T": 4, "KiB": 48, "blocks": 16, "us": 1.8, "GBps": 54.7}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 4, "KiB": 48, "blocks": 16, "us": 2.19, "GBps": 112.2}, {"case": "reduce peers=pin ld.global", "T": 4, "KiB": 48, "blocks": 16, "us": 2.19, "GBps": 112.3}, {"case": "reduce peers=pin ld.volatile", "T": 4, "KiB": 48, "blocks": 16, "us": 2.21, "GBps": 111.2}, {"case": "reduce peers=dev ld.sys", "T": 4, "KiB": 48, "blocks": 16, "us": 1.72, "GBps": 143.2}, {"case": "reduce peers=dev ld.global", "T": 4, "KiB": 48, "blocks": 16, "us": 1.68, "GBps": 146.5}, {"case": "stage dev->pin", "T": 4, "KiB": 48, "blocks": 48, "us": 1.44, "GBps": 68.5}, {"case": "copy dev->dev", "T": 4, "KiB": 48, "blocks": 48, "us": 1.42, "GBps": 69.4}, {"case": "copy pin->dev", "T": 4, "KiB": 48, "blocks": 48, "us": 1.79, "GBps": 55.0}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 4, "KiB": 48, "blocks": 48, "us": 2.19, "GBps": 112.3}, {"case": "reduce peers=pin ld.global", "T": 4, "KiB": 48, "blocks": 48, "us": 2.2, "GBps": 111.6}, {"case": "reduce peers=pin ld.volatile", "T": 4, "KiB": 48, "blocks": 48, "us": 2.2, "GBps": 111.7}, {"case": "reduce peers=dev ld.sys", "T": 4, "KiB": 48, "blocks": 48, "us": 1.75, "GBps": 140.5}, {"case": "reduce peers=dev ld.global", "T": 4, "KiB": 48, "blocks": 48, "us": 1.73, "GBps": 141.9}, {"case": "stage dev->pin", "T": 8, "KiB": 96, "blocks": 8, "us": 1.72, "GBps": 114.2}, {"case": "copy dev->dev", "T": 8, "KiB": 96, "blocks": 8, "us": 1.71, "GBps": 114.8}, {"case": "copy pin->dev", "T": 8, "KiB": 96, "blocks": 8, "us": 2.39, "GBps": 82.1}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 8, "KiB": 96, "blocks": 8, "us": 3.26, "GBps": 150.9}, {"case": "reduce peers=pin ld.global", "T": 8, "KiB": 96, "blocks": 8, "us": 3.24, "GBps": 151.8}, {"case": "reduce peers=pin ld.volatile", "T": 8, "KiB": 96, "blocks": 8, "us": 3.28, "GBps": 149.9}, {"case": "reduce peers=dev ld.sys", "T": 8, "KiB": 96, "blocks": 8, "us": 2.32, "GBps": 212.3}, {"case": "reduce peers=dev ld.global", "T": 8, "KiB": 96, "blocks": 8, "us": 2.16, "GBps": 227.4}, {"case": "stage dev->pin", "T": 8, "KiB": 96, "blocks": 16, "us": 1.42, "GBps": 138.1}, {"case": "copy dev->dev", "T": 8, "KiB": 96, "blocks": 16, "us": 1.42, "GBps": 138.3}, {"case": "copy pin->dev", "T": 8, "KiB": 96, "blocks": 16, "us": 1.97, "GBps": 99.6}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 8, "KiB": 96, "blocks": 16, "us": 2.95, "GBps": 166.5}, {"case": "reduce peers=pin ld.global", "T": 8, "KiB": 96, "blocks": 16, "us": 2.94, "GBps": 167.4}, {"case": "reduce peers=pin ld.volatile", "T": 8, "KiB": 96, "blocks": 16, "us": 2.96, "GBps": 166.1}, {"case": "reduce peers=dev ld.sys", "T": 8, "KiB": 96, "blocks": 16, "us": 1.72, "GBps": 285.6}, {"case": "reduce peers=dev ld.global", "T": 8, "KiB": 96, "blocks": 16, "us": 1.67, "GBps": 294.8}, {"case": "stage dev->pin", "T": 8, "KiB": 96, "blocks": 48, "us": 1.61, "GBps": 122.0}, {"case": "copy dev->dev", "T": 8, "KiB": 96, "blocks": 48, "us": 1.55, "GBps": 127.0}, {"case": "copy pin->dev", "T": 8, "KiB": 96, "blocks": 48, "us": 2.0, "GBps": 98.4}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 8, "KiB": 96, "blocks": 48, "us": 2.96, "GBps": 166.2}, {"case": "reduce peers=pin ld.global", "T": 8, "KiB": 96, "blocks": 48, "us": 2.94, "GBps": 166.9}, {"case": "reduce peers=pin ld.volatile", "T": 8, "KiB": 96, "blocks": 48, "us": 2.96, "GBps": 166.2}, {"case": "reduce peers=dev ld.sys", "T": 8, "KiB": 96, "blocks": 48, "us": 2.04, "GBps": 241.5}, {"case": "reduce peers=dev ld.global", "T": 8, "KiB": 96, "blocks": 48, "us": 2.0, "GBps": 246.0}, {"case": "stage dev->pin", "T": 16, "KiB": 192, "blocks": 8, "us": 2.02, "GBps": 194.8}, {"case": "copy dev->dev", "T": 16, "KiB": 192, "blocks": 8, "us": 2.02, "GBps": 194.8}, {"case": "copy pin->dev", "T": 16, "KiB": 192, "blocks": 8, "us": 3.1, "GBps": 127.0}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 16, "KiB": 192, "blocks": 8, "us": 4.73, "GBps": 208.0}, {"case": "reduce peers=pin ld.global", "T": 16, "KiB": 192, "blocks": 8, "us": 4.71, "GBps": 208.9}, {"case": "reduce peers=pin ld.volatile", "T": 16, "KiB": 192, "blocks": 8, "us": 4.7, "GBps": 209.3}, {"case": "reduce peers=dev ld.sys", "T": 16, "KiB": 192, "blocks": 8, "us": 4.09, "GBps": 240.2}, {"case": "reduce peers=dev ld.global", "T": 16, "KiB": 192, "blocks": 8, "us": 4.3, "GBps": 228.4}, {"case": "stage dev->pin", "T": 16, "KiB": 192, "blocks": 16, "us": 1.74, "GBps": 225.7}, {"case": "copy dev->dev", "T": 16, "KiB": 192, "blocks": 16, "us": 1.71, "GBps": 229.3}, {"case": "copy pin->dev", "T": 16, "KiB": 192, "blocks": 16, "us": 2.79, "GBps": 141.0}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 16, "KiB": 192, "blocks": 16, "us": 4.53, "GBps": 216.9}, {"case": "reduce peers=pin ld.global", "T": 16, "KiB": 192, "blocks": 16, "us": 4.49, "GBps": 218.8}, {"case": "reduce peers=pin ld.volatile", "T": 16, "KiB": 192, "blocks": 16, "us": 4.54, "GBps": 216.7}, {"case": "reduce peers=dev ld.sys", "T": 16, "KiB": 192, "blocks": 16, "us": 3.62, "GBps": 271.7}, {"case": "reduce peers=dev ld.global", "T": 16, "KiB": 192, "blocks": 16, "us": 3.61, "GBps": 272.0}, {"case": "stage dev->pin", "T": 16, "KiB": 192, "blocks": 48, "us": 1.66, "GBps": 237.3}, {"case": "copy dev->dev", "T": 16, "KiB": 192, "blocks": 48, "us": 1.56, "GBps": 251.8}, {"case": "copy pin->dev", "T": 16, "KiB": 192, "blocks": 48, "us": 2.55, "GBps": 154.0}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 16, "KiB": 192, "blocks": 48, "us": 4.36, "GBps": 225.3}, {"case": "reduce peers=pin ld.global", "T": 16, "KiB": 192, "blocks": 48, "us": 4.33, "GBps": 227.3}, {"case": "reduce peers=pin ld.volatile", "T": 16, "KiB": 192, "blocks": 48, "us": 4.36, "GBps": 225.3}, {"case": "reduce peers=dev ld.sys", "T": 16, "KiB": 192, "blocks": 48, "us": 3.32, "GBps": 295.9}, {"case": "reduce peers=dev ld.global", "T": 16, "KiB": 192, "blocks": 48, "us": 3.32, "GBps": 296.4}, {"case": "stage dev->pin", "T": 32, "KiB": 384, "blocks": 8, "us": 2.93, "GBps": 268.8}, {"case": "copy dev->dev", "T": 32, "KiB": 384, "blocks": 8, "us": 3.44, "GBps": 228.6}, {"case": "copy pin->dev", "T": 32, "KiB": 384, "blocks": 8, "us": 5.45, "GBps": 144.3}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 32, "KiB": 384, "blocks": 8, "us": 8.95, "GBps": 219.8}, {"case": "reduce peers=pin ld.global", "T": 32, "KiB": 384, "blocks": 8, "us": 8.94, "GBps": 219.9}, {"case": "reduce peers=pin ld.volatile", "T": 32, "KiB": 384, "blocks": 8, "us": 9.19, "GBps": 214.0}, {"case": "reduce peers=dev ld.sys", "T": 32, "KiB": 384, "blocks": 8, "us": 10.53, "GBps": 186.7}, {"case": "reduce peers=dev ld.global", "T": 32, "KiB": 384, "blocks": 8, "us": 10.48, "GBps": 187.6}, {"case": "stage dev->pin", "T": 32, "KiB": 384, "blocks": 16, "us": 2.66, "GBps": 295.7}, {"case": "copy dev->dev", "T": 32, "KiB": 384, "blocks": 16, "us": 2.77, "GBps": 284.2}, {"case": "copy pin->dev", "T": 32, "KiB": 384, "blocks": 16, "us": 4.72, "GBps": 166.7}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 32, "KiB": 384, "blocks": 16, "us": 8.85, "GBps": 222.2}, {"case": "reduce peers=pin ld.global", "T": 32, "KiB": 384, "blocks": 16, "us": 8.82, "GBps": 222.8}, {"case": "reduce peers=pin ld.volatile", "T": 32, "KiB": 384, "blocks": 16, "us": 8.59, "GBps": 228.9}, {"case": "reduce peers=dev ld.sys", "T": 32, "KiB": 384, "blocks": 16, "us": 10.1, "GBps": 194.7}, {"case": "reduce peers=dev ld.global", "T": 32, "KiB": 384, "blocks": 16, "us": 10.11, "GBps": 194.5}, {"case": "stage dev->pin", "T": 32, "KiB": 384, "blocks": 48, "us": 2.58, "GBps": 305.3}, {"case": "copy dev->dev", "T": 32, "KiB": 384, "blocks": 48, "us": 2.41, "GBps": 325.9}, {"case": "copy pin->dev", "T": 32, "KiB": 384, "blocks": 48, "us": 4.52, "GBps": 174.1}, {"case": "reduce peers=pin ld.sys (b12x)", "T": 32, "KiB": 384, "blocks": 48, "us": 8.86, "GBps": 222.0}, {"case": "reduce peers=pin ld.global", "T": 32, "KiB": 384, "blocks": 48, "us": 8.9, "GBps": 220.9}, {"case": "reduce peers=pin ld.volatile", "T": 32, "KiB": 384, "blocks": 48, "us": 8.94, "GBps": 219.8}, {"case": "reduce peers=dev ld.sys", "T": 32, "KiB": 384, "blocks": 48, "us": 10.14, "GBps": 194.0}, {"case": "reduce peers=dev ld.global", "T": 32, "KiB": 384, "blocks": 48, "us": 10.15, "GBps": 193.7}]}

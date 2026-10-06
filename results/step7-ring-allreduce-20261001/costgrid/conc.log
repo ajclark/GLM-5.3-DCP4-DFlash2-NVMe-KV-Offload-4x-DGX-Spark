@@ -1,0 +1,112 @@
+05:59:59 fixed7 n=1 ['prose0'] agg 17.8 tok/s over 28.7s, tok/cycle 2.19, gen [512] CLEAN 
+06:00:16 fixed7 n=1 ['code0'] agg 32.0 tok/s over 16.0s, tok/cycle 4.08, gen [512] CLEAN 
+06:00:56 fixed7 n=2 ['prose0', 'prose1'] agg 27.4 tok/s over 33.7s, tok/cycle 2.40, gen [512, 502] CLEAN 
+06:01:15 fixed7 n=2 ['code0', 'code1'] agg 56.1 tok/s over 15.6s, tok/cycle 5.47, gen [512, 512] CLEAN 
+06:02:05 fixed7 n=3 ['prose0', 'prose1', 'prose2'] agg 31.8 tok/s over 45.1s, tok/cycle 2.39, gen [512, 512, 512] CLEAN 
+06:02:35 fixed7 n=3 ['code0', 'code1', 'code2'] agg 60.5 tok/s over 19.9s, tok/cycle 4.54, gen [512, 512, 512] CLEAN 
+06:03:38 fixed7 n=4 ['prose0', 'prose1', 'prose2', 'prose3'] agg 33.7 tok/s over 48.8s, tok/cycle 2.19, gen [512, 502, 512, 448] CLEAN 
+06:04:10 fixed7 n=4 ['code0', 'code1', 'code2', 'code3'] agg 67.3 tok/s over 23.7s, tok/cycle 4.87, gen [512, 512, 512, 512] CLEAN 
+06:04:10 fixed7 SUMMARY fixed7|n1|code               rounds 1 agg median 32.0 mean 32.0 tok/s, tok/cycle 4.08
+06:04:10 fixed7 SUMMARY fixed7|n1|prose              rounds 1 agg median 17.8 mean 17.8 tok/s, tok/cycle 2.19
+06:04:10 fixed7 SUMMARY fixed7|n2|code               rounds 1 agg median 56.1 mean 56.1 tok/s, tok/cycle 5.47
+06:04:10 fixed7 SUMMARY fixed7|n2|prose              rounds 1 agg median 27.4 mean 27.4 tok/s, tok/cycle 2.40
+06:04:10 fixed7 SUMMARY fixed7|n3|code               rounds 1 agg median 60.5 mean 60.5 tok/s, tok/cycle 4.54
+06:04:10 fixed7 SUMMARY fixed7|n3|prose              rounds 1 agg median 31.8 mean 31.8 tok/s, tok/cycle 2.39
+06:04:10 fixed7 SUMMARY fixed7|n4|code               rounds 1 agg median 67.3 mean 67.3 tok/s, tok/cycle 4.87
+06:04:10 fixed7 SUMMARY fixed7|n4|prose              rounds 1 agg median 33.7 mean 33.7 tok/s, tok/cycle 2.19
+06:04:41 fixed5 n=1 ['prose0'] agg 19.3 tok/s over 26.5s, tok/cycle 2.12, gen [512] CLEAN 
+06:04:56 fixed5 n=1 ['code0'] agg 36.1 tok/s over 14.2s, tok/cycle 4.07, gen [512] CLEAN 
+06:05:32 fixed5 n=2 ['prose0', 'prose1'] agg 31.3 tok/s over 29.5s, tok/cycle 2.40, gen [512, 512] CLEAN 
+06:05:52 fixed5 n=2 ['code0', 'code1'] agg 54.4 tok/s over 16.2s, tok/cycle 4.53, gen [512, 512] CLEAN 
+06:06:37 fixed5 n=3 ['prose0', 'prose1', 'prose2'] agg 35.9 tok/s over 39.1s, tok/cycle 2.35, gen [512, 512, 512] CLEAN 
+06:07:07 fixed5 n=3 ['code0', 'code1', 'code2'] agg 58.1 tok/s over 20.2s, tok/cycle 4.01, gen [512, 512, 512] CLEAN 
+06:08:06 fixed5 n=4 ['prose0', 'prose1', 'prose2', 'prose3'] agg 37.9 tok/s over 38.7s, tok/cycle 2.07, gen [512, 447, 512, 510] CLEAN 
+06:08:39 fixed5 n=4 ['code0', 'code1', 'code2', 'code3'] agg 67.2 tok/s over 24.4s, tok/cycle 4.12, gen [512, 512, 512, 512] CLEAN 
+06:08:39 fixed5 SUMMARY fixed5|n1|code               rounds 1 agg median 36.1 mean 36.1 tok/s, tok/cycle 4.07
+06:08:39 fixed5 SUMMARY fixed5|n1|prose              rounds 1 agg median 19.3 mean 19.3 tok/s, tok/cycle 2.12
+06:08:39 fixed5 SUMMARY fixed5|n2|code               rounds 1 agg median 54.4 mean 54.4 tok/s, tok/cycle 4.53
+06:08:39 fixed5 SUMMARY fixed5|n2|prose              rounds 1 agg median 31.3 mean 31.3 tok/s, tok/cycle 2.40
+06:08:39 fixed5 SUMMARY fixed5|n3|code               rounds 1 agg median 58.1 mean 58.1 tok/s, tok/cycle 4.01
+06:08:39 fixed5 SUMMARY fixed5|n3|prose              rounds 1 agg median 35.9 mean 35.9 tok/s, tok/cycle 2.35
+06:08:39 fixed5 SUMMARY fixed5|n4|code               rounds 1 agg median 67.2 mean 67.2 tok/s, tok/cycle 4.12
+06:08:39 fixed5 SUMMARY fixed5|n4|prose              rounds 1 agg median 37.9 mean 37.9 tok/s, tok/cycle 2.07
+06:08:39 fixed5 SUMMARY fixed7|n1|code               rounds 1 agg median 32.0 mean 32.0 tok/s, tok/cycle 4.08
+06:08:39 fixed5 SUMMARY fixed7|n1|prose              rounds 1 agg median 17.8 mean 17.8 tok/s, tok/cycle 2.19
+06:08:39 fixed5 SUMMARY fixed7|n2|code               rounds 1 agg median 56.1 mean 56.1 tok/s, tok/cycle 5.47
+06:08:39 fixed5 SUMMARY fixed7|n2|prose              rounds 1 agg median 27.4 mean 27.4 tok/s, tok/cycle 2.40
+06:08:39 fixed5 SUMMARY fixed7|n3|code               rounds 1 agg median 60.5 mean 60.5 tok/s, tok/cycle 4.54
+06:08:39 fixed5 SUMMARY fixed7|n3|prose              rounds 1 agg median 31.8 mean 31.8 tok/s, tok/cycle 2.39
+06:08:39 fixed5 SUMMARY fixed7|n4|code               rounds 1 agg median 67.3 mean 67.3 tok/s, tok/cycle 4.87
+06:08:39 fixed5 SUMMARY fixed7|n4|prose              rounds 1 agg median 33.7 mean 33.7 tok/s, tok/cycle 2.19
+06:09:06 fixed3 n=1 ['prose0'] agg 22.3 tok/s over 23.0s, tok/cycle 2.10, gen [512] CLEAN 
+06:09:22 fixed3 n=1 ['code0'] agg 33.0 tok/s over 15.5s, tok/cycle 3.19, gen [512] CLEAN 
+06:09:55 fixed3 n=2 ['prose0', 'prose1'] agg 34.3 tok/s over 27.4s, tok/cycle 2.20, gen [512, 512] CLEAN 
+06:10:17 fixed3 n=2 ['code0', 'code1'] agg 51.0 tok/s over 18.7s, tok/cycle 3.52, gen [512, 512] CLEAN 
+06:10:56 fixed3 n=3 ['prose0', 'prose1', 'prose2'] agg 41.5 tok/s over 34.0s, tok/cycle 2.22, gen [512, 495, 512] CLEAN 
+06:11:25 fixed3 n=3 ['code0', 'code1', 'code2'] agg 57.6 tok/s over 23.2s, tok/cycle 3.27, gen [512, 512, 512] CLEAN 
+06:12:13 fixed3 n=4 ['prose0', 'prose1', 'prose2', 'prose3'] agg 46.5 tok/s over 35.7s, tok/cycle 2.15, gen [512, 476, 512, 512] CLEAN 
+06:12:46 fixed3 n=4 ['code0', 'code1', 'code2', 'code3'] agg 65.8 tok/s over 27.6s, tok/cycle 3.28, gen [512, 512, 512, 512] CLEAN 
+06:12:46 fixed3 SUMMARY fixed3|n1|code               rounds 1 agg median 33.0 mean 33.0 tok/s, tok/cycle 3.19
+06:12:46 fixed3 SUMMARY fixed3|n1|prose              rounds 1 agg median 22.3 mean 22.3 tok/s, tok/cycle 2.10
+06:12:46 fixed3 SUMMARY fixed3|n2|code               rounds 1 agg median 51.0 mean 51.0 tok/s, tok/cycle 3.52
+06:12:46 fixed3 SUMMARY fixed3|n2|prose              rounds 1 agg median 34.3 mean 34.3 tok/s, tok/cycle 2.20
+06:12:46 fixed3 SUMMARY fixed3|n3|code               rounds 1 agg median 57.6 mean 57.6 tok/s, tok/cycle 3.27
+06:12:46 fixed3 SUMMARY fixed3|n3|prose              rounds 1 agg median 41.5 mean 41.5 tok/s, tok/cycle 2.22
+06:12:46 fixed3 SUMMARY fixed3|n4|code               rounds 1 agg median 65.8 mean 65.8 tok/s, tok/cycle 3.28
+06:12:46 fixed3 SUMMARY fixed3|n4|prose              rounds 1 agg median 46.5 mean 46.5 tok/s, tok/cycle 2.15
+06:12:46 fixed3 SUMMARY fixed5|n1|code               rounds 1 agg median 36.1 mean 36.1 tok/s, tok/cycle 4.07
+06:12:46 fixed3 SUMMARY fixed5|n1|prose              rounds 1 agg median 19.3 mean 19.3 tok/s, tok/cycle 2.12
+06:12:46 fixed3 SUMMARY fixed5|n2|code               rounds 1 agg median 54.4 mean 54.4 tok/s, tok/cycle 4.53
+06:12:46 fixed3 SUMMARY fixed5|n2|prose              rounds 1 agg median 31.3 mean 31.3 tok/s, tok/cycle 2.40
+06:12:46 fixed3 SUMMARY fixed5|n3|code               rounds 1 agg median 58.1 mean 58.1 tok/s, tok/cycle 4.01
+06:12:46 fixed3 SUMMARY fixed5|n3|prose              rounds 1 agg median 35.9 mean 35.9 tok/s, tok/cycle 2.35
+06:12:46 fixed3 SUMMARY fixed5|n4|code               rounds 1 agg median 67.2 mean 67.2 tok/s, tok/cycle 4.12
+06:12:46 fixed3 SUMMARY fixed5|n4|prose              rounds 1 agg median 37.9 mean 37.9 tok/s, tok/cycle 2.07
+06:12:46 fixed3 SUMMARY fixed7|n1|code               rounds 1 agg median 32.0 mean 32.0 tok/s, tok/cycle 4.08
+06:12:46 fixed3 SUMMARY fixed7|n1|prose              rounds 1 agg median 17.8 mean 17.8 tok/s, tok/cycle 2.19
+06:12:46 fixed3 SUMMARY fixed7|n2|code               rounds 1 agg median 56.1 mean 56.1 tok/s, tok/cycle 5.47
+06:12:46 fixed3 SUMMARY fixed7|n2|prose              rounds 1 agg median 27.4 mean 27.4 tok/s, tok/cycle 2.40
+06:12:46 fixed3 SUMMARY fixed7|n3|code               rounds 1 agg median 60.5 mean 60.5 tok/s, tok/cycle 4.54
+06:12:46 fixed3 SUMMARY fixed7|n3|prose              rounds 1 agg median 31.8 mean 31.8 tok/s, tok/cycle 2.39
+06:12:46 fixed3 SUMMARY fixed7|n4|code               rounds 1 agg median 67.3 mean 67.3 tok/s, tok/cycle 4.87
+06:12:46 fixed3 SUMMARY fixed7|n4|prose              rounds 1 agg median 33.7 mean 33.7 tok/s, tok/cycle 2.19
+06:13:15 fixed1 n=1 ['prose0'] agg 20.8 tok/s over 24.6s, tok/cycle 1.63, gen [512] CLEAN 
+06:13:37 fixed1 n=1 ['code0'] agg 24.1 tok/s over 21.3s, tok/cycle 1.92, gen [512] CLEAN 
+06:14:10 fixed1 n=2 ['prose0', 'prose1'] agg 33.5 tok/s over 29.5s, tok/cycle 1.68, gen [512, 512] CLEAN 
+06:14:38 fixed1 n=2 ['code0', 'code1'] agg 37.7 tok/s over 26.8s, tok/cycle 1.95, gen [512, 512] CLEAN 
+06:15:16 fixed1 n=3 ['prose0', 'prose1', 'prose2'] agg 41.6 tok/s over 33.1s, tok/cycle 1.68, gen [512, 477, 512] CLEAN 
+06:15:51 fixed1 n=3 ['code0', 'code1', 'code2'] agg 46.0 tok/s over 31.6s, tok/cycle 1.91, gen [512, 512, 512] CLEAN 
+06:16:35 fixed1 n=4 ['prose0', 'prose1', 'prose2', 'prose3'] agg 48.0 tok/s over 39.4s, tok/cycle 1.66, gen [512, 512, 512, 459] CLEAN 
+06:17:16 fixed1 n=4 ['code0', 'code1', 'code2', 'code3'] agg 52.5 tok/s over 37.1s, tok/cycle 1.89, gen [512, 512, 512, 512] CLEAN 
+06:17:16 fixed1 SUMMARY fixed1|n1|code               rounds 1 agg median 24.1 mean 24.1 tok/s, tok/cycle 1.92
+06:17:16 fixed1 SUMMARY fixed1|n1|prose              rounds 1 agg median 20.8 mean 20.8 tok/s, tok/cycle 1.63
+06:17:16 fixed1 SUMMARY fixed1|n2|code               rounds 1 agg median 37.7 mean 37.7 tok/s, tok/cycle 1.95
+06:17:16 fixed1 SUMMARY fixed1|n2|prose              rounds 1 agg median 33.5 mean 33.5 tok/s, tok/cycle 1.68
+06:17:16 fixed1 SUMMARY fixed1|n3|code               rounds 1 agg median 46.0 mean 46.0 tok/s, tok/cycle 1.91
+06:17:16 fixed1 SUMMARY fixed1|n3|prose              rounds 1 agg median 41.6 mean 41.6 tok/s, tok/cycle 1.68
+06:17:16 fixed1 SUMMARY fixed1|n4|code               rounds 1 agg median 52.5 mean 52.5 tok/s, tok/cycle 1.89
+06:17:16 fixed1 SUMMARY fixed1|n4|prose              rounds 1 agg median 48.0 mean 48.0 tok/s, tok/cycle 1.66
+06:17:16 fixed1 SUMMARY fixed3|n1|code               rounds 1 agg median 33.0 mean 33.0 tok/s, tok/cycle 3.19
+06:17:16 fixed1 SUMMARY fixed3|n1|prose              rounds 1 agg median 22.3 mean 22.3 tok/s, tok/cycle 2.10
+06:17:16 fixed1 SUMMARY fixed3|n2|code               rounds 1 agg median 51.0 mean 51.0 tok/s, tok/cycle 3.52
+06:17:16 fixed1 SUMMARY fixed3|n2|prose              rounds 1 agg median 34.3 mean 34.3 tok/s, tok/cycle 2.20
+06:17:16 fixed1 SUMMARY fixed3|n3|code               rounds 1 agg median 57.6 mean 57.6 tok/s, tok/cycle 3.27
+06:17:16 fixed1 SUMMARY fixed3|n3|prose              rounds 1 agg median 41.5 mean 41.5 tok/s, tok/cycle 2.22
+06:17:16 fixed1 SUMMARY fixed3|n4|code               rounds 1 agg median 65.8 mean 65.8 tok/s, tok/cycle 3.28
+06:17:16 fixed1 SUMMARY fixed3|n4|prose              rounds 1 agg median 46.5 mean 46.5 tok/s, tok/cycle 2.15
+06:17:16 fixed1 SUMMARY fixed5|n1|code               rounds 1 agg median 36.1 mean 36.1 tok/s, tok/cycle 4.07
+06:17:16 fixed1 SUMMARY fixed5|n1|prose              rounds 1 agg median 19.3 mean 19.3 tok/s, tok/cycle 2.12
+06:17:16 fixed1 SUMMARY fixed5|n2|code               rounds 1 agg median 54.4 mean 54.4 tok/s, tok/cycle 4.53
+06:17:16 fixed1 SUMMARY fixed5|n2|prose              rounds 1 agg median 31.3 mean 31.3 tok/s, tok/cycle 2.40
+06:17:16 fixed1 SUMMARY fixed5|n3|code               rounds 1 agg median 58.1 mean 58.1 tok/s, tok/cycle 4.01
+06:17:16 fixed1 SUMMARY fixed5|n3|prose              rounds 1 agg median 35.9 mean 35.9 tok/s, tok/cycle 2.35
+06:17:16 fixed1 SUMMARY fixed5|n4|code               rounds 1 agg median 67.2 mean 67.2 tok/s, tok/cycle 4.12
+06:17:16 fixed1 SUMMARY fixed5|n4|prose              rounds 1 agg median 37.9 mean 37.9 tok/s, tok/cycle 2.07
+06:17:16 fixed1 SUMMARY fixed7|n1|code               rounds 1 agg median 32.0 mean 32.0 tok/s, tok/cycle 4.08
+06:17:16 fixed1 SUMMARY fixed7|n1|prose              rounds 1 agg median 17.8 mean 17.8 tok/s, tok/cycle 2.19
+06:17:16 fixed1 SUMMARY fixed7|n2|code               rounds 1 agg median 56.1 mean 56.1 tok/s, tok/cycle 5.47
+06:17:16 fixed1 SUMMARY fixed7|n2|prose              rounds 1 agg median 27.4 mean 27.4 tok/s, tok/cycle 2.40
+06:17:16 fixed1 SUMMARY fixed7|n3|code               rounds 1 agg median 60.5 mean 60.5 tok/s, tok/cycle 4.54
+06:17:16 fixed1 SUMMARY fixed7|n3|prose              rounds 1 agg median 31.8 mean 31.8 tok/s, tok/cycle 2.39
+06:17:16 fixed1 SUMMARY fixed7|n4|code               rounds 1 agg median 67.3 mean 67.3 tok/s, tok/cycle 4.87
+06:17:16 fixed1 SUMMARY fixed7|n4|prose              rounds 1 agg median 33.7 mean 33.7 tok/s, tok/cycle 2.19

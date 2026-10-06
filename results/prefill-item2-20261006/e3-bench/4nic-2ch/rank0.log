@@ -1,0 +1,5 @@
+{"type": "metadata", "label": "4nic-2ch", "nccl": "2.30.7", "env": {"NCCL_IB_HCA": "=roceP2p1s0f0,roceP2p1s0f1,rocep1s0f0,rocep1s0f1", "NCCL_IB_MERGE_NICS": "1", "NCCL_MAX_NCHANNELS": "2"}, "configs": ["1fwd"], "sizes": [12582912, 25165824]}
+{"type": "result", "label": "4nic-2ch", "config": "1fwd", "bytes": 12582912, "p50_us": 938.7, "min_us": 922.5, "max_us": 973.0, "GBps_per_rank_bus": 20.11, "max_err_vs_fp32": 0.0625, "vs_1fwd": null, "mem_drop_mb_max": {"MemAvailable": 641.8, "cuda_free": 643.0}}
+{"type": "result", "label": "4nic-2ch", "config": "1fwd", "bytes": 25165824, "p50_us": 1809.6, "min_us": 1779.9, "max_us": 1838.1, "GBps_per_rank_bus": 20.86, "max_err_vs_fp32": 0.0625, "vs_1fwd": null, "mem_drop_mb_max": {"MemAvailable": 641.8, "cuda_free": 643.0}}
+{"type": "done", "label": "4nic-2ch"}
+ created: port=1 dev=2 devName=roceP2p1s0f0 ndevs=4 nmdevs=6 qp_num=1454 pkey=0 pd=0xfac2dc1d89f0 oooRq=0

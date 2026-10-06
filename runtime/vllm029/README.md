@@ -99,6 +99,26 @@ After editing an overlay, refresh `manifest.json` with
 `.venv/bin/python runtime/vllm029/sync_overlay.py`, rerun tests, and rebuild.
 The source hashes are also the persisted-cache compatibility boundary.
 
+## DCP packing stride specialization fix
+
+The DCP candidate-packing overlay passes tensor strides and row width as
+non-specializing runtime scalars. This prevents new layouts within a warmed
+configuration from triggering late CUDA module loads. The CUDA rollout gate
+runs `dcp_pack_regression.py` in sweep, injected-failure and correctness modes.
+It is part of the `stridefix` base image (`Dockerfile.kvtier`) since 2026-09-20.
+
+## Overlay layer (`verify_cap_overlay/`) and RDMA collectives (`roce/`)
+
+The serving image is the `stridefix-kvtier` base image plus one overlay layer,
+built on every Spark by `verify_cap_overlay/build.sh` (no serving interruption).
+The layer is outside `manifest.json`, so it never changes the NVMe slab salt. It adds
+the draft-aware verification cap and its runtime control, the voice-first scheduler,
+the prefix-hit fix, the int8 drafter loading path, `glm_fast` (L2 prefetch, vocab-parallel
+argmax, DCP combine glue) and the RoCEnante / ring RDMA collectives from `roce/`
+(vendored b12x, Apache-2.0, with the reviewed patches listed in
+`roce/b12x/PROVENANCE.json`). Every feature has its own launcher switch; see
+`launch.sh` and the [top-level README](../../README.md#performance).
+
 ## C1 coding sweep
 
 The [2026-09-11/12 sweep report](../../results/vllm029-upgrade/c1-dflash-coding-20260911/REPORT.md)

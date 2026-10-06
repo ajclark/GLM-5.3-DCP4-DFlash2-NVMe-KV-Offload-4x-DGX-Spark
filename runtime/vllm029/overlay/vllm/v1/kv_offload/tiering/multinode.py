@@ -554,7 +554,14 @@ SLAB_META = "slab-meta.json"
 
 SLAB_EPOCH = "slab-epoch"
 
-DRAFTER_PER_TARGET = 4  # 64-token drafter blocks per 256-token target block
+DRAFTER_PER_TARGET = 4  # legacy default (DCP=4: 64-token drafter blocks per 256-token target block)
+
+def group_row_ratios(tokens_per_block: list[int]) -> list[int]:
+    """Slots per target row for every group: a group whose block spans fewer tokens
+    than the target's needs proportionally more slots for the same tokens
+    (DCP=2: 128-token target block / 64-token drafter block -> [1, 2])."""
+    base = tokens_per_block[0]
+    return [1] + [max(1, base // max(1, t)) for t in tokens_per_block[1:]]
 
 def _boot_id() -> str:
     try:
@@ -676,6 +683,18 @@ def _slab_should_wipe(old, slot_bytes, slot_counts, run_config, engine_version, 
         return True
     return False
 
+def _fallocate(fd: int, length: int) -> bool:
+    """fallocate(2) mode 0 over [0, length); True on success. Never falls back to
+    writing zeros (posix_fallocate would, for hundreds of GB)."""
+    try:
+        import ctypes
+        import ctypes.util
+        libc = ctypes.CDLL(ctypes.util.find_library("c") or "libc.so.6", use_errno=True)
+        libc.fallocate.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_long, ctypes.c_long]
+        return libc.fallocate(fd, 0, 0, int(length)) == 0
+    except Exception:  # noqa: BLE001
+        return False
+
 def _atomic_write_text(path: str, text: str) -> None:
     """Durable text publish, same barrier as _atomic_write_json. Used for the slab-epoch file:
     now that a reboot no longer wipes, the epoch is the ONLY cross-reboot invalidation barrier,
@@ -712,25 +731,32 @@ class SlabLoadStoreSpec(LoadStoreSpec):
     def __repr__(self) -> str:
         return f"SLAB({len(self.keys)} keys)"
 
-def slab_geometry(group_bytes: list[int], disk_bytes_per_rank: int) -> tuple[list[int], list[int]]:
+def slab_geometry(group_bytes: list[int], disk_bytes_per_rank: int,
+                  ratios: list[int] | None = None) -> tuple[list[int], list[int]]:
     """(slot_bytes, slot_count) per group from the group's payload bytes and
-    the per-rank disk budget. Group 0 (target) gets N rows, every other group
-    DRAFTER_PER_TARGET * N; header included in slot bytes, 4 KB aligned."""
+    the per-rank disk budget. Group 0 (target) gets N rows, group g ratios[g] * N
+    (ratios from group_row_ratios; default DRAFTER_PER_TARGET for every other
+    group); header included in slot bytes, 4 KB aligned."""
+    if ratios is None:
+        ratios = [1] + [DRAFTER_PER_TARGET] * (len(group_bytes) - 1)
+    assert len(ratios) == len(group_bytes) and ratios[0] == 1, ratios
     slot_bytes = [_round_up(SLAB_HEADER_BYTES + b, 4096) for b in group_bytes]
-    per_row = slot_bytes[0] + sum(DRAFTER_PER_TARGET * b for b in slot_bytes[1:])
+    per_row = sum(r * b for r, b in zip(ratios, slot_bytes))
     n = max(1, int(disk_bytes_per_rank) // per_row)
-    counts = [n] + [DRAFTER_PER_TARGET * n] * (len(group_bytes) - 1)
+    counts = [r * n for r in ratios]
     return slot_bytes, counts
 
 class SlabIO:
     """Slot-level I/O for one rank: header/payload layout, key verification,
     crash-safe write order. One fd per group, opened once."""
 
-    def __init__(self, rank_dir: str, slot_bytes: list[int], slot_counts: list[int], epoch: int = 0):
+    def __init__(self, rank_dir: str, slot_bytes: list[int], slot_counts: list[int], epoch: int = 0,
+                 preallocate: bool = False):
         self.rank_dir = rank_dir
         self.slot_bytes = slot_bytes
         self.slot_counts = slot_counts
         self.epoch = epoch
+        self.preallocate = preallocate
         os.makedirs(rank_dir, exist_ok=True)
         self.fds: list[int] = []
         for g in range(len(slot_bytes)):
@@ -739,6 +765,21 @@ class SlabIO:
             if os.fstat(fd).st_size > cap:
                 os.ftruncate(fd, cap)  # a smaller budget drops the slots past it
             self.fds.append(fd)
+        self._allocate()
+
+    def _allocate(self) -> None:
+        """Reserve the full slab extent up front (unwritten extents: reads return zeros,
+        so empty slots still fail the header check). Aligned direct writes into
+        allocated extents run in parallel on ext4; writes that allocate or extend
+        the file serialize on the inode lock. Falls back to a sparse size."""
+        if not self.preallocate:
+            return
+        for g, fd in enumerate(self.fds):
+            cap = self.slot_bytes[g] * self.slot_counts[g]
+            if _fallocate(fd, cap):
+                continue
+            if os.fstat(fd).st_size < cap:
+                os.ftruncate(fd, cap)
 
     def path(self, group: int) -> str:
         return os.path.join(self.rank_dir, f"g{group}.slab")
@@ -829,22 +870,40 @@ class SlabIO:
             except (OSError, AttributeError):
                 pass
 
-    def scan(self, group: int, epoch: int):
-        """Yield (slot, seq, key) for every valid slot of the current epoch."""
+    def scan(self, group: int, epoch: int, n_threads: int = 16):
+        """Yield (slot, seq, key) for every valid slot of the current epoch.
+        Headers are read in parallel (one random 4 KB read each on a full slab)."""
         fd, sb = self.fds[group], self.slot_bytes[group]
-        for slot in range(self.slot_counts[group]):
-            raw = os.pread(fd, SLAB_HEADER_BYTES, slot * sb)
-            if len(raw) < SLAB_HEADER_BYTES:
-                return  # sparse tail: nothing written past here
-            hdr = self.parse_header(raw)
-            if hdr is None or hdr[0] != group or hdr[1] != epoch:
-                continue
-            yield slot, hdr[3], hdr[4]
+        n = min(self.slot_counts[group], -(-os.fstat(fd).st_size // sb))
+
+        def part(lo: int, hi: int) -> list[tuple[int, int, OffloadKey]]:
+            out = []
+            for slot in range(lo, hi):
+                raw = os.pread(fd, SLAB_HEADER_BYTES, slot * sb)
+                if len(raw) < SLAB_HEADER_BYTES:
+                    break  # sparse tail: nothing written past here
+                hdr = self.parse_header(raw)
+                if hdr is None or hdr[0] != group or hdr[1] != epoch:
+                    continue
+                out.append((slot, hdr[3], hdr[4]))
+            return out
+
+        step = max(1024, -(-n // max(1, n_threads)))
+        ranges = [(lo, min(n, lo + step)) for lo in range(0, n, step)]
+        if len(ranges) <= 1:
+            parts = [part(lo, hi) for lo, hi in ranges]
+        else:
+            from concurrent.futures import ThreadPoolExecutor
+            with ThreadPoolExecutor(len(ranges)) as ex:
+                parts = list(ex.map(lambda r: part(*r), ranges))
+        for p in parts:
+            yield from p
 
     def wipe(self) -> None:
         for fd in self.fds:
             os.ftruncate(fd, 0)
             os.fsync(fd)   # the truncate must be durable before the new meta is published
+        self._allocate()
 
     def max_epoch(self) -> int | None:
         """Highest epoch found in any valid header, None if the slabs are empty. Used when the
@@ -888,6 +947,7 @@ class SlabOffloadingManager(OffloadingManager):
         self.siblings: dict[OffloadKey, list[OffloadKey]] = {}
         self.seq = 0
         self.epoch = 0
+        self.row_ratio = DRAFTER_PER_TARGET   # drafter slots per target row; from rank 0's geometry
         self._pending_reset = False
         self._rebuild = rebuild
         self.stats = {"hits": 0, "misses": 0, "evictions": 0, "stores": 0, "load_failures": 0}
@@ -910,6 +970,8 @@ class SlabOffloadingManager(OffloadingManager):
         except (OSError, ValueError, KeyError, TypeError):
             return False  # torn or unreadable meta: treat as not there yet
         self._rank0 = rank_dir
+        self.row_ratio = (max(1, self.counts[1] // max(1, self.counts[0]))
+                          if len(self.counts) > 1 else DRAFTER_PER_TARGET)
         epoch_path = os.path.join(rank_dir, SLAB_EPOCH)
         epoch_known = False
         try:
@@ -973,8 +1035,16 @@ class SlabOffloadingManager(OffloadingManager):
         self.stats["misses"] += 1
         return LookupResult.MISS
 
-    def _evictable(self, g: int, protect: set[OffloadKey]) -> int:
-        return sum(1 for k in self.index[g] if self.inflight_load.get(k, 0) == 0 and k not in protect)
+    def _evictable(self, g: int, protect: set[OffloadKey], need: int | None = None) -> int:
+        """Evictable slots in group g, counting at most ``need`` (the preflight only
+        needs to know there are enough; a full count is O(slots) per store)."""
+        n = 0
+        for k in self.index[g]:
+            if self.inflight_load.get(k, 0) == 0 and k not in protect:
+                n += 1
+                if need is not None and n >= need:
+                    break
+        return n
 
     def _take_slot(self, g: int, protect: set[OffloadKey], evicted: list[OffloadKey]) -> int:
         if self.free[g]:
@@ -1000,7 +1070,8 @@ class SlabOffloadingManager(OffloadingManager):
             g = get_offload_group_idx(k)
             need[g] = need.get(g, 0) + 1
         for g, n in need.items():  # transactional: preflight, or retry next step untouched
-            if len(self.free[g]) + self._evictable(g, protect) < n:
+            short = n - len(self.free[g])
+            if short > 0 and self._evictable(g, protect, short) < short:
                 return None
         evicted: list[OffloadKey] = []
         taken = [(k, self._take_slot(get_offload_group_idx(k), protect, evicted)) for k in new]
@@ -1008,8 +1079,9 @@ class SlabOffloadingManager(OffloadingManager):
             self.inflight_store[k] = slot
         targets = [k for k in new if get_offload_group_idx(k) == 0]
         drafters = [k for k in keys if get_offload_group_idx(k) != 0]
-        for i, t in enumerate(targets):  # bounded: the i-th target's 4 drafter blocks of this call
-            sib = drafters[DRAFTER_PER_TARGET * i : DRAFTER_PER_TARGET * (i + 1)]
+        r = self.row_ratio
+        for i, t in enumerate(targets):  # bounded: the i-th target's drafter blocks of this call
+            sib = drafters[r * i : r * (i + 1)]
             if sib:
                 self.siblings[t] = sib
         self.seq += 1
@@ -1172,10 +1244,359 @@ class SlabBounceController(BounceController):
             sid, len(keys), [functools.partial(self._load_one, job, k, s) for k, s in zip(keys, slots)]
         )
 
+class _CudaCopyBackend:
+    """Device side of ThreadedSlabController: one stream per I/O thread, batched
+    pointer copies (cuMemcpyBatchAsync via vLLM's swap_blocks_batch)."""
+
+    def __init__(self, device):
+        self.device = device
+
+    def thread_init(self):
+        torch.cuda.set_device(self.device)
+        return torch.cuda.Stream(device=self.device)
+
+    def submit_marker(self):
+        """Recorded on the submitting (compute) stream: the transfer must not start
+        before the model's pending writes to the blocks it reads or overwrites."""
+        ev = torch.cuda.Event()
+        ev.record(torch.cuda.current_stream(self.device))
+        return ev
+
+    def new_event(self):
+        # blocking: a waiting I/O thread sleeps instead of spinning a core that the
+        # engine's main thread needs
+        return torch.cuda.Event(blocking=True)
+
+    def copy(self, stream, marker, src, dst, sizes, done_event, host_src: bool) -> None:
+        from vllm import _custom_ops as ops
+        with torch.cuda.stream(stream):
+            stream.wait_event(marker)
+            ops.swap_blocks_batch(src, dst, sizes, is_src_access_order_any=host_src)
+            done_event.record(stream)
+
+    @staticmethod
+    def wait(event) -> None:
+        event.synchronize()
+
+
+@dataclass
+class _TJob:
+    job_id: int
+    store: bool
+    n: int
+    epoch: int
+    seq: int
+    marker: Any
+    nbytes: int
+    t0: float = field(default_factory=time.perf_counter)
+    done: int = 0
+    failed: bool = False
+    failed_gpu: list[int] = field(default_factory=list)
+    lock: threading.Lock = field(default_factory=threading.Lock)
+
+
+class ThreadedSlabController:
+    """Slab transfers driven entirely by I/O threads, independent of engine steps.
+
+    Each thread owns ``rows_per_thread`` 4 KB-aligned pinned rows of one slot size
+    and its own CUDA stream. A load reads the WHOLE slot (header + payload + pad,
+    4 KB multiple) with one O_DIRECT pread into a row, verifies key/length/epoch/
+    CRC, and copies the payload segments straight to the GPU block on the thread's
+    stream; the row is reused once that copy's event has completed, so disk reads
+    overlap host->GPU copies. A store copies GPU->row, CRCs, fills the header and
+    writes the slot with one O_DIRECT pwrite (the payload CRC is what makes a torn
+    slot detectable, as before). The main thread only drains finished jobs.
+    Pinned memory: (n_read + n_write) * rows_per_thread * slot_bytes.
+    """
+
+    def __init__(self, kv_caches: CanonicalKVCaches, slab: SlabIO, n_read_threads: int = 16,
+                 n_write_threads: int = 8, rows_per_thread: int = 2, direct_io: bool = True,
+                 backend=None):
+        self.slab = slab
+        self.backend = backend or _CudaCopyBackend(kv_caches.tensors[0].tensor.device)
+        # GPU block base pointer and row stride (bytes) per canonical tensor
+        self._gpu_base: list[int] = []
+        self._gpu_stride: list[int] = []
+        for t in kv_caches.tensors:
+            self._gpu_base.append(t.tensor.data_ptr())
+            self._gpu_stride.append(t.tensor.stride(0) * t.tensor.element_size())
+        # per group: (tensor_idx, byte offset in slot, nbytes); payload follows the header
+        self.layout: list[list[tuple[int, int, int]]] = []
+        for refs in kv_caches.group_data_refs:
+            off, segs = SLAB_HEADER_BYTES, []
+            for ref in refs:
+                segs.append((ref.tensor_idx, off, ref.page_size_bytes))
+                off += ref.page_size_bytes
+            self.layout.append(segs)
+        self.group_bytes = [sum(n for _, _, n in segs) for segs in self.layout]
+        for g, gb in enumerate(self.group_bytes):
+            assert SLAB_HEADER_BYTES + gb <= slab.slot_bytes[g], (g, gb, slab.slot_bytes[g])
+        self.row_bytes = max(slab.slot_bytes)
+        self.max_segs = max(len(segs) for segs in self.layout)
+        self.rows_per_thread = max(1, int(rows_per_thread))
+        self.direct = False
+        self.io_fds = list(slab.fds)
+        if direct_io and hasattr(os, "O_DIRECT"):
+            try:
+                self.io_fds = [os.open(slab.path(g), os.O_RDWR | os.O_DIRECT) for g in range(len(slab.fds))]
+                self.direct = True
+            except OSError as e:
+                logger.warning("Slab store: O_DIRECT unavailable (%s); using buffered I/O", e)
+        self._cv = threading.Condition()
+        self._loads: collections.deque = collections.deque()
+        self._stores: collections.deque = collections.deque()
+        self._finished: collections.deque[_TJob] = collections.deque()
+        self._stop = False
+        self.jobs: dict[int, _TJob] = {}
+        self._results: dict[bool, list[TransferResult]] = {True: [], False: []}
+        self._failed_gpu_blocks: set[int] = set()
+        n_read, n_write = max(1, int(n_read_threads)), max(1, int(n_write_threads))
+        self._ready = threading.Barrier(n_read + n_write + 1)
+        self._threads: list[threading.Thread] = []
+        self._init_errors: list[BaseException] = []
+        for i in range(n_read):
+            self._spawn(True, f"vllm_slab_load{i}")
+        for i in range(n_write):
+            self._spawn(False, f"vllm_slab_store{i}")
+        self._ready.wait()
+        if self._init_errors:
+            raise RuntimeError(f"slab I/O thread init failed: {self._init_errors[0]!r}")
+
+    def _spawn(self, load: bool, name: str) -> None:
+        t = threading.Thread(target=self._thread_main, args=(load,), name=name, daemon=True)
+        t.start()
+        self._threads.append(t)
+
+    # -- main thread -----------------------------------------------------------------
+    def submit(self, job_id: int, store: bool, spec: TransferSpec) -> bool:
+        src, dst = spec
+        gpu_spec, slab_spec = (src, dst) if store else (dst, src)
+        assert isinstance(gpu_spec, GPULoadStoreSpec) and isinstance(slab_spec, SlabLoadStoreSpec), spec
+        gpu_ids = [int(b) for b in gpu_spec.block_ids]
+        if len(gpu_ids) != len(slab_spec.keys) or not slab_spec.keys:
+            if slab_spec.keys:
+                logger.error("Slab job %d: %d keys vs %d GPU blocks", job_id, len(slab_spec.keys), len(gpu_ids))
+            return False
+        job = _TJob(job_id=job_id, store=store, n=len(gpu_ids), epoch=slab_spec.epoch, seq=slab_spec.seq,
+                    marker=self.backend.submit_marker(),
+                    nbytes=sum(self.group_bytes[get_offload_group_idx(k)] for k in slab_spec.keys))
+        self.jobs[job_id] = job
+        tasks = [(job, k, s, g) for k, s, g in zip(slab_spec.keys, slab_spec.slots, gpu_ids)]
+        with self._cv:
+            (self._stores if store else self._loads).extend(tasks)
+            self._cv.notify_all()
+        return True
+
+    def pump(self) -> None:
+        while self._finished:
+            job = self._finished.popleft()
+            self.jobs.pop(job.job_id, None)
+            if job.failed_gpu:
+                self._failed_gpu_blocks.update(job.failed_gpu)
+            self._results[job.store].append(TransferResult(
+                job_id=job.job_id, success=not job.failed,
+                transfer_size=job.nbytes if not job.failed else None,
+                transfer_time=time.perf_counter() - job.t0))
+
+    def take_results(self, store: bool) -> list[TransferResult]:
+        out, self._results[store] = self._results[store], []
+        return out
+
+    def take_failed_gpu_blocks(self) -> set[int]:
+        out, self._failed_gpu_blocks = self._failed_gpu_blocks, set()
+        return out
+
+    def wait_all(self, timeout: float | None = None) -> None:
+        """Block until every submitted job is done (the connector must not reuse
+        GPU blocks a transfer still touches)."""
+        t0 = last_log = time.monotonic()
+        while self.jobs:
+            self.pump()
+            if not self.jobs:
+                break
+            time.sleep(0.001)
+            now = time.monotonic()
+            if timeout is not None and now - t0 > timeout:
+                raise TimeoutError(f"{len(self.jobs)} tier jobs still in flight after {timeout:.0f}s")
+            if now - last_log > 30:
+                logger.warning("Tier wait: %d jobs still in flight after %.0fs", len(self.jobs), now - t0)
+                last_log = now
+
+    def shutdown(self) -> None:
+        with self._cv:
+            self._stop = True
+            self._cv.notify_all()
+        for t in self._threads:
+            t.join(timeout=10)
+        if self.direct:
+            for fd in self.io_fds:
+                try:
+                    os.close(fd)
+                except OSError:
+                    pass
+
+    # -- I/O threads ------------------------------------------------------------------
+    def _complete(self, job: _TJob, gpu_id: int, ok: bool) -> None:
+        with job.lock:
+            job.done += 1
+            if not ok:
+                job.failed = True
+                if not job.store:
+                    job.failed_gpu.append(gpu_id)
+            last = job.done == job.n
+        if last:
+            self._finished.append(job)
+
+    STORE_YIELD_S = 0.05   # longest a store waits for queued loads (the NVMe serves reads first)
+
+    def _next(self, q: collections.deque, have_pending: bool):
+        with self._cv:
+            while not self._stop and not q:
+                if have_pending:
+                    return None
+                self._cv.wait()
+            if q is self._stores and self._loads:
+                deadline = time.monotonic() + self.STORE_YIELD_S
+                while self._loads and not self._stop and time.monotonic() < deadline:
+                    self._cv.wait(0.002)
+                if not q:
+                    return None   # another store thread took it meanwhile: caller retries
+            if self._stop:
+                return False
+            return q.popleft()
+
+    def _alloc_rows(self):
+        n = self.rows_per_thread
+        flat = torch.empty(n * self.row_bytes + 4096, dtype=torch.int8,
+                           pin_memory=is_pin_memory_available())
+        pad = (-flat.data_ptr()) % 4096
+        rows = flat[pad:pad + n * self.row_bytes].view(n, self.row_bytes)
+        assert rows.data_ptr() % 4096 == 0
+        descs = [tuple(torch.empty(self.max_segs, dtype=torch.int64, pin_memory=is_pin_memory_available())
+                       for _ in range(3)) for _ in range(n)]
+        return flat, rows, rows.numpy(), descs
+
+    def _thread_main(self, load: bool) -> None:
+        try:
+            stream = self.backend.thread_init()
+            _flat, rows, rows_np, descs = self._alloc_rows()
+            events = [self.backend.new_event() for _ in range(self.rows_per_thread)]
+        except BaseException as e:  # noqa: BLE001
+            self._init_errors.append(e)
+            self._ready.wait()
+            return
+        self._ready.wait()
+        row_ptr = [rows[i].data_ptr() for i in range(self.rows_per_thread)]
+        views = [memoryview(rows_np[i]).cast("B") for i in range(self.rows_per_thread)]
+        pending: list[tuple[_TJob, int] | None] = [None] * self.rows_per_thread
+        q = self._loads if load else self._stores
+        i = 0
+        while True:
+            task = self._next(q, any(p is not None for p in pending))
+            if task is False:
+                return
+            if task is None:  # queue drained: finish the copies still in flight
+                for r, p in enumerate(pending):
+                    if p is not None:
+                        self._finish_row(events[r], p)
+                        pending[r] = None
+                continue
+            r = i % self.rows_per_thread
+            i += 1
+            if pending[r] is not None:
+                self._finish_row(events[r], pending[r])
+                pending[r] = None
+            job, key, slot, gpu_id = task
+            try:
+                if load:
+                    self._load_one(job, key, slot, gpu_id, stream, views[r], row_ptr[r], descs[r], events[r])
+                    pending[r] = (job, gpu_id)
+                else:
+                    self._store_one(job, key, slot, gpu_id, stream, views[r], row_ptr[r], descs[r], events[r])
+                    self._complete(job, gpu_id, True)
+            except Exception as e:  # noqa: BLE001
+                logger.warning("Slab store: %s of slot %d (group %d) failed: %s",
+                               "load" if load else "store", slot, get_offload_group_idx(key), e)
+                self._complete(job, gpu_id, False)
+
+    def _finish_row(self, event, p) -> None:
+        job, gpu_id = p
+        try:
+            self.backend.wait(event)
+            self._complete(job, gpu_id, True)
+        except Exception as e:  # noqa: BLE001
+            logger.warning("Slab store: host->GPU copy failed: %s", e)
+            self._complete(job, gpu_id, False)
+
+    def _fill(self, g: int, gpu_id: int, row_ptr: int, desc, to_gpu: bool) -> int:
+        src, dst, sizes = (d.numpy() for d in desc)
+        segs = self.layout[g]
+        for j, (t, off, n) in enumerate(segs):
+            gp = self._gpu_base[t] + gpu_id * self._gpu_stride[t]
+            hp = row_ptr + off
+            src[j], dst[j] = (hp, gp) if to_gpu else (gp, hp)
+            sizes[j] = n
+        return len(segs)
+
+    def _io(self, fn, fd: int, view: memoryview, off: int) -> None:
+        pos, mv = off, view
+        while mv:
+            n = fn(fd, [mv], pos)
+            if n <= 0:
+                raise OSError(f"{'preadv' if fn is os.preadv else 'pwritev'} returned {n} at {pos}")
+            pos += n
+            mv = mv[n:]
+
+    def _load_one(self, job, key, slot, gpu_id, stream, view, row_ptr, desc, event) -> None:
+        g = get_offload_group_idx(key)
+        if not 0 <= slot < self.slab.slot_counts[g]:
+            raise OSError(f"slot {slot} out of range for group {g}")
+        sb = self.slab.slot_bytes[g]
+        self._io(os.preadv, self.io_fds[g], view[:sb], slot * sb)
+        if not self.direct:
+            try:
+                os.posix_fadvise(self.io_fds[g], slot * sb, sb, os.POSIX_FADV_DONTNEED)
+            except (OSError, AttributeError):
+                pass
+        hdr = SlabIO.parse_header(bytes(view[:SLAB_HEADER_BYTES]))
+        length = self.group_bytes[g]
+        if hdr is None or hdr[4] != key or hdr[2] != length:
+            raise OSError(f"slot {slot} of group {g} does not hold the requested block")
+        if hdr[1] != job.epoch:
+            raise OSError(f"slot {slot} of group {g} holds epoch {hdr[1]}, load is epoch {job.epoch}")
+        if zlib.crc32(view[SLAB_HEADER_BYTES:SLAB_HEADER_BYTES + length]) & 0xFFFFFFFF != hdr[5]:
+            raise OSError(f"slot {slot} of group {g} failed payload CRC")
+        n = self._fill(g, gpu_id, row_ptr, desc, to_gpu=True)
+        self.backend.copy(stream, job.marker, desc[0][:n], desc[1][:n], desc[2][:n], event, host_src=True)
+
+    def _store_one(self, job, key, slot, gpu_id, stream, view, row_ptr, desc, event) -> None:
+        g = get_offload_group_idx(key)
+        sb = self.slab.slot_bytes[g]
+        length = self.group_bytes[g]
+        n = self._fill(g, gpu_id, row_ptr, desc, to_gpu=False)
+        self.backend.copy(stream, job.marker, desc[0][:n], desc[1][:n], desc[2][:n], event, host_src=False)
+        self.backend.wait(event)
+        payload_crc = zlib.crc32(view[SLAB_HEADER_BYTES:SLAB_HEADER_BYTES + length]) & 0xFFFFFFFF
+        view[:SLAB_HEADER_BYTES] = self.slab.header(key, length, job.seq, payload_crc, epoch=job.epoch)
+        tail = SLAB_HEADER_BYTES + length
+        if tail < sb:
+            view[tail:sb] = bytes(sb - tail)
+        self._io(os.pwritev, self.io_fds[g], view[:sb], slot * sb)
+        if not self.direct:
+            try:
+                os.fdatasync(self.io_fds[g])
+                os.posix_fadvise(self.io_fds[g], slot * sb, sb, os.POSIX_FADV_DONTNEED)
+            except (OSError, AttributeError):
+                pass
+
+
 class MultiNodeSlabOffloadingSpec(OffloadingSpecBase):
     """Fixed-size slab store. extra_config: root_dir (required),
-    disk_bytes_per_rank (default 150e9), bounce_blocks (48), n_read_threads /
-    n_write_threads (8)."""
+    disk_bytes_per_rank (default 150e9), io_engine ("threaded" default: O_DIRECT
+    slot I/O on per-thread CUDA streams; "bounce": the step-driven bounce buffer),
+    n_read_threads / n_write_threads (8), rows_per_thread (threaded, 2),
+    bounce_blocks (bounce, 48), drafter_ratio ("auto" = from the groups' block
+    token spans; an int forces the legacy fixed ratio)."""
 
     def __init__(self, config):
         super().__init__(config)
@@ -1189,8 +1610,14 @@ class MultiNodeSlabOffloadingSpec(OffloadingSpecBase):
         self.n_bounce = int(self.extra_config.get("bounce_blocks", 48))
         self.n_read_threads = int(self.extra_config.get("n_read_threads", 8))
         self.n_write_threads = int(self.extra_config.get("n_write_threads", 8))
+        self.io_engine = str(self.extra_config.get("io_engine", "threaded"))
+        if self.io_engine not in ("threaded", "bounce"):
+            raise ValueError(f"io_engine must be 'threaded' or 'bounce', got {self.io_engine!r}")
+        self.rows_per_thread = int(self.extra_config.get("rows_per_thread", 2))
+        self.direct_io = _slab_persist_value(self.extra_config.get("direct_io", True))
+        self.drafter_ratio = self.extra_config.get("drafter_ratio", "auto")
         self._manager: SlabOffloadingManager | None = None
-        self.controller: SlabBounceController | None = None
+        self.controller: SlabBounceController | ThreadedSlabController | None = None
 
     def get_manager(self) -> OffloadingManager:
         if self._manager is None:
@@ -1210,7 +1637,11 @@ class MultiNodeSlabOffloadingSpec(OffloadingSpecBase):
             sum(ref.page_size_bytes * self.block_size_factor for ref in refs)
             for refs in kv_caches.group_data_refs
         ]
-        slot_bytes, counts = slab_geometry(group_bytes, self.disk_bytes_per_rank)
+        if self.drafter_ratio == "auto":
+            ratios = group_row_ratios([g.tokens_per_block for g in self.config.groups])
+        else:
+            ratios = [1] + [int(self.drafter_ratio)] * (len(group_bytes) - 1)
+        slot_bytes, counts = slab_geometry(group_bytes, self.disk_bytes_per_rank, ratios)
         meta_path = os.path.join(rank_dir, SLAB_META)
         boot = _boot_id()
         run_config = fm.get_run_config()
@@ -1219,7 +1650,7 @@ class MultiNodeSlabOffloadingSpec(OffloadingSpecBase):
             old = json.load(open(meta_path)) if os.path.exists(meta_path) else None
         except (OSError, ValueError):
             old = None
-        io = SlabIO(rank_dir, slot_bytes, counts)
+        io = SlabIO(rank_dir, slot_bytes, counts, preallocate=self.io_engine == "threaded")
         # Cross-reboot persistence is a toggle (default ON): the payload CRC (v2) makes a persisted
         # slot safe to trust, so by default a reboot keeps the slabs. extra_config
         # "persist_across_reboot" (or env SLAB_PERSIST_ACROSS_REBOOT) can turn it off to restore the
@@ -1240,15 +1671,24 @@ class MultiNodeSlabOffloadingSpec(OffloadingSpecBase):
             io.epoch = int(pathlib_read(epoch_path)) if os.path.exists(epoch_path) else 0
         except ValueError:
             io.epoch = 0   # fallback only: every store/load carries the scheduler's epoch explicitly
-        self.controller = SlabBounceController(
-            kv_caches, io, n_bounce=self.n_bounce,
-            n_read_threads=self.n_read_threads, n_write_threads=self.n_write_threads,
-        )
+        if self.io_engine == "threaded":
+            self.controller = ThreadedSlabController(
+                kv_caches, io, n_read_threads=self.n_read_threads, n_write_threads=self.n_write_threads,
+                rows_per_thread=self.rows_per_thread, direct_io=self.direct_io,
+            )
+            engine = (f"threaded io ({self.n_read_threads}r/{self.n_write_threads}w x "
+                      f"{self.rows_per_thread} rows, {'O_DIRECT' if self.controller.direct else 'buffered'})")
+        else:
+            self.controller = SlabBounceController(
+                kv_caches, io, n_bounce=self.n_bounce,
+                n_read_threads=self.n_read_threads, n_write_threads=self.n_write_threads,
+            )
+            engine = f"{self.n_bounce} bounce slots"
         logger.info(
-            "Slab store: rank %d at %s, slot bytes %s, slots %s (%.1f GB cap%s), %d bounce slots",
+            "Slab store: rank %d at %s, slot bytes %s, slots %s (%.1f GB cap%s), group ratios %s, %s",
             fm.rank, rank_dir, slot_bytes, counts,
             sum(b * c for b, c in zip(slot_bytes, counts)) / 1e9,
-            ", wiped" if wiped else (", reused across reboot" if persist else ""), self.n_bounce,
+            ", wiped" if wiped else (", reused across reboot" if persist else ""), ratios, engine,
         )
         return SlabWorker(self.controller)
 

@@ -1,0 +1,73 @@
+{
+ "source": "step2 live periods (int8 drafter + fc split + fp8 head); C1 = historical context curve shifted by the measured short-context change",
+ "points": [
+  {
+   "context": 4096,
+   "cycle_ms": {
+    "1": 88.78,
+    "3": 100.84,
+    "5": 125.62,
+    "7": 134.42
+   }
+  },
+  {
+   "context": 32768,
+   "cycle_ms": {
+    "1": 88.58,
+    "3": 108.32,
+    "5": 122.01,
+    "7": 134.98
+   }
+  },
+  {
+   "context": 100000,
+   "cycle_ms": {
+    "1": 90.84,
+    "3": 104.1,
+    "5": 114.77,
+    "7": 136.62
+   }
+  }
+ ],
+ "batch": {
+  "2": {
+   "points": [
+    {
+     "context": 4096,
+     "cycle_ms": {
+      "1": 114.74,
+      "3": 143.12,
+      "5": 175.36,
+      "7": 191.71
+     }
+    }
+   ]
+  },
+  "3": {
+   "points": [
+    {
+     "context": 4096,
+     "cycle_ms": {
+      "1": 133.64,
+      "3": 181.99,
+      "5": 210.81,
+      "7": 241.56
+     }
+    }
+   ]
+  },
+  "4": {
+   "points": [
+    {
+     "context": 4096,
+     "cycle_ms": {
+      "1": 152.3,
+      "3": 203.94,
+      "5": 245.22,
+      "7": 277.99
+     }
+    }
+   ]
+  }
+ }
+}

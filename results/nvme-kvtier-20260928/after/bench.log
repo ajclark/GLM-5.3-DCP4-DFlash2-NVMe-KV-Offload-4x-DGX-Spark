@@ -1,0 +1,41 @@
+00:22:50 corpus: 1710974 tokens; label after; phases iso,agents,decode
+00:23:29 iso 20000: cold TTFT 33.72s, store drained after 3.6048099994659424s
+00:23:31 iso 20000 rep0: TTFT 0.774s hits 19840 load 0.65 GB/rank -> 0.83 GB/s/rank
+00:23:32 iso 20000 rep1: TTFT 0.789s hits 19840 load 0.65 GB/rank -> 0.82 GB/s/rank
+00:23:34 iso 20000 rep2: TTFT 0.765s hits 19840 load 0.65 GB/rank -> 0.84 GB/s/rank
+00:25:55 iso 80000: cold TTFT 137.76s, store drained after 3.0922582149505615s
+00:25:57 iso 80000 rep0: TTFT 0.970s hits 79872 load 2.26 GB/rank -> 2.33 GB/s/rank
+00:25:58 iso 80000 rep1: TTFT 0.957s hits 79872 load 2.26 GB/rank -> 2.37 GB/s/rank
+00:26:00 iso 80000 rep2: TTFT 0.948s hits 79872 load 2.26 GB/rank -> 2.39 GB/s/rank
+00:30:46 iso 160000: cold TTFT 283.17s, store drained after 3.1000030040740967s
+00:30:49 iso 160000 rep0: TTFT 1.243s hits 159872 load 4.42 GB/rank -> 3.56 GB/s/rank
+00:30:51 iso 160000 rep1: TTFT 1.214s hits 159872 load 4.42 GB/rank -> 3.64 GB/s/rank
+00:30:52 iso 160000 rep2: TTFT 1.232s hits 159872 load 4.42 GB/rank -> 3.59 GB/s/rank
+00:35:02 agent0 round0: len 74538 TTFT 128.28s e2e 249.4s 
+00:36:26 agent1 round0: len 78966 TTFT 246.52s e2e 333.9s 
+00:39:00 agent3 round0: len 71523 TTFT 353.60s e2e 487.5s 
+00:41:07 agent2 round0: len 86108 TTFT 483.61s e2e 614.3s 
+00:41:22 agent4 round0: len 83810 TTFT 613.18s e2e 629.6s 
+00:41:23 agent0 round1: len 76631 TTFT 361.43s e2e 371.5s 
+00:41:40 agent1 round1: len 80915 TTFT 293.83s e2e 306.7s 
+00:41:51 agent3 round1: len 72862 TTFT 141.73s e2e 161.2s 
+00:42:01 agent2 round1: len 87945 TTFT 29.48s e2e 44.5s 
+00:42:15 agent4 round1: len 86843 TTFT 26.08s e2e 43.1s 
+00:42:29 agent0 round2: len 78771 TTFT 33.44s e2e 54.8s 
+00:42:35 agent1 round2: len 83140 TTFT 31.60s e2e 45.4s 
+00:42:49 agent2 round2: len 89258 TTFT 24.16s e2e 33.9s 
+00:42:50 agent3 round2: len 74333 TTFT 32.96s e2e 49.4s 
+00:43:10 agent0 round3: len 80354 TTFT 25.04s e2e 35.0s 
+00:43:11 agent4 round2: len 89932 TTFT 29.05s e2e 44.0s 
+00:43:26 agent1 round3: len 84860 TTFT 30.40s e2e 41.9s 
+00:43:35 agent3 round3: len 75830 TTFT 19.62s e2e 35.5s 
+00:43:49 agent2 round3: len 92142 TTFT 33.16s e2e 48.4s 
+00:43:55 agent4 round3: len 92161 TTFT 25.55s e2e 38.5s 
+00:44:22 decode C1 count: [58.0, 58.2, 58.0] tok/s
+00:45:29 decode C1 prose: [24.8, 22.8, 22.7] tok/s
+00:46:07 decode C1 code: [41.3, 41.6, 41.7] tok/s
+00:46:20 decode C4 count: aggregate 155.4 tok/s
+00:47:03 decode C4 prose: aggregate 48.8 tok/s
+00:47:25 decode C4 code: aggregate 92.1 tok/s
+00:52:31 decode during reload: reload TTFT 2.81s, stream chunk rate 7.289556151822594 -> 6.948359900754377 /s
+00:52:31 wrote results/nvme-kvtier-20260928/after/result.json

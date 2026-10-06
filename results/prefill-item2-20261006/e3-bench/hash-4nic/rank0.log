@@ -1,0 +1,5 @@
+{"type": "metadata", "label": "hash-4nic", "nccl": "2.30.7", "env": {"NCCL_IB_HCA": "=roceP2p1s0f0,roceP2p1s0f1,rocep1s0f0,rocep1s0f1", "NCCL_IB_MERGE_NICS": "1", "NCCL_MAX_NCHANNELS": "2"}, "configs": ["1fwd"], "sizes": [12582912, 25165824]}
+{"type": "result", "label": "hash-4nic", "config": "1fwd", "bytes": 12582912, "p50_us": 921.3, "min_us": 916.8, "max_us": 994.3, "GBps_per_rank_bus": 20.49, "max_err_vs_fp32": 0.0625, "vs_1fwd": null, "mem_drop_mb_max": {"MemAvailable": 647.9, "cuda_free": 647.9}, "stress": null, "out_sha256": "ac4cc327c27141ce"}
+{"type": "result", "label": "hash-4nic", "config": "1fwd", "bytes": 25165824, "p50_us": 1829.4, "min_us": 1776.9, "max_us": 1869.9, "GBps_per_rank_bus": 20.63, "max_err_vs_fp32": 0.0625, "vs_1fwd": null, "mem_drop_mb_max": {"MemAvailable": 647.9, "cuda_free": 647.9}, "stress": null, "out_sha256": "d472d2b5742427db"}
+{"type": "done", "label": "hash-4nic"}
+ey=0 pd=0xe5197800ede0

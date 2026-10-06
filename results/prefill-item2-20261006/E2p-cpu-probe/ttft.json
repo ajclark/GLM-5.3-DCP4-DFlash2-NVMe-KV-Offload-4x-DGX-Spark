@@ -1,0 +1,28 @@
+{
+ "rows": [
+  {
+   "prompt_len": 32768,
+   "ttft_s": 43.74518132209778,
+   "wall_s": 43.74539375305176,
+   "prefill_s": 43.709900454000035,
+   "usage": {
+    "prompt_tokens": 32768,
+    "total_tokens": 32769,
+    "completion_tokens": 1
+   },
+   "prefix_hit_tokens": 0.0,
+   "external_hit_tokens": 0.0,
+   "contaminated": false,
+   "tok_s_server": 749.6699754437738,
+   "tok_s_client": 749.0653601073844
+  }
+ ],
+ "summary": {
+  "32768": {
+   "n": 1,
+   "prefill_s_median": 43.709900454000035,
+   "ttft_s_median": 43.74518132209778,
+   "tok_s_median": 749.6699754437738
+  }
+ }
+}

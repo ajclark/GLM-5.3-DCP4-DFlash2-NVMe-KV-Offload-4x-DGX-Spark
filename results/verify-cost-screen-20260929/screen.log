@@ -1,0 +1,100 @@
+22:12:59 === K=7: restart
+Ready: http://spark-06c4.local:8000/v1 — model glm-5.3
+spark-06c4=2585MB spark-365c=3650MB spark-ddbf=3823MB spark-a218=3519MB 
+{
+ "4096": {
+  "cycle_ms_server_median": 141.56647851736383,
+  "cycle_ms_client_median": 142.84433126449585,
+  "tokens_per_step": 5.319444444444445,
+  "n": 3
+ },
+ "32768": {
+  "cycle_ms_server_median": 142.13442454266888,
+  "cycle_ms_client_median": 142.79530902597355,
+  "tokens_per_step": 2.408805031446541,
+  "n": 3
+ },
+ "100000": {
+  "cycle_ms_server_median": 143.77265610195442,
+  "cycle_ms_client_median": 144.25453646429654,
+  "tokens_per_step": 6.491525423728813,
+  "n": 3
+ }
+}
+spark-06c4=1184MB spark-365c=2325MB spark-ddbf=2343MB spark-a218=2039MB 
+22:26:18 === K=5: restart
+Ready: http://spark-06c4.local:8000/v1 — model glm-5.3
+spark-06c4=2776MB spark-365c=4102MB spark-ddbf=3935MB spark-a218=3894MB 
+{
+ "4096": {
+  "cycle_ms_server_median": 132.32525952803877,
+  "cycle_ms_client_median": 134.1385505568813,
+  "tokens_per_step": 5.0394736842105265,
+  "n": 3
+ },
+ "32768": {
+  "cycle_ms_server_median": 128.72208995361498,
+  "cycle_ms_client_median": 129.22487900271054,
+  "tokens_per_step": 2.2267441860465116,
+  "n": 3
+ },
+ "100000": {
+  "cycle_ms_server_median": 121.48030140249628,
+  "cycle_ms_client_median": 121.71534810747418,
+  "tokens_per_step": 5.319444444444445,
+  "n": 3
+ }
+}
+spark-06c4=1372MB spark-365c=2721MB spark-ddbf=2796MB spark-a218=2712MB 
+22:39:11 === K=3: restart
+Ready: http://spark-06c4.local:8000/v1 — model glm-5.3
+spark-06c4=3012MB spark-365c=4279MB spark-ddbf=4310MB spark-a218=4177MB 
+{
+ "4096": {
+  "cycle_ms_server_median": 106.65209134319974,
+  "cycle_ms_client_median": 107.61277262981122,
+  "tokens_per_step": 3.6476190476190475,
+  "n": 3
+ },
+ "32768": {
+  "cycle_ms_server_median": 114.12943486133233,
+  "cycle_ms_client_median": 114.72113927205403,
+  "tokens_per_step": 2.9461538461538463,
+  "n": 3
+ },
+ "100000": {
+  "cycle_ms_server_median": 109.90501140615451,
+  "cycle_ms_client_median": 110.06970405578613,
+  "tokens_per_step": 3.792079207920792,
+  "n": 3
+ }
+}
+spark-06c4=2383MB spark-365c=3691MB spark-ddbf=3635MB spark-a218=3523MB 
+22:52:07 === K=1: restart
+Ready: http://spark-06c4.local:8000/v1 — model glm-5.3
+spark-06c4=3198MB spark-365c=4569MB spark-ddbf=4602MB spark-a218=4473MB 
+{
+ "4096": {
+  "cycle_ms_server_median": 93.87057529565195,
+  "cycle_ms_client_median": 94.3391176370474,
+  "tokens_per_step": 1.9540816326530612,
+  "n": 3
+ },
+ "32768": {
+  "cycle_ms_server_median": 93.67310701319101,
+  "cycle_ms_client_median": 93.91866248586904,
+  "tokens_per_step": 1.7022222222222223,
+  "n": 3
+ },
+ "100000": {
+  "cycle_ms_server_median": 95.92854386445921,
+  "cycle_ms_client_median": 95.87812664532902,
+  "tokens_per_step": 1.9246231155778895,
+  "n": 3
+ }
+}
+spark-06c4=2032MB spark-365c=3369MB spark-ddbf=3258MB spark-a218=3153MB 
+23:05:53 screen complete
+23:05:53 restoring production
+vllm_glm53big Up 3 seconds
+Ready: http://spark-06c4.local:8000/v1 — model glm-5.3

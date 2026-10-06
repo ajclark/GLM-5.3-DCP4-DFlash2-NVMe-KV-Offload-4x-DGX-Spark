@@ -1,0 +1,13 @@
+[2026-10-06 17:42:19] spark-ddbf:1:138 [0] misc/ibvwrap.cc:376 (wrap_ibv_modify_qp) NCCL WARN Call to ibv_modify_qp failed with 110 Connection timed out, on dev rocep1s0f1:1, curr state INIT, next state RTR, local GID index 3, local GID ::ffff:192.168.105.2, remote GID ::ffff:192.168.101.2
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/bench/nccl_tp_dualring.py", line 163, in <module>
+[rank2]:     main()
+[rank2]:   File "/bench/nccl_tp_dualring.py", line 109, in main
+[rank2]:     all_reduce(lib, comms, src, dst, launch)
+[rank2]:   File "/bench/nccl_tp_dualring.py", line 70, in all_reduce
+[rank2]:     lib.ncclGroupEnd()
+[rank2]:   File "/usr/local/lib/python3.12/dist-packages/vllm/distributed/device_communicators/pynccl_wrapper.py", line 606, in ncclGroupEnd
+[rank2]:     self.NCCL_CHECK(self._funcs["ncclGroupEnd"]())
+[rank2]:   File "/usr/local/lib/python3.12/dist-packages/vllm/distributed/device_communicators/pynccl_wrapper.py", line 430, in NCCL_CHECK
+[rank2]:     raise RuntimeError(f"NCCL error: {error_str}")
+[rank2]: RuntimeError: NCCL error: unhandled system error (run with NCCL_DEBUG=INFO for details)

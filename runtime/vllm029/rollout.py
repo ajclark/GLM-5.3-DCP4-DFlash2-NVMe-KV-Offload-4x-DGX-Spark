@@ -22,7 +22,8 @@ NAME='vllm_glm53big'
 IMAGE=os.environ.get('DCP_IMAGE','spark-vllm:0.29.0-dcp1')
 LAUNCH_KEYS = ('DCP_IMAGE', 'DCP_SIZE', 'MAXLEN', 'MAXBATCHED', 'MAXSEQS', 'KVBYTES',
                'KVTIER', 'KVTIER_DIR', 'KVTIER_MODE', 'KVTIER_THREADS', 'KVTIER_BOUNCE',
-               'KVTIER_DISK_BYTES', 'KVTIER_HASHSEED', 'DFLASH_K', 'NCCL_HOTPLUG',
+               'KVTIER_DISK_BYTES', 'KVTIER_HASHSEED', 'KVTIER_READ_THREADS',
+               'KVTIER_WRITE_THREADS', 'KVTIER_IO', 'VLLM_DEV_MODE', 'DFLASH_K', 'NCCL_HOTPLUG',
                'HOTPLUG_SO', 'HOTPLUG_PORT', 'NCCL_IB_QPS_PER_CONNECTION', 'PROFILER_DIR',
                'GLM_SPEC_POLICY', 'GLM_SPEC_LOSSY', 'GLM_DCP_LSE_FOLD',
                'DCP_LSE_FOLD', 'DCP_RS_HEADMAJOR')
@@ -216,6 +217,13 @@ def main():
                 '-v "$HOME/glm-vllm029-build:/regression:ro" '
                 '--entrypoint python3 '+IMAGE+' /regression/indexer_regression.py'],
                 out/'indexer-regression.log',guard,1200)
+            for mode in ('sweep', 'fault', 'correctness'):
+                guarded_process(['ssh',HOSTS[3],
+                    'docker run --rm --name vllm029-regression --gpus all --ipc host '
+                    '-v "$HOME/glm-vllm029-build:/regression:ro" '
+                    '--entrypoint python3 '+IMAGE+
+                    ' /regression/dcp_pack_regression.py --require-reuse --mode '+mode],
+                    out/f'dcp-pack-{mode}.log',guard,600)
         parallel(lambda h:ssh(h,'$HOME/glm53big/start-flusher.sh'))
         for rank in (3,2,1,0):
             print(f'Launching vLLM 0.29 rank {rank}',flush=True)

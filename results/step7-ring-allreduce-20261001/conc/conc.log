@@ -1,0 +1,37 @@
+06:36:42 step7 27 agent turns selected
+06:37:13 step7 n=2 ['prose0', 'prose1'] agg 35.3 tok/s over 27.0s, tok/cycle 2.04, gen [512, 512] CLEAN 
+06:37:42 step7 n=2 ['prose2', 'prose3'] agg 34.3 tok/s over 25.7s, tok/cycle 1.92, gen [512, 437] CLEAN 
+06:38:13 step7 n=2 ['prose4', 'prose5'] agg 36.0 tok/s over 26.3s, tok/cycle 2.10, gen [512, 512] CLEAN 
+06:38:34 step7 n=2 ['code0', 'code1'] agg 53.8 tok/s over 15.4s, tok/cycle 4.58, gen [512, 512] CLEAN 
+06:38:56 step7 n=2 ['code2', 'code3'] agg 50.2 tok/s over 19.2s, tok/cycle 4.00, gen [512, 512] CLEAN 
+06:39:17 step7 n=2 ['code4', 'code5'] agg 53.3 tok/s over 17.2s, tok/cycle 4.33, gen [512, 512] CLEAN 
+06:39:48 step7 n=2 ['prose0', 'code0'] agg 42.0 tok/s over 18.3s, tok/cycle 2.72, gen [512, 512] CLEAN 
+06:40:09 step7 n=2 ['code1', 's0:50'] agg 51.0 tok/s over 14.7s, tok/cycle 4.62, gen [512, 324] CLEAN 
+06:40:41 step7 n=2 ['s0:53', 'prose1'] agg 35.6 tok/s over 26.2s, tok/cycle 2.29, gen [512, 512] CLEAN 
+06:41:18 step7 n=3 ['prose0', 'prose1', 'prose2'] agg 43.1 tok/s over 32.1s, tok/cycle 2.02, gen [512, 512, 512] CLEAN 
+06:41:57 step7 n=3 ['prose3', 'prose4', 'prose5'] agg 42.8 tok/s over 32.5s, tok/cycle 1.93, gen [512, 512, 512] CLEAN 
+06:42:35 step7 n=3 ['prose6', 'prose7', 'prose8'] agg 44.4 tok/s over 32.2s, tok/cycle 2.13, gen [512, 512, 512] CLEAN 
+06:43:02 step7 n=3 ['code0', 'code1', 'code2'] agg 61.8 tok/s over 18.4s, tok/cycle 4.55, gen [512, 512, 512] CLEAN 
+06:43:31 step7 n=3 ['code3', 'code4', 'code5'] agg 57.5 tok/s over 22.2s, tok/cycle 3.91, gen [512, 512, 512] CLEAN 
+06:43:57 step7 n=3 ['code6', 'code7', 'code8'] agg 62.5 tok/s over 21.6s, tok/cycle 4.55, gen [512, 512, 512] CLEAN 
+06:44:36 step7 n=3 ['prose0', 'code0', 's0:50'] agg 46.1 tok/s over 23.8s, tok/cycle 2.46, gen [512, 512, 512] CLEAN 
+06:45:15 step7 n=3 ['code1', 's0:53', 'prose1'] agg 50.0 tok/s over 19.0s, tok/cycle 2.86, gen [512, 512, 512] CLEAN 
+06:45:56 step7 n=3 ['s0:59', 'prose2', 'code2'] agg 43.6 tok/s over 26.6s, tok/cycle 2.38, gen [512, 512, 512] CLEAN 
+06:46:39 step7 n=4 ['prose0', 'prose1', 'prose2', 'prose3'] agg 47.7 tok/s over 37.2s, tok/cycle 1.81, gen [512, 484, 512, 448] CLEAN 
+06:47:23 step7 n=4 ['prose4', 'prose5', 'prose6', 'prose7'] agg 51.3 tok/s over 37.4s, tok/cycle 2.12, gen [512, 512, 512, 512] CLEAN 
+06:48:07 step7 n=4 ['prose8', 'prose9', 'prose10', 'prose11'] agg 49.6 tok/s over 37.8s, tok/cycle 2.02, gen [512, 512, 512, 512] CLEAN 
+06:48:40 step7 n=4 ['code0', 'code1', 'code2', 'code3'] agg 67.8 tok/s over 21.2s, tok/cycle 4.41, gen [512, 512, 512, 512] CLEAN 
+06:49:11 step7 n=4 ['code4', 'code5', 'code6', 'code7'] agg 71.1 tok/s over 26.5s, tok/cycle 4.54, gen [512, 512, 512, 512] CLEAN 
+06:49:40 step7 n=4 ['code8', 'code9', 'code10', 'code11'] agg 74.8 tok/s over 21.9s, tok/cycle 4.93, gen [512, 409, 512, 512] CLEAN 
+06:50:21 step7 n=4 ['prose0', 'code0', 's0:50', 'prose1'] agg 51.9 tok/s over 17.4s, tok/cycle 2.64, gen [512, 512, 252, 496] CLEAN 
+06:51:07 step7 n=4 ['code1', 's0:53', 'prose2', 'code2'] agg 54.8 tok/s over 22.7s, tok/cycle 2.81, gen [512, 512, 512, 512] CLEAN 
+06:51:53 step7 n=4 ['s0:59', 'prose3', 'code3', 's1:136'] agg 51.8 tok/s over 22.9s, tok/cycle 2.57, gen [512, 464, 512, 440] CLEAN 
+06:51:53 step7 SUMMARY step7|n2|code                rounds 3 agg median 53.3 mean 52.4 tok/s, tok/cycle 4.29
+06:51:53 step7 SUMMARY step7|n2|mix                 rounds 3 agg median 42.0 mean 42.9 tok/s, tok/cycle 2.87
+06:51:53 step7 SUMMARY step7|n2|prose               rounds 3 agg median 35.3 mean 35.2 tok/s, tok/cycle 2.02
+06:51:53 step7 SUMMARY step7|n3|code                rounds 3 agg median 61.8 mean 60.6 tok/s, tok/cycle 4.31
+06:51:53 step7 SUMMARY step7|n3|mix                 rounds 3 agg median 46.1 mean 46.5 tok/s, tok/cycle 2.55
+06:51:53 step7 SUMMARY step7|n3|prose               rounds 3 agg median 43.1 mean 43.5 tok/s, tok/cycle 2.03
+06:51:53 step7 SUMMARY step7|n4|code                rounds 3 agg median 71.1 mean 71.3 tok/s, tok/cycle 4.61
+06:51:53 step7 SUMMARY step7|n4|mix                 rounds 3 agg median 51.9 mean 52.8 tok/s, tok/cycle 2.67
+06:51:53 step7 SUMMARY step7|n4|prose               rounds 3 agg median 49.6 mean 49.5 tok/s, tok/cycle 1.98

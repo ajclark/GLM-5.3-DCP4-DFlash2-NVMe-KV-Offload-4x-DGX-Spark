@@ -1,0 +1,225 @@
+21:55:46 base 27 agent turns selected
+21:56:29 base n=2 ['prose0', 'prose1'] agg 25.3 tok/s over 35.8s, tok/cycle 2.43, gen [512, 512] CLEAN 
+21:57:17 base n=2 ['prose2', 'prose3'] agg 20.4 tok/s over 45.4s, tok/cycle 1.97, gen [512, 432] CLEAN 
+21:57:58 base n=2 ['prose4', 'prose5'] agg 26.5 tok/s over 34.6s, tok/cycle 2.53, gen [512, 512] CLEAN 
+21:58:18 base n=2 ['code0', 'code1'] agg 56.1 tok/s over 15.1s, tok/cycle 5.89, gen [512, 512] CLEAN 
+21:58:45 base n=2 ['code2', 'code3'] agg 39.9 tok/s over 23.7s, tok/cycle 4.11, gen [512, 512] CLEAN 
+21:59:11 base n=2 ['code4', 'code5'] agg 43.4 tok/s over 21.4s, tok/cycle 4.49, gen [512, 512] CLEAN 
+21:59:49 base n=2 ['prose0', 'code0'] agg 30.1 tok/s over 27.4s, tok/cycle 2.88, gen [512, 512] CLEAN 
+22:00:23 base n=2 ['code1', 's0:50'] agg 42.2 tok/s over 16.3s, tok/cycle 3.51, gen [512, 512] CLEAN 
+22:01:10 base n=2 ['s0:53', 'prose1'] agg 22.7 tok/s over 37.8s, tok/cycle 2.32, gen [512, 489] CLEAN 
+22:01:10 base SUMMARY base|n2|code                 rounds 3 agg median 43.4 mean 46.5 tok/s, tok/cycle 4.72
+22:01:10 base SUMMARY base|n2|mix                  rounds 3 agg median 30.1 mean 31.7 tok/s, tok/cycle 2.83
+22:01:10 base SUMMARY base|n2|prose                rounds 3 agg median 25.3 mean 24.1 tok/s, tok/cycle 2.29
+22:01:13 ratio 27 agent turns selected
+22:01:49 ratio n=2 ['prose0', 'prose1'] agg 30.0 tok/s over 31.8s, tok/cycle 2.06, gen [512, 507] CLEAN 
+22:02:25 ratio n=2 ['prose2', 'prose3'] agg 28.6 tok/s over 34.2s, tok/cycle 1.88, gen [512, 478] CLEAN 
+22:03:00 ratio n=2 ['prose4', 'prose5'] agg 31.2 tok/s over 29.5s, tok/cycle 2.22, gen [512, 512] CLEAN 
+22:03:22 ratio n=2 ['code0', 'code1'] agg 54.7 tok/s over 15.8s, tok/cycle 5.25, gen [512, 512] CLEAN 
+22:03:48 ratio n=2 ['code2', 'code3'] agg 42.8 tok/s over 22.4s, tok/cycle 3.76, gen [512, 512] CLEAN 
+22:04:13 ratio n=2 ['code4', 'code5'] agg 45.8 tok/s over 19.6s, tok/cycle 4.27, gen [512, 512] CLEAN 
+22:04:48 ratio n=2 ['prose0', 'code0'] agg 36.1 tok/s over 22.0s, tok/cycle 2.65, gen [512, 512] CLEAN 
+22:05:21 ratio n=2 ['code1', 's0:50'] agg 43.0 tok/s over 16.6s, tok/cycle 3.40, gen [512, 512] CLEAN 
+22:05:53 ratio n=2 ['s0:53', 'prose1'] agg 31.1 tok/s over 26.2s, tok/cycle 2.42, gen [409, 512] CLEAN 
+22:05:53 ratio SUMMARY base|n2|code                 rounds 3 agg median 43.4 mean 46.5 tok/s, tok/cycle 4.72
+22:05:53 ratio SUMMARY base|n2|mix                  rounds 3 agg median 30.1 mean 31.7 tok/s, tok/cycle 2.83
+22:05:53 ratio SUMMARY base|n2|prose                rounds 3 agg median 25.3 mean 24.1 tok/s, tok/cycle 2.29
+22:05:53 ratio SUMMARY ratio|n2|code                rounds 3 agg median 45.8 mean 47.8 tok/s, tok/cycle 4.34
+22:05:53 ratio SUMMARY ratio|n2|mix                 rounds 3 agg median 36.1 mean 36.7 tok/s, tok/cycle 2.78
+22:05:53 ratio SUMMARY ratio|n2|prose               rounds 3 agg median 30.0 mean 30.0 tok/s, tok/cycle 2.05
+22:05:57 lambda 27 agent turns selected
+22:06:31 lambda n=2 ['prose0', 'prose1'] agg 32.1 tok/s over 28.8s, tok/cycle 2.23, gen [512, 484] CLEAN 
+22:07:06 lambda n=2 ['prose2', 'prose3'] agg 28.9 tok/s over 30.7s, tok/cycle 1.91, gen [512, 439] CLEAN 
+22:07:41 lambda n=2 ['prose4', 'prose5'] agg 32.4 tok/s over 28.1s, tok/cycle 2.24, gen [512, 512] CLEAN 
+22:08:04 lambda n=2 ['code0', 'code1'] agg 51.0 tok/s over 15.9s, tok/cycle 4.87, gen [512, 512] CLEAN 
+22:08:30 lambda n=2 ['code2', 'code3'] agg 41.8 tok/s over 23.0s, tok/cycle 3.53, gen [512, 512] CLEAN 
+22:08:55 lambda n=2 ['code4', 'code5'] agg 46.2 tok/s over 18.6s, tok/cycle 4.29, gen [512, 512] CLEAN 
+22:09:31 lambda n=2 ['prose0', 'code0'] agg 35.8 tok/s over 21.6s, tok/cycle 2.60, gen [512, 512] CLEAN 
+22:10:06 lambda n=2 ['code1', 's0:50'] agg 42.4 tok/s over 16.9s, tok/cycle 3.21, gen [512, 512] CLEAN 
+22:10:42 lambda n=2 ['s0:53', 'prose1'] agg 30.2 tok/s over 30.1s, tok/cycle 2.23, gen [512, 489] CLEAN 
+22:10:42 lambda SUMMARY base|n2|code                 rounds 3 agg median 43.4 mean 46.5 tok/s, tok/cycle 4.72
+22:10:42 lambda SUMMARY base|n2|mix                  rounds 3 agg median 30.1 mean 31.7 tok/s, tok/cycle 2.83
+22:10:42 lambda SUMMARY base|n2|prose                rounds 3 agg median 25.3 mean 24.1 tok/s, tok/cycle 2.29
+22:10:42 lambda SUMMARY lambda|n2|code               rounds 3 agg median 46.2 mean 46.3 tok/s, tok/cycle 4.16
+22:10:42 lambda SUMMARY lambda|n2|mix                rounds 3 agg median 35.8 mean 36.1 tok/s, tok/cycle 2.63
+22:10:42 lambda SUMMARY lambda|n2|prose              rounds 3 agg median 32.1 mean 31.1 tok/s, tok/cycle 2.12
+22:10:42 lambda SUMMARY ratio|n2|code                rounds 3 agg median 45.8 mean 47.8 tok/s, tok/cycle 4.34
+22:10:42 lambda SUMMARY ratio|n2|mix                 rounds 3 agg median 36.1 mean 36.7 tok/s, tok/cycle 2.78
+22:10:42 lambda SUMMARY ratio|n2|prose               rounds 3 agg median 30.0 mean 30.0 tok/s, tok/cycle 2.05
+22:10:45 base 27 agent turns selected
+22:11:46 base n=3 ['prose0', 'prose1', 'prose2'] agg 26.8 tok/s over 49.6s, tok/cycle 2.17, gen [512, 512, 512] CLEAN 
+22:12:44 base n=3 ['prose3', 'prose4', 'prose5'] agg 28.5 tok/s over 46.8s, tok/cycle 2.28, gen [512, 512, 512] CLEAN 
+22:13:39 base n=3 ['prose6', 'prose7', 'prose8'] agg 31.2 tok/s over 40.5s, tok/cycle 2.48, gen [512, 512, 512] CLEAN 
+22:14:11 base n=3 ['code0', 'code1', 'code2'] agg 56.6 tok/s over 21.0s, tok/cycle 4.74, gen [512, 512, 512] CLEAN 
+22:14:41 base n=3 ['code3', 'code4', 'code5'] agg 54.1 tok/s over 24.3s, tok/cycle 4.81, gen [512, 512, 512] CLEAN 
+22:15:09 base n=3 ['code6', 'code7', 'code8'] agg 57.8 tok/s over 23.2s, tok/cycle 5.10, gen [512, 512, 512] CLEAN 
+22:16:05 base n=3 ['prose0', 'code0', 's0:50'] agg 33.8 tok/s over 31.1s, tok/cycle 2.70, gen [512, 512, 512] CLEAN 
+22:16:50 base n=3 ['code1', 's0:53', 'prose1'] agg 43.2 tok/s over 20.4s, tok/cycle 3.35, gen [512, 444, 512] CLEAN 
+22:17:46 base n=3 ['s0:59', 'prose2', 'code2'] agg 32.7 tok/s over 31.3s, tok/cycle 2.64, gen [512, 512, 512] CLEAN 
+22:17:46 base SUMMARY base|n2|code                 rounds 3 agg median 43.4 mean 46.5 tok/s, tok/cycle 4.72
+22:17:46 base SUMMARY base|n2|mix                  rounds 3 agg median 30.1 mean 31.7 tok/s, tok/cycle 2.83
+22:17:46 base SUMMARY base|n2|prose                rounds 3 agg median 25.3 mean 24.1 tok/s, tok/cycle 2.29
+22:17:46 base SUMMARY base|n3|code                 rounds 3 agg median 56.6 mean 56.2 tok/s, tok/cycle 4.88
+22:17:46 base SUMMARY base|n3|mix                  rounds 3 agg median 33.8 mean 36.6 tok/s, tok/cycle 2.86
+22:17:46 base SUMMARY base|n3|prose                rounds 3 agg median 28.5 mean 28.8 tok/s, tok/cycle 2.30
+22:17:46 base SUMMARY lambda|n2|code               rounds 3 agg median 46.2 mean 46.3 tok/s, tok/cycle 4.16
+22:17:46 base SUMMARY lambda|n2|mix                rounds 3 agg median 35.8 mean 36.1 tok/s, tok/cycle 2.63
+22:17:46 base SUMMARY lambda|n2|prose              rounds 3 agg median 32.1 mean 31.1 tok/s, tok/cycle 2.12
+22:17:46 base SUMMARY ratio|n2|code                rounds 3 agg median 45.8 mean 47.8 tok/s, tok/cycle 4.34
+22:17:46 base SUMMARY ratio|n2|mix                 rounds 3 agg median 36.1 mean 36.7 tok/s, tok/cycle 2.78
+22:17:46 base SUMMARY ratio|n2|prose               rounds 3 agg median 30.0 mean 30.0 tok/s, tok/cycle 2.05
+22:17:50 ratio 27 agent turns selected
+22:18:35 ratio n=3 ['prose0', 'prose1', 'prose2'] agg 36.6 tok/s over 38.8s, tok/cycle 1.85, gen [512, 512, 512] CLEAN 
+22:19:15 ratio n=3 ['prose3', 'prose4', 'prose5'] agg 37.4 tok/s over 32.6s, tok/cycle 2.01, gen [373, 512, 512] CLEAN 
+22:19:59 ratio n=3 ['prose6', 'prose7', 'prose8'] agg 37.8 tok/s over 36.2s, tok/cycle 2.03, gen [508, 512, 512] CLEAN 
+22:20:29 ratio n=3 ['code0', 'code1', 'code2'] agg 57.7 tok/s over 20.4s, tok/cycle 4.74, gen [512, 512, 512] CLEAN 
+22:20:59 ratio n=3 ['code3', 'code4', 'code5'] agg 54.6 tok/s over 24.6s, tok/cycle 4.23, gen [512, 512, 512] CLEAN 
+22:21:29 ratio n=3 ['code6', 'code7', 'code8'] agg 56.4 tok/s over 24.0s, tok/cycle 4.49, gen [512, 512, 512] CLEAN 
+22:22:10 ratio n=3 ['prose0', 'code0', 's0:50'] agg 42.1 tok/s over 20.3s, tok/cycle 2.86, gen [512, 512, 308] CLEAN 
+22:22:52 ratio n=3 ['code1', 's0:53', 'prose1'] agg 45.7 tok/s over 19.9s, tok/cycle 3.04, gen [512, 512, 512] CLEAN 
+22:23:38 ratio n=3 ['s0:59', 'prose2', 'code2'] agg 39.2 tok/s over 27.3s, tok/cycle 2.43, gen [512, 512, 512] CLEAN 
+22:23:38 ratio SUMMARY base|n2|code                 rounds 3 agg median 43.4 mean 46.5 tok/s, tok/cycle 4.72
+22:23:38 ratio SUMMARY base|n2|mix                  rounds 3 agg median 30.1 mean 31.7 tok/s, tok/cycle 2.83
+22:23:38 ratio SUMMARY base|n2|prose                rounds 3 agg median 25.3 mean 24.1 tok/s, tok/cycle 2.29
+22:23:38 ratio SUMMARY base|n3|code                 rounds 3 agg median 56.6 mean 56.2 tok/s, tok/cycle 4.88
+22:23:38 ratio SUMMARY base|n3|mix                  rounds 3 agg median 33.8 mean 36.6 tok/s, tok/cycle 2.86
+22:23:38 ratio SUMMARY base|n3|prose                rounds 3 agg median 28.5 mean 28.8 tok/s, tok/cycle 2.30
+22:23:38 ratio SUMMARY lambda|n2|code               rounds 3 agg median 46.2 mean 46.3 tok/s, tok/cycle 4.16
+22:23:38 ratio SUMMARY lambda|n2|mix                rounds 3 agg median 35.8 mean 36.1 tok/s, tok/cycle 2.63
+22:23:38 ratio SUMMARY lambda|n2|prose              rounds 3 agg median 32.1 mean 31.1 tok/s, tok/cycle 2.12
+22:23:38 ratio SUMMARY ratio|n2|code                rounds 3 agg median 45.8 mean 47.8 tok/s, tok/cycle 4.34
+22:23:38 ratio SUMMARY ratio|n2|mix                 rounds 3 agg median 36.1 mean 36.7 tok/s, tok/cycle 2.78
+22:23:38 ratio SUMMARY ratio|n2|prose               rounds 3 agg median 30.0 mean 30.0 tok/s, tok/cycle 2.05
+22:23:38 ratio SUMMARY ratio|n3|code                rounds 3 agg median 56.4 mean 56.2 tok/s, tok/cycle 4.48
+22:23:38 ratio SUMMARY ratio|n3|mix                 rounds 3 agg median 42.1 mean 42.3 tok/s, tok/cycle 2.75
+22:23:38 ratio SUMMARY ratio|n3|prose               rounds 3 agg median 37.4 mean 37.3 tok/s, tok/cycle 1.96
+22:23:42 lambda 27 agent turns selected
+22:24:24 lambda n=3 ['prose0', 'prose1', 'prose2'] agg 37.8 tok/s over 36.2s, tok/cycle 2.00, gen [512, 494, 512] CLEAN 
+22:25:09 lambda n=3 ['prose3', 'prose4', 'prose5'] agg 36.9 tok/s over 37.3s, tok/cycle 1.84, gen [512, 512, 512] CLEAN 
+22:25:52 lambda n=3 ['prose6', 'prose7', 'prose8'] agg 39.1 tok/s over 36.3s, tok/cycle 2.09, gen [512, 512, 512] CLEAN 
+22:26:22 lambda n=3 ['code0', 'code1', 'code2'] agg 57.0 tok/s over 21.9s, tok/cycle 4.56, gen [512, 512, 512] CLEAN 
+22:26:53 lambda n=3 ['code3', 'code4', 'code5'] agg 55.0 tok/s over 23.9s, tok/cycle 4.17, gen [512, 512, 512] CLEAN 
+22:27:21 lambda n=3 ['code6', 'code7', 'code8'] agg 58.4 tok/s over 24.8s, tok/cycle 4.67, gen [512, 512, 512] CLEAN 
+22:28:03 lambda n=3 ['prose0', 'code0', 's0:50'] agg 40.8 tok/s over 23.7s, tok/cycle 2.53, gen [512, 512, 327] CLEAN 
+22:28:42 lambda n=3 ['code1', 's0:53', 'prose1'] agg 43.1 tok/s over 21.0s, tok/cycle 2.93, gen [512, 373, 497] CLEAN 
+22:29:21 lambda n=3 ['s0:59', 'prose2', 'code2'] agg 42.0 tok/s over 19.2s, tok/cycle 2.68, gen [258, 512, 512] CLEAN 
+22:29:21 lambda SUMMARY base|n2|code                 rounds 3 agg median 43.4 mean 46.5 tok/s, tok/cycle 4.72
+22:29:21 lambda SUMMARY base|n2|mix                  rounds 3 agg median 30.1 mean 31.7 tok/s, tok/cycle 2.83
+22:29:21 lambda SUMMARY base|n2|prose                rounds 3 agg median 25.3 mean 24.1 tok/s, tok/cycle 2.29
+22:29:21 lambda SUMMARY base|n3|code                 rounds 3 agg median 56.6 mean 56.2 tok/s, tok/cycle 4.88
+22:29:21 lambda SUMMARY base|n3|mix                  rounds 3 agg median 33.8 mean 36.6 tok/s, tok/cycle 2.86
+22:29:21 lambda SUMMARY base|n3|prose                rounds 3 agg median 28.5 mean 28.8 tok/s, tok/cycle 2.30
+22:29:21 lambda SUMMARY lambda|n2|code               rounds 3 agg median 46.2 mean 46.3 tok/s, tok/cycle 4.16
+22:29:21 lambda SUMMARY lambda|n2|mix                rounds 3 agg median 35.8 mean 36.1 tok/s, tok/cycle 2.63
+22:29:21 lambda SUMMARY lambda|n2|prose              rounds 3 agg median 32.1 mean 31.1 tok/s, tok/cycle 2.12
+22:29:21 lambda SUMMARY lambda|n3|code               rounds 3 agg median 57.0 mean 56.8 tok/s, tok/cycle 4.46
+22:29:21 lambda SUMMARY lambda|n3|mix                rounds 3 agg median 42.0 mean 42.0 tok/s, tok/cycle 2.71
+22:29:21 lambda SUMMARY lambda|n3|prose              rounds 3 agg median 37.8 mean 37.9 tok/s, tok/cycle 1.97
+22:29:21 lambda SUMMARY ratio|n2|code                rounds 3 agg median 45.8 mean 47.8 tok/s, tok/cycle 4.34
+22:29:21 lambda SUMMARY ratio|n2|mix                 rounds 3 agg median 36.1 mean 36.7 tok/s, tok/cycle 2.78
+22:29:21 lambda SUMMARY ratio|n2|prose               rounds 3 agg median 30.0 mean 30.0 tok/s, tok/cycle 2.05
+22:29:21 lambda SUMMARY ratio|n3|code                rounds 3 agg median 56.4 mean 56.2 tok/s, tok/cycle 4.48
+22:29:21 lambda SUMMARY ratio|n3|mix                 rounds 3 agg median 42.1 mean 42.3 tok/s, tok/cycle 2.75
+22:29:21 lambda SUMMARY ratio|n3|prose               rounds 3 agg median 37.4 mean 37.3 tok/s, tok/cycle 1.96
+22:29:25 base 27 agent turns selected
+22:30:29 base n=4 ['prose0', 'prose1', 'prose2', 'prose3'] agg 32.3 tok/s over 54.0s, tok/cycle 2.27, gen [512, 512, 512, 451] CLEAN 
+22:31:30 base n=4 ['prose4', 'prose5', 'prose6', 'prose7'] agg 35.5 tok/s over 53.8s, tok/cycle 2.54, gen [512, 512, 512, 512] CLEAN 
+22:32:34 base n=4 ['prose8', 'prose9', 'prose10', 'prose11'] agg 33.6 tok/s over 53.6s, tok/cycle 2.41, gen [495, 512, 512, 512] CLEAN 
+22:33:10 base n=4 ['code0', 'code1', 'code2', 'code3'] agg 63.8 tok/s over 24.0s, tok/cycle 4.80, gen [512, 512, 512, 512] CLEAN 
+22:33:41 base n=4 ['code4', 'code5', 'code6', 'code7'] agg 67.9 tok/s over 28.8s, tok/cycle 5.21, gen [512, 512, 512, 512] CLEAN 
+22:34:14 base n=4 ['code8', 'code9', 'code10', 'code11'] agg 63.8 tok/s over 24.9s, tok/cycle 4.86, gen [512, 360, 512, 512] CLEAN 
+22:35:19 base n=4 ['prose0', 'code0', 's0:50', 'prose1'] agg 37.1 tok/s over 36.5s, tok/cycle 2.68, gen [512, 512, 512, 512] CLEAN 
+22:36:12 base n=4 ['code1', 's0:53', 'prose2', 'code2'] agg 48.8 tok/s over 21.2s, tok/cycle 3.27, gen [512, 342, 512, 512] CLEAN 
+22:37:13 base n=4 ['s0:59', 'prose3', 'code3', 's1:136'] agg 44.0 tok/s over 25.9s, tok/cycle 2.98, gen [512, 512, 512, 427] CLEAN 
+22:37:13 base SUMMARY base|n2|code                 rounds 3 agg median 43.4 mean 46.5 tok/s, tok/cycle 4.72
+22:37:13 base SUMMARY base|n2|mix                  rounds 3 agg median 30.1 mean 31.7 tok/s, tok/cycle 2.83
+22:37:13 base SUMMARY base|n2|prose                rounds 3 agg median 25.3 mean 24.1 tok/s, tok/cycle 2.29
+22:37:13 base SUMMARY base|n3|code                 rounds 3 agg median 56.6 mean 56.2 tok/s, tok/cycle 4.88
+22:37:13 base SUMMARY base|n3|mix                  rounds 3 agg median 33.8 mean 36.6 tok/s, tok/cycle 2.86
+22:37:13 base SUMMARY base|n3|prose                rounds 3 agg median 28.5 mean 28.8 tok/s, tok/cycle 2.30
+22:37:13 base SUMMARY base|n4|code                 rounds 3 agg median 63.8 mean 65.1 tok/s, tok/cycle 4.95
+22:37:13 base SUMMARY base|n4|mix                  rounds 3 agg median 44.0 mean 43.3 tok/s, tok/cycle 2.95
+22:37:13 base SUMMARY base|n4|prose                rounds 3 agg median 33.6 mean 33.8 tok/s, tok/cycle 2.40
+22:37:13 base SUMMARY lambda|n2|code               rounds 3 agg median 46.2 mean 46.3 tok/s, tok/cycle 4.16
+22:37:13 base SUMMARY lambda|n2|mix                rounds 3 agg median 35.8 mean 36.1 tok/s, tok/cycle 2.63
+22:37:13 base SUMMARY lambda|n2|prose              rounds 3 agg median 32.1 mean 31.1 tok/s, tok/cycle 2.12
+22:37:13 base SUMMARY lambda|n3|code               rounds 3 agg median 57.0 mean 56.8 tok/s, tok/cycle 4.46
+22:37:13 base SUMMARY lambda|n3|mix                rounds 3 agg median 42.0 mean 42.0 tok/s, tok/cycle 2.71
+22:37:13 base SUMMARY lambda|n3|prose              rounds 3 agg median 37.8 mean 37.9 tok/s, tok/cycle 1.97
+22:37:13 base SUMMARY ratio|n2|code                rounds 3 agg median 45.8 mean 47.8 tok/s, tok/cycle 4.34
+22:37:13 base SUMMARY ratio|n2|mix                 rounds 3 agg median 36.1 mean 36.7 tok/s, tok/cycle 2.78
+22:37:13 base SUMMARY ratio|n2|prose               rounds 3 agg median 30.0 mean 30.0 tok/s, tok/cycle 2.05
+22:37:13 base SUMMARY ratio|n3|code                rounds 3 agg median 56.4 mean 56.2 tok/s, tok/cycle 4.48
+22:37:13 base SUMMARY ratio|n3|mix                 rounds 3 agg median 42.1 mean 42.3 tok/s, tok/cycle 2.75
+22:37:13 base SUMMARY ratio|n3|prose               rounds 3 agg median 37.4 mean 37.3 tok/s, tok/cycle 1.96
+22:37:17 ratio 27 agent turns selected
+22:38:07 ratio n=4 ['prose0', 'prose1', 'prose2', 'prose3'] agg 42.8 tok/s over 42.7s, tok/cycle 1.87, gen [512, 512, 512, 468] CLEAN 
+22:38:55 ratio n=4 ['prose4', 'prose5', 'prose6', 'prose7'] agg 46.2 tok/s over 41.1s, tok/cycle 2.20, gen [512, 512, 512, 512] CLEAN 
+22:39:45 ratio n=4 ['prose8', 'prose9', 'prose10', 'prose11'] agg 44.7 tok/s over 42.1s, tok/cycle 2.06, gen [512, 512, 512, 512] CLEAN 
+22:40:20 ratio n=4 ['code0', 'code1', 'code2', 'code3'] agg 63.3 tok/s over 25.0s, tok/cycle 4.44, gen [512, 512, 512, 512] CLEAN 
+22:40:54 ratio n=4 ['code4', 'code5', 'code6', 'code7'] agg 64.1 tok/s over 28.1s, tok/cycle 4.47, gen [512, 512, 512, 512] CLEAN 
+22:41:28 ratio n=4 ['code8', 'code9', 'code10', 'code11'] agg 67.3 tok/s over 23.9s, tok/cycle 4.73, gen [512, 437, 512, 512] CLEAN 
+22:42:19 ratio n=4 ['prose0', 'code0', 's0:50', 'prose1'] agg 45.6 tok/s over 33.7s, tok/cycle 2.40, gen [512, 512, 512, 512] CLEAN 
+22:43:08 ratio n=4 ['code1', 's0:53', 'prose2', 'code2'] agg 48.2 tok/s over 24.6s, tok/cycle 2.98, gen [512, 381, 512, 512] CLEAN 
+22:43:55 ratio n=4 ['s0:59', 'prose3', 'code3', 's1:136'] agg 49.8 tok/s over 19.9s, tok/cycle 2.91, gen [236, 492, 512, 468] CLEAN 
+22:43:55 ratio SUMMARY base|n2|code                 rounds 3 agg median 43.4 mean 46.5 tok/s, tok/cycle 4.72
+22:43:55 ratio SUMMARY base|n2|mix                  rounds 3 agg median 30.1 mean 31.7 tok/s, tok/cycle 2.83
+22:43:55 ratio SUMMARY base|n2|prose                rounds 3 agg median 25.3 mean 24.1 tok/s, tok/cycle 2.29
+22:43:55 ratio SUMMARY base|n3|code                 rounds 3 agg median 56.6 mean 56.2 tok/s, tok/cycle 4.88
+22:43:55 ratio SUMMARY base|n3|mix                  rounds 3 agg median 33.8 mean 36.6 tok/s, tok/cycle 2.86
+22:43:55 ratio SUMMARY base|n3|prose                rounds 3 agg median 28.5 mean 28.8 tok/s, tok/cycle 2.30
+22:43:55 ratio SUMMARY base|n4|code                 rounds 3 agg median 63.8 mean 65.1 tok/s, tok/cycle 4.95
+22:43:55 ratio SUMMARY base|n4|mix                  rounds 3 agg median 44.0 mean 43.3 tok/s, tok/cycle 2.95
+22:43:55 ratio SUMMARY base|n4|prose                rounds 3 agg median 33.6 mean 33.8 tok/s, tok/cycle 2.40
+22:43:55 ratio SUMMARY lambda|n2|code               rounds 3 agg median 46.2 mean 46.3 tok/s, tok/cycle 4.16
+22:43:55 ratio SUMMARY lambda|n2|mix                rounds 3 agg median 35.8 mean 36.1 tok/s, tok/cycle 2.63
+22:43:55 ratio SUMMARY lambda|n2|prose              rounds 3 agg median 32.1 mean 31.1 tok/s, tok/cycle 2.12
+22:43:55 ratio SUMMARY lambda|n3|code               rounds 3 agg median 57.0 mean 56.8 tok/s, tok/cycle 4.46
+22:43:55 ratio SUMMARY lambda|n3|mix                rounds 3 agg median 42.0 mean 42.0 tok/s, tok/cycle 2.71
+22:43:55 ratio SUMMARY lambda|n3|prose              rounds 3 agg median 37.8 mean 37.9 tok/s, tok/cycle 1.97
+22:43:55 ratio SUMMARY ratio|n2|code                rounds 3 agg median 45.8 mean 47.8 tok/s, tok/cycle 4.34
+22:43:55 ratio SUMMARY ratio|n2|mix                 rounds 3 agg median 36.1 mean 36.7 tok/s, tok/cycle 2.78
+22:43:55 ratio SUMMARY ratio|n2|prose               rounds 3 agg median 30.0 mean 30.0 tok/s, tok/cycle 2.05
+22:43:55 ratio SUMMARY ratio|n3|code                rounds 3 agg median 56.4 mean 56.2 tok/s, tok/cycle 4.48
+22:43:55 ratio SUMMARY ratio|n3|mix                 rounds 3 agg median 42.1 mean 42.3 tok/s, tok/cycle 2.75
+22:43:55 ratio SUMMARY ratio|n3|prose               rounds 3 agg median 37.4 mean 37.3 tok/s, tok/cycle 1.96
+22:43:55 ratio SUMMARY ratio|n4|code                rounds 3 agg median 64.1 mean 64.9 tok/s, tok/cycle 4.54
+22:43:55 ratio SUMMARY ratio|n4|mix                 rounds 3 agg median 48.2 mean 47.9 tok/s, tok/cycle 2.73
+22:43:55 ratio SUMMARY ratio|n4|prose               rounds 3 agg median 44.7 mean 44.6 tok/s, tok/cycle 2.04
+22:43:59 lambda 27 agent turns selected
+22:44:50 lambda n=4 ['prose0', 'prose1', 'prose2', 'prose3'] agg 42.8 tok/s over 39.9s, tok/cycle 1.83, gen [512, 469, 512, 512] CLEAN 
+22:45:38 lambda n=4 ['prose4', 'prose5', 'prose6', 'prose7'] agg 47.4 tok/s over 40.6s, tok/cycle 2.25, gen [512, 512, 512, 512] CLEAN 
+22:46:26 lambda n=4 ['prose8', 'prose9', 'prose10', 'prose11'] agg 45.6 tok/s over 41.5s, tok/cycle 2.14, gen [512, 512, 512, 512] CLEAN 
+22:47:00 lambda n=4 ['code0', 'code1', 'code2', 'code3'] agg 66.6 tok/s over 23.1s, tok/cycle 4.85, gen [512, 512, 512, 512] CLEAN 
+22:47:34 lambda n=4 ['code4', 'code5', 'code6', 'code7'] agg 68.1 tok/s over 28.2s, tok/cycle 4.69, gen [512, 512, 512, 512] CLEAN 
+22:48:05 lambda n=4 ['code8', 'code9', 'code10', 'code11'] agg 66.9 tok/s over 17.5s, tok/cycle 4.70, gen [512, 314, 512, 512] CLEAN 
+22:48:55 lambda n=4 ['prose0', 'code0', 's0:50', 'prose1'] agg 45.8 tok/s over 33.0s, tok/cycle 2.38, gen [512, 512, 512, 512] CLEAN 
+22:49:46 lambda n=4 ['code1', 's0:53', 'prose2', 'code2'] agg 50.7 tok/s over 24.3s, tok/cycle 2.86, gen [512, 512, 512, 512] CLEAN 
+22:50:37 lambda n=4 ['s0:59', 'prose3', 'code3', 's1:136'] agg 48.6 tok/s over 23.9s, tok/cycle 2.54, gen [512, 485, 512, 425] CLEAN 
+22:50:37 lambda SUMMARY base|n2|code                 rounds 3 agg median 43.4 mean 46.5 tok/s, tok/cycle 4.72
+22:50:37 lambda SUMMARY base|n2|mix                  rounds 3 agg median 30.1 mean 31.7 tok/s, tok/cycle 2.83
+22:50:37 lambda SUMMARY base|n2|prose                rounds 3 agg median 25.3 mean 24.1 tok/s, tok/cycle 2.29
+22:50:37 lambda SUMMARY base|n3|code                 rounds 3 agg median 56.6 mean 56.2 tok/s, tok/cycle 4.88
+22:50:37 lambda SUMMARY base|n3|mix                  rounds 3 agg median 33.8 mean 36.6 tok/s, tok/cycle 2.86
+22:50:37 lambda SUMMARY base|n3|prose                rounds 3 agg median 28.5 mean 28.8 tok/s, tok/cycle 2.30
+22:50:37 lambda SUMMARY base|n4|code                 rounds 3 agg median 63.8 mean 65.1 tok/s, tok/cycle 4.95
+22:50:37 lambda SUMMARY base|n4|mix                  rounds 3 agg median 44.0 mean 43.3 tok/s, tok/cycle 2.95
+22:50:37 lambda SUMMARY base|n4|prose                rounds 3 agg median 33.6 mean 33.8 tok/s, tok/cycle 2.40
+22:50:37 lambda SUMMARY lambda|n2|code               rounds 3 agg median 46.2 mean 46.3 tok/s, tok/cycle 4.16
+22:50:37 lambda SUMMARY lambda|n2|mix                rounds 3 agg median 35.8 mean 36.1 tok/s, tok/cycle 2.63
+22:50:37 lambda SUMMARY lambda|n2|prose              rounds 3 agg median 32.1 mean 31.1 tok/s, tok/cycle 2.12
+22:50:37 lambda SUMMARY lambda|n3|code               rounds 3 agg median 57.0 mean 56.8 tok/s, tok/cycle 4.46
+22:50:37 lambda SUMMARY lambda|n3|mix                rounds 3 agg median 42.0 mean 42.0 tok/s, tok/cycle 2.71
+22:50:37 lambda SUMMARY lambda|n3|prose              rounds 3 agg median 37.8 mean 37.9 tok/s, tok/cycle 1.97
+22:50:37 lambda SUMMARY lambda|n4|code               rounds 3 agg median 66.9 mean 67.2 tok/s, tok/cycle 4.75
+22:50:37 lambda SUMMARY lambda|n4|mix                rounds 3 agg median 48.6 mean 48.4 tok/s, tok/cycle 2.57
+22:50:37 lambda SUMMARY lambda|n4|prose              rounds 3 agg median 45.6 mean 45.3 tok/s, tok/cycle 2.06
+22:50:37 lambda SUMMARY ratio|n2|code                rounds 3 agg median 45.8 mean 47.8 tok/s, tok/cycle 4.34
+22:50:37 lambda SUMMARY ratio|n2|mix                 rounds 3 agg median 36.1 mean 36.7 tok/s, tok/cycle 2.78
+22:50:37 lambda SUMMARY ratio|n2|prose               rounds 3 agg median 30.0 mean 30.0 tok/s, tok/cycle 2.05
+22:50:37 lambda SUMMARY ratio|n3|code                rounds 3 agg median 56.4 mean 56.2 tok/s, tok/cycle 4.48
+22:50:37 lambda SUMMARY ratio|n3|mix                 rounds 3 agg median 42.1 mean 42.3 tok/s, tok/cycle 2.75
+22:50:37 lambda SUMMARY ratio|n3|prose               rounds 3 agg median 37.4 mean 37.3 tok/s, tok/cycle 1.96
+22:50:37 lambda SUMMARY ratio|n4|code                rounds 3 agg median 64.1 mean 64.9 tok/s, tok/cycle 4.54
+22:50:37 lambda SUMMARY ratio|n4|mix                 rounds 3 agg median 48.2 mean 47.9 tok/s, tok/cycle 2.73
+22:50:37 lambda SUMMARY ratio|n4|prose               rounds 3 agg median 44.7 mean 44.6 tok/s, tok/cycle 2.04

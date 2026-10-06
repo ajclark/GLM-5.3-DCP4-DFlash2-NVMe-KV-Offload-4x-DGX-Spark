@@ -1,0 +1,8 @@
+07:55:30 bcd2-k1 n=1 ['prose0'] agg 21.7 tok/s over 23.6s, tok/cycle 1.61, gen [512] CLEAN 
+07:55:50 bcd2-k1 n=1 ['code0'] agg 25.6 tok/s over 20.0s, tok/cycle 1.90, gen [512] CLEAN 
+07:56:31 bcd2-k1 n=4 ['prose0', 'prose1', 'prose2', 'prose3'] agg 50.7 tok/s over 35.1s, tok/cycle 1.68, gen [512, 512, 512, 431] CLEAN 
+07:57:10 bcd2-k1 n=4 ['code0', 'code1', 'code2', 'code3'] agg 55.2 tok/s over 35.8s, tok/cycle 1.91, gen [512, 512, 512, 512] CLEAN 
+07:57:10 bcd2-k1 SUMMARY bcd2-k1|n1|code              rounds 1 agg median 25.6 mean 25.6 tok/s, tok/cycle 1.90
+07:57:10 bcd2-k1 SUMMARY bcd2-k1|n1|prose             rounds 1 agg median 21.7 mean 21.7 tok/s, tok/cycle 1.61
+07:57:10 bcd2-k1 SUMMARY bcd2-k1|n4|code              rounds 1 agg median 55.2 mean 55.2 tok/s, tok/cycle 1.91
+07:57:10 bcd2-k1 SUMMARY bcd2-k1|n4|prose             rounds 1 agg median 50.7 mean 50.7 tok/s, tok/cycle 1.68

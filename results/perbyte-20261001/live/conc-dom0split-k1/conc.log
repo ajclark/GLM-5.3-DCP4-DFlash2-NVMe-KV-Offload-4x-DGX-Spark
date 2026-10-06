@@ -1,0 +1,16 @@
+19:23:28 dom0split-k1 n=1 ['prose0'] agg 22.9 tok/s over 22.4s, tok/cycle 1.62, gen [512] CLEAN 
+19:23:48 dom0split-k1 n=1 ['code0'] agg 26.8 tok/s over 19.1s, tok/cycle 1.92, gen [512] CLEAN 
+19:24:17 dom0split-k1 n=2 ['prose0', 'prose1'] agg 36.7 tok/s over 27.8s, tok/cycle 1.68, gen [512, 512] CLEAN 
+19:24:43 dom0split-k1 n=2 ['code0', 'code1'] agg 41.1 tok/s over 24.2s, tok/cycle 1.94, gen [512, 512] CLEAN 
+19:25:20 dom0split-k1 n=3 ['prose0', 'prose1', 'prose2'] agg 44.6 tok/s over 32.9s, tok/cycle 1.67, gen [512, 512, 512] CLEAN 
+19:25:52 dom0split-k1 n=3 ['code0', 'code1', 'code2'] agg 50.2 tok/s over 29.8s, tok/cycle 1.94, gen [512, 512, 512] CLEAN 
+19:26:33 dom0split-k1 n=4 ['prose0', 'prose1', 'prose2', 'prose3'] agg 50.6 tok/s over 35.3s, tok/cycle 1.64, gen [512, 475, 512, 460] CLEAN 
+19:27:11 dom0split-k1 n=4 ['code0', 'code1', 'code2', 'code3'] agg 56.8 tok/s over 35.0s, tok/cycle 1.92, gen [512, 512, 512, 512] CLEAN 
+19:27:11 dom0split-k1 SUMMARY dom0split-k1|n1|code         rounds 1 agg median 26.8 mean 26.8 tok/s, tok/cycle 1.92
+19:27:11 dom0split-k1 SUMMARY dom0split-k1|n1|prose        rounds 1 agg median 22.9 mean 22.9 tok/s, tok/cycle 1.62
+19:27:11 dom0split-k1 SUMMARY dom0split-k1|n2|code         rounds 1 agg median 41.1 mean 41.1 tok/s, tok/cycle 1.94
+19:27:11 dom0split-k1 SUMMARY dom0split-k1|n2|prose        rounds 1 agg median 36.7 mean 36.7 tok/s, tok/cycle 1.68
+19:27:11 dom0split-k1 SUMMARY dom0split-k1|n3|code         rounds 1 agg median 50.2 mean 50.2 tok/s, tok/cycle 1.94
+19:27:11 dom0split-k1 SUMMARY dom0split-k1|n3|prose        rounds 1 agg median 44.6 mean 44.6 tok/s, tok/cycle 1.67
+19:27:11 dom0split-k1 SUMMARY dom0split-k1|n4|code         rounds 1 agg median 56.8 mean 56.8 tok/s, tok/cycle 1.92
+19:27:11 dom0split-k1 SUMMARY dom0split-k1|n4|prose        rounds 1 agg median 50.6 mean 50.6 tok/s, tok/cycle 1.64

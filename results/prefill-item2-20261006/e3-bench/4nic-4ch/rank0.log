@@ -1,0 +1,5 @@
+{"type": "metadata", "label": "4nic-4ch", "nccl": "2.30.7", "env": {"NCCL_IB_HCA": "=roceP2p1s0f0,roceP2p1s0f1,rocep1s0f0,rocep1s0f1", "NCCL_IB_MERGE_NICS": "1", "NCCL_MAX_NCHANNELS": "4"}, "configs": ["1fwd"], "sizes": [12582912, 25165824]}
+{"type": "result", "label": "4nic-4ch", "config": "1fwd", "bytes": 12582912, "p50_us": 929.1, "min_us": 869.8, "max_us": 1034.1, "GBps_per_rank_bus": 20.31, "max_err_vs_fp32": 0.05859375, "vs_1fwd": null, "mem_drop_mb_max": {"MemAvailable": 707.6, "cuda_free": 707.9}}
+{"type": "result", "label": "4nic-4ch", "config": "1fwd", "bytes": 25165824, "p50_us": 1719.5, "min_us": 1704.1, "max_us": 1813.9, "GBps_per_rank_bus": 21.95, "max_err_vs_fp32": 0.0703125, "vs_1fwd": null, "mem_drop_mb_max": {"MemAvailable": 707.6, "cuda_free": 707.9}}
+{"type": "done", "label": "4nic-4ch"}
+pl: IbDev 3 Port 1 qp_num 2012 query_ece={supported=1, vendor_id=0x15b3, options=0x30000002, comp_mask=0x0}

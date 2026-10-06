@@ -1,0 +1,5 @@
+{"type": "metadata", "label": "today-2ch", "nccl": "2.30.7", "env": {"NCCL_IB_HCA": "=roceP2p1s0f0,roceP2p1s0f1", "NCCL_IB_MERGE_NICS": "1", "NCCL_MAX_NCHANNELS": "2"}, "configs": ["1fwd"], "sizes": [12582912, 25165824]}
+{"type": "result", "label": "today-2ch", "config": "1fwd", "bytes": 12582912, "p50_us": 1480.2, "min_us": 1459.7, "max_us": 1525.0, "GBps_per_rank_bus": 12.75, "max_err_vs_fp32": 0.0625, "vs_1fwd": null, "mem_drop_mb_max": {"MemAvailable": 622.7, "cuda_free": 622.9}}
+{"type": "result", "label": "today-2ch", "config": "1fwd", "bytes": 25165824, "p50_us": 2881.0, "min_us": 2856.8, "max_us": 2908.1, "GBps_per_rank_bus": 13.1, "max_err_vs_fp32": 0.0625, "vs_1fwd": null, "mem_drop_mb_max": {"MemAvailable": 622.7, "cuda_free": 622.9}}
+{"type": "done", "label": "today-2ch"}
+FF0000) ctsFifoRkey=0x1b9c9c ctsFifoLkey=0x1b9c9c

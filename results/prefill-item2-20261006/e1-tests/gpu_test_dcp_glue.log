@@ -1,0 +1,150 @@
+PASS patched cp_lse_ag_out_rs installed
+PASS stock kept as __wrapped__
+PASS T=2 base_e=True rank 0: correction output identical
+PASS T=2 base_e=True rank 0: lse identical
+PASS T=2 rank 0: glue output is a head-major view
+PASS T=2 rank 0: no NaN/inf in corrected output
+PASS T=2 base_e=True rank 1: correction output identical
+PASS T=2 base_e=True rank 1: lse identical
+PASS T=2 rank 1: glue output is a head-major view
+PASS T=2 rank 1: no NaN/inf in corrected output
+PASS T=2 rank 0: head-major input needs no copy
+PASS T=2 base_e=True rank 0: reduce-scatter result identical
+PASS T=2 rank 1: head-major input needs no copy
+PASS T=2 base_e=True rank 1: reduce-scatter result identical
+PASS T=2 base_e=False rank 0: correction output identical
+PASS T=2 base_e=False rank 0: lse identical
+PASS T=2 rank 0: glue output is a head-major view
+PASS T=2 rank 0: no NaN/inf in corrected output
+PASS T=2 base_e=False rank 1: correction output identical
+PASS T=2 base_e=False rank 1: lse identical
+PASS T=2 rank 1: glue output is a head-major view
+PASS T=2 rank 1: no NaN/inf in corrected output
+PASS T=2 rank 0: head-major input needs no copy
+PASS T=2 base_e=False rank 0: reduce-scatter result identical
+PASS T=2 rank 1: head-major input needs no copy
+PASS T=2 base_e=False rank 1: reduce-scatter result identical
+PASS T=8 base_e=True rank 0: correction output identical
+PASS T=8 base_e=True rank 0: lse identical
+PASS T=8 rank 0: glue output is a head-major view
+PASS T=8 rank 0: no NaN/inf in corrected output
+PASS T=8 base_e=True rank 1: correction output identical
+PASS T=8 base_e=True rank 1: lse identical
+PASS T=8 rank 1: glue output is a head-major view
+PASS T=8 rank 1: no NaN/inf in corrected output
+PASS T=8 rank 0: head-major input needs no copy
+PASS T=8 base_e=True rank 0: reduce-scatter result identical
+PASS T=8 rank 1: head-major input needs no copy
+PASS T=8 base_e=True rank 1: reduce-scatter result identical
+PASS T=8 base_e=False rank 0: correction output identical
+PASS T=8 base_e=False rank 0: lse identical
+PASS T=8 rank 0: glue output is a head-major view
+PASS T=8 rank 0: no NaN/inf in corrected output
+PASS T=8 base_e=False rank 1: correction output identical
+PASS T=8 base_e=False rank 1: lse identical
+PASS T=8 rank 1: glue output is a head-major view
+PASS T=8 rank 1: no NaN/inf in corrected output
+PASS T=8 rank 0: head-major input needs no copy
+PASS T=8 base_e=False rank 0: reduce-scatter result identical
+PASS T=8 rank 1: head-major input needs no copy
+PASS T=8 base_e=False rank 1: reduce-scatter result identical
+PASS T=32 base_e=True rank 0: correction output identical
+PASS T=32 base_e=True rank 0: lse identical
+PASS T=32 rank 0: glue output is a head-major view
+PASS T=32 rank 0: no NaN/inf in corrected output
+PASS T=32 base_e=True rank 1: correction output identical
+PASS T=32 base_e=True rank 1: lse identical
+PASS T=32 rank 1: glue output is a head-major view
+PASS T=32 rank 1: no NaN/inf in corrected output
+PASS T=32 rank 0: head-major input needs no copy
+PASS T=32 base_e=True rank 0: reduce-scatter result identical
+PASS T=32 rank 1: head-major input needs no copy
+PASS T=32 base_e=True rank 1: reduce-scatter result identical
+PASS T=32 base_e=False rank 0: correction output identical
+PASS T=32 base_e=False rank 0: lse identical
+PASS T=32 rank 0: glue output is a head-major view
+PASS T=32 rank 0: no NaN/inf in corrected output
+PASS T=32 base_e=False rank 1: correction output identical
+PASS T=32 base_e=False rank 1: lse identical
+PASS T=32 rank 1: glue output is a head-major view
+PASS T=32 rank 1: no NaN/inf in corrected output
+PASS T=32 rank 0: head-major input needs no copy
+PASS T=32 base_e=False rank 0: reduce-scatter result identical
+PASS T=32 rank 1: head-major input needs no copy
+PASS T=32 base_e=False rank 1: reduce-scatter result identical
+PASS T=96 base_e=True rank 0: correction output identical
+PASS T=96 base_e=True rank 0: lse identical
+PASS T=96 rank 0: glue output is a head-major view
+PASS T=96 rank 0: no NaN/inf in corrected output
+PASS T=96 base_e=True rank 1: correction output identical
+PASS T=96 base_e=True rank 1: lse identical
+PASS T=96 rank 1: glue output is a head-major view
+PASS T=96 rank 1: no NaN/inf in corrected output
+PASS T=96 rank 0: head-major input needs no copy
+PASS T=96 base_e=True rank 0: reduce-scatter result identical
+PASS T=96 rank 1: head-major input needs no copy
+PASS T=96 base_e=True rank 1: reduce-scatter result identical
+PASS T=96 base_e=False rank 0: correction output identical
+PASS T=96 base_e=False rank 0: lse identical
+PASS T=96 rank 0: glue output is a head-major view
+PASS T=96 rank 0: no NaN/inf in corrected output
+PASS T=96 base_e=False rank 1: correction output identical
+PASS T=96 base_e=False rank 1: lse identical
+PASS T=96 rank 1: glue output is a head-major view
+PASS T=96 rank 1: no NaN/inf in corrected output
+PASS T=96 rank 0: head-major input needs no copy
+PASS T=96 base_e=False rank 0: reduce-scatter result identical
+PASS T=96 rank 1: head-major input needs no copy
+PASS T=96 base_e=False rank 1: reduce-scatter result identical
+PASS T=1024 base_e=True rank 0: correction output identical
+PASS T=1024 base_e=True rank 0: lse identical
+PASS T=1024 rank 0: glue output is a head-major view
+PASS T=1024 rank 0: no NaN/inf in corrected output
+PASS T=1024 base_e=True rank 1: correction output identical
+PASS T=1024 base_e=True rank 1: lse identical
+PASS T=1024 rank 1: glue output is a head-major view
+PASS T=1024 rank 1: no NaN/inf in corrected output
+PASS T=1024 rank 0: head-major input needs no copy
+PASS T=1024 base_e=True rank 0: reduce-scatter result identical
+PASS T=1024 rank 1: head-major input needs no copy
+PASS T=1024 base_e=True rank 1: reduce-scatter result identical
+PASS T=1024 base_e=False rank 0: correction output identical
+PASS T=1024 base_e=False rank 0: lse identical
+PASS T=1024 rank 0: glue output is a head-major view
+PASS T=1024 rank 0: no NaN/inf in corrected output
+PASS T=1024 base_e=False rank 1: correction output identical
+PASS T=1024 base_e=False rank 1: lse identical
+PASS T=1024 rank 1: glue output is a head-major view
+PASS T=1024 rank 1: no NaN/inf in corrected output
+PASS T=1024 rank 0: head-major input needs no copy
+PASS T=1024 base_e=False rank 0: reduce-scatter result identical
+PASS T=1024 rank 1: head-major input needs no copy
+PASS T=1024 base_e=False rank 1: reduce-scatter result identical
+PASS T=2048 base_e=True rank 0: correction output identical
+PASS T=2048 base_e=True rank 0: lse identical
+PASS T=2048 rank 0: glue output is a head-major view
+PASS T=2048 rank 0: no NaN/inf in corrected output
+PASS T=2048 base_e=True rank 1: correction output identical
+PASS T=2048 base_e=True rank 1: lse identical
+PASS T=2048 rank 1: glue output is a head-major view
+PASS T=2048 rank 1: no NaN/inf in corrected output
+PASS T=2048 rank 0: head-major input needs no copy
+PASS T=2048 base_e=True rank 0: reduce-scatter result identical
+PASS T=2048 rank 1: head-major input needs no copy
+PASS T=2048 base_e=True rank 1: reduce-scatter result identical
+PASS T=2048 base_e=False rank 0: correction output identical
+PASS T=2048 base_e=False rank 0: lse identical
+PASS T=2048 rank 0: glue output is a head-major view
+PASS T=2048 rank 0: no NaN/inf in corrected output
+PASS T=2048 base_e=False rank 1: correction output identical
+PASS T=2048 base_e=False rank 1: lse identical
+PASS T=2048 rank 1: glue output is a head-major view
+PASS T=2048 rank 1: no NaN/inf in corrected output
+PASS T=2048 rank 0: head-major input needs no copy
+PASS T=2048 base_e=False rank 0: reduce-scatter result identical
+PASS T=2048 rank 1: head-major input needs no copy
+PASS T=2048 base_e=False rank 1: reduce-scatter result identical
+PASS 2-D last-dim gather == cat(dim=1) for (2048, 16, 576) torch.bfloat16
+PASS 2-D last-dim gather == cat(dim=1) for (2048, 2048, 2) torch.float32
+PASS 2-D last-dim gather == cat(dim=1) for (8, 16, 576) torch.bfloat16
+RESULT ok

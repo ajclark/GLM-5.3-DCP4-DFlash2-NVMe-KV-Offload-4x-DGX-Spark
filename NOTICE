@@ -26,3 +26,19 @@ tonyd2wild/GLM-5.3-Int4-Int8Mix-TP4-4x-DGX-Spark
 which also provides the container image and the Int4-Int8Mix quantization
 this work runs on. DFlash2 is by its respective authors; this repository
 only changes how its drafter's KV cache is placed under context parallelism.
+
+The serving overlay (runtime/vllm029/verify_cap_overlay/ and runtime/vllm029/roce/) also contains:
+
+- b12x (https://github.com/local-inference-lab/b12x), commit b58f34ea, Apache-2.0: the subset under
+  runtime/vllm029/roce/b12x/ (license in roce/b12x/LICENSE). roce/b12x/PROVENANCE.json pins every file's hash;
+  the only local patch is to b12x/comm/roce/_roce_proxy.c (idle backoff and a payload-within-slot check).
+  runtime/vllm029/roce/glm_roce/_pipe_proxy.c is derived from that proxy.
+- knapcio/GLM-5.3-Flash-4x-DGX-Spark-TP4 (https://github.com/knapcio/GLM-5.3-Flash-4x-DGX-Spark-TP4), commit
+  770d115: the RoCE routing shim in roce/glm_roce/install.py and the FP8 draft-head path in
+  verify_cap_overlay/vllm/model_executor/models/qwen3_dflash2.py are adapted from that project under the MIT
+  License (Copyright (c) 2026 knapcio; full text in roce/glm_roce/LICENSE). The L2-prefetch kernel and the
+  vocab-parallel argmax in verify_cap_overlay/glm_fast/ re-implement that project's Apache-2.0 overlays.
+- local-inference-lab/vllm#597 (Apache-2.0): roce/glm_roce/adapter.py ports its b12x RoCE communicator.
+
+Performance figures in README.md and results/ were measured on an abliterated graft of GLM-5.3 with the same
+quantization envelope as GLM-5.3 Int4-Int8Mix.

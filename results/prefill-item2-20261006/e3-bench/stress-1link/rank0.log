@@ -1,0 +1,5 @@
+{"type": "metadata", "label": "stress-1link", "nccl": "2.30.7", "env": {"NCCL_IB_HCA": "=roceP2p1s0f0,roceP2p1s0f1", "NCCL_IB_MERGE_NICS": "1", "NCCL_MAX_NCHANNELS": "2"}, "configs": ["1fwd"], "sizes": [12582912, 25165824]}
+{"type": "result", "label": "stress-1link", "config": "1fwd", "bytes": 12582912, "p50_us": 1512.6, "min_us": 1460.2, "max_us": 1565.1, "GBps_per_rank_bus": 12.48, "max_err_vs_fp32": 0.0625, "vs_1fwd": null, "mem_drop_mb_max": {"MemAvailable": 642.3, "cuda_free": 642.6}, "stress": {"iters": 3000, "mismatching_iters_max_rank": 0, "worst_abs": 0.0}}
+{"type": "result", "label": "stress-1link", "config": "1fwd", "bytes": 25165824, "p50_us": 2882.1, "min_us": 2846.0, "max_us": 2934.0, "GBps_per_rank_bus": 13.1, "max_err_vs_fp32": 0.0625, "vs_1fwd": null, "mem_drop_mb_max": {"MemAvailable": 642.3, "cuda_free": 642.6}, "stress": {"iters": 3000, "mismatching_iters_max_rank": 0, "worst_abs": 0.0}}
+{"type": "done", "label": "stress-1link"}
+ GID 3 (0/164A8C0FFFF0000) ctsFifoRkey=0x1b9c9c ctsFifoLkey=0x1b9c9c

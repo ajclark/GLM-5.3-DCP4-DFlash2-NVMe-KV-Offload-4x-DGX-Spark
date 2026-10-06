@@ -1,0 +1,133 @@
+{
+ "label": "k3",
+ "rows": [
+  {
+   "ctx": 4096,
+   "gen": 384,
+   "ttft_s": 6.86982798576355,
+   "prefill_s": 6.854270451993216,
+   "decode_s": 15.25261462002527,
+   "steps": 134.0,
+   "accepted": 250.0,
+   "cycle_ms_server": 113.82548223899455,
+   "cycle_ms_client": 114.64412768084304,
+   "tokens_per_step": 2.8582089552238807
+  },
+  {
+   "ctx": 4096,
+   "gen": 384,
+   "ttft_s": 6.868757963180542,
+   "prefill_s": 6.853231604967732,
+   "decode_s": 11.198469591035973,
+   "steps": 105.0,
+   "accepted": 279.0,
+   "cycle_ms_server": 106.65209134319974,
+   "cycle_ms_client": 107.61277262981122,
+   "tokens_per_step": 3.6476190476190475
+  },
+  {
+   "ctx": 4096,
+   "gen": 384,
+   "ttft_s": 0.7511260509490967,
+   "prefill_s": 0.7351369709940627,
+   "decode_s": 11.169298890978098,
+   "steps": 105.0,
+   "accepted": 279.0,
+   "cycle_ms_server": 106.37427515217236,
+   "cycle_ms_client": 107.35558546506442,
+   "tokens_per_step": 3.6476190476190475
+  },
+  {
+   "ctx": 32768,
+   "gen": 384,
+   "ttft_s": 55.95334815979004,
+   "prefill_s": 55.88176438899245,
+   "decode_s": 21.43309025495546,
+   "steps": 191.0,
+   "accepted": 193.0,
+   "cycle_ms_server": 112.21513222489769,
+   "cycle_ms_client": 112.5906605469553,
+   "tokens_per_step": 2.005235602094241
+  },
+  {
+   "ctx": 32768,
+   "gen": 384,
+   "ttft_s": 55.89709115028381,
+   "prefill_s": 55.84132486599265,
+   "decode_s": 14.836826531973202,
+   "steps": 130.0,
+   "accepted": 256.0,
+   "cycle_ms_server": 114.12943486133233,
+   "cycle_ms_client": 114.72113927205403,
+   "tokens_per_step": 2.9461538461538463
+  },
+  {
+   "ctx": 32768,
+   "gen": 384,
+   "ttft_s": 0.8066635131835938,
+   "prefill_s": 0.7509832000359893,
+   "decode_s": 13.676409697975032,
+   "steps": 119.0,
+   "accepted": 264.0,
+   "cycle_ms_server": 114.92781258802547,
+   "cycle_ms_client": 115.56693658990375,
+   "tokens_per_step": 3.2184873949579833
+  },
+  {
+   "ctx": 100000,
+   "gen": 384,
+   "ttft_s": 173.6766242980957,
+   "prefill_s": 173.51452302001417,
+   "decode_s": 11.296856492001098,
+   "steps": 103.0,
+   "accepted": 281.0,
+   "cycle_ms_server": 109.6782183689427,
+   "cycle_ms_client": 109.52569456661449,
+   "tokens_per_step": 3.7184466019417477
+  },
+  {
+   "ctx": 100000,
+   "gen": 384,
+   "ttft_s": 173.58572244644165,
+   "prefill_s": 173.4397120749927,
+   "decode_s": 11.118452897004317,
+   "steps": 101.0,
+   "accepted": 283.0,
+   "cycle_ms_server": 110.0836920495477,
+   "cycle_ms_client": 110.06970405578613,
+   "tokens_per_step": 3.792079207920792
+  },
+  {
+   "ctx": 100000,
+   "gen": 384,
+   "ttft_s": 0.71649169921875,
+   "prefill_s": 0.6090138659928925,
+   "decode_s": 11.100406152021606,
+   "steps": 101.0,
+   "accepted": 282.0,
+   "cycle_ms_server": 109.90501140615451,
+   "cycle_ms_client": 110.19047498703003,
+   "tokens_per_step": 3.792079207920792
+  }
+ ],
+ "summary": {
+  "4096": {
+   "cycle_ms_server_median": 106.65209134319974,
+   "cycle_ms_client_median": 107.61277262981122,
+   "tokens_per_step": 3.6476190476190475,
+   "n": 3
+  },
+  "32768": {
+   "cycle_ms_server_median": 114.12943486133233,
+   "cycle_ms_client_median": 114.72113927205403,
+   "tokens_per_step": 2.9461538461538463,
+   "n": 3
+  },
+  "100000": {
+   "cycle_ms_server_median": 109.90501140615451,
+   "cycle_ms_client_median": 110.06970405578613,
+   "tokens_per_step": 3.792079207920792,
+   "n": 3
+  }
+ }
+}

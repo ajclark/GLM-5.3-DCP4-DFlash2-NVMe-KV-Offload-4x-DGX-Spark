@@ -1,0 +1,8 @@
+08:01:24 off2-k1 n=1 ['prose0'] agg 20.2 tok/s over 25.3s, tok/cycle 1.62, gen [512] CLEAN 
+08:01:46 off2-k1 n=1 ['code0'] agg 23.7 tok/s over 21.6s, tok/cycle 1.89, gen [512] CLEAN 
+08:02:31 off2-k1 n=4 ['prose0', 'prose1', 'prose2', 'prose3'] agg 47.1 tok/s over 40.6s, tok/cycle 1.65, gen [512, 512, 512, 473] CLEAN 
+08:03:12 off2-k1 n=4 ['code0', 'code1', 'code2', 'code3'] agg 53.0 tok/s over 37.5s, tok/cycle 1.92, gen [512, 512, 512, 512] CLEAN 
+08:03:12 off2-k1 SUMMARY off2-k1|n1|code              rounds 1 agg median 23.7 mean 23.7 tok/s, tok/cycle 1.89
+08:03:12 off2-k1 SUMMARY off2-k1|n1|prose             rounds 1 agg median 20.2 mean 20.2 tok/s, tok/cycle 1.62
+08:03:12 off2-k1 SUMMARY off2-k1|n4|code              rounds 1 agg median 53.0 mean 53.0 tok/s, tok/cycle 1.92
+08:03:12 off2-k1 SUMMARY off2-k1|n4|prose             rounds 1 agg median 47.1 mean 47.1 tok/s, tok/cycle 1.65

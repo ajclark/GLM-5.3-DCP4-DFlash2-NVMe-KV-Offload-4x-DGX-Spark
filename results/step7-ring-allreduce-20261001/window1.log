@@ -1,0 +1,25 @@
+07:25:34 stopping serving
+07:25:46 ring A/B
+== s0b8 split=0 blocks=8
+exit: 0
+s0b8 ok nccl_T1=51.0 nccl_T16=135.2 nccl_T2=59.8 nccl_T32=185.4 nccl_T4=70.6 nccl_T8=97.3 ring_T1=21.1 ring_T16=81.4 ring_T2=25.9 ring_T32=127.6 ring_T4=31.4 ring_T8=49.0
+== s0b16 split=0 blocks=16
+exit: 0
+s0b16 ok nccl_T1=55.3 nccl_T16=132.7 nccl_T2=61.1 nccl_T32=184.6 nccl_T4=73.4 nccl_T8=96.0 ring_T1=21.0 ring_T16=85.7 ring_T2=25.6 ring_T32=135.2 ring_T4=32.5 ring_T8=49.1
+== s1b8 split=1 blocks=8
+exit: 0
+s1b8 ok nccl_T1=53.2 nccl_T16=135.8 nccl_T2=61.0 nccl_T32=186.6 nccl_T4=72.9 nccl_T8=95.7 ring_T1=20.2 ring_T16=74.2 ring_T2=24.0 ring_T32=121.9 ring_T4=31.1 ring_T8=49.5
+== s1b16 split=1 blocks=16
+exit: 0
+s1b16 ok nccl_T1=51.4 nccl_T16=133.3 nccl_T2=60.1 nccl_T32=184.0 nccl_T4=71.7 nccl_T8=95.7 ring_T1=20.3 ring_T16=77.3 ring_T2=25.0 ring_T32=124.9 ring_T4=32.5 ring_T8=48.5
+== s0b32 split=0 blocks=32
+exit: 0
+s0b32 ok nccl_T1=57.1 nccl_T16=133.7 nccl_T2=59.3 nccl_T32=187.2 nccl_T4=72.8 nccl_T8=96.2 ring_T1=21.0 ring_T16=85.2 ring_T2=24.9 ring_T32=141.5 ring_T4=33.0 ring_T8=50.8
+AB-DONE
+07:30:16 step 5/6 GPU tests
+rsync: [Receiver] mkdir "~/glm-fast-test/glm_fast" failed: No such file or directory (2)
+rsync error: error in file IO (code 11) at main.c(800) [Receiver=3.2.7]
+step5 exit 11
+step6 bench exit 1
+step6 kernel exit 1
+07:30:32 WINDOW1-DONE

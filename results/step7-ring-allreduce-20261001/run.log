@@ -1,0 +1,53 @@
+06:04:10 fixed7 SUMMARY fixed7|n1|code               rounds 1 agg median 32.0 mean 32.0 tok/s, tok/cycle 4.08
+06:04:10 fixed7 SUMMARY fixed7|n1|prose              rounds 1 agg median 17.8 mean 17.8 tok/s, tok/cycle 2.19
+06:04:10 fixed7 SUMMARY fixed7|n2|code               rounds 1 agg median 56.1 mean 56.1 tok/s, tok/cycle 5.47
+06:04:10 fixed7 SUMMARY fixed7|n2|prose              rounds 1 agg median 27.4 mean 27.4 tok/s, tok/cycle 2.40
+06:04:10 fixed7 SUMMARY fixed7|n3|code               rounds 1 agg median 60.5 mean 60.5 tok/s, tok/cycle 4.54
+06:04:10 fixed7 SUMMARY fixed7|n3|prose              rounds 1 agg median 31.8 mean 31.8 tok/s, tok/cycle 2.39
+06:04:10 fixed7 SUMMARY fixed7|n4|code               rounds 1 agg median 67.3 mean 67.3 tok/s, tok/cycle 4.87
+06:04:10 fixed7 SUMMARY fixed7|n4|prose              rounds 1 agg median 33.7 mean 33.7 tok/s, tok/cycle 2.19
+06:08:39 fixed5 SUMMARY fixed5|n1|code               rounds 1 agg median 36.1 mean 36.1 tok/s, tok/cycle 4.07
+06:08:39 fixed5 SUMMARY fixed5|n1|prose              rounds 1 agg median 19.3 mean 19.3 tok/s, tok/cycle 2.12
+06:08:39 fixed5 SUMMARY fixed5|n2|code               rounds 1 agg median 54.4 mean 54.4 tok/s, tok/cycle 4.53
+06:08:39 fixed5 SUMMARY fixed5|n2|prose              rounds 1 agg median 31.3 mean 31.3 tok/s, tok/cycle 2.40
+06:08:39 fixed5 SUMMARY fixed5|n3|code               rounds 1 agg median 58.1 mean 58.1 tok/s, tok/cycle 4.01
+06:08:39 fixed5 SUMMARY fixed5|n3|prose              rounds 1 agg median 35.9 mean 35.9 tok/s, tok/cycle 2.35
+06:08:39 fixed5 SUMMARY fixed5|n4|code               rounds 1 agg median 67.2 mean 67.2 tok/s, tok/cycle 4.12
+06:08:39 fixed5 SUMMARY fixed5|n4|prose              rounds 1 agg median 37.9 mean 37.9 tok/s, tok/cycle 2.07
+06:12:46 fixed3 SUMMARY fixed3|n1|code               rounds 1 agg median 33.0 mean 33.0 tok/s, tok/cycle 3.19
+06:12:46 fixed3 SUMMARY fixed3|n1|prose              rounds 1 agg median 22.3 mean 22.3 tok/s, tok/cycle 2.10
+06:12:46 fixed3 SUMMARY fixed3|n2|code               rounds 1 agg median 51.0 mean 51.0 tok/s, tok/cycle 3.52
+06:12:46 fixed3 SUMMARY fixed3|n2|prose              rounds 1 agg median 34.3 mean 34.3 tok/s, tok/cycle 2.20
+06:12:46 fixed3 SUMMARY fixed3|n3|code               rounds 1 agg median 57.6 mean 57.6 tok/s, tok/cycle 3.27
+06:12:46 fixed3 SUMMARY fixed3|n3|prose              rounds 1 agg median 41.5 mean 41.5 tok/s, tok/cycle 2.22
+06:12:46 fixed3 SUMMARY fixed3|n4|code               rounds 1 agg median 65.8 mean 65.8 tok/s, tok/cycle 3.28
+06:12:46 fixed3 SUMMARY fixed3|n4|prose              rounds 1 agg median 46.5 mean 46.5 tok/s, tok/cycle 2.15
+06:17:16 fixed1 SUMMARY fixed1|n1|code               rounds 1 agg median 24.1 mean 24.1 tok/s, tok/cycle 1.92
+06:17:16 fixed1 SUMMARY fixed1|n1|prose              rounds 1 agg median 20.8 mean 20.8 tok/s, tok/cycle 1.63
+06:17:16 fixed1 SUMMARY fixed1|n2|code               rounds 1 agg median 37.7 mean 37.7 tok/s, tok/cycle 1.95
+06:17:16 fixed1 SUMMARY fixed1|n2|prose              rounds 1 agg median 33.5 mean 33.5 tok/s, tok/cycle 1.68
+06:17:16 fixed1 SUMMARY fixed1|n3|code               rounds 1 agg median 46.0 mean 46.0 tok/s, tok/cycle 1.91
+06:17:16 fixed1 SUMMARY fixed1|n3|prose              rounds 1 agg median 41.6 mean 41.6 tok/s, tok/cycle 1.68
+06:17:16 fixed1 SUMMARY fixed1|n4|code               rounds 1 agg median 52.5 mean 52.5 tok/s, tok/cycle 1.89
+06:17:16 fixed1 SUMMARY fixed1|n4|prose              rounds 1 agg median 48.0 mean 48.0 tok/s, tok/cycle 1.66
+{"2": {"points": [{"context": 4096, "cycle_ms": {"1": 102.23, "3": 132.05, "5": 157.23, "7": 179.85}}]}, "3": {"points": [{"context": 4096, "cycle_ms": {"1": 123.22, "3": 163.66, "5": 198.51, "7": 227.27}}]}, "4": {"points": [{"context": 4096, "cycle_ms": {"1": 140.85, "3": 191.38, "5": 231.04, "7": 264.15}}]}}
+[{"context": 4096, "cycle_ms": {"1": 79.05, "3": 88.01, "5": 115.93, "7": 123.68}}, {"context": 32768, "cycle_ms": {"1": 78.85, "3": 95.49, "5": 112.32, "7": 124.24}}, {"context": 100000, "cycle_ms": {"1": 81.11, "3": 91.27, "5": 105.08, "7": 125.88}}]
+06:36:38 SUMMARY code         n= 15 tok/cycle 4.83 (median 4.90) tok/s 37.3 pos-accept [0.883, 0.736, 0.613, 0.508, 0.436, 0.36, 0.297] mix {'reasoning': 0.0, 'content': 1.0, 'tool_calls': 0.0}
+06:36:38 SUMMARY code+think   n=  5 tok/cycle 4.45 (median 4.69) tok/s 36.0 pos-accept [0.844, 0.664, 0.543, 0.464, 0.388, 0.302, 0.248] mix {'reasoning': 0.06, 'content': 0.94, 'tool_calls': 0.0}
+06:36:38 SUMMARY prose        n= 15 tok/cycle 2.41 (median 2.50) tok/s 20.6 pos-accept [0.65, 0.36, 0.197, 0.109, 0.055, 0.026, 0.013] mix {'reasoning': 0.0, 'content': 1.0, 'tool_calls': 0.0}
+06:36:38 SUMMARY prose+think  n=  5 tok/cycle 2.27 (median 2.17) tok/s 17.7 pos-accept [0.628, 0.343, 0.168, 0.082, 0.033, 0.011, 0.006] mix {'reasoning': 0.06, 'content': 0.94, 'tool_calls': 0.0}
+06:51:53 step7 SUMMARY step7|n2|code                rounds 3 agg median 53.3 mean 52.4 tok/s, tok/cycle 4.29
+06:51:53 step7 SUMMARY step7|n2|mix                 rounds 3 agg median 42.0 mean 42.9 tok/s, tok/cycle 2.87
+06:51:53 step7 SUMMARY step7|n2|prose               rounds 3 agg median 35.3 mean 35.2 tok/s, tok/cycle 2.02
+06:51:53 step7 SUMMARY step7|n3|code                rounds 3 agg median 61.8 mean 60.6 tok/s, tok/cycle 4.31
+06:51:53 step7 SUMMARY step7|n3|mix                 rounds 3 agg median 46.1 mean 46.5 tok/s, tok/cycle 2.55
+06:51:53 step7 SUMMARY step7|n3|prose               rounds 3 agg median 43.1 mean 43.5 tok/s, tok/cycle 2.03
+06:51:53 step7 SUMMARY step7|n4|code                rounds 3 agg median 71.1 mean 71.3 tok/s, tok/cycle 4.61
+06:51:53 step7 SUMMARY step7|n4|mix                 rounds 3 agg median 51.9 mean 52.8 tok/s, tok/cycle 2.67
+06:51:53 step7 SUMMARY step7|n4|prose               rounds 3 agg median 49.6 mean 49.5 tok/s, tok/cycle 1.98
+07:24:11 SUMMARY agent        n= 64 tok/cycle 2.88 (median 3.09) tok/s 30.0 pos-accept [0.727, 0.465, 0.323, 0.141, 0.112, 0.063, 0.053] mix {'reasoning': 0.59, 'content': 0.06, 'tool_calls': 0.36}
+07:24:11 SUMMARY code         n= 15 tok/cycle 4.38 (median 4.43) tok/s 39.5 pos-accept [0.872, 0.725, 0.591, 0.356, 0.329, 0.277, 0.23] mix {'reasoning': 0.0, 'content': 1.0, 'tool_calls': 0.0}
+07:24:11 SUMMARY code+think   n=  5 tok/cycle 3.97 (median 4.11) tok/s 37.1 pos-accept [0.841, 0.655, 0.526, 0.281, 0.263, 0.221, 0.18] mix {'reasoning': 0.07, 'content': 0.93, 'tool_calls': 0.0}
+07:24:11 SUMMARY prose        n= 15 tok/cycle 2.25 (median 2.24) tok/s 24.0 pos-accept [0.659, 0.363, 0.19, 0.016, 0.013, 0.007, 0.004] mix {'reasoning': 0.0, 'content': 1.0, 'tool_calls': 0.0}
+07:24:11 SUMMARY prose+think  n=  5 tok/cycle 2.15 (median 2.07) tok/s 22.6 pos-accept [0.641, 0.325, 0.161, 0.007, 0.007, 0.006, 0.003] mix {'reasoning': 0.05, 'content': 0.95, 'tool_calls': 0.0}
+STEP7-DONE

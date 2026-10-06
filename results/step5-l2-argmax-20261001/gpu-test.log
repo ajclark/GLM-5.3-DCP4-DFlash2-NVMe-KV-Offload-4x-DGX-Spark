@@ -1,0 +1,40 @@
+glm_fast step-5 GPU test: torch 2.13.0+cu130, device cuda NVIDIA GB10
+triton 3.7.1
+== A_argmax_exact
+PASS A1 argmax random rows vs torch.argmax: 0 mismatches / 3100 rows
+PASS A2 argmax adversarial rows vs torch.argmax: 0 mismatches / 18 rows
+PASS A3 Triton keys bitwise == torch reference keys: 0 differing keys
+PASS A4 NaN rows: in range, NaN treated as -inf: ids=[5, 0, 38719, 77446, 0, 116159]
+== B_argmax_vs_stock_sampler
+PASS B1 greedy verify vs stock rejection_sample: 0 bad / 300 batches (1124 requests)
+PASS B2 plain sampler path vs stock gumbel_sample(temp 0): 0 mismatches / 30 rows
+PASS B3 NaN-containing verify steps: every emitted id in range
+INFO B3 NaN-containing requests identical to stock (not required): 31/40
+== C_argmax_timing
+INFO C argmax local work at L=8: stock gather-copy+sampler 169.7 us, fast 33.6 us (plus NCCL: stock gathers 1.86 MB/rank, fast 192 B)
+INFO C argmax local work at L=32: stock gather-copy+sampler 318.0 us, fast 33.4 us (plus NCCL: stock gathers 7.43 MB/rank, fast 768 B)
+INFO C GPUModelRunner.sample digest in this image: 021198f1cec14aee (reviewed)
+== D_l2_kernel_and_graph
+PASS D1 cuda prefetch kernel builds, loads and runs: 1.2 s, /tmp/glm_fast_test/libglm_l2pf-ab58829dbc5f.so
+PASS D1 triton prefetch kernel builds, loads and runs: 0.0 s, jit
+PASS D2 cuda: captured fork/prefetch/join graph replays (flag on and off), output bit-identical
+PASS D2 triton: captured fork/prefetch/join graph replays (flag on and off), output bit-identical
+== E_l2_value
+INFO E device: NVIDIA GB10, L2 24.0 MiB, 48 SMs
+INFO E torch.cuda._sleep calibration: 1993 cycles/us
+INFO E bf16 cuBLAS GEMV 6144x1024 (12.6 MB): cold 114.7 us; L2-warm (re-read) 24.6 us; cuda 12MiB/20us 82.7; cuda 12MiB/40us 66.5; cuda 12MiB/80us 66.6; triton 12MiB/20us 83.9; triton 12MiB/40us 66.9; triton 12MiB/80us 67.1
+INFO E int8 Marlin o_proj 4096x6144 (25.2 MB): cold 178.2 us; L2-warm (re-read) 68.4 us; cuda 8MiB/20us 146.8; cuda 8MiB/40us 145.3; cuda 8MiB/80us 145.4; cuda 12MiB/20us 145.2; cuda 12MiB/40us 130.3; cuda 12MiB/80us 130.1; triton 8MiB/20us 145.9; triton 8MiB/40us 145.1; triton 8MiB/80us 145.4; triton 12MiB/20us 144.3; triton 12MiB/40us 130.1; triton 12MiB/80us 130.0
+INFO E int8 Marlin fused_qkv_a 6144x2624 (16.1 MB): cold 133.2 us; L2-warm (re-read) 21.3 us; cuda 12MiB/20us 104.8; cuda 12MiB/40us 90.9; cuda 12MiB/80us 90.1; cuda 16MiB/20us 111.4; cuda 16MiB/40us 87.2; cuda 16MiB/80us 77.3; triton 12MiB/20us 105.1; triton 12MiB/40us 90.5; triton 12MiB/80us 90.6; triton 16MiB/20us 110.9; triton 16MiB/40us 86.9; triton 16MiB/80us 77.2
+INFO E int8 Marlin shared gate_up 6144x1024 (6.3 MB): cold 61.4 us; L2-warm (re-read) 24.8 us; cuda 8MiB/20us 36.4; cuda 8MiB/40us 36.9; cuda 8MiB/80us 36.9; triton 8MiB/20us 37.0; triton 8MiB/40us 36.9; triton 8MiB/80us 36.9
+INFO E best at an 80 us window: bf16 cuBLAS GEMV 6144x1024 (12.6 MB) [cuda]: 114.7 -> 66.6 us (-48.1 us, 42%) with 12 MiB
+INFO E best at an 80 us window: bf16 cuBLAS GEMV 6144x1024 (12.6 MB) [triton]: 114.7 -> 67.1 us (-47.6 us, 42%) with 12 MiB
+INFO E best at an 80 us window: int8 Marlin o_proj 4096x6144 (25.2 MB) [cuda]: 178.2 -> 130.1 us (-48.1 us, 27%) with 12 MiB
+INFO E best at an 80 us window: int8 Marlin o_proj 4096x6144 (25.2 MB) [triton]: 178.2 -> 130.0 us (-48.2 us, 27%) with 12 MiB
+INFO E best at an 80 us window: int8 Marlin fused_qkv_a 6144x2624 (16.1 MB) [cuda]: 133.2 -> 77.3 us (-55.9 us, 42%) with 16 MiB
+INFO E best at an 80 us window: int8 Marlin fused_qkv_a 6144x2624 (16.1 MB) [triton]: 133.2 -> 77.2 us (-56.0 us, 42%) with 16 MiB
+INFO E best at an 80 us window: int8 Marlin shared gate_up 6144x1024 (6.3 MB) [cuda]: 61.4 -> 36.9 us (-24.6 us, 40%) with 8 MiB
+INFO E best at an 80 us window: int8 Marlin shared gate_up 6144x1024 (6.3 MB) [triton]: 61.4 -> 36.9 us (-24.6 us, 40%) with 8 MiB
+PASS E1 a prefetched GEMV is >= 15% faster than cold after an 80 us window
+PASS E2 graph replay [cuda] int8 Marlin fused_qkv_a 6144x2624 (16.1 MB): 80 us window + GEMV: cold 214.7 us, prefetched 158.4 us (-56.3 us)
+PASS E3 runtime flag off: the captured prefetch graph runs like the cold one: 215.7 us vs cold 214.7 us
+SUMMARY pass=14 fail=0

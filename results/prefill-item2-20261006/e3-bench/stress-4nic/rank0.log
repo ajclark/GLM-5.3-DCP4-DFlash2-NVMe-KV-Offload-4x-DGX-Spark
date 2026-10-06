@@ -1,0 +1,4 @@
+{"type": "metadata", "label": "stress-4nic", "nccl": "2.30.7", "env": {"NCCL_IB_HCA": "=roceP2p1s0f0,roceP2p1s0f1,rocep1s0f0,rocep1s0f1", "NCCL_IB_MERGE_NICS": "1", "NCCL_MAX_NCHANNELS": "2"}, "configs": ["1fwd"], "sizes": [12582912, 25165824]}
+{"type": "result", "label": "stress-4nic", "config": "1fwd", "bytes": 12582912, "p50_us": 963.4, "min_us": 925.1, "max_us": 1248.8, "GBps_per_rank_bus": 19.59, "max_err_vs_fp32": 0.0625, "vs_1fwd": null, "mem_drop_mb_max": {"MemAvailable": 644.4, "cuda_free": 646.6}, "stress": {"iters": 3000, "mismatching_iters_max_rank": 0, "worst_abs": 0.0}}
+{"type": "result", "label": "stress-4nic", "config": "1fwd", "bytes": 25165824, "p50_us": 1806.5, "min_us": 1791.0, "max_us": 1848.1, "GBps_per_rank_bus": 20.9, "max_err_vs_fp32": 0.0625, "vs_1fwd": null, "mem_drop_mb_max": {"MemAvailable": 644.4, "cuda_free": 646.6}, "stress": {"iters": 3000, "mismatching_iters_max_rank": 0, "worst_abs": 0.0}}
+{"type": "done", "label": "stress-4nic"}

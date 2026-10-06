@@ -1,0 +1,13 @@
+[2026-10-06 17:42:19] spark-365c:1:92 [0] misc/socket.cc:59 (socketProgress) NCCL WARN socketProgress: Connection closed by remote peer spark-ddbf.lan<45699>
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/bench/nccl_tp_dualring.py", line 163, in <module>
+[rank1]:     main()
+[rank1]:   File "/bench/nccl_tp_dualring.py", line 109, in main
+[rank1]:     all_reduce(lib, comms, src, dst, launch)
+[rank1]:   File "/bench/nccl_tp_dualring.py", line 70, in all_reduce
+[rank1]:     lib.ncclGroupEnd()
+[rank1]:   File "/usr/local/lib/python3.12/dist-packages/vllm/distributed/device_communicators/pynccl_wrapper.py", line 606, in ncclGroupEnd
+[rank1]:     self.NCCL_CHECK(self._funcs["ncclGroupEnd"]())
+[rank1]:   File "/usr/local/lib/python3.12/dist-packages/vllm/distributed/device_communicators/pynccl_wrapper.py", line 430, in NCCL_CHECK
+[rank1]:     raise RuntimeError(f"NCCL error: {error_str}")
+[rank1]: RuntimeError: NCCL error: remote process exited or there was a network error

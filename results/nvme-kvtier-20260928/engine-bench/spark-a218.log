@@ -1,0 +1,18 @@
+geometry ok [1737, 6948]
+roundtrip ok (direct=True, cuda=True)
+roundtrip ok (direct=False, cuda=True)
+manager ok
+ALL OK
+store 6000 slots: 10.15 GB/s (2.0s, 8 writers)
+raw O_DIRECT slot reads, 8 threads: 12.69 GB/s
+raw O_DIRECT slot reads, 16 threads: 14.22 GB/s
+raw O_DIRECT slot reads, 32 threads: 9.39 GB/s
+raw O_DIRECT slot reads, 64 threads: 14.10 GB/s
+engine load 1200 blocks, 8 threads x 2 rows: 11.31 GB/s (0.37s) content_ok=True
+engine load 1200 blocks, 16 threads x 2 rows: 11.26 GB/s (0.37s) content_ok=True
+engine load 1200 blocks, 24 threads x 2 rows: 10.71 GB/s (0.39s) content_ok=True
+engine load 1200 blocks, 32 threads x 2 rows: 10.41 GB/s (0.40s) content_ok=True
+engine load 1200 blocks, 8 threads x 4 rows: 10.97 GB/s (0.38s) content_ok=True
+engine load 1200 blocks, 16 threads x 4 rows: 10.84 GB/s (0.38s) content_ok=True
+engine load 1200 blocks, 24 threads x 4 rows: 10.54 GB/s (0.39s) content_ok=True
+engine load 1200 blocks, 32 threads x 4 rows: 10.21 GB/s (0.41s) content_ok=True

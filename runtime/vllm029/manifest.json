@@ -29,7 +29,7 @@
     },
     "v1/kv_offload/tiering/multinode.py": {
       "upstream_sha256": null,
-      "sha256": "0c64167dc09500b8a411a5e09d8edcb761d6247b4ac9ec70b2fb6aa77a17efe2"
+      "sha256": "6d349a54f7830e4303f8bdf6b7fa0bad1ef41dd51877f09e2b8334d4ba3a758c"
     },
     "v1/worker/gpu/model_runner.py": {
       "upstream_sha256": "d7bae5b05a2a9f02c1ba29f0b4b32434cee43c3b369d3985505d3f8ed89b461b",
@@ -62,6 +62,10 @@
     "models/deepseek_v32/common/kernels.py": {
       "upstream_sha256": "f0336ad018744b7251045271b699ff634d4c6efbd3ce9557d1bd0f8906ce0214",
       "sha256": "a3725c1a71ebb11916092a25c4176f5f07e0318f71a00ca7830d59877a776db6"
+    },
+    "model_executor/kernels/attention/dsa/dcp_indexer_cutedsl.py": {
+      "upstream_sha256": "aff489e6505b495db182bfaf95017e31e2ceab0cf1685b3e3a94976fec02bfce",
+      "sha256": "35974064f6fd910beb6af9780223012dcf1734245607960082fde361751ab880"
     }
   },
   "dependency_versions": {

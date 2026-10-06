@@ -1,0 +1,8 @@
+# Thin rollout image: the production image plus the NVMe KV tier overlay only.
+# Build context: runtime/vllm029 (see kvtier rollout in README.md).
+ARG BASE=spark-vllm:0.29.0-nvme4-stridefix-20260920
+FROM ${BASE}
+COPY manifest.json /opt/spark-vllm-manifest.json
+COPY overlay/vllm/v1/kv_offload/tiering/multinode.py /usr/local/lib/python3.12/dist-packages/vllm/v1/kv_offload/tiering/multinode.py
+RUN python3 /opt/verify-spark-vllm.py >/dev/null && \
+    python3 -m py_compile /usr/local/lib/python3.12/dist-packages/vllm/v1/kv_offload/tiering/multinode.py

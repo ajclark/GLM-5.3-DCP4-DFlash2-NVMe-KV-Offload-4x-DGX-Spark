@@ -1,0 +1,91 @@
+{
+ "label": "E1-k1",
+ "rows": [
+  {
+   "ctx": 2048,
+   "gen": 256,
+   "ttft_s": 0.4738631248474121,
+   "prefill_s": 0.4657445929478854,
+   "decode_s": 10.87192596506793,
+   "steps": 151.0,
+   "accepted": 104.0,
+   "cycle_ms_server": 71.99950970243663,
+   "cycle_ms_client": 72.4687655766805,
+   "tokens_per_step": 1.6887417218543046
+  },
+  {
+   "ctx": 2048,
+   "gen": 256,
+   "ttft_s": 0.4761006832122803,
+   "prefill_s": 0.4684498469578102,
+   "decode_s": 9.884222625987604,
+   "steps": 134.0,
+   "accepted": 122.0,
+   "cycle_ms_server": 73.76285541781795,
+   "cycle_ms_client": 74.30469183097209,
+   "tokens_per_step": 1.9029850746268657
+  },
+  {
+   "ctx": 2048,
+   "gen": 256,
+   "ttft_s": 0.4715571403503418,
+   "prefill_s": 0.46251539792865515,
+   "decode_s": 10.807530225021765,
+   "steps": 150.0,
+   "accepted": 105.0,
+   "cycle_ms_server": 72.05020150014509,
+   "cycle_ms_client": 72.51738541878309,
+   "tokens_per_step": 1.7
+  },
+  {
+   "ctx": 16384,
+   "gen": 256,
+   "ttft_s": 0.5056860446929932,
+   "prefill_s": 0.4779429150512442,
+   "decode_s": 10.27433209202718,
+   "steps": 141.0,
+   "accepted": 114.0,
+   "cycle_ms_server": 72.86760348955447,
+   "cycle_ms_client": 73.27310357775006,
+   "tokens_per_step": 1.8085106382978724
+  },
+  {
+   "ctx": 16384,
+   "gen": 256,
+   "ttft_s": 0.5015785694122314,
+   "prefill_s": 0.4756132790353149,
+   "decode_s": 9.855648529017344,
+   "steps": 133.0,
+   "accepted": 123.0,
+   "cycle_ms_server": 74.1026205189274,
+   "cycle_ms_client": 74.54919815063477,
+   "tokens_per_step": 1.9172932330827068
+  },
+  {
+   "ctx": 16384,
+   "gen": 256,
+   "ttft_s": 0.5067219734191895,
+   "prefill_s": 0.47891648998484015,
+   "decode_s": 9.841581010026857,
+   "steps": 133.0,
+   "accepted": 123.0,
+   "cycle_ms_server": 73.99684969945005,
+   "cycle_ms_client": 74.43599448059544,
+   "tokens_per_step": 1.9172932330827068
+  }
+ ],
+ "summary": {
+  "2048": {
+   "cycle_ms_server_median": 72.05020150014509,
+   "cycle_ms_client_median": 72.51738541878309,
+   "tokens_per_step": 1.7,
+   "n": 3
+  },
+  "16384": {
+   "cycle_ms_server_median": 73.99684969945005,
+   "cycle_ms_client_median": 74.43599448059544,
+   "tokens_per_step": 1.9172932330827068,
+   "n": 3
+  }
+ }
+}

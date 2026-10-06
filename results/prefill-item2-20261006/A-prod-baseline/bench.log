@@ -1,0 +1,20 @@
+01:43:49 ttft n=4096 rep=0: ttft 6.99s prefill 6.98s -> 587 tok/s (hits 0/0)
+01:43:57 ttft n=4096 rep=1: ttft 6.99s prefill 6.98s -> 587 tok/s (hits 0/0)
+01:44:05 ttft n=4096 rep=2: ttft 7.15s prefill 7.14s -> 574 tok/s (hits 0/0)
+01:45:02 ttft n=32768 rep=0: ttft 56.86s prefill 56.83s -> 577 tok/s (hits 0/0)
+01:46:00 ttft n=32768 rep=1: ttft 57.01s prefill 56.97s -> 575 tok/s (hits 0/0)
+01:46:57 ttft n=32768 rep=2: ttft 57.20s prefill 57.17s -> 573 tok/s (hits 0/0)
+01:48:46 ttft n=61440 rep=0: ttft 108.43s prefill 108.37s -> 567 tok/s (hits 0/0)
+01:50:35 ttft n=61440 rep=1: ttft 108.50s prefill 108.43s -> 567 tok/s (hits 0/0)
+01:52:25 ttft n=61440 rep=2: ttft 109.03s prefill 108.96s -> 564 tok/s (hits 0/0)
+01:52:25 ttft summary n=4096: {'n': 3, 'prefill_s_median': 6.983378930948675, 'ttft_s_median': 6.993943214416504, 'tok_s_median': 586.5355496960793}
+01:52:25 ttft summary n=32768: {'n': 3, 'prefill_s_median': 56.968908225069754, 'ttft_s_median': 57.00550699234009, 'tok_s_median': 575.1909422336464}
+01:52:25 ttft summary n=61440: {'n': 3, 'prefill_s_median': 108.43058406200726, 'ttft_s_median': 108.49552392959595, 'tok_s_median': 566.6297985157476}
+01:52:45 quality n=8192 run=0: 256 tokens, prefill 14.1s, hits 0
+01:53:07 quality n=8192 run=1: 256 tokens, prefill 14.2s, hits 0
+01:53:58 quality n=24576 run=0: 256 tokens, prefill 42.6s, hits 0
+01:54:49 quality n=24576 run=1: 256 tokens, prefill 42.6s, hits 0
+01:56:24 quality n=49152 run=0: 256 tokens, prefill 86.6s, hits 0
+01:57:59 quality n=49152 run=1: 256 tokens, prefill 86.5s, hits 0
+02:01:06 quality n=98304 run=0: 256 tokens, prefill 176.3s, hits 0
+02:04:10 quality n=98304 run=1: 256 tokens, prefill 175.7s, hits 0
